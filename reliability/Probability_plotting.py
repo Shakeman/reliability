@@ -37,26 +37,27 @@ plot_points - plots the failure points on a scatter plot. Useful to overlay
 """
 
 import matplotlib.pyplot as plt
-from matplotlib.transforms import blended_transform_factory
 import numpy as np
 import pandas as pd
+from matplotlib.transforms import blended_transform_factory
+
 from reliability.Distributions import (
-    Weibull_Distribution,
-    Lognormal_Distribution,
-    Normal_Distribution,
-    Gamma_Distribution,
     Beta_Distribution,
     Exponential_Distribution,
-    Loglogistic_Distribution,
+    Gamma_Distribution,
     Gumbel_Distribution,
+    Loglogistic_Distribution,
+    Lognormal_Distribution,
+    Normal_Distribution,
+    Weibull_Distribution,
 )
 from reliability.Nonparametric import KaplanMeier, NelsonAalen, RankAdjustment
 from reliability.Utils import (
     axes_transforms,
-    round_and_string,
+    colorprint,
     probability_plot_xylims,
     probability_plot_xyticks,
-    colorprint,
+    round_and_string,
     xy_downsample,
 )
 
@@ -116,8 +117,8 @@ def plotting_positions(failures=None, right_censored=None, a=None, sort=False):
             "a must be in the range 0 to 1. Default is 0.3 which gives the median rank. For more information see https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot#Heuristics"
         )
 
-    if sort not in [True,False]:
-        raise ValueError('sort must be True or False. Default is False to keep the same order as the input.')
+    if sort not in [True, False]:
+        raise ValueError("sort must be True or False. Default is False to keep the same order as the input.")
 
     # construct the dataframe for the rank adjustment method
     f_codes = np.ones_like(f)
@@ -180,7 +181,7 @@ def Weibull_probability_plot(
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
-    **kwargs
+    **kwargs,
 ):
     """
     Generates a probability plot on Weibull scaled probability paper so that the
@@ -248,9 +249,7 @@ def Weibull_probability_plot(
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
     elif len(failures) < 2 and __fitted_dist_params is None:
-        raise ValueError(
-            "Insufficient data to fit a distribution. Minimum number of points is 2"
-        )
+        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
         raise ValueError("failures must be a list or an array")
@@ -261,7 +260,7 @@ def Weibull_probability_plot(
             raise ValueError("right_censored must be a list or an array")
         right_censored = np.asarray(right_censored)
 
-    if show_fitted_distribution == False and fit_gamma == True:
+    if show_fitted_distribution is False and fit_gamma is True:
         colorprint(
             "WARNING: fit_gamma has been reset to False because the distribution is not fitted when show_fitted_distribution = False.",
             text_color="red",
@@ -274,9 +273,7 @@ def Weibull_probability_plot(
     xlabel = "Time"  # this will be overridden if gamma is fitted
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
         if __fitted_dist_params is not None:
             if __fitted_dist_params.gamma > 0:
@@ -308,11 +305,7 @@ def Weibull_probability_plot(
                 label = kwargs.pop("label")
             else:
                 label = str(
-                    "Fitted Weibull_2P (α="
-                    + round_and_string(alpha, dec)
-                    + ", β="
-                    + round_and_string(beta, dec)
-                    + ")"
+                    "Fitted Weibull_2P (α=" + round_and_string(alpha, dec) + ", β=" + round_and_string(beta, dec) + ")"
                 )
         elif fit_gamma is True:
             if __fitted_dist_params is not None:
@@ -369,9 +362,7 @@ def Weibull_probability_plot(
     # plot the failure points and format the scale and axes
     x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
     if show_scatter_points is True:
-        x_scatter, y_scatter = xy_downsample(
-            x, y, downsample_factor=downsample_scatterplot
-        )
+        x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
     plt.gca().set_yscale(
         "function",
@@ -387,9 +378,7 @@ def Weibull_probability_plot(
         plt.legend(loc="upper left")
     plt.title("Probability plot\nWeibull CDF")
     plt.ylabel("Fraction failing")
-    plt.xlabel(
-        xlabel
-    )  # needs to be set after plotting the CDF to override the default 'xvals'
+    plt.xlabel(xlabel)  # needs to be set after plotting the CDF to override the default 'xvals'
     probability_plot_xylims(x=x, y=y, dist="weibull", spacing=0.1)
     probability_plot_xyticks()
     plt.subplots_adjust(top=0.92, bottom=0.09, left=0.12, right=0.94)
@@ -407,7 +396,7 @@ def Loglogistic_probability_plot(
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
-    **kwargs
+    **kwargs,
 ):
     """
     Generates a probability plot on Loglogistically scaled probability paper so
@@ -475,9 +464,7 @@ def Loglogistic_probability_plot(
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
     elif len(failures) < 2 and __fitted_dist_params is None:
-        raise ValueError(
-            "Insufficient data to fit a distribution. Minimum number of points is 2"
-        )
+        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
         raise ValueError("failures must be a list or an array")
@@ -488,7 +475,7 @@ def Loglogistic_probability_plot(
             raise ValueError("right_censored must be a list or an array")
         right_censored = np.asarray(right_censored)
 
-    if show_fitted_distribution == False and fit_gamma == True:
+    if show_fitted_distribution is False and fit_gamma is True:
         colorprint(
             "WARNING: fit_gamma has been reset to False because the distribution is not fitted when show_fitted_distribution = False.",
             text_color="red",
@@ -501,9 +488,7 @@ def Loglogistic_probability_plot(
     xlabel = "Time"  # this will be overridden if gamma is fitted
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
         if __fitted_dist_params is not None:
             if __fitted_dist_params.gamma > 0:
@@ -595,9 +580,7 @@ def Loglogistic_probability_plot(
     # plot the failure points and format the scale and axes
     x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
     if show_scatter_points is True:
-        x_scatter, y_scatter = xy_downsample(
-            x, y, downsample_factor=downsample_scatterplot
-        )
+        x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
     plt.gca().set_yscale(
         "function",
@@ -617,9 +600,7 @@ def Loglogistic_probability_plot(
         plt.legend(loc="upper left")
     plt.title("Probability plot\nLoglogistic CDF")
     plt.ylabel("Fraction failing")
-    plt.xlabel(
-        xlabel
-    )  # needs to be set after plotting the CDF to override the default 'xvals'
+    plt.xlabel(xlabel)  # needs to be set after plotting the CDF to override the default 'xvals'
     probability_plot_xylims(x=x, y=y, dist="loglogistic", spacing=0.1)
     probability_plot_xyticks()
     plt.subplots_adjust(top=0.92, bottom=0.09, left=0.12, right=0.94)
@@ -636,7 +617,7 @@ def Exponential_probability_plot_Weibull_Scale(
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
-    **kwargs
+    **kwargs,
 ):
     """
     Generates a probability plot on Weibull scaled probability paper so that the
@@ -710,9 +691,7 @@ def Exponential_probability_plot_Weibull_Scale(
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
     elif len(failures) < 1 and __fitted_dist_params is None:
-        raise ValueError(
-            "Insufficient data to fit a distribution. Minimum number of points is 1"
-        )
+        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 1")
 
     if type(failures) not in [np.ndarray, list]:
         raise ValueError("failures must be a list or an array")
@@ -723,7 +702,7 @@ def Exponential_probability_plot_Weibull_Scale(
             raise ValueError("right_censored must be a list or an array")
         right_censored = np.asarray(right_censored)
 
-    if show_fitted_distribution == False and fit_gamma == True:
+    if show_fitted_distribution is False and fit_gamma is True:
         colorprint(
             "WARNING: fit_gamma has been reset to False because the distribution is not fitted when show_fitted_distribution = False.",
             text_color="red",
@@ -736,9 +715,7 @@ def Exponential_probability_plot_Weibull_Scale(
     xlabel = "Time"  # this will be overridden if gamma is fitted
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
         if __fitted_dist_params is not None:
             if __fitted_dist_params.gamma > 0:
@@ -763,11 +740,7 @@ def Exponential_probability_plot_Weibull_Scale(
             if "label" in kwargs:
                 label = kwargs.pop("label")
             else:
-                label = str(
-                    "Fitted Exponential_1P (λ="
-                    + round_and_string(Lambda, dec)
-                    + ")"
-                )
+                label = str("Fitted Exponential_1P (λ=" + round_and_string(Lambda, dec) + ")")
         elif fit_gamma is True:
             if __fitted_dist_params is not None:
                 Lambda = __fitted_dist_params.Lambda
@@ -811,9 +784,7 @@ def Exponential_probability_plot_Weibull_Scale(
     # plot the failure points and format the scale and axes
     x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
     if show_scatter_points is True:
-        x_scatter, y_scatter = xy_downsample(
-            x, y, downsample_factor=downsample_scatterplot
-        )
+        x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
     plt.gca().set_yscale(
         "function",
@@ -830,9 +801,7 @@ def Exponential_probability_plot_Weibull_Scale(
         plt.legend(loc="upper left")
     plt.ylabel("Fraction failing")
     plt.title("Probability plot\nExponential CDF (Weibull Scale)")
-    plt.xlabel(
-        xlabel
-    )  # needs to be set after plotting the CDF to override the default 'xvals'
+    plt.xlabel(xlabel)  # needs to be set after plotting the CDF to override the default 'xvals'
     probability_plot_xylims(x=x, y=y, dist="weibull", spacing=0.1)
     probability_plot_xyticks()
     plt.subplots_adjust(top=0.92, bottom=0.09, left=0.12, right=0.94)
@@ -849,7 +818,7 @@ def Gumbel_probability_plot(
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
-    **kwargs
+    **kwargs,
 ):
     """
     Generates a probability plot on Gumbel scaled probability paper so that the
@@ -912,9 +881,7 @@ def Gumbel_probability_plot(
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
     elif len(failures) < 2 and __fitted_dist_params is None:
-        raise ValueError(
-            "Insufficient data to fit a distribution. Minimum number of points is 2"
-        )
+        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
         raise ValueError("failures must be a list or an array")
@@ -931,9 +898,7 @@ def Gumbel_probability_plot(
         data_color = "k"
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
         if __fitted_dist_params is not None:
             mu = __fitted_dist_params.mu
@@ -960,11 +925,7 @@ def Gumbel_probability_plot(
             label = kwargs.pop("label")
         else:
             label = str(
-                "Fitted Gumbel_2P (μ="
-                + round_and_string(mu, dec)
-                + ", σ="
-                + round_and_string(sigma, dec)
-                + ")"
+                "Fitted Gumbel_2P (μ=" + round_and_string(mu, dec) + ", σ=" + round_and_string(sigma, dec) + ")"
             )
         gbf = Gumbel_Distribution(
             mu=mu,
@@ -978,9 +939,7 @@ def Gumbel_probability_plot(
 
     x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
     if show_scatter_points is True:
-        x_scatter, y_scatter = xy_downsample(
-            x, y, downsample_factor=downsample_scatterplot
-        )
+        x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
     plt.gca().set_yscale(
         "function",
@@ -1013,7 +972,7 @@ def Normal_probability_plot(
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
-    **kwargs
+    **kwargs,
 ):
     """
     Generates a probability plot on Normal scaled probability paper so that the
@@ -1076,9 +1035,7 @@ def Normal_probability_plot(
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
     elif len(failures) < 2 and __fitted_dist_params is None:
-        raise ValueError(
-            "Insufficient data to fit a distribution. Minimum number of points is 2"
-        )
+        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
         raise ValueError("failures must be a list or an array")
@@ -1095,9 +1052,7 @@ def Normal_probability_plot(
         data_color = "k"
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
         if __fitted_dist_params is not None:
             mu = __fitted_dist_params.mu
@@ -1123,11 +1078,7 @@ def Normal_probability_plot(
             label = kwargs.pop("label")
         else:
             label = str(
-                "Fitted Normal_2P (μ="
-                + round_and_string(mu, dec)
-                + ", σ="
-                + round_and_string(sigma, dec)
-                + ")"
+                "Fitted Normal_2P (μ=" + round_and_string(mu, dec) + ", σ=" + round_and_string(sigma, dec) + ")"
             )
         nf = Normal_Distribution(
             mu=mu,
@@ -1142,9 +1093,7 @@ def Normal_probability_plot(
     # plot the failure points and format the scale and axes
     x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
     if show_scatter_points is True:
-        x_scatter, y_scatter = xy_downsample(
-            x, y, downsample_factor=downsample_scatterplot
-        )
+        x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
     plt.gca().set_yscale(
         "function",
@@ -1178,7 +1127,7 @@ def Lognormal_probability_plot(
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
-    **kwargs
+    **kwargs,
 ):
     """
     Generates a probability plot on Lognormal scaled probability paper so that
@@ -1245,9 +1194,7 @@ def Lognormal_probability_plot(
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
     elif len(failures) < 2 and __fitted_dist_params is None:
-        raise ValueError(
-            "Insufficient data to fit a distribution. Minimum number of points is 2"
-        )
+        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
         raise ValueError("failures must be a list or an array")
@@ -1258,7 +1205,7 @@ def Lognormal_probability_plot(
             raise ValueError("right_censored must be a list or an array")
         right_censored = np.asarray(right_censored)
 
-    if show_fitted_distribution == False and fit_gamma == True:
+    if show_fitted_distribution is False and fit_gamma is True:
         colorprint(
             "WARNING: fit_gamma has been reset to False because the distribution is not fitted when show_fitted_distribution = False.",
             text_color="red",
@@ -1271,9 +1218,7 @@ def Lognormal_probability_plot(
     xlabel = "Time"  # this will be overridden if gamma is fitted
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
         if __fitted_dist_params is not None:
             if __fitted_dist_params.gamma > 0:
@@ -1305,11 +1250,7 @@ def Lognormal_probability_plot(
                 label = kwargs.pop("label")
             else:
                 label = str(
-                    "Fitted Lognormal_2P (μ="
-                    + round_and_string(mu, dec)
-                    + ", σ="
-                    + round_and_string(sigma, dec)
-                    + ")"
+                    "Fitted Lognormal_2P (μ=" + round_and_string(mu, dec) + ", σ=" + round_and_string(sigma, dec) + ")"
                 )
         elif fit_gamma is True:
             if __fitted_dist_params is not None:
@@ -1363,9 +1304,7 @@ def Lognormal_probability_plot(
     # plot the failure points and format the scale and axes
     x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
     if show_scatter_points is True:
-        x_scatter, y_scatter = xy_downsample(
-            x, y, downsample_factor=downsample_scatterplot
-        )
+        x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
     plt.gca().set_yscale(
         "function",
@@ -1398,7 +1337,7 @@ def Beta_probability_plot(
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
-    **kwargs
+    **kwargs,
 ):
     """
     Generates a probability plot on Beta scaled probability paper so that the
@@ -1462,9 +1401,7 @@ def Beta_probability_plot(
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
     elif len(failures) < 2 and __fitted_dist_params is None:
-        raise ValueError(
-            "Insufficient data to fit a distribution. Minimum number of points is 2"
-        )
+        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
         raise ValueError("failures must be a list or an array")
@@ -1482,9 +1419,7 @@ def Beta_probability_plot(
 
     # We can't skip fitting when show_fitted_distribution = False because the axes scaling needs alpha and beta
     if CI <= 0 or CI >= 1:
-        raise ValueError(
-            "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
-        )
+        raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
     if __fitted_dist_params is not None:
         alpha = __fitted_dist_params.alpha
@@ -1503,13 +1438,7 @@ def Beta_probability_plot(
     if "label" in kwargs:
         label = kwargs.pop("label")
     else:
-        label = str(
-            "Fitted Beta_2P (α="
-            + round_and_string(alpha, dec)
-            + ", β="
-            + round_and_string(beta, dec)
-            + ")"
-        )
+        label = str("Fitted Beta_2P (α=" + round_and_string(alpha, dec) + ", β=" + round_and_string(beta, dec) + ")")
     bf = Beta_Distribution(
         alpha=alpha,
         beta=beta,
@@ -1519,12 +1448,15 @@ def Beta_probability_plot(
     plt.grid(visible=True, which="major", color="k", alpha=0.3, linestyle="-")
     plt.grid(visible=True, which="minor", color="k", alpha=0.08, linestyle="-")
     if show_scatter_points is True:
-        x_scatter, y_scatter = xy_downsample(
-            x, y, downsample_factor=downsample_scatterplot
-        )
+        x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
-    f_beta = lambda x: axes_transforms.beta_forward(x, alpha, beta)
-    fi_beta = lambda x: axes_transforms.beta_inverse(x, alpha, beta)
+
+    def f_beta(x):
+        return axes_transforms.beta_forward(x, alpha, beta)
+
+    def fi_beta(x):
+        return axes_transforms.beta_inverse(x, alpha, beta)
+
     plt.gca().set_yscale("function", functions=(f_beta, fi_beta))
     if show_fitted_distribution is True:
         bf.CDF(label=label, **kwargs)
@@ -1535,12 +1467,8 @@ def Beta_probability_plot(
     plt.gcf().set_size_inches(
         9, 9
     )  # adjust the figsize. This is done outside of figure creation so that layering of multiple plots is possible
-    probability_plot_xylims(
-        x=x, y=y, dist="beta", spacing=0.1, beta_alpha=alpha, beta_beta=beta
-    )
-    probability_plot_xyticks(
-        yticks=[0.1, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99, 0.999, 0.9999, 0.99999]
-    )
+    probability_plot_xylims(x=x, y=y, dist="beta", spacing=0.1, beta_alpha=alpha, beta_beta=beta)
+    probability_plot_xyticks(yticks=[0.1, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99, 0.999, 0.9999, 0.99999])
     plt.subplots_adjust(top=0.92, bottom=0.09, left=0.12, right=0.94)
     return plt.gcf()
 
@@ -1556,7 +1484,7 @@ def Gamma_probability_plot(
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
-    **kwargs
+    **kwargs,
 ):
     """
     Generates a probability plot on Gamma scaled probability paper so that the
@@ -1628,9 +1556,7 @@ def Gamma_probability_plot(
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
     elif len(failures) < 2 and __fitted_dist_params is None:
-        raise ValueError(
-            "Insufficient data to fit a distribution. Minimum number of points is 2"
-        )
+        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
         raise ValueError("failures must be a list or an array")
@@ -1641,7 +1567,7 @@ def Gamma_probability_plot(
             raise ValueError("right_censored must be a list or an array")
         right_censored = np.asarray(right_censored)
 
-    if show_fitted_distribution == False and fit_gamma == True:
+    if show_fitted_distribution is False and fit_gamma is True:
         colorprint(
             "WARNING: fit_gamma has been reset to False because the distribution is not fitted when show_fitted_distribution = False.",
             text_color="red",
@@ -1655,9 +1581,7 @@ def Gamma_probability_plot(
 
     # We can't skip fitting when show_fitted_distribution = False because the axes scaling needs beta
     if CI <= 0 or CI >= 1:
-        raise ValueError(
-            "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
-        )
+        raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
     if __fitted_dist_params is not None:
         if __fitted_dist_params.gamma > 0:
@@ -1693,11 +1617,7 @@ def Gamma_probability_plot(
             label = kwargs.pop("label")
         else:
             label = str(
-                "Fitted Gamma_2P (α="
-                + round_and_string(alpha, dec)
-                + ", β="
-                + round_and_string(beta, dec)
-                + ")"
+                "Fitted Gamma_2P (α=" + round_and_string(alpha, dec) + ", β=" + round_and_string(beta, dec) + ")"
             )
     elif fit_gamma is True:
         if __fitted_dist_params is not None:
@@ -1758,12 +1678,15 @@ def Gamma_probability_plot(
     # plot the failure points and format the scale and axes
     x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
     if show_scatter_points is True:
-        x_scatter, y_scatter = xy_downsample(
-            x, y, downsample_factor=downsample_scatterplot
-        )
+        x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
-    f_gamma = lambda x: axes_transforms.gamma_forward(x, beta)
-    fi_gamma = lambda x: axes_transforms.gamma_inverse(x, beta)
+
+    def f_gamma(x):
+        return axes_transforms.gamma_forward(x, beta)
+
+    def fi_gamma(x):
+        return axes_transforms.gamma_inverse(x, beta)
+
     plt.gca().set_yscale("function", functions=(f_gamma, fi_gamma))
     plt.grid(visible=True, which="major", color="k", alpha=0.3, linestyle="-")
     plt.grid(visible=True, which="minor", color="k", alpha=0.08, linestyle="-")
@@ -1777,9 +1700,7 @@ def Gamma_probability_plot(
     plt.ylabel("Fraction failing")
     plt.xlabel(xlabel)
     probability_plot_xylims(x=x, y=y, dist="gamma", spacing=0.1, gamma_beta=beta)
-    probability_plot_xyticks(
-        yticks=[0.1, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99, 0.999, 0.9999, 0.99999]
-    )
+    probability_plot_xyticks(yticks=[0.1, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99, 0.999, 0.9999, 0.99999])
     plt.subplots_adjust(top=0.92, bottom=0.09, left=0.12, right=0.94)
     return plt.gcf()
 
@@ -1794,7 +1715,7 @@ def Exponential_probability_plot(
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
-    **kwargs
+    **kwargs,
 ):
     """
     Generates a probability plot on Exponentially scaled probability paper so
@@ -1864,9 +1785,7 @@ def Exponential_probability_plot(
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
     elif len(failures) < 1 and __fitted_dist_params is None:
-        raise ValueError(
-            "Insufficient data to fit a distribution. Minimum number of points is 1"
-        )
+        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 1")
 
     if type(failures) not in [np.ndarray, list]:
         raise ValueError("failures must be a list or an array")
@@ -1877,7 +1796,7 @@ def Exponential_probability_plot(
             raise ValueError("right_censored must be a list or an array")
         right_censored = np.asarray(right_censored)
 
-    if show_fitted_distribution == False and fit_gamma == True:
+    if show_fitted_distribution is False and fit_gamma is True:
         colorprint(
             "WARNING: fit_gamma has been reset to False because the distribution is not fitted when show_fitted_distribution = False.",
             text_color="red",
@@ -1890,9 +1809,7 @@ def Exponential_probability_plot(
     xlabel = "Time"  # this will be overridden if gamma is fitted
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
         if __fitted_dist_params is not None:
             if __fitted_dist_params.gamma > 0:
@@ -1917,11 +1834,7 @@ def Exponential_probability_plot(
             if "label" in kwargs:
                 label = kwargs.pop("label")
             else:
-                label = str(
-                    "Fitted Exponential_1P (λ="
-                    + round_and_string(Lambda, dec)
-                    + ")"
-                )
+                label = str("Fitted Exponential_1P (λ=" + round_and_string(Lambda, dec) + ")")
         elif fit_gamma is True:
             if __fitted_dist_params is not None:
                 Lambda = __fitted_dist_params.Lambda
@@ -1958,9 +1871,7 @@ def Exponential_probability_plot(
 
     x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
     if show_scatter_points is True:
-        x_scatter, y_scatter = xy_downsample(
-            x, y, downsample_factor=downsample_scatterplot
-        )
+        x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
     plt.gca().set_yscale(
         "function",
@@ -1979,13 +1890,9 @@ def Exponential_probability_plot(
         plt.legend(loc="upper left")
     plt.title("Probability plot\nExponential CDF")
     plt.ylabel("Fraction failing")
-    plt.xlabel(
-        xlabel
-    )  # needs to be set after plotting the CDF to override the default 'xvals'
+    plt.xlabel(xlabel)  # needs to be set after plotting the CDF to override the default 'xvals'
     probability_plot_xylims(x=x, y=y, dist="exponential", spacing=0.1)
-    probability_plot_xyticks(
-        yticks=[0.1, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99, 0.999, 0.9999, 0.99999]
-    )
+    probability_plot_xyticks(yticks=[0.1, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99, 0.999, 0.9999, 0.99999])
     plt.subplots_adjust(top=0.92, bottom=0.09, left=0.12, right=0.94)
     return plt.gcf()
 
@@ -1997,7 +1904,7 @@ def PP_plot_parametric(
     x_quantile_lines=None,
     show_diagonal_line=False,
     downsample_scatterplot=False,
-    **kwargs
+    **kwargs,
 ):
     """
     The PP plot (probability-probability plot) consists of plotting the CDF of
@@ -2094,9 +2001,7 @@ def PP_plot_parametric(
     dist_Y_CDF = Y_dist.CDF(xvals=xvals, show_plot=False)
 
     if downsample_scatterplot is not False:
-        x_scatter, y_scatter = xy_downsample(
-            dist_X_CDF, dist_Y_CDF, downsample_factor=downsample_scatterplot
-        )
+        x_scatter, y_scatter = xy_downsample(dist_X_CDF, dist_Y_CDF, downsample_factor=downsample_scatterplot)
     else:
         x_scatter, y_scatter = dist_X_CDF, dist_Y_CDF
     plt.scatter(x_scatter, y_scatter, marker=marker, color=color)
@@ -2114,9 +2019,7 @@ def PP_plot_parametric(
     if y_quantile_lines is not None:
         for q in y_quantile_lines:
             quantile = X_dist.CDF(xvals=Y_dist.quantile(q), show_plot=False)
-            plt.plot(
-                [-1000, quantile, quantile], [q, q, -1000], color="blue", linewidth=0.5
-            )
+            plt.plot([-1000, quantile, quantile], [q, q, -1000], color="blue", linewidth=0.5)
             plt.text(
                 s=str(round(quantile, 2)),
                 x=quantile,
@@ -2129,9 +2032,7 @@ def PP_plot_parametric(
     if x_quantile_lines is not None:
         for q in x_quantile_lines:
             quantile = Y_dist.CDF(xvals=X_dist.quantile(q), show_plot=False)
-            plt.plot(
-                [q, q, -1000], [-1000, quantile, quantile], color="red", linewidth=0.5
-            )
+            plt.plot([q, q, -1000], [-1000, quantile, quantile], color="red", linewidth=0.5)
             plt.text(
                 s=str(round(quantile, 2)),
                 x=0,
@@ -2151,12 +2052,7 @@ def PP_plot_parametric(
 
 
 def QQ_plot_parametric(
-    X_dist=None,
-    Y_dist=None,
-    show_fitted_lines=True,
-    show_diagonal_line=False,
-    downsample_scatterplot=False,
-    **kwargs
+    X_dist=None, Y_dist=None, show_fitted_lines=True, show_diagonal_line=False, downsample_scatterplot=False, **kwargs
 ):
     """
     A QQ plot (quantile-quantile plot) consists of plotting failure units vs
@@ -2256,9 +2152,7 @@ def QQ_plot_parametric(
     dist_Y_ISF = np.array(dist_Y_ISF)
 
     if downsample_scatterplot is not False:
-        x_scatter, y_scatter = xy_downsample(
-            dist_X_ISF, dist_Y_ISF, downsample_factor=downsample_scatterplot
-        )
+        x_scatter, y_scatter = xy_downsample(dist_X_ISF, dist_Y_ISF, downsample_factor=downsample_scatterplot)
     else:
         x_scatter, y_scatter = dist_X_ISF, dist_Y_ISF
     plt.scatter(x_scatter, y_scatter, marker=marker, color=color)
@@ -2274,13 +2168,9 @@ def QQ_plot_parametric(
     text_str = str("Y = " + str(round(m, 3)) + " X")
     y1_fit = deg1[0] * x_fit + deg1[1]
     if deg1[1] < 0:
-        text_str1 = str(
-            "Y = " + str(round(deg1[0], 3)) + " X" + " - " + str(round(-1 * deg1[1], 3))
-        )
+        text_str1 = str("Y = " + str(round(deg1[0], 3)) + " X" + " - " + str(round(-1 * deg1[1], 3)))
     else:
-        text_str1 = str(
-            "Y = " + str(round(deg1[0], 3)) + " X" + " + " + str(round(deg1[1], 3))
-        )
+        text_str1 = str("Y = " + str(round(deg1[0], 3)) + " X" + " + " + str(round(deg1[1], 3)))
 
     if show_diagonal_line is True:
         plt.plot(
@@ -2319,7 +2209,7 @@ def PP_plot_semiparametric(
     show_diagonal_line=True,
     method="KM",
     downsample_scatterplot=False,
-    **kwargs
+    **kwargs,
 ):
     """
     A PP plot (probability-probability plot) consists of plotting the CDF of one
@@ -2402,13 +2292,13 @@ def PP_plot_semiparametric(
         raise ValueError(
             "Y_dist must be specified as a probability distribution generated using the Distributions module"
         )
-    if type(X_data_failures) == list:
+    if isinstance(X_data_failures, list):
         X_data_failures = np.sort(np.array(X_data_failures))
     elif type(X_data_failures) == np.ndarray:
         X_data_failures = np.sort(X_data_failures)
     else:
         raise ValueError("X_data_failures must be an array or list")
-    if type(X_data_right_censored) == list:
+    if isinstance(X_data_right_censored, list):
         X_data_right_censored = np.sort(np.array(X_data_right_censored))
     elif type(X_data_right_censored) == np.ndarray:
         X_data_right_censored = np.sort(X_data_right_censored)
@@ -2474,9 +2364,7 @@ def PP_plot_semiparametric(
     CDF = Y_dist.CDF(X_data_failures, show_plot=False)
 
     if downsample_scatterplot is not False:
-        x_scatter, y_scatter = xy_downsample(
-            ecdf, CDF, downsample_factor=downsample_scatterplot
-        )
+        x_scatter, y_scatter = xy_downsample(ecdf, CDF, downsample_factor=downsample_scatterplot)
     else:
         x_scatter, y_scatter = ecdf, CDF
     plt.scatter(x_scatter, y_scatter, marker=marker, color=color)
@@ -2499,7 +2387,7 @@ def QQ_plot_semiparametric(
     show_diagonal_line=False,
     method="KM",
     downsample_scatterplot=False,
-    **kwargs
+    **kwargs,
 ):
     """
     A QQ plot (quantile-quantile plot) consists of plotting failure units vs
@@ -2586,13 +2474,13 @@ def QQ_plot_semiparametric(
         raise ValueError(
             "Y_dist must be specified as a probability distribution generated using the Distributions module"
         )
-    if type(X_data_failures) == list:
+    if isinstance(X_data_failures, list):
         X_data_failures = np.sort(np.array(X_data_failures))
     elif type(X_data_failures) == np.ndarray:
         X_data_failures = np.sort(X_data_failures)
     else:
         raise ValueError("X_data_failures must be an array or list")
-    if type(X_data_right_censored) == list:
+    if isinstance(X_data_right_censored, list):
         X_data_right_censored = np.sort(np.array(X_data_right_censored))
     elif type(X_data_right_censored) == np.ndarray:
         X_data_right_censored = np.sort(X_data_right_censored)
@@ -2661,22 +2549,12 @@ def QQ_plot_semiparametric(
     dist_Y_ISF[dist_Y_ISF == -np.inf] = 0
 
     if downsample_scatterplot is not False:
-        x_scatter, y_scatter = xy_downsample(
-            X_data_failures, dist_Y_ISF, downsample_factor=downsample_scatterplot
-        )
+        x_scatter, y_scatter = xy_downsample(X_data_failures, dist_Y_ISF, downsample_factor=downsample_scatterplot)
     else:
         x_scatter, y_scatter = X_data_failures, dist_Y_ISF
     plt.scatter(x_scatter, y_scatter, marker=marker, color=color)
 
-    plt.ylabel(
-        str(
-            "Theoretical Quantiles based on\n"
-            + method_str
-            + " estimate and "
-            + Y_dist.name
-            + " distribution"
-        )
-    )
+    plt.ylabel(str("Theoretical Quantiles based on\n" + method_str + " estimate and " + Y_dist.name + " distribution"))
     plt.xlabel("Actual Quantiles")
     plt.axis("square")
     max_value = max(max(dist_Y_ISF), max(X_data_failures))
@@ -2700,13 +2578,9 @@ def QQ_plot_semiparametric(
     text_str = str("Y = " + str(round(m, 3)) + " X")
     y1_fit = deg1[0] * x_fit + deg1[1]
     if deg1[1] < 0:
-        text_str1 = str(
-            "Y = " + str(round(deg1[0], 3)) + " X" + " - " + str(round(-1 * deg1[1], 3))
-        )
+        text_str1 = str("Y = " + str(round(deg1[0], 3)) + " X" + " - " + str(round(-1 * deg1[1], 3)))
     else:
-        text_str1 = str(
-            "Y = " + str(round(deg1[0], 3)) + " X" + " + " + str(round(deg1[1], 3))
-        )
+        text_str1 = str("Y = " + str(round(deg1[0], 3)) + " X" + " + " + str(round(deg1[1], 3)))
     if show_fitted_lines is True:
         plt.plot(x_fit, y_fit, color="red", alpha=0.5, label=text_str)
         plt.plot(x_fit, y1_fit, color="green", alpha=0.5, label=text_str1)
@@ -2719,14 +2593,7 @@ def QQ_plot_semiparametric(
     return [m, deg1[0], deg1[1]]
 
 
-def plot_points(
-    failures=None,
-    right_censored=None,
-    func="CDF",
-    a=None,
-    downsample_scatterplot=False,
-    **kwargs
-):
+def plot_points(failures=None, right_censored=None, func="CDF", a=None, downsample_scatterplot=False, **kwargs):
     """
     Plots the failure points as a scatter plot based on the plotting positions.
     This is similar to a probability plot, just without the axes scaling or the
@@ -2784,13 +2651,9 @@ def plot_points(
         plt.show()
     """
     if failures is None or len(failures) < 1:
-        raise ValueError(
-            "failures must be an array or list with at least 1 failure time"
-        )
+        raise ValueError("failures must be an array or list with at least 1 failure time")
 
-    x, y = plotting_positions(
-        failures=failures, right_censored=right_censored, a=a
-    )  # get the plotting positions
+    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)  # get the plotting positions
     y = np.array(y)
     x = np.array(x)
 
@@ -2832,9 +2695,7 @@ def plot_points(
     xlims = plt.xlim(auto=None)  # get previous xlim
     ylims = plt.ylim(auto=None)  # get previous ylim
 
-    x_scatter, y_scatter = xy_downsample(
-        x, y_adjusted, downsample_factor=downsample_scatterplot
-    )
+    x_scatter, y_scatter = xy_downsample(x, y_adjusted, downsample_factor=downsample_scatterplot)
     plt.scatter(x_scatter, y_scatter, marker=marker, color=color, **kwargs)
 
     if xlims != (0, 1) or ylims != (0, 1):

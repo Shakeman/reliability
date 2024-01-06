@@ -1,26 +1,27 @@
-import numpy as np
-from numpy.linalg import LinAlgError
-import scipy.stats as ss
-import pandas as pd
-import matplotlib.pyplot as plt
 import autograd.numpy as anp
-from autograd.scipy.special import erf
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import scipy.stats as ss
 from autograd.differential_operators import hessian
-from reliability.Fitters import Fit_Weibull_2P, Fit_Lognormal_2P, Fit_Normal_2P
+from autograd.scipy.special import erf
+from numpy.linalg import LinAlgError
+
 from reliability.Distributions import (
-    Weibull_Distribution,
+    Exponential_Distribution,
     Lognormal_Distribution,
     Normal_Distribution,
-    Exponential_Distribution,
+    Weibull_Distribution,
 )
+from reliability.Fitters import Fit_Lognormal_2P, Fit_Normal_2P, Fit_Weibull_2P
 from reliability.Utils import (
-    colorprint,
-    round_and_string,
     ALT_fitters_input_checking,
     ALT_least_squares,
     ALT_MLE_optimization,
-    life_stress_plot,
     ALT_prob_plot,
+    colorprint,
+    life_stress_plot,
+    round_and_string,
 )
 
 pd.set_option("display.width", 200)  # prevents wrapping after default 80 characters
@@ -184,7 +185,6 @@ class Fit_Everything_ALT:
         sort_by="BIC",
         **kwargs,
     ):
-
         # check kwargs for failure_stress and right_censored_stress
         if "failure_stress" in kwargs and failure_stress_1 is None:
             failure_stress_1 = kwargs.pop("failure_stress")
@@ -256,17 +256,11 @@ class Fit_Everything_ALT:
         self.__use_level_stress = use_level_stress
 
         if print_results not in [True, False]:
-            raise ValueError(
-                "print_results must be either True or False. Defaults is True."
-            )
+            raise ValueError("print_results must be either True or False. Defaults is True.")
         if show_probability_plot not in [True, False]:
-            raise ValueError(
-                "show_probability_plot must be either True or False. Default is True."
-            )
+            raise ValueError("show_probability_plot must be either True or False. Default is True.")
         if show_best_distribution_probability_plot not in [True, False]:
-            raise ValueError(
-                "show_best_distribution_probability_plot must be either True or False. Default is True."
-            )
+            raise ValueError("show_best_distribution_probability_plot must be either True or False. Default is True.")
 
         single_stress_ALT_models_list = [
             "Weibull_Exponential",
@@ -297,9 +291,7 @@ class Fit_Everything_ALT:
             "Exponential_Power_Exponential",
             "Exponential_Dual_Power",
         ]
-        all_ALT_models_list = (
-            single_stress_ALT_models_list + dual_stress_ALT_models_list
-        )
+        all_ALT_models_list = single_stress_ALT_models_list + dual_stress_ALT_models_list
 
         excluded_models = []
         unknown_exclusions = []
@@ -384,9 +376,7 @@ class Fit_Everything_ALT:
             self.Weibull_Exponential_loglik = self.__Weibull_Exponential_params.loglik
             self.Weibull_Exponential_BIC = self.__Weibull_Exponential_params.BIC
             self.Weibull_Exponential_AICc = self.__Weibull_Exponential_params.AICc
-            self.Weibull_Exponential_optimizer = (
-                self.__Weibull_Exponential_params.optimizer
-            )
+            self.Weibull_Exponential_optimizer = self.__Weibull_Exponential_params.optimizer
 
             df = pd.concat(
                 [
@@ -509,14 +499,10 @@ class Fit_Everything_ALT:
             self.Lognormal_Exponential_a = self.__Lognormal_Exponential_params.a
             self.Lognormal_Exponential_b = self.__Lognormal_Exponential_params.b
             self.Lognormal_Exponential_sigma = self.__Lognormal_Exponential_params.sigma
-            self.Lognormal_Exponential_loglik = (
-                self.__Lognormal_Exponential_params.loglik
-            )
+            self.Lognormal_Exponential_loglik = self.__Lognormal_Exponential_params.loglik
             self.Lognormal_Exponential_BIC = self.__Lognormal_Exponential_params.BIC
             self.Lognormal_Exponential_AICc = self.__Lognormal_Exponential_params.AICc
-            self.Lognormal_Exponential_optimizer = (
-                self.__Lognormal_Exponential_params.optimizer
-            )
+            self.Lognormal_Exponential_optimizer = self.__Lognormal_Exponential_params.optimizer
 
             df = pd.concat(
                 [
@@ -642,9 +628,7 @@ class Fit_Everything_ALT:
             self.Normal_Exponential_loglik = self.__Normal_Exponential_params.loglik
             self.Normal_Exponential_BIC = self.__Normal_Exponential_params.BIC
             self.Normal_Exponential_AICc = self.__Normal_Exponential_params.AICc
-            self.Normal_Exponential_optimizer = (
-                self.__Normal_Exponential_params.optimizer
-            )
+            self.Normal_Exponential_optimizer = self.__Normal_Exponential_params.optimizer
 
             df = pd.concat(
                 [
@@ -766,16 +750,10 @@ class Fit_Everything_ALT:
             )
             self.Exponential_Exponential_a = self.__Exponential_Exponential_params.a
             self.Exponential_Exponential_b = self.__Exponential_Exponential_params.b
-            self.Exponential_Exponential_loglik = (
-                self.__Exponential_Exponential_params.loglik
-            )
+            self.Exponential_Exponential_loglik = self.__Exponential_Exponential_params.loglik
             self.Exponential_Exponential_BIC = self.__Exponential_Exponential_params.BIC
-            self.Exponential_Exponential_AICc = (
-                self.__Exponential_Exponential_params.AICc
-            )
-            self.Exponential_Exponential_optimizer = (
-                self.__Exponential_Exponential_params.optimizer
-            )
+            self.Exponential_Exponential_AICc = self.__Exponential_Exponential_params.AICc
+            self.Exponential_Exponential_optimizer = self.__Exponential_Exponential_params.optimizer
 
             df = pd.concat(
                 [
@@ -816,9 +794,7 @@ class Fit_Everything_ALT:
             self.Exponential_Eyring_loglik = self.__Exponential_Eyring_params.loglik
             self.Exponential_Eyring_BIC = self.__Exponential_Eyring_params.BIC
             self.Exponential_Eyring_AICc = self.__Exponential_Eyring_params.AICc
-            self.Exponential_Eyring_optimizer = (
-                self.__Exponential_Eyring_params.optimizer
-            )
+            self.Exponential_Eyring_optimizer = self.__Exponential_Eyring_params.optimizer
 
             df = pd.concat(
                 [
@@ -900,21 +876,11 @@ class Fit_Everything_ALT:
             self.Weibull_Dual_Exponential_a = self.__Weibull_Dual_Exponential_params.a
             self.Weibull_Dual_Exponential_b = self.__Weibull_Dual_Exponential_params.b
             self.Weibull_Dual_Exponential_c = self.__Weibull_Dual_Exponential_params.c
-            self.Weibull_Dual_Exponential_beta = (
-                self.__Weibull_Dual_Exponential_params.beta
-            )
-            self.Weibull_Dual_Exponential_loglik = (
-                self.__Weibull_Dual_Exponential_params.loglik
-            )
-            self.Weibull_Dual_Exponential_BIC = (
-                self.__Weibull_Dual_Exponential_params.BIC
-            )
-            self.Weibull_Dual_Exponential_AICc = (
-                self.__Weibull_Dual_Exponential_params.AICc
-            )
-            self.Weibull_Dual_Exponential_optimizer = (
-                self.__Weibull_Dual_Exponential_params.optimizer
-            )
+            self.Weibull_Dual_Exponential_beta = self.__Weibull_Dual_Exponential_params.beta
+            self.Weibull_Dual_Exponential_loglik = self.__Weibull_Dual_Exponential_params.loglik
+            self.Weibull_Dual_Exponential_BIC = self.__Weibull_Dual_Exponential_params.BIC
+            self.Weibull_Dual_Exponential_AICc = self.__Weibull_Dual_Exponential_params.AICc
+            self.Weibull_Dual_Exponential_optimizer = self.__Weibull_Dual_Exponential_params.optimizer
 
             df = pd.concat(
                 [
@@ -956,21 +922,11 @@ class Fit_Everything_ALT:
             self.Weibull_Power_Exponential_a = self.__Weibull_Power_Exponential_params.a
             self.Weibull_Power_Exponential_c = self.__Weibull_Power_Exponential_params.c
             self.Weibull_Power_Exponential_n = self.__Weibull_Power_Exponential_params.n
-            self.Weibull_Power_Exponential_beta = (
-                self.__Weibull_Power_Exponential_params.beta
-            )
-            self.Weibull_Power_Exponential_loglik = (
-                self.__Weibull_Power_Exponential_params.loglik
-            )
-            self.Weibull_Power_Exponential_BIC = (
-                self.__Weibull_Power_Exponential_params.BIC
-            )
-            self.Weibull_Power_Exponential_AICc = (
-                self.__Weibull_Power_Exponential_params.AICc
-            )
-            self.Weibull_Power_Exponential_optimizer = (
-                self.__Weibull_Power_Exponential_params.optimizer
-            )
+            self.Weibull_Power_Exponential_beta = self.__Weibull_Power_Exponential_params.beta
+            self.Weibull_Power_Exponential_loglik = self.__Weibull_Power_Exponential_params.loglik
+            self.Weibull_Power_Exponential_BIC = self.__Weibull_Power_Exponential_params.BIC
+            self.Weibull_Power_Exponential_AICc = self.__Weibull_Power_Exponential_params.AICc
+            self.Weibull_Power_Exponential_optimizer = self.__Weibull_Power_Exponential_params.optimizer
 
             df = pd.concat(
                 [
@@ -1016,9 +972,7 @@ class Fit_Everything_ALT:
             self.Weibull_Dual_Power_loglik = self.__Weibull_Dual_Power_params.loglik
             self.Weibull_Dual_Power_BIC = self.__Weibull_Dual_Power_params.BIC
             self.Weibull_Dual_Power_AICc = self.__Weibull_Dual_Power_params.AICc
-            self.Weibull_Dual_Power_optimizer = (
-                self.__Weibull_Dual_Power_params.optimizer
-            )
+            self.Weibull_Dual_Power_optimizer = self.__Weibull_Dual_Power_params.optimizer
 
             df = pd.concat(
                 [
@@ -1057,30 +1011,14 @@ class Fit_Everything_ALT:
                 show_life_stress_plot=False,
                 print_results=False,
             )
-            self.Lognormal_Dual_Exponential_a = (
-                self.__Lognormal_Dual_Exponential_params.a
-            )
-            self.Lognormal_Dual_Exponential_b = (
-                self.__Lognormal_Dual_Exponential_params.b
-            )
-            self.Lognormal_Dual_Exponential_c = (
-                self.__Lognormal_Dual_Exponential_params.c
-            )
-            self.Lognormal_Dual_Exponential_sigma = (
-                self.__Lognormal_Dual_Exponential_params.sigma
-            )
-            self.Lognormal_Dual_Exponential_loglik = (
-                self.__Lognormal_Dual_Exponential_params.loglik
-            )
-            self.Lognormal_Dual_Exponential_BIC = (
-                self.__Lognormal_Dual_Exponential_params.BIC
-            )
-            self.Lognormal_Dual_Exponential_AICc = (
-                self.__Lognormal_Dual_Exponential_params.AICc
-            )
-            self.Lognormal_Dual_Exponential_optimizer = (
-                self.__Lognormal_Dual_Exponential_params.optimizer
-            )
+            self.Lognormal_Dual_Exponential_a = self.__Lognormal_Dual_Exponential_params.a
+            self.Lognormal_Dual_Exponential_b = self.__Lognormal_Dual_Exponential_params.b
+            self.Lognormal_Dual_Exponential_c = self.__Lognormal_Dual_Exponential_params.c
+            self.Lognormal_Dual_Exponential_sigma = self.__Lognormal_Dual_Exponential_params.sigma
+            self.Lognormal_Dual_Exponential_loglik = self.__Lognormal_Dual_Exponential_params.loglik
+            self.Lognormal_Dual_Exponential_BIC = self.__Lognormal_Dual_Exponential_params.BIC
+            self.Lognormal_Dual_Exponential_AICc = self.__Lognormal_Dual_Exponential_params.AICc
+            self.Lognormal_Dual_Exponential_optimizer = self.__Lognormal_Dual_Exponential_params.optimizer
 
             df = pd.concat(
                 [
@@ -1119,30 +1057,14 @@ class Fit_Everything_ALT:
                 show_life_stress_plot=False,
                 print_results=False,
             )
-            self.Lognormal_Power_Exponential_a = (
-                self.__Lognormal_Power_Exponential_params.a
-            )
-            self.Lognormal_Power_Exponential_c = (
-                self.__Lognormal_Power_Exponential_params.c
-            )
-            self.Lognormal_Power_Exponential_n = (
-                self.__Lognormal_Power_Exponential_params.n
-            )
-            self.Lognormal_Power_Exponential_sigma = (
-                self.__Lognormal_Power_Exponential_params.sigma
-            )
-            self.Lognormal_Power_Exponential_loglik = (
-                self.__Lognormal_Power_Exponential_params.loglik
-            )
-            self.Lognormal_Power_Exponential_BIC = (
-                self.__Lognormal_Power_Exponential_params.BIC
-            )
-            self.Lognormal_Power_Exponential_AICc = (
-                self.__Lognormal_Power_Exponential_params.AICc
-            )
-            self.Lognormal_Power_Exponential_optimizer = (
-                self.__Lognormal_Power_Exponential_params.optimizer
-            )
+            self.Lognormal_Power_Exponential_a = self.__Lognormal_Power_Exponential_params.a
+            self.Lognormal_Power_Exponential_c = self.__Lognormal_Power_Exponential_params.c
+            self.Lognormal_Power_Exponential_n = self.__Lognormal_Power_Exponential_params.n
+            self.Lognormal_Power_Exponential_sigma = self.__Lognormal_Power_Exponential_params.sigma
+            self.Lognormal_Power_Exponential_loglik = self.__Lognormal_Power_Exponential_params.loglik
+            self.Lognormal_Power_Exponential_BIC = self.__Lognormal_Power_Exponential_params.BIC
+            self.Lognormal_Power_Exponential_AICc = self.__Lognormal_Power_Exponential_params.AICc
+            self.Lognormal_Power_Exponential_optimizer = self.__Lognormal_Power_Exponential_params.optimizer
 
             df = pd.concat(
                 [
@@ -1188,9 +1110,7 @@ class Fit_Everything_ALT:
             self.Lognormal_Dual_Power_loglik = self.__Lognormal_Dual_Power_params.loglik
             self.Lognormal_Dual_Power_BIC = self.__Lognormal_Dual_Power_params.BIC
             self.Lognormal_Dual_Power_AICc = self.__Lognormal_Dual_Power_params.AICc
-            self.Lognormal_Dual_Power_optimizer = (
-                self.__Lognormal_Dual_Power_params.optimizer
-            )
+            self.Lognormal_Dual_Power_optimizer = self.__Lognormal_Dual_Power_params.optimizer
 
             df = pd.concat(
                 [
@@ -1232,19 +1152,11 @@ class Fit_Everything_ALT:
             self.Normal_Dual_Exponential_a = self.__Normal_Dual_Exponential_params.a
             self.Normal_Dual_Exponential_b = self.__Normal_Dual_Exponential_params.b
             self.Normal_Dual_Exponential_c = self.__Normal_Dual_Exponential_params.c
-            self.Normal_Dual_Exponential_sigma = (
-                self.__Normal_Dual_Exponential_params.sigma
-            )
-            self.Normal_Dual_Exponential_loglik = (
-                self.__Normal_Dual_Exponential_params.loglik
-            )
+            self.Normal_Dual_Exponential_sigma = self.__Normal_Dual_Exponential_params.sigma
+            self.Normal_Dual_Exponential_loglik = self.__Normal_Dual_Exponential_params.loglik
             self.Normal_Dual_Exponential_BIC = self.__Normal_Dual_Exponential_params.BIC
-            self.Normal_Dual_Exponential_AICc = (
-                self.__Normal_Dual_Exponential_params.AICc
-            )
-            self.Normal_Dual_Exponential_optimizer = (
-                self.__Normal_Dual_Exponential_params.optimizer
-            )
+            self.Normal_Dual_Exponential_AICc = self.__Normal_Dual_Exponential_params.AICc
+            self.Normal_Dual_Exponential_optimizer = self.__Normal_Dual_Exponential_params.optimizer
 
             df = pd.concat(
                 [
@@ -1286,21 +1198,11 @@ class Fit_Everything_ALT:
             self.Normal_Power_Exponential_a = self.__Normal_Power_Exponential_params.a
             self.Normal_Power_Exponential_c = self.__Normal_Power_Exponential_params.c
             self.Normal_Power_Exponential_n = self.__Normal_Power_Exponential_params.n
-            self.Normal_Power_Exponential_sigma = (
-                self.__Normal_Power_Exponential_params.sigma
-            )
-            self.Normal_Power_Exponential_loglik = (
-                self.__Normal_Power_Exponential_params.loglik
-            )
-            self.Normal_Power_Exponential_BIC = (
-                self.__Normal_Power_Exponential_params.BIC
-            )
-            self.Normal_Power_Exponential_AICc = (
-                self.__Normal_Power_Exponential_params.AICc
-            )
-            self.Normal_Power_Exponential_optimizer = (
-                self.__Normal_Power_Exponential_params.optimizer
-            )
+            self.Normal_Power_Exponential_sigma = self.__Normal_Power_Exponential_params.sigma
+            self.Normal_Power_Exponential_loglik = self.__Normal_Power_Exponential_params.loglik
+            self.Normal_Power_Exponential_BIC = self.__Normal_Power_Exponential_params.BIC
+            self.Normal_Power_Exponential_AICc = self.__Normal_Power_Exponential_params.AICc
+            self.Normal_Power_Exponential_optimizer = self.__Normal_Power_Exponential_params.optimizer
 
             df = pd.concat(
                 [
@@ -1371,43 +1273,27 @@ class Fit_Everything_ALT:
             )
 
         if "Exponential_Dual_Exponential" not in self.excluded_models:
-            self.__Exponential_Dual_Exponential_params = (
-                Fit_Exponential_Dual_Exponential(
-                    failures=failures,
-                    failure_stress_1=failure_stress_1,
-                    failure_stress_2=failure_stress_2,
-                    right_censored=right_censored,
-                    right_censored_stress_1=right_censored_stress_1,
-                    right_censored_stress_2=right_censored_stress_2,
-                    use_level_stress=use_level_stress,
-                    CI=CI,
-                    optimizer=optimizer,
-                    show_probability_plot=False,
-                    show_life_stress_plot=False,
-                    print_results=False,
-                )
+            self.__Exponential_Dual_Exponential_params = Fit_Exponential_Dual_Exponential(
+                failures=failures,
+                failure_stress_1=failure_stress_1,
+                failure_stress_2=failure_stress_2,
+                right_censored=right_censored,
+                right_censored_stress_1=right_censored_stress_1,
+                right_censored_stress_2=right_censored_stress_2,
+                use_level_stress=use_level_stress,
+                CI=CI,
+                optimizer=optimizer,
+                show_probability_plot=False,
+                show_life_stress_plot=False,
+                print_results=False,
             )
-            self.Exponential_Dual_Exponential_a = (
-                self.__Exponential_Dual_Exponential_params.a
-            )
-            self.Exponential_Dual_Exponential_b = (
-                self.__Exponential_Dual_Exponential_params.b
-            )
-            self.Exponential_Dual_Exponential_c = (
-                self.__Exponential_Dual_Exponential_params.c
-            )
-            self.Exponential_Dual_Exponential_loglik = (
-                self.__Exponential_Dual_Exponential_params.loglik
-            )
-            self.Exponential_Dual_Exponential_BIC = (
-                self.__Exponential_Dual_Exponential_params.BIC
-            )
-            self.Exponential_Dual_Exponential_AICc = (
-                self.__Exponential_Dual_Exponential_params.AICc
-            )
-            self.Exponential_Dual_Exponential_optimizer = (
-                self.__Exponential_Dual_Exponential_params.optimizer
-            )
+            self.Exponential_Dual_Exponential_a = self.__Exponential_Dual_Exponential_params.a
+            self.Exponential_Dual_Exponential_b = self.__Exponential_Dual_Exponential_params.b
+            self.Exponential_Dual_Exponential_c = self.__Exponential_Dual_Exponential_params.c
+            self.Exponential_Dual_Exponential_loglik = self.__Exponential_Dual_Exponential_params.loglik
+            self.Exponential_Dual_Exponential_BIC = self.__Exponential_Dual_Exponential_params.BIC
+            self.Exponential_Dual_Exponential_AICc = self.__Exponential_Dual_Exponential_params.AICc
+            self.Exponential_Dual_Exponential_optimizer = self.__Exponential_Dual_Exponential_params.optimizer
 
             df = pd.concat(
                 [
@@ -1422,9 +1308,7 @@ class Fit_Everything_ALT:
                             "n": [""],
                             "beta": [""],
                             "sigma": [""],
-                            "Log-likelihood": [
-                                self.Exponential_Dual_Exponential_loglik
-                            ],
+                            "Log-likelihood": [self.Exponential_Dual_Exponential_loglik],
                             "AICc": [self.Exponential_Dual_Exponential_AICc],
                             "BIC": [self.Exponential_Dual_Exponential_BIC],
                             "optimizer": [self.Exponential_Dual_Exponential_optimizer],
@@ -1434,43 +1318,27 @@ class Fit_Everything_ALT:
             )
 
         if "Exponential_Power_Exponential" not in self.excluded_models:
-            self.__Exponential_Power_Exponential_params = (
-                Fit_Exponential_Power_Exponential(
-                    failures=failures,
-                    failure_stress_1=failure_stress_1,
-                    failure_stress_2=failure_stress_2,
-                    right_censored=right_censored,
-                    right_censored_stress_1=right_censored_stress_1,
-                    right_censored_stress_2=right_censored_stress_2,
-                    use_level_stress=use_level_stress,
-                    CI=CI,
-                    optimizer=optimizer,
-                    show_probability_plot=False,
-                    show_life_stress_plot=False,
-                    print_results=False,
-                )
+            self.__Exponential_Power_Exponential_params = Fit_Exponential_Power_Exponential(
+                failures=failures,
+                failure_stress_1=failure_stress_1,
+                failure_stress_2=failure_stress_2,
+                right_censored=right_censored,
+                right_censored_stress_1=right_censored_stress_1,
+                right_censored_stress_2=right_censored_stress_2,
+                use_level_stress=use_level_stress,
+                CI=CI,
+                optimizer=optimizer,
+                show_probability_plot=False,
+                show_life_stress_plot=False,
+                print_results=False,
             )
-            self.Exponential_Power_Exponential_a = (
-                self.__Exponential_Power_Exponential_params.a
-            )
-            self.Exponential_Power_Exponential_c = (
-                self.__Exponential_Power_Exponential_params.c
-            )
-            self.Exponential_Power_Exponential_n = (
-                self.__Exponential_Power_Exponential_params.n
-            )
-            self.Exponential_Power_Exponential_loglik = (
-                self.__Exponential_Power_Exponential_params.loglik
-            )
-            self.Exponential_Power_Exponential_BIC = (
-                self.__Exponential_Power_Exponential_params.BIC
-            )
-            self.Exponential_Power_Exponential_AICc = (
-                self.__Exponential_Power_Exponential_params.AICc
-            )
-            self.Exponential_Power_Exponential_optimizer = (
-                self.__Exponential_Power_Exponential_params.optimizer
-            )
+            self.Exponential_Power_Exponential_a = self.__Exponential_Power_Exponential_params.a
+            self.Exponential_Power_Exponential_c = self.__Exponential_Power_Exponential_params.c
+            self.Exponential_Power_Exponential_n = self.__Exponential_Power_Exponential_params.n
+            self.Exponential_Power_Exponential_loglik = self.__Exponential_Power_Exponential_params.loglik
+            self.Exponential_Power_Exponential_BIC = self.__Exponential_Power_Exponential_params.BIC
+            self.Exponential_Power_Exponential_AICc = self.__Exponential_Power_Exponential_params.AICc
+            self.Exponential_Power_Exponential_optimizer = self.__Exponential_Power_Exponential_params.optimizer
 
             df = pd.concat(
                 [
@@ -1485,9 +1353,7 @@ class Fit_Everything_ALT:
                             "n": [self.Exponential_Power_Exponential_n],
                             "beta": [""],
                             "sigma": [""],
-                            "Log-likelihood": [
-                                self.Exponential_Power_Exponential_loglik
-                            ],
+                            "Log-likelihood": [self.Exponential_Power_Exponential_loglik],
                             "AICc": [self.Exponential_Power_Exponential_AICc],
                             "BIC": [self.Exponential_Power_Exponential_BIC],
                             "optimizer": [self.Exponential_Power_Exponential_optimizer],
@@ -1514,14 +1380,10 @@ class Fit_Everything_ALT:
             self.Exponential_Dual_Power_c = self.__Exponential_Dual_Power_params.c
             self.Exponential_Dual_Power_m = self.__Exponential_Dual_Power_params.m
             self.Exponential_Dual_Power_n = self.__Exponential_Dual_Power_params.n
-            self.Exponential_Dual_Power_loglik = (
-                self.__Exponential_Dual_Power_params.loglik
-            )
+            self.Exponential_Dual_Power_loglik = self.__Exponential_Dual_Power_params.loglik
             self.Exponential_Dual_Power_BIC = self.__Exponential_Dual_Power_params.BIC
             self.Exponential_Dual_Power_AICc = self.__Exponential_Dual_Power_params.AICc
-            self.Exponential_Dual_Power_optimizer = (
-                self.__Exponential_Dual_Power_params.optimizer
-            )
+            self.Exponential_Dual_Power_optimizer = self.__Exponential_Dual_Power_params.optimizer
 
             df = pd.concat(
                 [
@@ -1546,13 +1408,10 @@ class Fit_Everything_ALT:
             )
 
         # change to sorting by BIC if there is insufficient data to get the AICc for everything that was fitted
-        if (
-            sort_by.upper() in ["AIC", "AICC"]
-            and "Insufficient data" in df["AICc"].values
-        ):
+        if sort_by.upper() in ["AIC", "AICC"] and "Insufficient data" in df["AICc"].values:
             sort_by = "BIC"
         # sort the dataframe by BIC, AICc, or log-likelihood. Smallest AICc, BIC, log-likelihood is better fit
-        if type(sort_by) != str:
+        if not isinstance(sort_by, str):
             raise ValueError(
                 "Invalid input to sort_by. Options are 'BIC', 'AICc', or 'Log-likelihood'. Default is 'BIC'."
             )
@@ -1568,13 +1427,9 @@ class Fit_Everything_ALT:
             "LOGLIKELIHOOD",
             "LOG LIKELIHOOD",
         ]:
-            df["LLabs"] = abs(
-                df["Log-likelihood"]
-            )  # need to create a new column for the absolute value before sorting
+            df["LLabs"] = abs(df["Log-likelihood"])  # need to create a new column for the absolute value before sorting
             df2 = df.sort_values(by="LLabs")
-            df2.drop(
-                "LLabs", axis=1, inplace=True
-            )  # remove the column created just for sorting
+            df2.drop("LLabs", axis=1, inplace=True)  # remove the column created just for sorting
         else:
             raise ValueError(
                 "Invalid input to sort_by. Options are 'BIC', 'AICc', or 'Log-likelihood'. Default is 'BIC'."
@@ -1589,106 +1444,70 @@ class Fit_Everything_ALT:
         if use_level_stress is not None:
             if best_model == "Weibull_Exponential":
                 self.best_model_at_use_stress = Weibull_Distribution(
-                    alpha=self.Weibull_Exponential_b
-                    * np.exp(self.Weibull_Exponential_a / use_level_stress),
+                    alpha=self.Weibull_Exponential_b * np.exp(self.Weibull_Exponential_a / use_level_stress),
                     beta=self.Weibull_Exponential_beta,
                 )
             elif best_model == "Weibull_Eyring":
                 self.best_model_at_use_stress = Weibull_Distribution(
                     alpha=(1 / use_level_stress)
-                    * np.exp(
-                        -(
-                            self.Weibull_Eyring_c
-                            - self.Weibull_Eyring_a / use_level_stress
-                        )
-                    ),
+                    * np.exp(-(self.Weibull_Eyring_c - self.Weibull_Eyring_a / use_level_stress)),
                     beta=self.Weibull_Eyring_beta,
                 )
             elif best_model == "Weibull_Power":
                 self.best_model_at_use_stress = Weibull_Distribution(
-                    alpha=self.Weibull_Power_a
-                    * use_level_stress ** self.Weibull_Power_n,
+                    alpha=self.Weibull_Power_a * use_level_stress**self.Weibull_Power_n,
                     beta=self.Weibull_Power_beta,
                 )
             elif best_model == "Lognormal_Exponential":
                 self.best_model_at_use_stress = Lognormal_Distribution(
-                    mu=np.log(
-                        self.Lognormal_Exponential_b
-                        * np.exp(self.Lognormal_Exponential_a / use_level_stress)
-                    ),
+                    mu=np.log(self.Lognormal_Exponential_b * np.exp(self.Lognormal_Exponential_a / use_level_stress)),
                     sigma=self.Lognormal_Exponential_sigma,
                 )
             elif best_model == "Lognormal_Eyring":
                 self.best_model_at_use_stress = Lognormal_Distribution(
                     mu=np.log(
                         (1 / use_level_stress)
-                        * np.exp(
-                            -(
-                                self.Lognormal_Eyring_c
-                                - self.Lognormal_Eyring_a / use_level_stress
-                            )
-                        )
+                        * np.exp(-(self.Lognormal_Eyring_c - self.Lognormal_Eyring_a / use_level_stress))
                     ),
                     sigma=self.Lognormal_Eyring_sigma,
                 )
             elif best_model == "Lognormal_Power":
                 self.best_model_at_use_stress = Lognormal_Distribution(
-                    mu=np.log(
-                        self.Lognormal_Power_a
-                        * use_level_stress ** self.Lognormal_Power_n
-                    ),
+                    mu=np.log(self.Lognormal_Power_a * use_level_stress**self.Lognormal_Power_n),
                     sigma=self.Lognormal_Power_sigma,
                 )
             elif best_model == "Normal_Exponential":
                 self.best_model_at_use_stress = Normal_Distribution(
-                    mu=self.Normal_Exponential_b
-                    * np.exp(self.Normal_Exponential_a / use_level_stress),
+                    mu=self.Normal_Exponential_b * np.exp(self.Normal_Exponential_a / use_level_stress),
                     sigma=self.Normal_Exponential_sigma,
                 )
             elif best_model == "Normal_Eyring":
                 self.best_model_at_use_stress = Normal_Distribution(
                     mu=(1 / use_level_stress)
-                    * np.exp(
-                        -(
-                            self.Normal_Eyring_c
-                            - self.Normal_Eyring_a / use_level_stress
-                        )
-                    ),
+                    * np.exp(-(self.Normal_Eyring_c - self.Normal_Eyring_a / use_level_stress)),
                     sigma=self.Normal_Eyring_sigma,
                 )
             elif best_model == "Normal_Power":
                 self.best_model_at_use_stress = Normal_Distribution(
-                    mu=self.Normal_Power_a * use_level_stress ** self.Normal_Power_n,
+                    mu=self.Normal_Power_a * use_level_stress**self.Normal_Power_n,
                     sigma=self.Normal_Power_sigma,
                 )
             elif best_model == "Exponential_Exponential":
                 self.best_model_at_use_stress = Exponential_Distribution(
                     Lambda=1
-                    / (
-                        self.Exponential_Exponential_b
-                        * np.exp(self.Exponential_Exponential_a / use_level_stress)
-                    )
+                    / (self.Exponential_Exponential_b * np.exp(self.Exponential_Exponential_a / use_level_stress))
                 )
             elif best_model == "Exponential_Eyring":
                 self.best_model_at_use_stress = Exponential_Distribution(
                     Lambda=1
                     / (
                         (1 / use_level_stress)
-                        * np.exp(
-                            -(
-                                self.Exponential_Eyring_c
-                                - self.Exponential_Eyring_a / use_level_stress
-                            )
-                        )
+                        * np.exp(-(self.Exponential_Eyring_c - self.Exponential_Eyring_a / use_level_stress))
                     )
                 )
             elif best_model == "Exponential_Power":
                 self.best_model_at_use_stress = Exponential_Distribution(
-                    Lambda=1
-                    / (
-                        self.Exponential_Power_a
-                        * use_level_stress ** self.Exponential_Power_n
-                    )
+                    Lambda=1 / (self.Exponential_Power_a * use_level_stress**self.Exponential_Power_n)
                 )
             elif best_model == "Weibull_Dual_Exponential":
                 self.best_model_at_use_stress = Weibull_Distribution(
@@ -1731,9 +1550,7 @@ class Fit_Everything_ALT:
                     / (
                         self.Lognormal_Power_Exponential_c
                         * use_level_stress[1] ** self.Lognormal_Power_Exponential_n
-                        * np.exp(
-                            self.Lognormal_Power_Exponential_a / use_level_stress[0]
-                        )
+                        * np.exp(self.Lognormal_Power_Exponential_a / use_level_stress[0])
                     ),
                     sigma=self.Lognormal_Power_Exponential_sigma,
                 )
@@ -1794,9 +1611,7 @@ class Fit_Everything_ALT:
         # print the results
         if print_results is True:  # printing occurs by default
             if len(right_censored) > 0:
-                frac_cens = (
-                    len(right_censored) / (len(failures) + len(right_censored))
-                ) * 100
+                frac_cens = (len(right_censored) / (len(failures) + len(right_censored))) * 100
             else:
                 frac_cens = 0
             if frac_cens % 1 < 1e-10:
@@ -1816,9 +1631,7 @@ class Fit_Everything_ALT:
                     use_level_stress_str = round_and_string(use_level_stress)
                 else:
                     use_level_stress_str = str(
-                        round_and_string(use_level_stress[0])
-                        + ", "
-                        + round_and_string(use_level_stress[1])
+                        round_and_string(use_level_stress[0]) + ", " + round_and_string(use_level_stress[1])
                     )
                 print(
                     str(
@@ -1836,14 +1649,9 @@ class Fit_Everything_ALT:
             self.probability_plot = Fit_Everything_ALT.__probability_plot(self)
 
         if show_best_distribution_probability_plot is True:
-            self.best_distribution_probability_plot = (
-                Fit_Everything_ALT.__probability_plot(self, best_only=True)
-            )
+            self.best_distribution_probability_plot = Fit_Everything_ALT.__probability_plot(self, best_only=True)
 
-        if (
-            show_probability_plot is True
-            or show_best_distribution_probability_plot is True
-        ):
+        if show_probability_plot is True or show_best_distribution_probability_plot is True:
             plt.show()
 
     def __probability_plot(self, best_only=False):
@@ -1883,9 +1691,7 @@ class Fit_Everything_ALT:
             if item == "Weibull_Exponential":
 
                 def life_func(S1):
-                    return self.Weibull_Exponential_b * np.exp(
-                        self.Weibull_Exponential_a / S1
-                    )
+                    return self.Weibull_Exponential_b * np.exp(self.Weibull_Exponential_a / S1)
 
                 stresses_for_groups = (
                     self._Fit_Everything_ALT__Weibull_Exponential_params._Fit_Weibull_Exponential__stresses_for_groups
@@ -1918,11 +1724,7 @@ class Fit_Everything_ALT:
             elif item == "Weibull_Eyring":
 
                 def life_func(S1):
-                    return (
-                        1
-                        / S1
-                        * np.exp(-(self.Weibull_Eyring_c - self.Weibull_Eyring_a / S1))
-                    )
+                    return 1 / S1 * np.exp(-(self.Weibull_Eyring_c - self.Weibull_Eyring_a / S1))
 
                 stresses_for_groups = (
                     self._Fit_Everything_ALT__Weibull_Eyring_params._Fit_Weibull_Eyring__stresses_for_groups
@@ -1933,9 +1735,7 @@ class Fit_Everything_ALT:
                 shape_for_change_df = (
                     self._Fit_Everything_ALT__Weibull_Eyring_params._Fit_Weibull_Eyring__shape_for_change_df
                 )
-                failure_groups = (
-                    self._Fit_Everything_ALT__Weibull_Eyring_params._Fit_Weibull_Eyring__failure_groups
-                )
+                failure_groups = self._Fit_Everything_ALT__Weibull_Eyring_params._Fit_Weibull_Eyring__failure_groups
                 right_censored_groups = (
                     self._Fit_Everything_ALT__Weibull_Eyring_params._Fit_Weibull_Eyring__right_censored_groups
                 )
@@ -1955,7 +1755,7 @@ class Fit_Everything_ALT:
             elif item == "Weibull_Power":
 
                 def life_func(S1):
-                    return self.Weibull_Power_a * S1 ** self.Weibull_Power_n
+                    return self.Weibull_Power_a * S1**self.Weibull_Power_n
 
                 stresses_for_groups = (
                     self._Fit_Everything_ALT__Weibull_Power_params._Fit_Weibull_Power__stresses_for_groups
@@ -1966,9 +1766,7 @@ class Fit_Everything_ALT:
                 shape_for_change_df = (
                     self._Fit_Everything_ALT__Weibull_Power_params._Fit_Weibull_Power__shape_for_change_df
                 )
-                failure_groups = (
-                    self._Fit_Everything_ALT__Weibull_Power_params._Fit_Weibull_Power__failure_groups
-                )
+                failure_groups = self._Fit_Everything_ALT__Weibull_Power_params._Fit_Weibull_Power__failure_groups
                 right_censored_groups = (
                     self._Fit_Everything_ALT__Weibull_Power_params._Fit_Weibull_Power__right_censored_groups
                 )
@@ -1988,9 +1786,7 @@ class Fit_Everything_ALT:
             elif item == "Lognormal_Exponential":
 
                 def life_func(S1):
-                    return self.Lognormal_Exponential_b * np.exp(
-                        self.Lognormal_Exponential_a / S1
-                    )
+                    return self.Lognormal_Exponential_b * np.exp(self.Lognormal_Exponential_a / S1)
 
                 stresses_for_groups = (
                     self._Fit_Everything_ALT__Lognormal_Exponential_params._Fit_Lognormal_Exponential__stresses_for_groups
@@ -2023,13 +1819,7 @@ class Fit_Everything_ALT:
             elif item == "Lognormal_Eyring":
 
                 def life_func(S1):
-                    return (
-                        1
-                        / S1
-                        * np.exp(
-                            -(self.Lognormal_Eyring_c - self.Lognormal_Eyring_a / S1)
-                        )
-                    )
+                    return 1 / S1 * np.exp(-(self.Lognormal_Eyring_c - self.Lognormal_Eyring_a / S1))
 
                 stresses_for_groups = (
                     self._Fit_Everything_ALT__Lognormal_Eyring_params._Fit_Lognormal_Eyring__stresses_for_groups
@@ -2040,9 +1830,7 @@ class Fit_Everything_ALT:
                 shape_for_change_df = (
                     self._Fit_Everything_ALT__Lognormal_Eyring_params._Fit_Lognormal_Eyring__shape_for_change_df
                 )
-                failure_groups = (
-                    self._Fit_Everything_ALT__Lognormal_Eyring_params._Fit_Lognormal_Eyring__failure_groups
-                )
+                failure_groups = self._Fit_Everything_ALT__Lognormal_Eyring_params._Fit_Lognormal_Eyring__failure_groups
                 right_censored_groups = (
                     self._Fit_Everything_ALT__Lognormal_Eyring_params._Fit_Lognormal_Eyring__right_censored_groups
                 )
@@ -2062,7 +1850,7 @@ class Fit_Everything_ALT:
             elif item == "Lognormal_Power":
 
                 def life_func(S1):
-                    return self.Lognormal_Power_a * S1 ** self.Lognormal_Power_n
+                    return self.Lognormal_Power_a * S1**self.Lognormal_Power_n
 
                 stresses_for_groups = (
                     self._Fit_Everything_ALT__Lognormal_Power_params._Fit_Lognormal_Power__stresses_for_groups
@@ -2073,9 +1861,7 @@ class Fit_Everything_ALT:
                 shape_for_change_df = (
                     self._Fit_Everything_ALT__Lognormal_Power_params._Fit_Lognormal_Power__shape_for_change_df
                 )
-                failure_groups = (
-                    self._Fit_Everything_ALT__Lognormal_Power_params._Fit_Lognormal_Power__failure_groups
-                )
+                failure_groups = self._Fit_Everything_ALT__Lognormal_Power_params._Fit_Lognormal_Power__failure_groups
                 right_censored_groups = (
                     self._Fit_Everything_ALT__Lognormal_Power_params._Fit_Lognormal_Power__right_censored_groups
                 )
@@ -2095,9 +1881,7 @@ class Fit_Everything_ALT:
             elif item == "Normal_Exponential":
 
                 def life_func(S1):
-                    return self.Normal_Exponential_b * np.exp(
-                        self.Normal_Exponential_a / S1
-                    )
+                    return self.Normal_Exponential_b * np.exp(self.Normal_Exponential_a / S1)
 
                 stresses_for_groups = (
                     self._Fit_Everything_ALT__Normal_Exponential_params._Fit_Normal_Exponential__stresses_for_groups
@@ -2131,11 +1915,7 @@ class Fit_Everything_ALT:
             elif item == "Normal_Eyring":
 
                 def life_func(S1):
-                    return (
-                        1
-                        / S1
-                        * np.exp(-(self.Normal_Eyring_c - self.Normal_Eyring_a / S1))
-                    )
+                    return 1 / S1 * np.exp(-(self.Normal_Eyring_c - self.Normal_Eyring_a / S1))
 
                 stresses_for_groups = (
                     self._Fit_Everything_ALT__Normal_Eyring_params._Fit_Normal_Eyring__stresses_for_groups
@@ -2146,9 +1926,7 @@ class Fit_Everything_ALT:
                 shape_for_change_df = (
                     self._Fit_Everything_ALT__Normal_Eyring_params._Fit_Normal_Eyring__shape_for_change_df
                 )
-                failure_groups = (
-                    self._Fit_Everything_ALT__Normal_Eyring_params._Fit_Normal_Eyring__failure_groups
-                )
+                failure_groups = self._Fit_Everything_ALT__Normal_Eyring_params._Fit_Normal_Eyring__failure_groups
                 right_censored_groups = (
                     self._Fit_Everything_ALT__Normal_Eyring_params._Fit_Normal_Eyring__right_censored_groups
                 )
@@ -2168,7 +1946,7 @@ class Fit_Everything_ALT:
             elif item == "Normal_Power":
 
                 def life_func(S1):
-                    return self.Normal_Power_a * S1 ** self.Normal_Power_n
+                    return self.Normal_Power_a * S1**self.Normal_Power_n
 
                 stresses_for_groups = (
                     self._Fit_Everything_ALT__Normal_Power_params._Fit_Normal_Power__stresses_for_groups
@@ -2179,9 +1957,7 @@ class Fit_Everything_ALT:
                 shape_for_change_df = (
                     self._Fit_Everything_ALT__Normal_Power_params._Fit_Normal_Power__shape_for_change_df
                 )
-                failure_groups = (
-                    self._Fit_Everything_ALT__Normal_Power_params._Fit_Normal_Power__failure_groups
-                )
+                failure_groups = self._Fit_Everything_ALT__Normal_Power_params._Fit_Normal_Power__failure_groups
                 right_censored_groups = (
                     self._Fit_Everything_ALT__Normal_Power_params._Fit_Normal_Power__right_censored_groups
                 )
@@ -2201,9 +1977,7 @@ class Fit_Everything_ALT:
             elif item == "Exponential_Exponential":
 
                 def life_func(S1):
-                    return self.Exponential_Exponential_b * np.exp(
-                        self.Exponential_Exponential_a / S1
-                    )
+                    return self.Exponential_Exponential_b * np.exp(self.Exponential_Exponential_a / S1)
 
                 stresses_for_groups = (
                     self._Fit_Everything_ALT__Exponential_Exponential_params._Fit_Exponential_Exponential__stresses_for_groups
@@ -2236,16 +2010,7 @@ class Fit_Everything_ALT:
             elif item == "Exponential_Eyring":
 
                 def life_func(S1):
-                    return (
-                        1
-                        / S1
-                        * np.exp(
-                            -(
-                                self.Exponential_Eyring_c
-                                - self.Exponential_Eyring_a / S1
-                            )
-                        )
-                    )
+                    return 1 / S1 * np.exp(-(self.Exponential_Eyring_c - self.Exponential_Eyring_a / S1))
 
                 stresses_for_groups = (
                     self._Fit_Everything_ALT__Exponential_Eyring_params._Fit_Exponential_Eyring__stresses_for_groups
@@ -2278,7 +2043,7 @@ class Fit_Everything_ALT:
             elif item == "Exponential_Power":
 
                 def life_func(S1):
-                    return self.Exponential_Power_a * S1 ** self.Exponential_Power_n
+                    return self.Exponential_Power_a * S1**self.Exponential_Power_n
 
                 stresses_for_groups = (
                     self._Fit_Everything_ALT__Exponential_Power_params._Fit_Exponential_Power__stresses_for_groups
@@ -2313,8 +2078,7 @@ class Fit_Everything_ALT:
 
                 def life_func(S1, S2):
                     return self.Weibull_Dual_Exponential_c * np.exp(
-                        self.Weibull_Dual_Exponential_a / S1
-                        + self.Weibull_Dual_Exponential_b / S2
+                        self.Weibull_Dual_Exponential_a / S1 + self.Weibull_Dual_Exponential_b / S2
                     )
 
                 stresses_for_groups = (
@@ -2351,7 +2115,7 @@ class Fit_Everything_ALT:
                 def life_func(S1, S2):
                     return (
                         self.Weibull_Power_Exponential_c
-                        * (S2 ** self.Weibull_Power_Exponential_n)
+                        * (S2**self.Weibull_Power_Exponential_n)
                         * np.exp(self.Weibull_Power_Exponential_a / S1)
                     )
 
@@ -2389,8 +2153,8 @@ class Fit_Everything_ALT:
                 def life_func(S1, S2):
                     return (
                         self.Weibull_Dual_Power_c
-                        * (S1 ** self.Weibull_Dual_Power_m)
-                        * (S2 ** self.Weibull_Dual_Power_n)
+                        * (S1**self.Weibull_Dual_Power_m)
+                        * (S2**self.Weibull_Dual_Power_n)
                     )
 
                 stresses_for_groups = (
@@ -2426,8 +2190,7 @@ class Fit_Everything_ALT:
 
                 def life_func(S1, S2):
                     return self.Lognormal_Dual_Exponential_c * np.exp(
-                        self.Lognormal_Dual_Exponential_a / S1
-                        + self.Lognormal_Dual_Exponential_b / S2
+                        self.Lognormal_Dual_Exponential_a / S1 + self.Lognormal_Dual_Exponential_b / S2
                     )
 
                 stresses_for_groups = (
@@ -2464,7 +2227,7 @@ class Fit_Everything_ALT:
                 def life_func(S1, S2):
                     return (
                         self.Lognormal_Power_Exponential_c
-                        * (S2 ** self.Lognormal_Power_Exponential_n)
+                        * (S2**self.Lognormal_Power_Exponential_n)
                         * np.exp(self.Lognormal_Power_Exponential_a / S1)
                     )
 
@@ -2502,8 +2265,8 @@ class Fit_Everything_ALT:
                 def life_func(S1, S2):
                     return (
                         self.Lognormal_Dual_Power_c
-                        * (S1 ** self.Lognormal_Dual_Power_m)
-                        * (S2 ** self.Lognormal_Dual_Power_n)
+                        * (S1**self.Lognormal_Dual_Power_m)
+                        * (S2**self.Lognormal_Dual_Power_n)
                     )
 
                 stresses_for_groups = (
@@ -2539,8 +2302,7 @@ class Fit_Everything_ALT:
 
                 def life_func(S1, S2):
                     return self.Normal_Dual_Exponential_c * np.exp(
-                        self.Normal_Dual_Exponential_a / S1
-                        + self.Normal_Dual_Exponential_b / S2
+                        self.Normal_Dual_Exponential_a / S1 + self.Normal_Dual_Exponential_b / S2
                     )
 
                 stresses_for_groups = (
@@ -2577,7 +2339,7 @@ class Fit_Everything_ALT:
                 def life_func(S1, S2):
                     return (
                         self.Normal_Power_Exponential_c
-                        * (S2 ** self.Normal_Power_Exponential_n)
+                        * (S2**self.Normal_Power_Exponential_n)
                         * np.exp(self.Normal_Power_Exponential_a / S1)
                     )
 
@@ -2614,9 +2376,7 @@ class Fit_Everything_ALT:
 
                 def life_func(S1, S2):
                     return (
-                        self.Normal_Dual_Power_c
-                        * (S1 ** self.Normal_Dual_Power_m)
-                        * (S2 ** self.Normal_Dual_Power_n)
+                        self.Normal_Dual_Power_c * (S1**self.Normal_Dual_Power_m) * (S2**self.Normal_Dual_Power_n)
                     )
 
                 stresses_for_groups = (
@@ -2652,8 +2412,7 @@ class Fit_Everything_ALT:
 
                 def life_func(S1, S2):
                     return self.Exponential_Dual_Exponential_c * np.exp(
-                        self.Exponential_Dual_Exponential_a / S1
-                        + self.Exponential_Dual_Exponential_b / S2
+                        self.Exponential_Dual_Exponential_a / S1 + self.Exponential_Dual_Exponential_b / S2
                     )
 
                 stresses_for_groups = (
@@ -2690,7 +2449,7 @@ class Fit_Everything_ALT:
                 def life_func(S1, S2):
                     return (
                         self.Exponential_Power_Exponential_c
-                        * (S2 ** self.Exponential_Power_Exponential_n)
+                        * (S2**self.Exponential_Power_Exponential_n)
                         * np.exp(self.Exponential_Power_Exponential_a / S1)
                     )
 
@@ -2728,8 +2487,8 @@ class Fit_Everything_ALT:
                 def life_func(S1, S2):
                     return (
                         self.Exponential_Dual_Power_c
-                        * (S1 ** self.Exponential_Dual_Power_m)
-                        * (S2 ** self.Exponential_Dual_Power_n)
+                        * (S1**self.Exponential_Dual_Power_m)
+                        * (S2**self.Exponential_Dual_Power_n)
                     )
 
                 stresses_for_groups = (
@@ -2909,7 +2668,6 @@ class Fit_Weibull_Exponential:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Weibull",
             life_stress_model="Exponential",
@@ -2937,9 +2695,7 @@ class Fit_Weibull_Exponential:
         self.__stresses_for_groups = inputs.stresses_for_groups
 
         # obtain the initial guess for the life stress model and the life distribution
-        life_stress_guess = ALT_least_squares(
-            model="Exponential", failures=failures, stress_1_array=failure_stress
-        )
+        life_stress_guess = ALT_least_squares(model="Exponential", failures=failures, stress_1_array=failure_stress)
 
         # obtain the common shape parameter
         betas = []
@@ -3059,13 +2815,11 @@ class Fit_Weibull_Exponential:
         # goodness of fit dataframe
         n = len(failures) + len(right_censored)
         k = len(guess)
-        LL2 = 2 * LL_func(
-            params, failures, right_censored, failure_stress, right_censored_stress
-        )
+        LL2 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -3073,9 +2827,7 @@ class Fit_Weibull_Exponential:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1):
             return self.b * np.exp(self.a / S1)
@@ -3083,9 +2835,7 @@ class Fit_Weibull_Exponential:
         # use level stress calculations
         if use_level_stress is not None:
             self.alpha_at_use_stress = life_func(S1=use_level_stress)
-            self.distribution_at_use_stress = Weibull_Distribution(
-                alpha=self.alpha_at_use_stress, beta=self.beta
-            )
+            self.distribution_at_use_stress = Weibull_Distribution(alpha=self.alpha_at_use_stress, beta=self.beta)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -3103,15 +2853,11 @@ class Fit_Weibull_Exponential:
                 betas_for_change_df[i] = ""  # replace with space
                 beta_differences.append("")
             else:
-                beta_diff = (
-                    common_betas[i] - betas_for_change_df[i]
-                ) / betas_for_change_df[i]
+                beta_diff = (common_betas[i] - betas_for_change_df[i]) / betas_for_change_df[i]
                 if abs(beta_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if beta_diff > 0:
-                    beta_differences.append(
-                        str("+" + str(round(beta_diff * 100, 2)) + "%")
-                    )
+                    beta_differences.append(str("+" + str(round(beta_diff * 100, 2)) + "%"))
                 else:
                     beta_differences.append(str(str(round(beta_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = alphas_for_change_df
@@ -3150,11 +2896,7 @@ class Fit_Weibull_Exponential:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Weibull_Exponential ("
-                    + str(CI_rounded)
-                    + "% CI):"
-                ),
+                str("Results from Fit_Weibull_Exponential (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -3180,7 +2922,7 @@ class Fit_Weibull_Exponential:
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
             print(
                 "If this model is being used for the Arrhenius Model, a = Ea/K_B ==> Ea =",
-                round(self.a * 8.617333262145 * 10 ** -5, 5),
+                round(self.a * 8.617333262145 * 10**-5, 5),
                 "eV\n",
             )
 
@@ -3222,9 +2964,7 @@ class Fit_Weibull_Exponential:
     @staticmethod
     def logf(t, T, a, b, beta):  # Log PDF
         life = b * anp.exp(a / T)
-        return (
-            (beta - 1) * anp.log(t / life) + anp.log(beta / life) - (t / life) ** beta
-        )
+        return (beta - 1) * anp.log(t / life) + anp.log(beta / life) - (t / life) ** beta
 
     @staticmethod
     def logR(t, T, a, b, beta):  # Log SF
@@ -3234,13 +2974,9 @@ class Fit_Weibull_Exponential:
     @staticmethod
     def LL(params, t_f, t_rc, T_f, T_rc):  # log likelihood function
         # failure times
-        LL_f = Fit_Weibull_Exponential.logf(
-            t_f, T_f, params[0], params[1], params[2]
-        ).sum()
+        LL_f = Fit_Weibull_Exponential.logf(t_f, T_f, params[0], params[1], params[2]).sum()
         # right censored times
-        LL_rc = Fit_Weibull_Exponential.logR(
-            t_rc, T_rc, params[0], params[1], params[2]
-        ).sum()
+        LL_rc = Fit_Weibull_Exponential.logR(t_rc, T_rc, params[0], params[1], params[2]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -3368,7 +3104,6 @@ class Fit_Weibull_Eyring:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Weibull",
             life_stress_model="Eyring",
@@ -3396,9 +3131,7 @@ class Fit_Weibull_Eyring:
         self.__stresses_for_groups = inputs.stresses_for_groups
 
         # obtain the initial guess for the life stress model and the life distribution
-        life_stress_guess = ALT_least_squares(
-            model="Eyring", failures=failures, stress_1_array=failure_stress
-        )
+        life_stress_guess = ALT_least_squares(model="Eyring", failures=failures, stress_1_array=failure_stress)
 
         # obtain the common shape parameter
         betas = []
@@ -3518,13 +3251,11 @@ class Fit_Weibull_Eyring:
         # goodness of fit dataframe
         n = len(failures) + len(right_censored)
         k = len(guess)
-        LL2 = 2 * LL_func(
-            params, failures, right_censored, failure_stress, right_censored_stress
-        )
+        LL2 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -3532,9 +3263,7 @@ class Fit_Weibull_Eyring:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1):
             return 1 / S1 * np.exp(-(self.c - self.a / S1))
@@ -3542,9 +3271,7 @@ class Fit_Weibull_Eyring:
         # use level stress calculations
         if use_level_stress is not None:
             self.alpha_at_use_stress = life_func(S1=use_level_stress)
-            self.distribution_at_use_stress = Weibull_Distribution(
-                alpha=self.alpha_at_use_stress, beta=self.beta
-            )
+            self.distribution_at_use_stress = Weibull_Distribution(alpha=self.alpha_at_use_stress, beta=self.beta)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -3562,15 +3289,11 @@ class Fit_Weibull_Eyring:
                 betas_for_change_df[i] = ""  # replace with space
                 beta_differences.append("")
             else:
-                beta_diff = (
-                    common_betas[i] - betas_for_change_df[i]
-                ) / betas_for_change_df[i]
+                beta_diff = (common_betas[i] - betas_for_change_df[i]) / betas_for_change_df[i]
                 if abs(beta_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if beta_diff > 0:
-                    beta_differences.append(
-                        str("+" + str(round(beta_diff * 100, 2)) + "%")
-                    )
+                    beta_differences.append(str("+" + str(round(beta_diff * 100, 2)) + "%"))
                 else:
                     beta_differences.append(str(str(round(beta_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = alphas_for_change_df
@@ -3672,9 +3395,7 @@ class Fit_Weibull_Eyring:
     @staticmethod
     def logf(t, T, a, c, beta):  # Log PDF
         life = 1 / T * anp.exp(-(c - a / T))
-        return (
-            (beta - 1) * anp.log(t / life) + anp.log(beta / life) - (t / life) ** beta
-        )
+        return (beta - 1) * anp.log(t / life) + anp.log(beta / life) - (t / life) ** beta
 
     @staticmethod
     def logR(t, T, a, c, beta):  # Log SF
@@ -3686,9 +3407,7 @@ class Fit_Weibull_Eyring:
         # failure times
         LL_f = Fit_Weibull_Eyring.logf(t_f, T_f, params[0], params[1], params[2]).sum()
         # right censored times
-        LL_rc = Fit_Weibull_Eyring.logR(
-            t_rc, T_rc, params[0], params[1], params[2]
-        ).sum()
+        LL_rc = Fit_Weibull_Eyring.logR(t_rc, T_rc, params[0], params[1], params[2]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -3815,7 +3534,6 @@ class Fit_Weibull_Power:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Weibull",
             life_stress_model="Power",
@@ -3843,9 +3561,7 @@ class Fit_Weibull_Power:
         self.__stresses_for_groups = inputs.stresses_for_groups
 
         # obtain the initial guess for the life stress model and the life distribution
-        life_stress_guess = ALT_least_squares(
-            model="Power", failures=failures, stress_1_array=failure_stress
-        )
+        life_stress_guess = ALT_least_squares(model="Power", failures=failures, stress_1_array=failure_stress)
 
         # obtain the common shape parameter
         betas = []
@@ -3965,13 +3681,11 @@ class Fit_Weibull_Power:
         # goodness of fit dataframe
         n = len(failures) + len(right_censored)
         k = len(guess)
-        LL2 = 2 * LL_func(
-            params, failures, right_censored, failure_stress, right_censored_stress
-        )
+        LL2 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -3979,19 +3693,15 @@ class Fit_Weibull_Power:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1):
-            return self.a * S1 ** self.n
+            return self.a * S1**self.n
 
         # use level stress calculations
         if use_level_stress is not None:
             self.alpha_at_use_stress = life_func(S1=use_level_stress)
-            self.distribution_at_use_stress = Weibull_Distribution(
-                alpha=self.alpha_at_use_stress, beta=self.beta
-            )
+            self.distribution_at_use_stress = Weibull_Distribution(alpha=self.alpha_at_use_stress, beta=self.beta)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -4009,15 +3719,11 @@ class Fit_Weibull_Power:
                 betas_for_change_df[i] = ""  # replace with space
                 beta_differences.append("")
             else:
-                beta_diff = (
-                    common_betas[i] - betas_for_change_df[i]
-                ) / betas_for_change_df[i]
+                beta_diff = (common_betas[i] - betas_for_change_df[i]) / betas_for_change_df[i]
                 if abs(beta_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if beta_diff > 0:
-                    beta_differences.append(
-                        str("+" + str(round(beta_diff * 100, 2)) + "%")
-                    )
+                    beta_differences.append(str("+" + str(round(beta_diff * 100, 2)) + "%"))
                 else:
                     beta_differences.append(str(str(round(beta_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = alphas_for_change_df
@@ -4118,14 +3824,12 @@ class Fit_Weibull_Power:
 
     @staticmethod
     def logf(t, T, a, n, beta):  # Log PDF
-        life = a * T ** n
-        return (
-            (beta - 1) * anp.log(t / life) + anp.log(beta / life) - (t / life) ** beta
-        )
+        life = a * T**n
+        return (beta - 1) * anp.log(t / life) + anp.log(beta / life) - (t / life) ** beta
 
     @staticmethod
     def logR(t, T, a, n, beta):  # Log SF
-        life = a * T ** n
+        life = a * T**n
         return -((t / life) ** beta)
 
     @staticmethod
@@ -4133,9 +3837,7 @@ class Fit_Weibull_Power:
         # failure times
         LL_f = Fit_Weibull_Power.logf(t_f, T_f, params[0], params[1], params[2]).sum()
         # right censored times
-        LL_rc = Fit_Weibull_Power.logR(
-            t_rc, T_rc, params[0], params[1], params[2]
-        ).sum()
+        LL_rc = Fit_Weibull_Power.logR(t_rc, T_rc, params[0], params[1], params[2]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -4285,7 +3987,6 @@ class Fit_Weibull_Dual_Exponential:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Weibull",
             life_stress_model="Dual_Exponential",
@@ -4471,7 +4172,7 @@ class Fit_Weibull_Dual_Exponential:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -4479,21 +4180,15 @@ class Fit_Weibull_Dual_Exponential:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1, S2):
             return self.c * np.exp(self.a / S1 + self.b / S2)
 
         # use level stress calculations
         if use_level_stress is not None:
-            self.alpha_at_use_stress = life_func(
-                S1=use_level_stress[0], S2=use_level_stress[1]
-            )
-            self.distribution_at_use_stress = Weibull_Distribution(
-                alpha=self.alpha_at_use_stress, beta=self.beta
-            )
+            self.alpha_at_use_stress = life_func(S1=use_level_stress[0], S2=use_level_stress[1])
+            self.distribution_at_use_stress = Weibull_Distribution(alpha=self.alpha_at_use_stress, beta=self.beta)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -4502,17 +4197,10 @@ class Fit_Weibull_Dual_Exponential:
         stresses_for_groups_str = []
         for stress in stresses_for_groups:
             new_alphas.append(life_func(S1=stress[0], S2=stress[1]))
-            stresses_for_groups_str.append(
-                str(
-                    round_and_string(stress[0])
-                    + ", "
-                    + round_and_string(stress[1])
-                )
-            )
+            stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-                    / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
                 )
         common_betas = np.ones(len(stresses_for_groups)) * self.beta
         beta_differences = []
@@ -4522,15 +4210,11 @@ class Fit_Weibull_Dual_Exponential:
                 betas_for_change_df[i] = ""  # replace with space
                 beta_differences.append("")
             else:
-                beta_diff = (
-                    common_betas[i] - betas_for_change_df[i]
-                ) / betas_for_change_df[i]
+                beta_diff = (common_betas[i] - betas_for_change_df[i]) / betas_for_change_df[i]
                 if abs(beta_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if beta_diff > 0:
-                    beta_differences.append(
-                        str("+" + str(round(beta_diff * 100, 2)) + "%")
-                    )
+                    beta_differences.append(str("+" + str(round(beta_diff * 100, 2)) + "%"))
                 else:
                     beta_differences.append(str(str(round(beta_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = alphas_for_change_df
@@ -4569,11 +4253,7 @@ class Fit_Weibull_Dual_Exponential:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Weibull_Dual_Exponential ("
-                    + str(CI_rounded)
-                    + "% CI):"
-                ),
+                str("Results from Fit_Weibull_Dual_Exponential (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -4638,9 +4318,7 @@ class Fit_Weibull_Dual_Exponential:
     @staticmethod
     def logf(t, S1, S2, a, b, c, beta):  # Log PDF
         life = c * anp.exp(a / S1 + b / S2)
-        return (
-            (beta - 1) * anp.log(t / life) + anp.log(beta / life) - (t / life) ** beta
-        )
+        return (beta - 1) * anp.log(t / life) + anp.log(beta / life) - (t / life) ** beta
 
     @staticmethod
     def logR(t, S1, S2, a, b, c, beta):  # Log SF
@@ -4650,13 +4328,9 @@ class Fit_Weibull_Dual_Exponential:
     @staticmethod
     def LL(params, t_f, t_rc, S1_f, S2_f, S1_rc, S2_rc):  # log likelihood function
         # failure times
-        LL_f = Fit_Weibull_Dual_Exponential.logf(
-            t_f, S1_f, S2_f, params[0], params[1], params[2], params[3]
-        ).sum()
+        LL_f = Fit_Weibull_Dual_Exponential.logf(t_f, S1_f, S2_f, params[0], params[1], params[2], params[3]).sum()
         # right censored times
-        LL_rc = Fit_Weibull_Dual_Exponential.logR(
-            t_rc, S1_rc, S2_rc, params[0], params[1], params[2], params[3]
-        ).sum()
+        LL_rc = Fit_Weibull_Dual_Exponential.logR(t_rc, S1_rc, S2_rc, params[0], params[1], params[2], params[3]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -4807,7 +4481,6 @@ class Fit_Weibull_Power_Exponential:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Weibull",
             life_stress_model="Power_Exponential",
@@ -4993,7 +4666,7 @@ class Fit_Weibull_Power_Exponential:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -5001,21 +4674,15 @@ class Fit_Weibull_Power_Exponential:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1, S2):
-            return self.c * (S2 ** self.n) * np.exp(self.a / S1)
+            return self.c * (S2**self.n) * np.exp(self.a / S1)
 
         # use level stress calculations
         if use_level_stress is not None:
-            self.alpha_at_use_stress = life_func(
-                S1=use_level_stress[0], S2=use_level_stress[1]
-            )
-            self.distribution_at_use_stress = Weibull_Distribution(
-                alpha=self.alpha_at_use_stress, beta=self.beta
-            )
+            self.alpha_at_use_stress = life_func(S1=use_level_stress[0], S2=use_level_stress[1])
+            self.distribution_at_use_stress = Weibull_Distribution(alpha=self.alpha_at_use_stress, beta=self.beta)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -5024,17 +4691,10 @@ class Fit_Weibull_Power_Exponential:
         AF = []
         for stress in stresses_for_groups:
             new_alphas.append(life_func(S1=stress[0], S2=stress[1]))
-            stresses_for_groups_str.append(
-                str(
-                    round_and_string(stress[0])
-                    + ", "
-                    + round_and_string(stress[1])
-                )
-            )
+            stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-                    / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
                 )
         common_betas = np.ones(len(stresses_for_groups)) * self.beta
         beta_differences = []
@@ -5044,15 +4704,11 @@ class Fit_Weibull_Power_Exponential:
                 betas_for_change_df[i] = ""  # replace with space
                 beta_differences.append("")
             else:
-                beta_diff = (
-                    common_betas[i] - betas_for_change_df[i]
-                ) / betas_for_change_df[i]
+                beta_diff = (common_betas[i] - betas_for_change_df[i]) / betas_for_change_df[i]
                 if abs(beta_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if beta_diff > 0:
-                    beta_differences.append(
-                        str("+" + str(round(beta_diff * 100, 2)) + "%")
-                    )
+                    beta_differences.append(str("+" + str(round(beta_diff * 100, 2)) + "%"))
                 else:
                     beta_differences.append(str(str(round(beta_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = alphas_for_change_df
@@ -5091,11 +4747,7 @@ class Fit_Weibull_Power_Exponential:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Weibull_Power_Exponential ("
-                    + str(CI_rounded)
-                    + "% CI):"
-                ),
+                str("Results from Fit_Weibull_Power_Exponential (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -5159,14 +4811,12 @@ class Fit_Weibull_Power_Exponential:
 
     @staticmethod
     def logf(t, S1, S2, a, c, n, beta):  # Log PDF
-        life = c * S2 ** n * anp.exp(a / S1)
-        return (
-            (beta - 1) * anp.log(t / life) + anp.log(beta / life) - (t / life) ** beta
-        )
+        life = c * S2**n * anp.exp(a / S1)
+        return (beta - 1) * anp.log(t / life) + anp.log(beta / life) - (t / life) ** beta
 
     @staticmethod
     def logR(t, S1, S2, a, c, n, beta):  # Log SF
-        life = c * S2 ** n * anp.exp(a / S1)
+        life = c * S2**n * anp.exp(a / S1)
         return -((t / life) ** beta)
 
     @staticmethod
@@ -5326,7 +4976,6 @@ class Fit_Weibull_Dual_Power:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Weibull",
             life_stress_model="Dual_Power",
@@ -5512,7 +5161,7 @@ class Fit_Weibull_Dual_Power:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -5520,21 +5169,15 @@ class Fit_Weibull_Dual_Power:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1, S2):
-            return self.c * (S1 ** self.m) * (S2 ** self.n)
+            return self.c * (S1**self.m) * (S2**self.n)
 
         # use level stress calculations
         if use_level_stress is not None:
-            self.alpha_at_use_stress = life_func(
-                S1=use_level_stress[0], S2=use_level_stress[1]
-            )
-            self.distribution_at_use_stress = Weibull_Distribution(
-                alpha=self.alpha_at_use_stress, beta=self.beta
-            )
+            self.alpha_at_use_stress = life_func(S1=use_level_stress[0], S2=use_level_stress[1])
+            self.distribution_at_use_stress = Weibull_Distribution(alpha=self.alpha_at_use_stress, beta=self.beta)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -5543,17 +5186,10 @@ class Fit_Weibull_Dual_Power:
         AF = []
         for stress in stresses_for_groups:
             new_alphas.append(life_func(S1=stress[0], S2=stress[1]))
-            stresses_for_groups_str.append(
-                str(
-                    round_and_string(stress[0])
-                    + ", "
-                    + round_and_string(stress[1])
-                )
-            )
+            stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-                    / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
                 )
         common_betas = np.ones(len(stresses_for_groups)) * self.beta
         beta_differences = []
@@ -5563,15 +5199,11 @@ class Fit_Weibull_Dual_Power:
                 betas_for_change_df[i] = ""  # replace with space
                 beta_differences.append("")
             else:
-                beta_diff = (
-                    common_betas[i] - betas_for_change_df[i]
-                ) / betas_for_change_df[i]
+                beta_diff = (common_betas[i] - betas_for_change_df[i]) / betas_for_change_df[i]
                 if abs(beta_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if beta_diff > 0:
-                    beta_differences.append(
-                        str("+" + str(round(beta_diff * 100, 2)) + "%")
-                    )
+                    beta_differences.append(str("+" + str(round(beta_diff * 100, 2)) + "%"))
                 else:
                     beta_differences.append(str(str(round(beta_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = alphas_for_change_df
@@ -5610,9 +5242,7 @@ class Fit_Weibull_Dual_Power:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Weibull_Dual_Power (" + str(CI_rounded) + "% CI):"
-                ),
+                str("Results from Fit_Weibull_Dual_Power (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -5676,26 +5306,20 @@ class Fit_Weibull_Dual_Power:
 
     @staticmethod
     def logf(t, S1, S2, c, m, n, beta):  # Log PDF
-        life = c * (S1 ** m) * (S2 ** n)
-        return (
-            (beta - 1) * anp.log(t / life) + anp.log(beta / life) - (t / life) ** beta
-        )
+        life = c * (S1**m) * (S2**n)
+        return (beta - 1) * anp.log(t / life) + anp.log(beta / life) - (t / life) ** beta
 
     @staticmethod
     def logR(t, S1, S2, c, m, n, beta):  # Log SF
-        life = c * (S1 ** m) * (S2 ** n)
+        life = c * (S1**m) * (S2**n)
         return -((t / life) ** beta)
 
     @staticmethod
     def LL(params, t_f, t_rc, S1_f, S2_f, S1_rc, S2_rc):  # log likelihood function
         # failure times
-        LL_f = Fit_Weibull_Dual_Power.logf(
-            t_f, S1_f, S2_f, params[0], params[1], params[2], params[3]
-        ).sum()
+        LL_f = Fit_Weibull_Dual_Power.logf(t_f, S1_f, S2_f, params[0], params[1], params[2], params[3]).sum()
         # right censored times
-        LL_rc = Fit_Weibull_Dual_Power.logR(
-            t_rc, S1_rc, S2_rc, params[0], params[1], params[2], params[3]
-        ).sum()
+        LL_rc = Fit_Weibull_Dual_Power.logR(t_rc, S1_rc, S2_rc, params[0], params[1], params[2], params[3]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -5826,7 +5450,6 @@ class Fit_Lognormal_Exponential:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Lognormal",
             life_stress_model="Exponential",
@@ -5854,9 +5477,7 @@ class Fit_Lognormal_Exponential:
         self.__stresses_for_groups = inputs.stresses_for_groups
 
         # obtain the initial guess for the life stress model and the life distribution
-        life_stress_guess = ALT_least_squares(
-            model="Exponential", failures=failures, stress_1_array=failure_stress
-        )
+        life_stress_guess = ALT_least_squares(model="Exponential", failures=failures, stress_1_array=failure_stress)
 
         # obtain the common shape parameter
         sigmas = []
@@ -5980,13 +5601,11 @@ class Fit_Lognormal_Exponential:
         # goodness of fit dataframe
         n = len(failures) + len(right_censored)
         k = len(guess)
-        LL2 = 2 * LL_func(
-            params, failures, right_censored, failure_stress, right_censored_stress
-        )
+        LL2 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -5994,9 +5613,7 @@ class Fit_Lognormal_Exponential:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1):
             return self.b * np.exp(self.a / S1)
@@ -6004,9 +5621,7 @@ class Fit_Lognormal_Exponential:
         # use level stress calculations
         if use_level_stress is not None:
             self.mu_at_use_stress = np.log(life_func(S1=use_level_stress))
-            self.distribution_at_use_stress = Lognormal_Distribution(
-                mu=self.mu_at_use_stress, sigma=self.sigma
-            )
+            self.distribution_at_use_stress = Lognormal_Distribution(mu=self.mu_at_use_stress, sigma=self.sigma)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -6024,15 +5639,11 @@ class Fit_Lognormal_Exponential:
                 sigmas_for_change_df[i] = ""  # replace with space
                 sigma_differences.append("")
             else:
-                sigma_diff = (
-                    common_sigmas[i] - sigmas_for_change_df[i]
-                ) / sigmas_for_change_df[i]
+                sigma_diff = (common_sigmas[i] - sigmas_for_change_df[i]) / sigmas_for_change_df[i]
                 if abs(sigma_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if sigma_diff > 0:
-                    sigma_differences.append(
-                        str("+" + str(round(sigma_diff * 100, 2)) + "%")
-                    )
+                    sigma_differences.append(str("+" + str(round(sigma_diff * 100, 2)) + "%"))
                 else:
                     sigma_differences.append(str(str(round(sigma_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = mus_for_change_df
@@ -6071,11 +5682,7 @@ class Fit_Lognormal_Exponential:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Lognormal_Exponential ("
-                    + str(CI_rounded)
-                    + "% CI):"
-                ),
+                str("Results from Fit_Lognormal_Exponential (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -6101,7 +5708,7 @@ class Fit_Lognormal_Exponential:
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
             print(
                 "If this model is being used for the Arrhenius Model, a = Ea/K_B ==> Ea =",
-                round(self.a * 8.617333262145 * 10 ** -5, 5),
+                round(self.a * 8.617333262145 * 10**-5, 5),
                 "eV\n",
             )
 
@@ -6144,27 +5751,20 @@ class Fit_Lognormal_Exponential:
     def logf(t, T, a, b, sigma):  # Log PDF
         life = b * anp.exp(a / T)
         return anp.log(
-            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2))
-            / (t * sigma * (2 * anp.pi) ** 0.5)
+            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5)
         )
 
     @staticmethod
     def logR(t, T, a, b, sigma):  # Log SF
         life = b * anp.exp(a / T)
-        return anp.log(
-            0.5 - 0.5 * erf((anp.log(t) - anp.log(life)) / (sigma * 2 ** 0.5))
-        )
+        return anp.log(0.5 - 0.5 * erf((anp.log(t) - anp.log(life)) / (sigma * 2**0.5)))
 
     @staticmethod
     def LL(params, t_f, t_rc, T_f, T_rc):  # log likelihood function
         # failure times
-        LL_f = Fit_Lognormal_Exponential.logf(
-            t_f, T_f, params[0], params[1], params[2]
-        ).sum()
+        LL_f = Fit_Lognormal_Exponential.logf(t_f, T_f, params[0], params[1], params[2]).sum()
         # right censored times
-        LL_rc = Fit_Lognormal_Exponential.logR(
-            t_rc, T_rc, params[0], params[1], params[2]
-        ).sum()
+        LL_rc = Fit_Lognormal_Exponential.logR(t_rc, T_rc, params[0], params[1], params[2]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -6292,7 +5892,6 @@ class Fit_Lognormal_Eyring:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Lognormal",
             life_stress_model="Eyring",
@@ -6320,9 +5919,7 @@ class Fit_Lognormal_Eyring:
         self.__stresses_for_groups = inputs.stresses_for_groups
 
         # obtain the initial guess for the life stress model and the life distribution
-        life_stress_guess = ALT_least_squares(
-            model="Eyring", failures=failures, stress_1_array=failure_stress
-        )
+        life_stress_guess = ALT_least_squares(model="Eyring", failures=failures, stress_1_array=failure_stress)
 
         # obtain the common shape parameter
         sigmas = []
@@ -6446,13 +6043,11 @@ class Fit_Lognormal_Eyring:
         # goodness of fit dataframe
         n = len(failures) + len(right_censored)
         k = len(guess)
-        LL2 = 2 * LL_func(
-            params, failures, right_censored, failure_stress, right_censored_stress
-        )
+        LL2 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -6460,9 +6055,7 @@ class Fit_Lognormal_Eyring:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1):
             return 1 / S1 * np.exp(-(self.c - self.a / S1))
@@ -6470,9 +6063,7 @@ class Fit_Lognormal_Eyring:
         # use level stress calculations
         if use_level_stress is not None:
             self.mu_at_use_stress = np.log(life_func(S1=use_level_stress))
-            self.distribution_at_use_stress = Lognormal_Distribution(
-                mu=self.mu_at_use_stress, sigma=self.sigma
-            )
+            self.distribution_at_use_stress = Lognormal_Distribution(mu=self.mu_at_use_stress, sigma=self.sigma)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -6490,15 +6081,11 @@ class Fit_Lognormal_Eyring:
                 sigmas_for_change_df[i] = ""  # replace with space
                 sigma_differences.append("")
             else:
-                sigma_diff = (
-                    common_sigmas[i] - sigmas_for_change_df[i]
-                ) / sigmas_for_change_df[i]
+                sigma_diff = (common_sigmas[i] - sigmas_for_change_df[i]) / sigmas_for_change_df[i]
                 if abs(sigma_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if sigma_diff > 0:
-                    sigma_differences.append(
-                        str("+" + str(round(sigma_diff * 100, 2)) + "%")
-                    )
+                    sigma_differences.append(str("+" + str(round(sigma_diff * 100, 2)) + "%"))
                 else:
                     sigma_differences.append(str(str(round(sigma_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = mus_for_change_df
@@ -6601,27 +6188,20 @@ class Fit_Lognormal_Eyring:
     def logf(t, T, a, c, sigma):  # Log PDF
         life = 1 / T * anp.exp(-(c - a / T))
         return anp.log(
-            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2))
-            / (t * sigma * (2 * anp.pi) ** 0.5)
+            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5)
         )
 
     @staticmethod
     def logR(t, T, a, c, sigma):  # Log SF
         life = 1 / T * anp.exp(-(c - a / T))
-        return anp.log(
-            0.5 - 0.5 * erf((anp.log(t) - anp.log(life)) / (sigma * 2 ** 0.5))
-        )
+        return anp.log(0.5 - 0.5 * erf((anp.log(t) - anp.log(life)) / (sigma * 2**0.5)))
 
     @staticmethod
     def LL(params, t_f, t_rc, T_f, T_rc):  # log likelihood function
         # failure times
-        LL_f = Fit_Lognormal_Eyring.logf(
-            t_f, T_f, params[0], params[1], params[2]
-        ).sum()
+        LL_f = Fit_Lognormal_Eyring.logf(t_f, T_f, params[0], params[1], params[2]).sum()
         # right censored times
-        LL_rc = Fit_Lognormal_Eyring.logR(
-            t_rc, T_rc, params[0], params[1], params[2]
-        ).sum()
+        LL_rc = Fit_Lognormal_Eyring.logR(t_rc, T_rc, params[0], params[1], params[2]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -6748,7 +6328,6 @@ class Fit_Lognormal_Power:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Lognormal",
             life_stress_model="Power",
@@ -6776,9 +6355,7 @@ class Fit_Lognormal_Power:
         self.__stresses_for_groups = inputs.stresses_for_groups
 
         # obtain the initial guess for the life stress model and the life distribution
-        life_stress_guess = ALT_least_squares(
-            model="Power", failures=failures, stress_1_array=failure_stress
-        )
+        life_stress_guess = ALT_least_squares(model="Power", failures=failures, stress_1_array=failure_stress)
 
         # obtain the common shape parameter
         sigmas = []
@@ -6902,13 +6479,11 @@ class Fit_Lognormal_Power:
         # goodness of fit dataframe
         n = len(failures) + len(right_censored)
         k = len(guess)
-        LL2 = 2 * LL_func(
-            params, failures, right_censored, failure_stress, right_censored_stress
-        )
+        LL2 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -6916,19 +6491,15 @@ class Fit_Lognormal_Power:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1):
-            return self.a * S1 ** self.n
+            return self.a * S1**self.n
 
         # use level stress calculations
         if use_level_stress is not None:
             self.mu_at_use_stress = np.log(life_func(S1=use_level_stress))
-            self.distribution_at_use_stress = Lognormal_Distribution(
-                mu=self.mu_at_use_stress, sigma=self.sigma
-            )
+            self.distribution_at_use_stress = Lognormal_Distribution(mu=self.mu_at_use_stress, sigma=self.sigma)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -6946,15 +6517,11 @@ class Fit_Lognormal_Power:
                 sigmas_for_change_df[i] = ""  # replace with space
                 sigma_differences.append("")
             else:
-                sigma_diff = (
-                    common_sigmas[i] - sigmas_for_change_df[i]
-                ) / sigmas_for_change_df[i]
+                sigma_diff = (common_sigmas[i] - sigmas_for_change_df[i]) / sigmas_for_change_df[i]
                 if abs(sigma_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if sigma_diff > 0:
-                    sigma_differences.append(
-                        str("+" + str(round(sigma_diff * 100, 2)) + "%")
-                    )
+                    sigma_differences.append(str("+" + str(round(sigma_diff * 100, 2)) + "%"))
                 else:
                     sigma_differences.append(str(str(round(sigma_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = mus_for_change_df
@@ -7055,27 +6622,22 @@ class Fit_Lognormal_Power:
 
     @staticmethod
     def logf(t, T, a, n, sigma):  # Log PDF
-        life = a * T ** n
+        life = a * T**n
         return anp.log(
-            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2))
-            / (t * sigma * (2 * anp.pi) ** 0.5)
+            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5)
         )
 
     @staticmethod
     def logR(t, T, a, n, sigma):  # Log SF
-        life = a * T ** n
-        return anp.log(
-            0.5 - 0.5 * erf((anp.log(t) - anp.log(life)) / (sigma * 2 ** 0.5))
-        )
+        life = a * T**n
+        return anp.log(0.5 - 0.5 * erf((anp.log(t) - anp.log(life)) / (sigma * 2**0.5)))
 
     @staticmethod
     def LL(params, t_f, t_rc, T_f, T_rc):  # log likelihood function
         # failure times
         LL_f = Fit_Lognormal_Power.logf(t_f, T_f, params[0], params[1], params[2]).sum()
         # right censored times
-        LL_rc = Fit_Lognormal_Power.logR(
-            t_rc, T_rc, params[0], params[1], params[2]
-        ).sum()
+        LL_rc = Fit_Lognormal_Power.logR(t_rc, T_rc, params[0], params[1], params[2]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -7225,7 +6787,6 @@ class Fit_Lognormal_Dual_Exponential:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Lognormal",
             life_stress_model="Dual_Exponential",
@@ -7411,7 +6972,7 @@ class Fit_Lognormal_Dual_Exponential:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -7419,21 +6980,15 @@ class Fit_Lognormal_Dual_Exponential:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1, S2):
             return self.c * np.exp(self.a / S1 + self.b / S2)
 
         # use level stress calculations
         if use_level_stress is not None:
-            self.mu_at_use_stress = np.log(
-                life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-            )
-            self.distribution_at_use_stress = Lognormal_Distribution(
-                mu=self.mu_at_use_stress, sigma=self.sigma
-            )
+            self.mu_at_use_stress = np.log(life_func(S1=use_level_stress[0], S2=use_level_stress[1]))
+            self.distribution_at_use_stress = Lognormal_Distribution(mu=self.mu_at_use_stress, sigma=self.sigma)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -7442,17 +6997,10 @@ class Fit_Lognormal_Dual_Exponential:
         stresses_for_groups_str = []
         for stress in stresses_for_groups:
             new_mus.append(np.log(life_func(S1=stress[0], S2=stress[1])))
-            stresses_for_groups_str.append(
-                str(
-                    round_and_string(stress[0])
-                    + ", "
-                    + round_and_string(stress[1])
-                )
-            )
+            stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-                    / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
                 )
         common_sigmas = np.ones(len(stresses_for_groups)) * self.sigma
         sigma_differences = []
@@ -7462,15 +7010,11 @@ class Fit_Lognormal_Dual_Exponential:
                 sigmas_for_change_df[i] = ""  # replace with space
                 sigma_differences.append("")
             else:
-                sigma_diff = (
-                    common_sigmas[i] - sigmas_for_change_df[i]
-                ) / sigmas_for_change_df[i]
+                sigma_diff = (common_sigmas[i] - sigmas_for_change_df[i]) / sigmas_for_change_df[i]
                 if abs(sigma_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if sigma_diff > 0:
-                    sigma_differences.append(
-                        str("+" + str(round(sigma_diff * 100, 2)) + "%")
-                    )
+                    sigma_differences.append(str("+" + str(round(sigma_diff * 100, 2)) + "%"))
                 else:
                     sigma_differences.append(str(str(round(sigma_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = mus_for_change_df
@@ -7509,11 +7053,7 @@ class Fit_Lognormal_Dual_Exponential:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Lognormal_Dual_Exponential ("
-                    + str(CI_rounded)
-                    + "% CI):"
-                ),
+                str("Results from Fit_Lognormal_Dual_Exponential (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -7579,16 +7119,13 @@ class Fit_Lognormal_Dual_Exponential:
     def logf(t, S1, S2, a, b, c, sigma):  # Log PDF
         life = c * anp.exp(a / S1 + b / S2)
         return anp.log(
-            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2))
-            / (t * sigma * (2 * anp.pi) ** 0.5)
+            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5)
         )
 
     @staticmethod
     def logR(t, S1, S2, a, b, c, sigma):  # Log SF
         life = c * anp.exp(a / S1 + b / S2)
-        return anp.log(
-            0.5 - 0.5 * erf((anp.log(t) - anp.log(life)) / (sigma * 2 ** 0.5))
-        )
+        return anp.log(0.5 - 0.5 * erf((anp.log(t) - anp.log(life)) / (sigma * 2**0.5)))
 
     @staticmethod
     def LL(params, t_f, t_rc, S1_f, S2_f, S1_rc, S2_rc):  # log likelihood function
@@ -7748,7 +7285,6 @@ class Fit_Lognormal_Power_Exponential:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Lognormal",
             life_stress_model="Power_Exponential",
@@ -7934,7 +7470,7 @@ class Fit_Lognormal_Power_Exponential:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -7942,21 +7478,15 @@ class Fit_Lognormal_Power_Exponential:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1, S2):
-            return self.c * (S2 ** self.n) * np.exp(self.a / S1)
+            return self.c * (S2**self.n) * np.exp(self.a / S1)
 
         # use level stress calculations
         if use_level_stress is not None:
-            self.mu_at_use_stress = np.log(
-                life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-            )
-            self.distribution_at_use_stress = Lognormal_Distribution(
-                mu=self.mu_at_use_stress, sigma=self.sigma
-            )
+            self.mu_at_use_stress = np.log(life_func(S1=use_level_stress[0], S2=use_level_stress[1]))
+            self.distribution_at_use_stress = Lognormal_Distribution(mu=self.mu_at_use_stress, sigma=self.sigma)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -7965,17 +7495,10 @@ class Fit_Lognormal_Power_Exponential:
         AF = []
         for stress in stresses_for_groups:
             new_mus.append(np.log(life_func(S1=stress[0], S2=stress[1])))
-            stresses_for_groups_str.append(
-                str(
-                    round_and_string(stress[0])
-                    + ", "
-                    + round_and_string(stress[1])
-                )
-            )
+            stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-                    / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
                 )
         common_sigmas = np.ones(len(stresses_for_groups)) * self.sigma
         sigma_differences = []
@@ -7985,15 +7508,11 @@ class Fit_Lognormal_Power_Exponential:
                 sigmas_for_change_df[i] = ""  # replace with space
                 sigma_differences.append("")
             else:
-                sigma_diff = (
-                    common_sigmas[i] - sigmas_for_change_df[i]
-                ) / sigmas_for_change_df[i]
+                sigma_diff = (common_sigmas[i] - sigmas_for_change_df[i]) / sigmas_for_change_df[i]
                 if abs(sigma_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if sigma_diff > 0:
-                    sigma_differences.append(
-                        str("+" + str(round(sigma_diff * 100, 2)) + "%")
-                    )
+                    sigma_differences.append(str("+" + str(round(sigma_diff * 100, 2)) + "%"))
                 else:
                     sigma_differences.append(str(str(round(sigma_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = mus_for_change_df
@@ -8032,11 +7551,7 @@ class Fit_Lognormal_Power_Exponential:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Lognormal_Power_Exponential ("
-                    + str(CI_rounded)
-                    + "% CI):"
-                ),
+                str("Results from Fit_Lognormal_Power_Exponential (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -8100,18 +7615,15 @@ class Fit_Lognormal_Power_Exponential:
 
     @staticmethod
     def logf(t, S1, S2, a, c, n, sigma):  # Log PDF
-        life = c * S2 ** n * anp.exp(a / S1)
+        life = c * S2**n * anp.exp(a / S1)
         return anp.log(
-            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2))
-            / (t * sigma * (2 * anp.pi) ** 0.5)
+            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5)
         )
 
     @staticmethod
     def logR(t, S1, S2, a, c, n, sigma):  # Log SF
-        life = c * S2 ** n * anp.exp(a / S1)
-        return anp.log(
-            0.5 - 0.5 * erf((anp.log(t) - anp.log(life)) / (sigma * 2 ** 0.5))
-        )
+        life = c * S2**n * anp.exp(a / S1)
+        return anp.log(0.5 - 0.5 * erf((anp.log(t) - anp.log(life)) / (sigma * 2**0.5)))
 
     @staticmethod
     def LL(params, t_f, t_rc, S1_f, S2_f, S1_rc, S2_rc):  # log likelihood function
@@ -8268,7 +7780,6 @@ class Fit_Lognormal_Dual_Power:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Lognormal",
             life_stress_model="Dual_Power",
@@ -8454,7 +7965,7 @@ class Fit_Lognormal_Dual_Power:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -8462,21 +7973,15 @@ class Fit_Lognormal_Dual_Power:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1, S2):
-            return self.c * (S1 ** self.m) * (S2 ** self.n)
+            return self.c * (S1**self.m) * (S2**self.n)
 
         # use level stress calculations
         if use_level_stress is not None:
-            self.mu_at_use_stress = np.log(
-                life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-            )
-            self.distribution_at_use_stress = Lognormal_Distribution(
-                mu=self.mu_at_use_stress, sigma=self.sigma
-            )
+            self.mu_at_use_stress = np.log(life_func(S1=use_level_stress[0], S2=use_level_stress[1]))
+            self.distribution_at_use_stress = Lognormal_Distribution(mu=self.mu_at_use_stress, sigma=self.sigma)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -8485,17 +7990,10 @@ class Fit_Lognormal_Dual_Power:
         AF = []
         for stress in stresses_for_groups:
             new_mus.append(np.log(life_func(S1=stress[0], S2=stress[1])))
-            stresses_for_groups_str.append(
-                str(
-                    round_and_string(stress[0])
-                    + ", "
-                    + round_and_string(stress[1])
-                )
-            )
+            stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-                    / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
                 )
         common_sigmas = np.ones(len(stresses_for_groups)) * self.sigma
         sigma_differences = []
@@ -8505,15 +8003,11 @@ class Fit_Lognormal_Dual_Power:
                 sigmas_for_change_df[i] = ""  # replace with space
                 sigma_differences.append("")
             else:
-                sigma_diff = (
-                    common_sigmas[i] - sigmas_for_change_df[i]
-                ) / sigmas_for_change_df[i]
+                sigma_diff = (common_sigmas[i] - sigmas_for_change_df[i]) / sigmas_for_change_df[i]
                 if abs(sigma_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if sigma_diff > 0:
-                    sigma_differences.append(
-                        str("+" + str(round(sigma_diff * 100, 2)) + "%")
-                    )
+                    sigma_differences.append(str("+" + str(round(sigma_diff * 100, 2)) + "%"))
                 else:
                     sigma_differences.append(str(str(round(sigma_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = mus_for_change_df
@@ -8552,11 +8046,7 @@ class Fit_Lognormal_Dual_Power:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Lognormal_Dual_Power ("
-                    + str(CI_rounded)
-                    + "% CI):"
-                ),
+                str("Results from Fit_Lognormal_Dual_Power (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -8620,29 +8110,22 @@ class Fit_Lognormal_Dual_Power:
 
     @staticmethod
     def logf(t, S1, S2, c, m, n, sigma):  # Log PDF
-        life = c * (S1 ** m) * (S2 ** n)
+        life = c * (S1**m) * (S2**n)
         return anp.log(
-            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2))
-            / (t * sigma * (2 * anp.pi) ** 0.5)
+            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5)
         )
 
     @staticmethod
     def logR(t, S1, S2, c, m, n, sigma):  # Log SF
-        life = c * (S1 ** m) * (S2 ** n)
-        return anp.log(
-            0.5 - 0.5 * erf((anp.log(t) - anp.log(life)) / (sigma * 2 ** 0.5))
-        )
+        life = c * (S1**m) * (S2**n)
+        return anp.log(0.5 - 0.5 * erf((anp.log(t) - anp.log(life)) / (sigma * 2**0.5)))
 
     @staticmethod
     def LL(params, t_f, t_rc, S1_f, S2_f, S1_rc, S2_rc):  # log likelihood function
         # failure times
-        LL_f = Fit_Lognormal_Dual_Power.logf(
-            t_f, S1_f, S2_f, params[0], params[1], params[2], params[3]
-        ).sum()
+        LL_f = Fit_Lognormal_Dual_Power.logf(t_f, S1_f, S2_f, params[0], params[1], params[2], params[3]).sum()
         # right censored times
-        LL_rc = Fit_Lognormal_Dual_Power.logR(
-            t_rc, S1_rc, S2_rc, params[0], params[1], params[2], params[3]
-        ).sum()
+        LL_rc = Fit_Lognormal_Dual_Power.logR(t_rc, S1_rc, S2_rc, params[0], params[1], params[2], params[3]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -8773,7 +8256,6 @@ class Fit_Normal_Exponential:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Normal",
             life_stress_model="Exponential",
@@ -8801,9 +8283,7 @@ class Fit_Normal_Exponential:
         self.__stresses_for_groups = inputs.stresses_for_groups
 
         # obtain the initial guess for the life stress model and the life distribution
-        life_stress_guess = ALT_least_squares(
-            model="Exponential", failures=failures, stress_1_array=failure_stress
-        )
+        life_stress_guess = ALT_least_squares(model="Exponential", failures=failures, stress_1_array=failure_stress)
 
         # obtain the common shape parameter
         sigmas = []
@@ -8927,13 +8407,11 @@ class Fit_Normal_Exponential:
         # goodness of fit dataframe
         n = len(failures) + len(right_censored)
         k = len(guess)
-        LL2 = 2 * LL_func(
-            params, failures, right_censored, failure_stress, right_censored_stress
-        )
+        LL2 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -8941,9 +8419,7 @@ class Fit_Normal_Exponential:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1):
             return self.b * np.exp(self.a / S1)
@@ -8951,9 +8427,7 @@ class Fit_Normal_Exponential:
         # use level stress calculations
         if use_level_stress is not None:
             self.mu_at_use_stress = life_func(S1=use_level_stress)
-            self.distribution_at_use_stress = Normal_Distribution(
-                mu=self.mu_at_use_stress, sigma=self.sigma
-            )
+            self.distribution_at_use_stress = Normal_Distribution(mu=self.mu_at_use_stress, sigma=self.sigma)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -8971,15 +8445,11 @@ class Fit_Normal_Exponential:
                 sigmas_for_change_df[i] = ""  # replace with space
                 sigma_differences.append("")
             else:
-                sigma_diff = (
-                    common_sigmas[i] - sigmas_for_change_df[i]
-                ) / sigmas_for_change_df[i]
+                sigma_diff = (common_sigmas[i] - sigmas_for_change_df[i]) / sigmas_for_change_df[i]
                 if abs(sigma_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if sigma_diff > 0:
-                    sigma_differences.append(
-                        str("+" + str(round(sigma_diff * 100, 2)) + "%")
-                    )
+                    sigma_differences.append(str("+" + str(round(sigma_diff * 100, 2)) + "%"))
                 else:
                     sigma_differences.append(str(str(round(sigma_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = mus_for_change_df
@@ -9018,9 +8488,7 @@ class Fit_Normal_Exponential:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Normal_Exponential (" + str(CI_rounded) + "% CI):"
-                ),
+                str("Results from Fit_Normal_Exponential (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -9046,7 +8514,7 @@ class Fit_Normal_Exponential:
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
             print(
                 "If this model is being used for the Arrhenius Model, a = Ea/K_B ==> Ea =",
-                round(self.a * 8.617333262145 * 10 ** -5, 5),
+                round(self.a * 8.617333262145 * 10**-5, 5),
                 "eV\n",
             )
 
@@ -9088,25 +8556,19 @@ class Fit_Normal_Exponential:
     @staticmethod
     def logf(t, T, a, b, sigma):  # Log PDF
         life = b * anp.exp(a / T)
-        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log(
-            (sigma * (2 * anp.pi) ** 0.5)
-        )
+        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log((sigma * (2 * anp.pi) ** 0.5))
 
     @staticmethod
     def logR(t, T, a, b, sigma):  # Log SF
         life = b * anp.exp(a / T)
-        return anp.log((1 + erf(((life - t) / sigma) / 2 ** 0.5)) / 2)
+        return anp.log((1 + erf(((life - t) / sigma) / 2**0.5)) / 2)
 
     @staticmethod
     def LL(params, t_f, t_rc, T_f, T_rc):  # log likelihood function
         # failure times
-        LL_f = Fit_Normal_Exponential.logf(
-            t_f, T_f, params[0], params[1], params[2]
-        ).sum()
+        LL_f = Fit_Normal_Exponential.logf(t_f, T_f, params[0], params[1], params[2]).sum()
         # right censored times
-        LL_rc = Fit_Normal_Exponential.logR(
-            t_rc, T_rc, params[0], params[1], params[2]
-        ).sum()
+        LL_rc = Fit_Normal_Exponential.logR(t_rc, T_rc, params[0], params[1], params[2]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -9234,7 +8696,6 @@ class Fit_Normal_Eyring:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Normal",
             life_stress_model="Eyring",
@@ -9262,9 +8723,7 @@ class Fit_Normal_Eyring:
         self.__stresses_for_groups = inputs.stresses_for_groups
 
         # obtain the initial guess for the life stress model and the life distribution
-        life_stress_guess = ALT_least_squares(
-            model="Eyring", failures=failures, stress_1_array=failure_stress
-        )
+        life_stress_guess = ALT_least_squares(model="Eyring", failures=failures, stress_1_array=failure_stress)
 
         # obtain the common shape parameter
         sigmas = []
@@ -9388,13 +8847,11 @@ class Fit_Normal_Eyring:
         # goodness of fit dataframe
         n = len(failures) + len(right_censored)
         k = len(guess)
-        LL2 = 2 * LL_func(
-            params, failures, right_censored, failure_stress, right_censored_stress
-        )
+        LL2 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -9402,9 +8859,7 @@ class Fit_Normal_Eyring:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1):
             return 1 / S1 * np.exp(-(self.c - self.a / S1))
@@ -9412,9 +8867,7 @@ class Fit_Normal_Eyring:
         # use level stress calculations
         if use_level_stress is not None:
             self.mu_at_use_stress = life_func(S1=use_level_stress)
-            self.distribution_at_use_stress = Normal_Distribution(
-                mu=self.mu_at_use_stress, sigma=self.sigma
-            )
+            self.distribution_at_use_stress = Normal_Distribution(mu=self.mu_at_use_stress, sigma=self.sigma)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -9432,15 +8885,11 @@ class Fit_Normal_Eyring:
                 sigmas_for_change_df[i] = ""  # replace with space
                 sigma_differences.append("")
             else:
-                sigma_diff = (
-                    common_sigmas[i] - sigmas_for_change_df[i]
-                ) / sigmas_for_change_df[i]
+                sigma_diff = (common_sigmas[i] - sigmas_for_change_df[i]) / sigmas_for_change_df[i]
                 if abs(sigma_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if sigma_diff > 0:
-                    sigma_differences.append(
-                        str("+" + str(round(sigma_diff * 100, 2)) + "%")
-                    )
+                    sigma_differences.append(str("+" + str(round(sigma_diff * 100, 2)) + "%"))
                 else:
                     sigma_differences.append(str(str(round(sigma_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = mus_for_change_df
@@ -9542,23 +8991,19 @@ class Fit_Normal_Eyring:
     @staticmethod
     def logf(t, T, a, c, sigma):  # Log PDF
         life = 1 / T * anp.exp(-(c - a / T))
-        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log(
-            (sigma * (2 * anp.pi) ** 0.5)
-        )
+        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log((sigma * (2 * anp.pi) ** 0.5))
 
     @staticmethod
     def logR(t, T, a, c, sigma):  # Log SF
         life = 1 / T * anp.exp(-(c - a / T))
-        return anp.log((1 + erf(((life - t) / sigma) / 2 ** 0.5)) / 2)
+        return anp.log((1 + erf(((life - t) / sigma) / 2**0.5)) / 2)
 
     @staticmethod
     def LL(params, t_f, t_rc, T_f, T_rc):  # log likelihood function
         # failure times
         LL_f = Fit_Normal_Eyring.logf(t_f, T_f, params[0], params[1], params[2]).sum()
         # right censored times
-        LL_rc = Fit_Normal_Eyring.logR(
-            t_rc, T_rc, params[0], params[1], params[2]
-        ).sum()
+        LL_rc = Fit_Normal_Eyring.logR(t_rc, T_rc, params[0], params[1], params[2]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -9685,7 +9130,6 @@ class Fit_Normal_Power:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Normal",
             life_stress_model="Power",
@@ -9713,9 +9157,7 @@ class Fit_Normal_Power:
         self.__stresses_for_groups = inputs.stresses_for_groups
 
         # obtain the initial guess for the life stress model and the life distribution
-        life_stress_guess = ALT_least_squares(
-            model="Power", failures=failures, stress_1_array=failure_stress
-        )
+        life_stress_guess = ALT_least_squares(model="Power", failures=failures, stress_1_array=failure_stress)
 
         # obtain the common shape parameter
         sigmas = []
@@ -9839,13 +9281,11 @@ class Fit_Normal_Power:
         # goodness of fit dataframe
         n = len(failures) + len(right_censored)
         k = len(guess)
-        LL2 = 2 * LL_func(
-            params, failures, right_censored, failure_stress, right_censored_stress
-        )
+        LL2 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -9853,19 +9293,15 @@ class Fit_Normal_Power:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1):
-            return self.a * S1 ** self.n
+            return self.a * S1**self.n
 
         # use level stress calculations
         if use_level_stress is not None:
             self.mu_at_use_stress = life_func(S1=use_level_stress)
-            self.distribution_at_use_stress = Normal_Distribution(
-                mu=self.mu_at_use_stress, sigma=self.sigma
-            )
+            self.distribution_at_use_stress = Normal_Distribution(mu=self.mu_at_use_stress, sigma=self.sigma)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -9883,15 +9319,11 @@ class Fit_Normal_Power:
                 sigmas_for_change_df[i] = ""  # replace with space
                 sigma_differences.append("")
             else:
-                sigma_diff = (
-                    common_sigmas[i] - sigmas_for_change_df[i]
-                ) / sigmas_for_change_df[i]
+                sigma_diff = (common_sigmas[i] - sigmas_for_change_df[i]) / sigmas_for_change_df[i]
                 if abs(sigma_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if sigma_diff > 0:
-                    sigma_differences.append(
-                        str("+" + str(round(sigma_diff * 100, 2)) + "%")
-                    )
+                    sigma_differences.append(str("+" + str(round(sigma_diff * 100, 2)) + "%"))
                 else:
                     sigma_differences.append(str(str(round(sigma_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = mus_for_change_df
@@ -9992,15 +9424,13 @@ class Fit_Normal_Power:
 
     @staticmethod
     def logf(t, T, a, n, sigma):  # Log PDF
-        life = a * T ** n
-        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log(
-            (sigma * (2 * anp.pi) ** 0.5)
-        )
+        life = a * T**n
+        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log((sigma * (2 * anp.pi) ** 0.5))
 
     @staticmethod
     def logR(t, T, a, n, sigma):  # Log SF
-        life = a * T ** n
-        return anp.log((1 + erf(((life - t) / sigma) / 2 ** 0.5)) / 2)
+        life = a * T**n
+        return anp.log((1 + erf(((life - t) / sigma) / 2**0.5)) / 2)
 
     @staticmethod
     def LL(params, t_f, t_rc, T_f, T_rc):  # log likelihood function
@@ -10157,7 +9587,6 @@ class Fit_Normal_Dual_Exponential:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Normal",
             life_stress_model="Dual_Exponential",
@@ -10343,7 +9772,7 @@ class Fit_Normal_Dual_Exponential:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -10351,21 +9780,15 @@ class Fit_Normal_Dual_Exponential:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1, S2):
             return self.c * np.exp(self.a / S1 + self.b / S2)
 
         # use level stress calculations
         if use_level_stress is not None:
-            self.mu_at_use_stress = life_func(
-                S1=use_level_stress[0], S2=use_level_stress[1]
-            )
-            self.distribution_at_use_stress = Normal_Distribution(
-                mu=self.mu_at_use_stress, sigma=self.sigma
-            )
+            self.mu_at_use_stress = life_func(S1=use_level_stress[0], S2=use_level_stress[1])
+            self.distribution_at_use_stress = Normal_Distribution(mu=self.mu_at_use_stress, sigma=self.sigma)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -10374,17 +9797,10 @@ class Fit_Normal_Dual_Exponential:
         stresses_for_groups_str = []
         for stress in stresses_for_groups:
             new_mus.append(life_func(S1=stress[0], S2=stress[1]))
-            stresses_for_groups_str.append(
-                str(
-                    round_and_string(stress[0])
-                    + ", "
-                    + round_and_string(stress[1])
-                )
-            )
+            stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-                    / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
                 )
         common_sigmas = np.ones(len(stresses_for_groups)) * self.sigma
         sigma_differences = []
@@ -10394,15 +9810,11 @@ class Fit_Normal_Dual_Exponential:
                 sigmas_for_change_df[i] = ""  # replace with space
                 sigma_differences.append("")
             else:
-                sigma_diff = (
-                    common_sigmas[i] - sigmas_for_change_df[i]
-                ) / sigmas_for_change_df[i]
+                sigma_diff = (common_sigmas[i] - sigmas_for_change_df[i]) / sigmas_for_change_df[i]
                 if abs(sigma_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if sigma_diff > 0:
-                    sigma_differences.append(
-                        str("+" + str(round(sigma_diff * 100, 2)) + "%")
-                    )
+                    sigma_differences.append(str("+" + str(round(sigma_diff * 100, 2)) + "%"))
                 else:
                     sigma_differences.append(str(str(round(sigma_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = mus_for_change_df
@@ -10441,11 +9853,7 @@ class Fit_Normal_Dual_Exponential:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Normal_Dual_Exponential ("
-                    + str(CI_rounded)
-                    + "% CI):"
-                ),
+                str("Results from Fit_Normal_Dual_Exponential (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -10510,25 +9918,19 @@ class Fit_Normal_Dual_Exponential:
     @staticmethod
     def logf(t, S1, S2, a, b, c, sigma):  # Log PDF
         life = c * anp.exp(a / S1 + b / S2)
-        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log(
-            (sigma * (2 * anp.pi) ** 0.5)
-        )
+        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log((sigma * (2 * anp.pi) ** 0.5))
 
     @staticmethod
     def logR(t, S1, S2, a, b, c, sigma):  # Log SF
         life = c * anp.exp(a / S1 + b / S2)
-        return anp.log((1 + erf(((life - t) / sigma) / 2 ** 0.5)) / 2)
+        return anp.log((1 + erf(((life - t) / sigma) / 2**0.5)) / 2)
 
     @staticmethod
     def LL(params, t_f, t_rc, S1_f, S2_f, S1_rc, S2_rc):  # log likelihood function
         # failure times
-        LL_f = Fit_Normal_Dual_Exponential.logf(
-            t_f, S1_f, S2_f, params[0], params[1], params[2], params[3]
-        ).sum()
+        LL_f = Fit_Normal_Dual_Exponential.logf(t_f, S1_f, S2_f, params[0], params[1], params[2], params[3]).sum()
         # right censored times
-        LL_rc = Fit_Normal_Dual_Exponential.logR(
-            t_rc, S1_rc, S2_rc, params[0], params[1], params[2], params[3]
-        ).sum()
+        LL_rc = Fit_Normal_Dual_Exponential.logR(t_rc, S1_rc, S2_rc, params[0], params[1], params[2], params[3]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -10679,7 +10081,6 @@ class Fit_Normal_Power_Exponential:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Normal",
             life_stress_model="Power_Exponential",
@@ -10865,7 +10266,7 @@ class Fit_Normal_Power_Exponential:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -10873,21 +10274,15 @@ class Fit_Normal_Power_Exponential:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1, S2):
-            return self.c * (S2 ** self.n) * np.exp(self.a / S1)
+            return self.c * (S2**self.n) * np.exp(self.a / S1)
 
         # use level stress calculations
         if use_level_stress is not None:
-            self.mu_at_use_stress = life_func(
-                S1=use_level_stress[0], S2=use_level_stress[1]
-            )
-            self.distribution_at_use_stress = Normal_Distribution(
-                mu=self.mu_at_use_stress, sigma=self.sigma
-            )
+            self.mu_at_use_stress = life_func(S1=use_level_stress[0], S2=use_level_stress[1])
+            self.distribution_at_use_stress = Normal_Distribution(mu=self.mu_at_use_stress, sigma=self.sigma)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -10896,17 +10291,10 @@ class Fit_Normal_Power_Exponential:
         AF = []
         for stress in stresses_for_groups:
             new_mus.append(life_func(S1=stress[0], S2=stress[1]))
-            stresses_for_groups_str.append(
-                str(
-                    round_and_string(stress[0])
-                    + ", "
-                    + round_and_string(stress[1])
-                )
-            )
+            stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-                    / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
                 )
         common_sigmas = np.ones(len(stresses_for_groups)) * self.sigma
         sigma_differences = []
@@ -10916,15 +10304,11 @@ class Fit_Normal_Power_Exponential:
                 sigmas_for_change_df[i] = ""  # replace with space
                 sigma_differences.append("")
             else:
-                sigma_diff = (
-                    common_sigmas[i] - sigmas_for_change_df[i]
-                ) / sigmas_for_change_df[i]
+                sigma_diff = (common_sigmas[i] - sigmas_for_change_df[i]) / sigmas_for_change_df[i]
                 if abs(sigma_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if sigma_diff > 0:
-                    sigma_differences.append(
-                        str("+" + str(round(sigma_diff * 100, 2)) + "%")
-                    )
+                    sigma_differences.append(str("+" + str(round(sigma_diff * 100, 2)) + "%"))
                 else:
                     sigma_differences.append(str(str(round(sigma_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = mus_for_change_df
@@ -10963,11 +10347,7 @@ class Fit_Normal_Power_Exponential:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Normal_Power_Exponential ("
-                    + str(CI_rounded)
-                    + "% CI):"
-                ),
+                str("Results from Fit_Normal_Power_Exponential (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -11031,26 +10411,20 @@ class Fit_Normal_Power_Exponential:
 
     @staticmethod
     def logf(t, S1, S2, a, c, n, sigma):  # Log PDF
-        life = c * S2 ** n * anp.exp(a / S1)
-        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log(
-            (sigma * (2 * anp.pi) ** 0.5)
-        )
+        life = c * S2**n * anp.exp(a / S1)
+        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log((sigma * (2 * anp.pi) ** 0.5))
 
     @staticmethod
     def logR(t, S1, S2, a, c, n, sigma):  # Log SF
-        life = c * S2 ** n * anp.exp(a / S1)
-        return anp.log((1 + erf(((life - t) / sigma) / 2 ** 0.5)) / 2)
+        life = c * S2**n * anp.exp(a / S1)
+        return anp.log((1 + erf(((life - t) / sigma) / 2**0.5)) / 2)
 
     @staticmethod
     def LL(params, t_f, t_rc, S1_f, S2_f, S1_rc, S2_rc):  # log likelihood function
         # failure times
-        LL_f = Fit_Normal_Power_Exponential.logf(
-            t_f, S1_f, S2_f, params[0], params[1], params[2], params[3]
-        ).sum()
+        LL_f = Fit_Normal_Power_Exponential.logf(t_f, S1_f, S2_f, params[0], params[1], params[2], params[3]).sum()
         # right censored times
-        LL_rc = Fit_Normal_Power_Exponential.logR(
-            t_rc, S1_rc, S2_rc, params[0], params[1], params[2], params[3]
-        ).sum()
+        LL_rc = Fit_Normal_Power_Exponential.logR(t_rc, S1_rc, S2_rc, params[0], params[1], params[2], params[3]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -11198,7 +10572,6 @@ class Fit_Normal_Dual_Power:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Normal",
             life_stress_model="Dual_Power",
@@ -11384,7 +10757,7 @@ class Fit_Normal_Dual_Power:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -11392,21 +10765,15 @@ class Fit_Normal_Dual_Power:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1, S2):
-            return self.c * (S1 ** self.m) * (S2 ** self.n)
+            return self.c * (S1**self.m) * (S2**self.n)
 
         # use level stress calculations
         if use_level_stress is not None:
-            self.mu_at_use_stress = life_func(
-                S1=use_level_stress[0], S2=use_level_stress[1]
-            )
-            self.distribution_at_use_stress = Normal_Distribution(
-                mu=self.mu_at_use_stress, sigma=self.sigma
-            )
+            self.mu_at_use_stress = life_func(S1=use_level_stress[0], S2=use_level_stress[1])
+            self.distribution_at_use_stress = Normal_Distribution(mu=self.mu_at_use_stress, sigma=self.sigma)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -11415,17 +10782,10 @@ class Fit_Normal_Dual_Power:
         AF = []
         for stress in stresses_for_groups:
             new_mus.append(life_func(S1=stress[0], S2=stress[1]))
-            stresses_for_groups_str.append(
-                str(
-                    round_and_string(stress[0])
-                    + ", "
-                    + round_and_string(stress[1])
-                )
-            )
+            stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-                    / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
                 )
         common_sigmas = np.ones(len(stresses_for_groups)) * self.sigma
         sigma_differences = []
@@ -11435,15 +10795,11 @@ class Fit_Normal_Dual_Power:
                 sigmas_for_change_df[i] = ""  # replace with space
                 sigma_differences.append("")
             else:
-                sigma_diff = (
-                    common_sigmas[i] - sigmas_for_change_df[i]
-                ) / sigmas_for_change_df[i]
+                sigma_diff = (common_sigmas[i] - sigmas_for_change_df[i]) / sigmas_for_change_df[i]
                 if abs(sigma_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if sigma_diff > 0:
-                    sigma_differences.append(
-                        str("+" + str(round(sigma_diff * 100, 2)) + "%")
-                    )
+                    sigma_differences.append(str("+" + str(round(sigma_diff * 100, 2)) + "%"))
                 else:
                     sigma_differences.append(str(str(round(sigma_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = mus_for_change_df
@@ -11482,9 +10838,7 @@ class Fit_Normal_Dual_Power:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Normal_Dual_Power (" + str(CI_rounded) + "% CI):"
-                ),
+                str("Results from Fit_Normal_Dual_Power (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -11548,15 +10902,13 @@ class Fit_Normal_Dual_Power:
 
     @staticmethod
     def logf(t, S1, S2, c, m, n, sigma):  # Log PDF
-        life = c * (S1 ** m) * (S2 ** n)
-        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log(
-            (sigma * (2 * anp.pi) ** 0.5)
-        )
+        life = c * (S1**m) * (S2**n)
+        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log((sigma * (2 * anp.pi) ** 0.5))
 
     @staticmethod
     def logR(t, S1, S2, c, m, n, sigma):  # Log SF
-        life = c * (S1 ** m) * (S2 ** n)
-        return anp.log((1 + erf(((life - t) / sigma) / 2 ** 0.5)) / 2)
+        life = c * (S1**m) * (S2**n)
+        return anp.log((1 + erf(((life - t) / sigma) / 2**0.5)) / 2)
 
     @staticmethod
     def LL(params, t_f, t_rc, S1_f, S2_f, S1_rc, S2_rc):  # log likelihood function
@@ -11688,7 +11040,6 @@ class Fit_Exponential_Exponential:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Exponential",
             life_stress_model="Exponential",
@@ -11716,9 +11067,7 @@ class Fit_Exponential_Exponential:
         self.__stresses_for_groups = inputs.stresses_for_groups
 
         # obtain the initial guess for the life stress model and the life distribution
-        life_stress_guess = ALT_least_squares(
-            model="Exponential", failures=failures, stress_1_array=failure_stress
-        )
+        life_stress_guess = ALT_least_squares(model="Exponential", failures=failures, stress_1_array=failure_stress)
 
         # obtain the common shape parameter
         betas = []  # weibull betas
@@ -11826,13 +11175,11 @@ class Fit_Exponential_Exponential:
         # goodness of fit dataframe
         n = len(failures) + len(right_censored)
         k = len(guess)
-        LL2 = 2 * LL_func(
-            params, failures, right_censored, failure_stress, right_censored_stress
-        )
+        LL2 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -11840,9 +11187,7 @@ class Fit_Exponential_Exponential:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1):
             return self.b * np.exp(self.a / S1)
@@ -11850,9 +11195,7 @@ class Fit_Exponential_Exponential:
         # use level stress calculations
         if use_level_stress is not None:
             self.Lambda_at_use_stress = 1 / life_func(S1=use_level_stress)
-            self.distribution_at_use_stress = Exponential_Distribution(
-                Lambda=self.Lambda_at_use_stress
-            )
+            self.distribution_at_use_stress = Exponential_Distribution(Lambda=self.Lambda_at_use_stress)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -11870,15 +11213,11 @@ class Fit_Exponential_Exponential:
                 betas_for_change_df[i] = ""  # replace with space
                 beta_differences.append("")
             else:
-                beta_diff = (
-                    common_betas[i] - betas_for_change_df[i]
-                ) / betas_for_change_df[i]
+                beta_diff = (common_betas[i] - betas_for_change_df[i]) / betas_for_change_df[i]
                 if abs(beta_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if beta_diff > 0:
-                    beta_differences.append(
-                        str("+" + str(round(beta_diff * 100, 2)) + "%")
-                    )
+                    beta_differences.append(str("+" + str(round(beta_diff * 100, 2)) + "%"))
                 else:
                     beta_differences.append(str(str(round(beta_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = alphas_for_change_df
@@ -11917,11 +11256,7 @@ class Fit_Exponential_Exponential:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Exponential_Exponential ("
-                    + str(CI_rounded)
-                    + "% CI):"
-                ),
+                str("Results from Fit_Exponential_Exponential (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -11947,7 +11282,7 @@ class Fit_Exponential_Exponential:
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
             print(
                 "If this model is being used for the Arrhenius Model, a = Ea/K_B ==> Ea =",
-                round(self.a * 8.617333262145 * 10 ** -5, 5),
+                round(self.a * 8.617333262145 * 10**-5, 5),
                 "eV\n",
             )
 
@@ -12121,7 +11456,6 @@ class Fit_Exponential_Eyring:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Exponential",
             life_stress_model="Eyring",
@@ -12149,9 +11483,7 @@ class Fit_Exponential_Eyring:
         self.__stresses_for_groups = inputs.stresses_for_groups
 
         # obtain the initial guess for the life stress model and the life distribution
-        life_stress_guess = ALT_least_squares(
-            model="Eyring", failures=failures, stress_1_array=failure_stress
-        )
+        life_stress_guess = ALT_least_squares(model="Eyring", failures=failures, stress_1_array=failure_stress)
 
         # obtain the common shape parameter
         betas = []
@@ -12259,13 +11591,11 @@ class Fit_Exponential_Eyring:
         # goodness of fit dataframe
         n = len(failures) + len(right_censored)
         k = len(guess)
-        LL2 = 2 * LL_func(
-            params, failures, right_censored, failure_stress, right_censored_stress
-        )
+        LL2 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -12273,9 +11603,7 @@ class Fit_Exponential_Eyring:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1):
             return 1 / S1 * np.exp(-(self.c - self.a / S1))
@@ -12283,9 +11611,7 @@ class Fit_Exponential_Eyring:
         # use level stress calculations
         if use_level_stress is not None:
             self.Lambda_at_use_stress = 1 / life_func(S1=use_level_stress)
-            self.distribution_at_use_stress = Exponential_Distribution(
-                Lambda=self.Lambda_at_use_stress
-            )
+            self.distribution_at_use_stress = Exponential_Distribution(Lambda=self.Lambda_at_use_stress)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -12303,15 +11629,11 @@ class Fit_Exponential_Eyring:
                 betas_for_change_df[i] = ""  # replace with space
                 beta_differences.append("")
             else:
-                beta_diff = (
-                    common_betas[i] - betas_for_change_df[i]
-                ) / betas_for_change_df[i]
+                beta_diff = (common_betas[i] - betas_for_change_df[i]) / betas_for_change_df[i]
                 if abs(beta_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if beta_diff > 0:
-                    beta_differences.append(
-                        str("+" + str(round(beta_diff * 100, 2)) + "%")
-                    )
+                    beta_differences.append(str("+" + str(round(beta_diff * 100, 2)) + "%"))
                 else:
                     beta_differences.append(str(str(round(beta_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = alphas_for_change_df
@@ -12350,9 +11672,7 @@ class Fit_Exponential_Eyring:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Exponential_Eyring (" + str(CI_rounded) + "% CI):"
-                ),
+                str("Results from Fit_Exponential_Eyring (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -12546,7 +11866,6 @@ class Fit_Exponential_Power:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Exponential",
             life_stress_model="Power",
@@ -12574,9 +11893,7 @@ class Fit_Exponential_Power:
         self.__stresses_for_groups = inputs.stresses_for_groups
 
         # obtain the initial guess for the life stress model and the life distribution
-        life_stress_guess = ALT_least_squares(
-            model="Power", failures=failures, stress_1_array=failure_stress
-        )
+        life_stress_guess = ALT_least_squares(model="Power", failures=failures, stress_1_array=failure_stress)
 
         # obtain the common shape parameter
         betas = []
@@ -12684,13 +12001,11 @@ class Fit_Exponential_Power:
         # goodness of fit dataframe
         n = len(failures) + len(right_censored)
         k = len(guess)
-        LL2 = 2 * LL_func(
-            params, failures, right_censored, failure_stress, right_censored_stress
-        )
+        LL2 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -12698,19 +12013,15 @@ class Fit_Exponential_Power:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1):
-            return self.a * S1 ** self.n
+            return self.a * S1**self.n
 
         # use level stress calculations
         if use_level_stress is not None:
             self.Lambda_at_use_stress = 1 / life_func(S1=use_level_stress)
-            self.distribution_at_use_stress = Exponential_Distribution(
-                Lambda=self.Lambda_at_use_stress
-            )
+            self.distribution_at_use_stress = Exponential_Distribution(Lambda=self.Lambda_at_use_stress)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -12728,15 +12039,11 @@ class Fit_Exponential_Power:
                 betas_for_change_df[i] = ""  # replace with space
                 beta_differences.append("")
             else:
-                beta_diff = (
-                    common_betas[i] - betas_for_change_df[i]
-                ) / betas_for_change_df[i]
+                beta_diff = (common_betas[i] - betas_for_change_df[i]) / betas_for_change_df[i]
                 if abs(beta_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if beta_diff > 0:
-                    beta_differences.append(
-                        str("+" + str(round(beta_diff * 100, 2)) + "%")
-                    )
+                    beta_differences.append(str("+" + str(round(beta_diff * 100, 2)) + "%"))
                 else:
                     beta_differences.append(str(str(round(beta_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = alphas_for_change_df
@@ -12775,9 +12082,7 @@ class Fit_Exponential_Power:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Exponential_Power (" + str(CI_rounded) + "% CI):"
-                ),
+                str("Results from Fit_Exponential_Power (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -12839,12 +12144,12 @@ class Fit_Exponential_Power:
 
     @staticmethod
     def logf(t, T, a, n):  # Log PDF
-        life = a * T ** n
+        life = a * T**n
         return anp.log(1 / life) - 1 / life * t
 
     @staticmethod
     def logR(t, T, a, n):  # Log SF
-        life = a * T ** n
+        life = a * T**n
         return -(1 / life * t)
 
     @staticmethod
@@ -12994,7 +12299,6 @@ class Fit_Exponential_Dual_Exponential:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Exponential",
             life_stress_model="Dual_Exponential",
@@ -13167,7 +12471,7 @@ class Fit_Exponential_Dual_Exponential:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -13175,21 +12479,15 @@ class Fit_Exponential_Dual_Exponential:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1, S2):
             return self.c * np.exp(self.a / S1 + self.b / S2)
 
         # use level stress calculations
         if use_level_stress is not None:
-            self.Lambda_at_use_stress = 1 / life_func(
-                S1=use_level_stress[0], S2=use_level_stress[1]
-            )
-            self.distribution_at_use_stress = Exponential_Distribution(
-                Lambda=self.Lambda_at_use_stress
-            )
+            self.Lambda_at_use_stress = 1 / life_func(S1=use_level_stress[0], S2=use_level_stress[1])
+            self.distribution_at_use_stress = Exponential_Distribution(Lambda=self.Lambda_at_use_stress)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -13198,17 +12496,10 @@ class Fit_Exponential_Dual_Exponential:
         stresses_for_groups_str = []
         for stress in stresses_for_groups:
             new_alphas.append(life_func(S1=stress[0], S2=stress[1]))
-            stresses_for_groups_str.append(
-                str(
-                    round_and_string(stress[0])
-                    + ", "
-                    + round_and_string(stress[1])
-                )
-            )
+            stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-                    / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
                 )
         common_betas = np.ones(len(stresses_for_groups))
         beta_differences = []
@@ -13218,15 +12509,11 @@ class Fit_Exponential_Dual_Exponential:
                 betas_for_change_df[i] = ""  # replace with space
                 beta_differences.append("")
             else:
-                beta_diff = (
-                    common_betas[i] - betas_for_change_df[i]
-                ) / betas_for_change_df[i]
+                beta_diff = (common_betas[i] - betas_for_change_df[i]) / betas_for_change_df[i]
                 if abs(beta_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if beta_diff > 0:
-                    beta_differences.append(
-                        str("+" + str(round(beta_diff * 100, 2)) + "%")
-                    )
+                    beta_differences.append(str("+" + str(round(beta_diff * 100, 2)) + "%"))
                 else:
                     beta_differences.append(str(str(round(beta_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = alphas_for_change_df
@@ -13265,11 +12552,7 @@ class Fit_Exponential_Dual_Exponential:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Exponential_Dual_Exponential ("
-                    + str(CI_rounded)
-                    + "% CI):"
-                ),
+                str("Results from Fit_Exponential_Dual_Exponential (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -13344,13 +12627,9 @@ class Fit_Exponential_Dual_Exponential:
     @staticmethod
     def LL(params, t_f, t_rc, S1_f, S2_f, S1_rc, S2_rc):  # log likelihood function
         # failure times
-        LL_f = Fit_Exponential_Dual_Exponential.logf(
-            t_f, S1_f, S2_f, params[0], params[1], params[2]
-        ).sum()
+        LL_f = Fit_Exponential_Dual_Exponential.logf(t_f, S1_f, S2_f, params[0], params[1], params[2]).sum()
         # right censored times
-        LL_rc = Fit_Exponential_Dual_Exponential.logR(
-            t_rc, S1_rc, S2_rc, params[0], params[1], params[2]
-        ).sum()
+        LL_rc = Fit_Exponential_Dual_Exponential.logR(t_rc, S1_rc, S2_rc, params[0], params[1], params[2]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -13493,7 +12772,6 @@ class Fit_Exponential_Power_Exponential:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Exponential",
             life_stress_model="Power_Exponential",
@@ -13666,7 +12944,7 @@ class Fit_Exponential_Power_Exponential:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -13674,21 +12952,15 @@ class Fit_Exponential_Power_Exponential:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1, S2):
-            return self.c * (S2 ** self.n) * np.exp(self.a / S1)
+            return self.c * (S2**self.n) * np.exp(self.a / S1)
 
         # use level stress calculations
         if use_level_stress is not None:
-            self.Lambda_at_use_stress = 1 / life_func(
-                S1=use_level_stress[0], S2=use_level_stress[1]
-            )
-            self.distribution_at_use_stress = Exponential_Distribution(
-                Lambda=self.Lambda_at_use_stress
-            )
+            self.Lambda_at_use_stress = 1 / life_func(S1=use_level_stress[0], S2=use_level_stress[1])
+            self.distribution_at_use_stress = Exponential_Distribution(Lambda=self.Lambda_at_use_stress)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -13697,17 +12969,10 @@ class Fit_Exponential_Power_Exponential:
         AF = []
         for stress in stresses_for_groups:
             new_alphas.append(life_func(S1=stress[0], S2=stress[1]))
-            stresses_for_groups_str.append(
-                str(
-                    round_and_string(stress[0])
-                    + ", "
-                    + round_and_string(stress[1])
-                )
-            )
+            stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-                    / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
                 )
         common_betas = np.ones(len(stresses_for_groups))
         beta_differences = []
@@ -13717,15 +12982,11 @@ class Fit_Exponential_Power_Exponential:
                 betas_for_change_df[i] = ""  # replace with space
                 beta_differences.append("")
             else:
-                beta_diff = (
-                    common_betas[i] - betas_for_change_df[i]
-                ) / betas_for_change_df[i]
+                beta_diff = (common_betas[i] - betas_for_change_df[i]) / betas_for_change_df[i]
                 if abs(beta_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if beta_diff > 0:
-                    beta_differences.append(
-                        str("+" + str(round(beta_diff * 100, 2)) + "%")
-                    )
+                    beta_differences.append(str("+" + str(round(beta_diff * 100, 2)) + "%"))
                 else:
                     beta_differences.append(str(str(round(beta_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = alphas_for_change_df
@@ -13764,11 +13025,7 @@ class Fit_Exponential_Power_Exponential:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Exponential_Power_Exponential ("
-                    + str(CI_rounded)
-                    + "% CI):"
-                ),
+                str("Results from Fit_Exponential_Power_Exponential (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -13832,24 +13089,20 @@ class Fit_Exponential_Power_Exponential:
 
     @staticmethod
     def logf(t, S1, S2, a, c, n):  # Log PDF
-        life = c * S2 ** n * anp.exp(a / S1)
+        life = c * S2**n * anp.exp(a / S1)
         return anp.log(1 / life) - 1 / life * t
 
     @staticmethod
     def logR(t, S1, S2, a, c, n):  # Log SF
-        life = c * S2 ** n * anp.exp(a / S1)
+        life = c * S2**n * anp.exp(a / S1)
         return -(1 / life * t)
 
     @staticmethod
     def LL(params, t_f, t_rc, S1_f, S2_f, S1_rc, S2_rc):  # log likelihood function
         # failure times
-        LL_f = Fit_Exponential_Power_Exponential.logf(
-            t_f, S1_f, S2_f, params[0], params[1], params[2]
-        ).sum()
+        LL_f = Fit_Exponential_Power_Exponential.logf(t_f, S1_f, S2_f, params[0], params[1], params[2]).sum()
         # right censored times
-        LL_rc = Fit_Exponential_Power_Exponential.logR(
-            t_rc, S1_rc, S2_rc, params[0], params[1], params[2]
-        ).sum()
+        LL_rc = Fit_Exponential_Power_Exponential.logR(t_rc, S1_rc, S2_rc, params[0], params[1], params[2]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -13989,7 +13242,6 @@ class Fit_Exponential_Dual_Power:
         show_life_stress_plot=True,
         print_results=True,
     ):
-
         inputs = ALT_fitters_input_checking(
             dist="Exponential",
             life_stress_model="Dual_Power",
@@ -14162,7 +13414,7 @@ class Fit_Exponential_Dual_Power:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -14170,21 +13422,15 @@ class Fit_Exponential_Dual_Power:
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            data=GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
         def life_func(S1, S2):
-            return self.c * (S1 ** self.m) * (S2 ** self.n)
+            return self.c * (S1**self.m) * (S2**self.n)
 
         # use level stress calculations
         if use_level_stress is not None:
-            self.Lambda_at_use_stress = 1 / life_func(
-                S1=use_level_stress[0], S2=use_level_stress[1]
-            )
-            self.distribution_at_use_stress = Exponential_Distribution(
-                Lambda=self.Lambda_at_use_stress
-            )
+            self.Lambda_at_use_stress = 1 / life_func(S1=use_level_stress[0], S2=use_level_stress[1])
+            self.distribution_at_use_stress = Exponential_Distribution(Lambda=self.Lambda_at_use_stress)
             self.mean_life = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
@@ -14193,17 +13439,10 @@ class Fit_Exponential_Dual_Power:
         AF = []
         for stress in stresses_for_groups:
             new_alphas.append(life_func(S1=stress[0], S2=stress[1]))
-            stresses_for_groups_str.append(
-                str(
-                    round_and_string(stress[0])
-                    + ", "
-                    + round_and_string(stress[1])
-                )
-            )
+            stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-                    / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
                 )
         common_betas = np.ones(len(stresses_for_groups))
         beta_differences = []
@@ -14213,15 +13452,11 @@ class Fit_Exponential_Dual_Power:
                 betas_for_change_df[i] = ""  # replace with space
                 beta_differences.append("")
             else:
-                beta_diff = (
-                    common_betas[i] - betas_for_change_df[i]
-                ) / betas_for_change_df[i]
+                beta_diff = (common_betas[i] - betas_for_change_df[i]) / betas_for_change_df[i]
                 if abs(beta_diff) > shape_change_threshold:
                     shape_change_exceeded = True
                 if beta_diff > 0:
-                    beta_differences.append(
-                        str("+" + str(round(beta_diff * 100, 2)) + "%")
-                    )
+                    beta_differences.append(str("+" + str(round(beta_diff * 100, 2)) + "%"))
                 else:
                     beta_differences.append(str(str(round(beta_diff * 100, 2)) + "%"))
         self.__scale_for_change_df = alphas_for_change_df
@@ -14260,11 +13495,7 @@ class Fit_Exponential_Dual_Power:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Exponential_Dual_Power ("
-                    + str(CI_rounded)
-                    + "% CI):"
-                ),
+                str("Results from Fit_Exponential_Dual_Power (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -14328,22 +13559,18 @@ class Fit_Exponential_Dual_Power:
 
     @staticmethod
     def logf(t, S1, S2, c, m, n):  # Log PDF
-        life = c * (S1 ** m) * (S2 ** n)
+        life = c * (S1**m) * (S2**n)
         return anp.log(1 / life) - 1 / life * t
 
     @staticmethod
     def logR(t, S1, S2, c, m, n):  # Log SF
-        life = c * (S1 ** m) * (S2 ** n)
+        life = c * (S1**m) * (S2**n)
         return -(1 / life * t)
 
     @staticmethod
     def LL(params, t_f, t_rc, S1_f, S2_f, S1_rc, S2_rc):  # log likelihood function
         # failure times
-        LL_f = Fit_Exponential_Dual_Power.logf(
-            t_f, S1_f, S2_f, params[0], params[1], params[2]
-        ).sum()
+        LL_f = Fit_Exponential_Dual_Power.logf(t_f, S1_f, S2_f, params[0], params[1], params[2]).sum()
         # right censored times
-        LL_rc = Fit_Exponential_Dual_Power.logR(
-            t_rc, S1_rc, S2_rc, params[0], params[1], params[2]
-        ).sum()
+        LL_rc = Fit_Exponential_Dual_Power.logR(t_rc, S1_rc, S2_rc, params[0], params[1], params[2]).sum()
         return -(LL_f + LL_rc)

@@ -31,21 +31,22 @@ values = dist.random_samples(number_of_samples=10000)
     >> random values will be generated from the distribution
 """
 
-import scipy.stats as ss
-import numpy as np
-from scipy import integrate
 import matplotlib.pyplot as plt
+import numpy as np
+import scipy.stats as ss
+from scipy import integrate
+
 from reliability.Utils import (
-    round_and_string,
+    colorprint,
+    distribution_confidence_intervals,
+    distributions_input_checking,
+    extract_CI,
+    generate_X_array,
     get_axes_limits,
     restore_axes_limits,
-    generate_X_array,
-    zeroise_below_gamma,
-    distribution_confidence_intervals,
-    colorprint,
-    extract_CI,
-    distributions_input_checking,
+    round_and_string,
     unpack_single_arrays,
+    zeroise_below_gamma,
 )
 
 dec = 4  # number of decimals to use when rounding descriptive statistics and parameter titles
@@ -100,28 +101,21 @@ class Weibull_Distribution:
     def __init__(self, alpha=None, beta=None, gamma=0, **kwargs):
         self.name = "Weibull"
         if alpha is None or beta is None:
-            raise ValueError(
-                "Parameters alpha and beta must be specified. Eg. Weibull_Distribution(alpha=5,beta=2)"
-            )
+            raise ValueError("Parameters alpha and beta must be specified. Eg. Weibull_Distribution(alpha=5,beta=2)")
         self.alpha = float(alpha)
         self.beta = float(beta)
         self.gamma = float(gamma)
         self.parameters = np.array([self.alpha, self.beta, self.gamma])
-        mean, var, skew, kurt = ss.weibull_min.stats(
-            self.beta, scale=self.alpha, loc=self.gamma, moments="mvsk"
-        )
+        mean, var, skew, kurt = ss.weibull_min.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="mvsk")
         self.mean = float(mean)
         self.variance = float(var)
-        self.standard_deviation = var ** 0.5
+        self.standard_deviation = var**0.5
         self.skewness = float(skew)
         self.kurtosis = kurt + 3
         self.excess_kurtosis = float(kurt)
         self.median = ss.weibull_min.median(self.beta, scale=self.alpha, loc=self.gamma)
         if self.beta >= 1:
-            self.mode = (
-                self.alpha * ((self.beta - 1) / self.beta) ** (1 / self.beta)
-                + self.gamma
-            )
+            self.mode = self.alpha * ((self.beta - 1) / self.beta) ** (1 / self.beta) + self.gamma
         else:
             self.mode = self.gamma
         if self.gamma != 0:
@@ -144,12 +138,7 @@ class Weibull_Distribution:
             )
             self.name2 = "Weibull_3P"
         else:
-            self.param_title = str(
-                "α="
-                + round_and_string(self.alpha, dec)
-                + ",β="
-                + round_and_string(self.beta, dec)
-            )
+            self.param_title = str("α=" + round_and_string(self.alpha, dec) + ",β=" + round_and_string(self.beta, dec))
             self.param_title_long = str(
                 "Weibull Distribution (α="
                 + round_and_string(self.alpha, dec)
@@ -195,9 +184,7 @@ class Weibull_Distribution:
         self._pdf0 = ss.weibull_min.pdf(
             0, self.beta, scale=self.alpha, loc=0
         )  # the pdf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
-        self._hf0 = ss.weibull_min.pdf(
-            0, self.beta, scale=self.alpha, loc=0
-        ) / ss.weibull_min.sf(
+        self._hf0 = ss.weibull_min.pdf(0, self.beta, scale=self.alpha, loc=0) / ss.weibull_min.sf(
             0, self.beta, scale=self.alpha, loc=0
         )  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
@@ -240,9 +227,7 @@ class Weibull_Distribution:
         pdf = ss.weibull_min.pdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         cdf = ss.weibull_min.cdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         sf = ss.weibull_min.sf(X, self.beta, scale=self.alpha, loc=self.gamma)
-        hf = (self.beta / self.alpha) * ((X - self.gamma) / self.alpha) ** (
-            self.beta - 1
-        )
+        hf = (self.beta / self.alpha) * ((X - self.gamma) / self.alpha) ** (self.beta - 1)
         hf = zeroise_below_gamma(X=X, Y=hf, gamma=self.gamma)
         chf = ((X - self.gamma) / self.alpha) ** self.beta
         chf = zeroise_below_gamma(X=X, Y=chf, gamma=self.gamma)
@@ -331,17 +316,10 @@ class Weibull_Distribution:
         text_mode = str("Mode = " + round_and_string(self.mode, dec))
         text_b5 = str("$5^{th}$ quantile = " + round_and_string(self.b5, dec))
         text_b95 = str("$95^{th}$ quantile = " + round_and_string(self.b95, dec))
-        text_std = str(
-            "Standard deviation = " + round_and_string(self.standard_deviation,dec))
-        text_var = str(
-            "Variance = " + round_and_string(self.variance, dec)
-        )
-        text_skew = str(
-            "Skewness = " + round_and_string(self.skewness, dec)
-        )
-        text_ex_kurt = str(
-            "Excess kurtosis = "
-            + round_and_string(self.excess_kurtosis, dec))
+        text_std = str("Standard deviation = " + round_and_string(self.standard_deviation, dec))
+        text_var = str("Variance = " + round_and_string(self.variance, dec))
+        text_skew = str("Skewness = " + round_and_string(self.skewness, dec))
+        text_ex_kurt = str("Excess kurtosis = " + round_and_string(self.excess_kurtosis, dec))
         plt.text(0, 9, text_mean)
         plt.text(0, 8, text_median)
         plt.text(0, 7, text_mode)
@@ -394,18 +372,13 @@ class Weibull_Distribution:
         pdf = ss.weibull_min.pdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         pdf = unpack_single_arrays(pdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, pdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Probability density")
-            text_title = str(
-                "Weibull Distribution\n"
-                + " Probability Density Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Weibull Distribution\n" + " Probability Density Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.85)
 
@@ -433,7 +406,7 @@ class Weibull_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the CDF (cumulative distribution function)
@@ -502,25 +475,18 @@ class Weibull_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         cdf = ss.weibull_min.cdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         cdf = unpack_single_arrays(cdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             p = plt.plot(X, cdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction failing")
-            text_title = str(
-                "Weibull Distribution\n"
-                + " Cumulative Distribution Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Weibull Distribution\n" + " Cumulative Distribution Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.85)
 
@@ -545,16 +511,12 @@ class Weibull_Distribution:
                 color=p[0].get_color(),
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="CDF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="CDF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.quantile(CI_y), upper_CI
             elif CI_type == "reliability":
-                cdf_point = ss.weibull_min.cdf(
-                    CI_x, self.beta, scale=self.alpha, loc=self.gamma
-                )
+                cdf_point = ss.weibull_min.cdf(CI_x, self.beta, scale=self.alpha, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(cdf_point), upper_CI
         else:
             return cdf
@@ -570,7 +532,7 @@ class Weibull_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the SF (survival function)
@@ -639,25 +601,18 @@ class Weibull_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         sf = ss.weibull_min.sf(X, self.beta, scale=self.alpha, loc=self.gamma)
         sf = unpack_single_arrays(sf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             p = plt.plot(X, sf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction surviving")
-            text_title = str(
-                "Weibull Distribution\n"
-                + " Survival Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Weibull Distribution\n" + " Survival Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.85)
 
@@ -682,16 +637,12 @@ class Weibull_Distribution:
                 color=p[0].get_color(),
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="SF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="SF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(CI_y), upper_CI
             elif CI_type == "reliability":
-                sf_point = ss.weibull_min.sf(
-                    CI_x, self.beta, scale=self.alpha, loc=self.gamma
-                )
+                sf_point = ss.weibull_min.sf(CI_x, self.beta, scale=self.alpha, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(sf_point), upper_CI
         else:
             return sf
@@ -733,9 +684,7 @@ class Weibull_Distribution:
             self, "HF", xvals, xmin, xmax, show_plot
         )  # lgtm [py/mismatched-multiple-assignment]
 
-        hf = (self.beta / self.alpha) * ((X - self.gamma) / self.alpha) ** (
-            self.beta - 1
-        )
+        hf = (self.beta / self.alpha) * ((X - self.gamma) / self.alpha) ** (self.beta - 1)
         hf = zeroise_below_gamma(X=X, Y=hf, gamma=self.gamma)
         hf = unpack_single_arrays(hf)
         self._hf = hf  # required by the CI plotting part
@@ -747,9 +696,7 @@ class Weibull_Distribution:
             plt.plot(X, hf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Hazard")
-            text_title = str(
-                "Weibull Distribution\n" + " Hazard Function " + "\n" + self.param_title
-            )
+            text_title = str("Weibull Distribution\n" + " Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.85)
 
@@ -777,7 +724,7 @@ class Weibull_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the CHF (cumulative hazard function)
@@ -846,9 +793,7 @@ class Weibull_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         chf = ((X - self.gamma) / self.alpha) ** self.beta
         chf = zeroise_below_gamma(X=X, Y=chf, gamma=self.gamma)
@@ -856,18 +801,13 @@ class Weibull_Distribution:
         self._chf = chf  # required by the CI plotting part
         self._X = X
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             p = plt.plot(X, chf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Cumulative hazard")
-            text_title = str(
-                "Weibull Distribution\n"
-                + " Cumulative Hazard Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Weibull Distribution\n" + " Cumulative Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.85)
 
@@ -892,9 +832,7 @@ class Weibull_Distribution:
                 color=p[0].get_color(),
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="CHF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="CHF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(np.exp(-CI_y)), upper_CI
@@ -973,7 +911,10 @@ class Weibull_Distribution:
         MRL : float
             The mean residual life
         """
-        R = lambda x: ss.weibull_min.sf(x, self.beta, scale=self.alpha, loc=self.gamma)
+
+        def R(x):
+            return ss.weibull_min.sf(x, self.beta, scale=self.alpha, loc=self.gamma)
+
         integral_R, error = integrate.quad(R, t, np.inf)
         MRL = integral_R / R(t)
         return MRL
@@ -1047,13 +988,11 @@ class Weibull_Distribution:
         -----
         This is the same as rvs in scipy.stats
         """
-        if type(number_of_samples) != int or number_of_samples < 1:
+        if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             np.random.seed(seed)
-        RVS = ss.weibull_min.rvs(
-            self.beta, scale=self.alpha, loc=self.gamma, size=number_of_samples
-        )
+        RVS = ss.weibull_min.rvs(self.beta, scale=self.alpha, loc=self.gamma, size=number_of_samples)
         return RVS
 
 
@@ -1102,32 +1041,21 @@ class Normal_Distribution:
         self.name = "Normal"
         self.name2 = "Normal_2P"
         if mu is None or sigma is None:
-            raise ValueError(
-                "Parameters mu and sigma must be specified. Eg. Normal_Distribution(mu=5,sigma=2)"
-            )
+            raise ValueError("Parameters mu and sigma must be specified. Eg. Normal_Distribution(mu=5,sigma=2)")
         self.mu = float(mu)
         self.sigma = float(sigma)
         self.parameters = np.array([self.mu, self.sigma])
         self.mean = mu
-        self.variance = sigma ** 2
+        self.variance = sigma**2
         self.standard_deviation = sigma
         self.skewness = 0
         self.kurtosis = 3
         self.excess_kurtosis = 0
         self.median = mu
         self.mode = mu
-        self.param_title = str(
-            "μ="
-            + round_and_string(self.mu, dec)
-            + ",σ="
-            + round_and_string(self.sigma, dec)
-        )
+        self.param_title = str("μ=" + round_and_string(self.mu, dec) + ",σ=" + round_and_string(self.sigma, dec))
         self.param_title_long = str(
-            "Normal Distribution (μ="
-            + round_and_string(self.mu, dec)
-            + ",σ="
-            + round_and_string(self.sigma, dec)
-            + ")"
+            "Normal Distribution (μ=" + round_and_string(self.mu, dec) + ",σ=" + round_and_string(self.sigma, dec) + ")"
         )
         self.b5 = ss.norm.ppf(0.05, loc=self.mu, scale=self.sigma)
         self.b95 = ss.norm.ppf(0.95, loc=self.mu, scale=self.sigma)
@@ -1194,9 +1122,7 @@ class Normal_Distribution:
         be based on the distribution's parameters. No plotting keywords are
         accepted.
         """
-        X, xvals, xmin, xmax = distributions_input_checking(
-            self, "ALL", xvals, xmin, xmax
-        )
+        X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
 
         pdf = ss.norm.pdf(X, self.mu, self.sigma)
         cdf = ss.norm.cdf(X, self.mu, self.sigma)
@@ -1288,19 +1214,11 @@ class Normal_Distribution:
         text_mode = str("Mode = " + round_and_string(self.mode, dec))
         text_b5 = str("$5^{th}$ quantile = " + round_and_string(self.b5, dec))
         text_b95 = str("$95^{th}$ quantile = " + round_and_string(self.b95, dec))
-        text_std = str(
-            "Standard deviation = " + round_and_string(self.standard_deviation,dec))
+        text_std = str("Standard deviation = " + round_and_string(self.standard_deviation, dec))
 
-        text_var = str(
-            "Variance = " + round_and_string(self.variance, dec)
-        )
-        text_skew = str(
-            "Skewness = " + round_and_string(self.skewness, dec)
-        )
-        text_ex_kurt = str(
-            "Excess kurtosis = "
-            + round_and_string(self.excess_kurtosis, dec)
-        )
+        text_var = str("Variance = " + round_and_string(self.variance, dec))
+        text_skew = str("Skewness = " + round_and_string(self.skewness, dec))
+        text_ex_kurt = str("Excess kurtosis = " + round_and_string(self.excess_kurtosis, dec))
         plt.text(0, 9, text_mean)
         plt.text(0, 8, text_median)
         plt.text(0, 7, text_mode)
@@ -1353,18 +1271,13 @@ class Normal_Distribution:
         pdf = ss.norm.pdf(X, self.mu, self.sigma)
         pdf = unpack_single_arrays(pdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, pdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Probability density")
-            text_title = str(
-                "Normal Distribution\n"
-                + " Probability Density Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Normal Distribution\n" + " Probability Density Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -1392,7 +1305,7 @@ class Normal_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the CDF (cumulative distribution function)
@@ -1460,25 +1373,18 @@ class Normal_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         cdf = ss.norm.cdf(X, self.mu, self.sigma)
         cdf = unpack_single_arrays(cdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             p = plt.plot(X, cdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction failing")
-            text_title = str(
-                "Normal Distribution\n"
-                + " Cumulative Distribution Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Normal Distribution\n" + " Cumulative Distribution Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -1503,9 +1409,7 @@ class Normal_Distribution:
                 xmax=xmax,
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="CDF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="CDF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.quantile(CI_y), upper_CI
@@ -1526,7 +1430,7 @@ class Normal_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the SF (survival function)
@@ -1594,25 +1498,18 @@ class Normal_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         sf = ss.norm.sf(X, self.mu, self.sigma)
         sf = unpack_single_arrays(sf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             p = plt.plot(X, sf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction surviving")
-            text_title = str(
-                "Normal Distribution\n"
-                + " Survival Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Normal Distribution\n" + " Survival Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -1637,9 +1534,7 @@ class Normal_Distribution:
                 xmax=xmax,
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="SF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="SF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(CI_y), upper_CI
@@ -1688,15 +1583,13 @@ class Normal_Distribution:
         hf = ss.norm.pdf(X, self.mu, self.sigma) / ss.norm.sf(X, self.mu, self.sigma)
         hf = unpack_single_arrays(hf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, hf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Hazard")
-            text_title = str(
-                "Normal Distribution\n" + " Hazard Function " + "\n" + self.param_title
-            )
+            text_title = str("Normal Distribution\n" + " Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -1724,7 +1617,7 @@ class Normal_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the CHF (cumulative hazard function)
@@ -1792,27 +1685,20 @@ class Normal_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         chf = -np.log(ss.norm.sf(X, self.mu, self.sigma))
         chf = unpack_single_arrays(chf)
         self._chf = chf  # required by the CI plotting part
         self._X = X
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             p = plt.plot(X, chf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Cumulative hazard")
-            text_title = str(
-                "Normal Distribution\n"
-                + " Cumulative Hazard Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Normal Distribution\n" + " Cumulative Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -1837,9 +1723,7 @@ class Normal_Distribution:
                 xmax=xmax,
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="CHF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="CHF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(np.exp(-CI_y)), upper_CI
@@ -1914,7 +1798,10 @@ class Normal_Distribution:
         MRL : float
             The mean residual life
         """
-        R = lambda x: ss.norm.sf(x, loc=self.mu, scale=self.sigma)
+
+        def R(x):
+            return ss.norm.sf(x, loc=self.mu, scale=self.sigma)
+
         integral_R, error = integrate.quad(R, t, np.inf)
         MRL = integral_R / R(t)
         return MRL
@@ -1974,7 +1861,7 @@ class Normal_Distribution:
         -----
         This is the same as rvs in scipy.stats
         """
-        if type(number_of_samples) != int or number_of_samples < 1:
+        if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             np.random.seed(seed)
@@ -2030,24 +1917,20 @@ class Lognormal_Distribution:
     def __init__(self, mu=None, sigma=None, gamma=0, **kwargs):
         self.name = "Lognormal"
         if mu is None or sigma is None:
-            raise ValueError(
-                "Parameters mu and sigma must be specified. Eg. Lognormal_Distribution(mu=5,sigma=2)"
-            )
+            raise ValueError("Parameters mu and sigma must be specified. Eg. Lognormal_Distribution(mu=5,sigma=2)")
         self.mu = float(mu)
         self.sigma = float(sigma)
         self.gamma = float(gamma)
         self.parameters = np.array([self.mu, self.sigma, self.gamma])
-        mean, var, skew, kurt = ss.lognorm.stats(
-            self.sigma, self.gamma, np.exp(self.mu), moments="mvsk"
-        )
+        mean, var, skew, kurt = ss.lognorm.stats(self.sigma, self.gamma, np.exp(self.mu), moments="mvsk")
         self.mean = float(mean)
         self.variance = float(var)
-        self.standard_deviation = var ** 0.5
+        self.standard_deviation = var**0.5
         self.skewness = float(skew)
         self.kurtosis = kurt + 3
         self.excess_kurtosis = float(kurt)
         self.median = ss.lognorm.median(self.sigma, self.gamma, np.exp(self.mu))
-        self.mode = np.exp(self.mu - self.sigma ** 2) + self.gamma
+        self.mode = np.exp(self.mu - self.sigma**2) + self.gamma
         if self.gamma != 0:
             self.param_title = str(
                 "μ="
@@ -2068,12 +1951,7 @@ class Lognormal_Distribution:
             )
             self.name2 = "Lognormal_3P"
         else:
-            self.param_title = str(
-                "μ="
-                + round_and_string(self.mu, dec)
-                + ",σ="
-                + round_and_string(self.sigma, dec)
-            )
+            self.param_title = str("μ=" + round_and_string(self.mu, dec) + ",σ=" + round_and_string(self.sigma, dec))
             self.param_title_long = str(
                 "Lognormal Distribution (μ="
                 + round_and_string(self.mu, dec)
@@ -2153,9 +2031,7 @@ class Lognormal_Distribution:
         be based on the distribution's parameters. No plotting keywords are
         accepted.
         """
-        X, xvals, xmin, xmax = distributions_input_checking(
-            self, "ALL", xvals, xmin, xmax
-        )
+        X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
 
         pdf = ss.lognorm.pdf(X, self.sigma, self.gamma, np.exp(self.mu))
         cdf = ss.lognorm.cdf(X, self.sigma, self.gamma, np.exp(self.mu))
@@ -2247,18 +2123,10 @@ class Lognormal_Distribution:
         text_mode = str("Mode = " + round_and_string(self.mode, dec))
         text_b5 = str("$5^{th}$ quantile = " + round_and_string(self.b5, dec))
         text_b95 = str("$95^{th}$ quantile = " + round_and_string(self.b95, dec))
-        text_std = str(
-            "Standard deviation = " + round_and_string(self.standard_deviation,dec))
-        text_var = str(
-            "Variance = " + round_and_string(self.variance, dec)
-        )
-        text_skew = str(
-            "Skewness = " + round_and_string(self.skewness, dec)
-        )
-        text_ex_kurt = str(
-            "Excess kurtosis = "
-            + round_and_string(self.excess_kurtosis, dec)
-        )
+        text_std = str("Standard deviation = " + round_and_string(self.standard_deviation, dec))
+        text_var = str("Variance = " + round_and_string(self.variance, dec))
+        text_skew = str("Skewness = " + round_and_string(self.skewness, dec))
+        text_ex_kurt = str("Excess kurtosis = " + round_and_string(self.excess_kurtosis, dec))
         plt.text(0, 9, text_mean)
         plt.text(0, 8, text_median)
         plt.text(0, 7, text_mode)
@@ -2311,18 +2179,13 @@ class Lognormal_Distribution:
         pdf = ss.lognorm.pdf(X, self.sigma, self.gamma, np.exp(self.mu))
         pdf = unpack_single_arrays(pdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, pdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Probability density")
-            text_title = str(
-                "Lognormal Distribution\n"
-                + " Probability Density Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Lognormal Distribution\n" + " Probability Density Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -2350,7 +2213,7 @@ class Lognormal_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the CDF (cumulative distribution function)
@@ -2418,9 +2281,7 @@ class Lognormal_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         cdf = ss.lognorm.cdf(X, self.sigma, self.gamma, np.exp(self.mu))
         cdf = unpack_single_arrays(cdf)
@@ -2432,10 +2293,7 @@ class Lognormal_Distribution:
             plt.xlabel("x values")
             plt.ylabel("Fraction failing")
             text_title = str(
-                "Lognormal Distribution\n"
-                + " Cumulative Distribution Function "
-                + "\n"
-                + self.param_title
+                "Lognormal Distribution\n" + " Cumulative Distribution Function " + "\n" + self.param_title
             )
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
@@ -2461,9 +2319,7 @@ class Lognormal_Distribution:
                 xmax=xmax,
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="CDF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="CDF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.quantile(CI_y), upper_CI
@@ -2484,7 +2340,7 @@ class Lognormal_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the SF (survival function)
@@ -2552,25 +2408,18 @@ class Lognormal_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         sf = ss.lognorm.sf(X, self.sigma, self.gamma, np.exp(self.mu))
         sf = unpack_single_arrays(sf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             p = plt.plot(X, sf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction surviving")
-            text_title = str(
-                "Lognormal Distribution\n"
-                + " Survival Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Lognormal Distribution\n" + " Survival Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -2595,9 +2444,7 @@ class Lognormal_Distribution:
                 xmax=xmax,
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="SF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="SF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(CI_y), upper_CI
@@ -2648,18 +2495,13 @@ class Lognormal_Distribution:
         )
         hf = unpack_single_arrays(hf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, hf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Hazard")
-            text_title = str(
-                "Lognormal Distribution\n"
-                + " Hazard Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Lognormal Distribution\n" + " Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -2687,7 +2529,7 @@ class Lognormal_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the CHF (cumulative hazard function)
@@ -2755,27 +2597,20 @@ class Lognormal_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         chf = -np.log(ss.lognorm.sf(X, self.sigma, self.gamma, np.exp(self.mu)))
         chf = unpack_single_arrays(chf)
         self._chf = chf  # required by the CI plotting part
         self._X = X
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             p = plt.plot(X, chf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Cumulative hazard")
-            text_title = str(
-                "Lognormal Distribution\n"
-                + " Cumulative Hazard Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Lognormal Distribution\n" + " Cumulative Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -2800,16 +2635,12 @@ class Lognormal_Distribution:
                 xmax=xmax,
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="CHF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="CHF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(np.exp(-CI_y)), upper_CI
             elif CI_type == "reliability":
-                chf_point = -np.log(
-                    ss.lognorm.sf(CI_x, self.sigma, self.gamma, np.exp(self.mu))
-                )
+                chf_point = -np.log(ss.lognorm.sf(CI_x, self.sigma, self.gamma, np.exp(self.mu)))
                 return lower_CI, unpack_single_arrays(chf_point), upper_CI
         else:
             return chf
@@ -2879,7 +2710,10 @@ class Lognormal_Distribution:
         MRL : float
             The mean residual life
         """
-        R = lambda x: ss.lognorm.sf(x, self.sigma, self.gamma, np.exp(self.mu))
+
+        def R(x):
+            return ss.lognorm.sf(x, self.sigma, self.gamma, np.exp(self.mu))
+
         integral_R, error = integrate.quad(R, t, np.inf)
         MRL = integral_R / R(t)
         return MRL
@@ -2953,13 +2787,11 @@ class Lognormal_Distribution:
         -----
         This is the same as rvs in scipy.stats
         """
-        if type(number_of_samples) != int or number_of_samples < 1:
+        if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             np.random.seed(seed)
-        RVS = ss.lognorm.rvs(
-            self.sigma, self.gamma, np.exp(self.mu), size=number_of_samples
-        )
+        RVS = ss.lognorm.rvs(self.sigma, self.gamma, np.exp(self.mu), size=number_of_samples)
         return RVS
 
 
@@ -3009,18 +2841,14 @@ class Exponential_Distribution:
     def __init__(self, Lambda=None, gamma=0, **kwargs):
         self.name = "Exponential"
         if Lambda is None:
-            raise ValueError(
-                "Parameter Lambda must be specified. Eg. Exponential_Distribution(Lambda=3)"
-            )
+            raise ValueError("Parameter Lambda must be specified. Eg. Exponential_Distribution(Lambda=3)")
         self.Lambda = float(Lambda)
         self.gamma = float(gamma)
         self.parameters = np.array([self.Lambda, self.gamma])
-        mean, var, skew, kurt = ss.expon.stats(
-            scale=1 / self.Lambda, loc=self.gamma, moments="mvsk"
-        )
+        mean, var, skew, kurt = ss.expon.stats(scale=1 / self.Lambda, loc=self.gamma, moments="mvsk")
         self.mean = float(mean)
         self.variance = float(var)
-        self.standard_deviation = var ** 0.5
+        self.standard_deviation = var**0.5
         self.skewness = float(skew)
         self.kurtosis = kurt + 3
         self.excess_kurtosis = float(kurt)
@@ -3028,10 +2856,7 @@ class Exponential_Distribution:
         self.mode = self.gamma
         if self.gamma != 0:
             self.param_title = str(
-                "λ="
-                + round_and_string(self.Lambda, dec)
-                + ",γ="
-                + round_and_string(self.gamma, dec)
+                "λ=" + round_and_string(self.Lambda, dec) + ",γ=" + round_and_string(self.gamma, dec)
             )
             self.param_title_long = str(
                 "Exponential Distribution (λ="
@@ -3043,11 +2868,7 @@ class Exponential_Distribution:
             self.name2 = "Exponential_2P"
         else:
             self.param_title = str("λ=" + round_and_string(self.Lambda, dec))
-            self.param_title_long = str(
-                "Exponential Distribution (λ="
-                + round_and_string(self.Lambda, dec)
-                + ")"
-            )
+            self.param_title_long = str("Exponential Distribution (λ=" + round_and_string(self.Lambda, dec) + ")")
             self.name2 = "Exponential_1P"
         self.b5 = ss.expon.ppf(0.05, scale=1 / self.Lambda, loc=self.gamma)
         self.b95 = ss.expon.ppf(0.95, scale=1 / self.Lambda, loc=self.gamma)
@@ -3074,9 +2895,7 @@ class Exponential_Distribution:
         self._pdf0 = ss.expon.pdf(
             0, scale=1 / self.Lambda, loc=0
         )  # the pdf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array.
-        self._hf0 = (
-            self.Lambda
-        )  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
+        self._hf0 = self.Lambda  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
     def plot(self, xvals=None, xmin=None, xmax=None):
         """
@@ -3106,9 +2925,7 @@ class Exponential_Distribution:
         accepted.
         """
 
-        X, xvals, xmin, xmax = distributions_input_checking(
-            self, "ALL", xvals, xmin, xmax
-        )
+        X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
 
         pdf = ss.expon.pdf(X, scale=1 / self.Lambda, loc=self.gamma)
         cdf = ss.expon.cdf(X, scale=1 / self.Lambda, loc=self.gamma)
@@ -3202,18 +3019,10 @@ class Exponential_Distribution:
         text_mode = str("Mode = " + round_and_string(self.mode, dec))
         text_b5 = str("$5^{th}$ quantile = " + round_and_string(self.b5, dec))
         text_b95 = str("$95^{th}$ quantile = " + round_and_string(self.b95, dec))
-        text_std = str(
-            "Standard deviation = " + round_and_string(self.standard_deviation,dec))
-        text_var = str(
-            "Variance = " + round_and_string(self.variance, dec)
-        )
-        text_skew = str(
-            "Skewness = " + round_and_string(self.skewness, dec)
-        )
-        text_ex_kurt = str(
-            "Excess kurtosis = "
-            + round_and_string(self.excess_kurtosis, dec)
-        )
+        text_std = str("Standard deviation = " + round_and_string(self.standard_deviation, dec))
+        text_var = str("Variance = " + round_and_string(self.variance, dec))
+        text_skew = str("Skewness = " + round_and_string(self.skewness, dec))
+        text_ex_kurt = str("Excess kurtosis = " + round_and_string(self.excess_kurtosis, dec))
         plt.text(0, 9, text_mean)
         plt.text(0, 8, text_median)
         plt.text(0, 7, text_mode)
@@ -3266,18 +3075,13 @@ class Exponential_Distribution:
         pdf = ss.expon.pdf(X, scale=1 / self.Lambda, loc=self.gamma)
         pdf = unpack_single_arrays(pdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
 
             plt.plot(X, pdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Probability density")
-            text_title = str(
-                "Exponential Distribution\n"
-                + " Probability Density Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Exponential Distribution\n" + " Probability Density Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -3295,16 +3099,7 @@ class Exponential_Distribution:
         return pdf
 
     def CDF(
-        self,
-        xvals=None,
-        xmin=None,
-        xmax=None,
-        show_plot=True,
-        plot_CI=True,
-        CI=None,
-        CI_y=None,
-        CI_x=None,
-        **kwargs
+        self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_CI=True, CI=None, CI_y=None, CI_x=None, **kwargs
     ):
         """
         Plots the CDF (cumulative distribution function)
@@ -3375,24 +3170,19 @@ class Exponential_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x)
 
         cdf = ss.expon.cdf(X, scale=1 / self.Lambda, loc=self.gamma)
         cdf = unpack_single_arrays(cdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
 
             p = plt.plot(X, cdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction failing")
             text_title = str(
-                "Exponential Distribution\n"
-                + " Cumulative Distribution Function "
-                + "\n"
-                + self.param_title
+                "Exponential Distribution\n" + " Cumulative Distribution Function " + "\n" + self.param_title
             )
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
@@ -3417,9 +3207,7 @@ class Exponential_Distribution:
                 color=p[0].get_color(),
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="CDF", CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="CDF", CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_y is not None:
                 return lower_CI, self.quantile(CI_y), upper_CI
@@ -3430,16 +3218,7 @@ class Exponential_Distribution:
             return cdf
 
     def SF(
-        self,
-        xvals=None,
-        xmin=None,
-        xmax=None,
-        show_plot=True,
-        plot_CI=True,
-        CI=None,
-        CI_y=None,
-        CI_x=None,
-        **kwargs
+        self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_CI=True, CI=None, CI_y=None, CI_x=None, **kwargs
     ):
         """
         Plots the SF (survival function)
@@ -3510,25 +3289,18 @@ class Exponential_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "SF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "SF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x)
 
         sf = ss.expon.sf(X, scale=1 / self.Lambda, loc=self.gamma)
         sf = unpack_single_arrays(sf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
 
             p = plt.plot(X, sf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction surviving")
-            text_title = str(
-                "Exponential Distribution\n"
-                + " Survival Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Exponential Distribution\n" + " Survival Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -3552,9 +3324,7 @@ class Exponential_Distribution:
                 color=p[0].get_color(),
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="SF", CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="SF", CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_y is not None:
                 return lower_CI, self.inverse_SF(CI_y), upper_CI
@@ -3604,18 +3374,13 @@ class Exponential_Distribution:
         hf = zeroise_below_gamma(X=X, Y=hf, gamma=self.gamma)
         hf = unpack_single_arrays(hf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
 
             plt.plot(X, hf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Hazard")
-            text_title = str(
-                "Exponential Distribution\n"
-                + " Hazard Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Exponential Distribution\n" + " Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -3633,16 +3398,7 @@ class Exponential_Distribution:
         return hf
 
     def CHF(
-        self,
-        xvals=None,
-        xmin=None,
-        xmax=None,
-        show_plot=True,
-        plot_CI=True,
-        CI=None,
-        CI_y=None,
-        CI_x=None,
-        **kwargs
+        self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_CI=True, CI=None, CI_y=None, CI_x=None, **kwargs
     ):
         """
         Plots the CHF (cumulative hazard function)
@@ -3713,26 +3469,19 @@ class Exponential_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x)
 
         chf = (X - self.gamma) * self.Lambda
         chf = zeroise_below_gamma(X=X, Y=chf, gamma=self.gamma)
         chf = unpack_single_arrays(chf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
 
             p = plt.plot(X, chf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Cumulative hazard")
-            text_title = str(
-                "Exponential Distribution\n"
-                + " Cumulative Hazard Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Exponential Distribution\n" + " Cumulative Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -3756,16 +3505,12 @@ class Exponential_Distribution:
                 color=p[0].get_color(),
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="CHF", CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="CHF", CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_y is not None:
                 return lower_CI, self.inverse_SF(np.exp(-CI_y)), upper_CI
             elif CI_x is not None:
-                chf_point = zeroise_below_gamma(
-                    X=CI_x, Y=(CI_x - self.gamma) * self.Lambda, gamma=self.gamma
-                )
+                chf_point = zeroise_below_gamma(X=CI_x, Y=(CI_x - self.gamma) * self.Lambda, gamma=self.gamma)
                 return lower_CI, unpack_single_arrays(chf_point), upper_CI
         else:
             return chf
@@ -3835,7 +3580,10 @@ class Exponential_Distribution:
         MRL : float
             The mean residual life
         """
-        R = lambda x: ss.expon.sf(x, scale=1 / self.Lambda, loc=self.gamma)
+
+        def R(x):
+            return ss.expon.sf(x, scale=1 / self.Lambda, loc=self.gamma)
+
         integral_R, error = integrate.quad(R, t, np.inf)
         MRL = integral_R / R(t)
         return MRL
@@ -3857,10 +3605,7 @@ class Exponential_Distribution:
         """
         if self.gamma == 0:
             colorprint(
-                str(
-                    "Descriptive statistics for Exponential distribution with lambda = "
-                    + str(self.Lambda)
-                ),
+                str("Descriptive statistics for Exponential distribution with lambda = " + str(self.Lambda)),
                 bold=True,
                 underline=True,
             )
@@ -3905,7 +3650,7 @@ class Exponential_Distribution:
         -----
         This is the same as rvs in scipy.stats
         """
-        if type(number_of_samples) != int or number_of_samples < 1:
+        if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             np.random.seed(seed)
@@ -3961,19 +3706,15 @@ class Gamma_Distribution:
     def __init__(self, alpha=None, beta=None, gamma=0, **kwargs):
         self.name = "Gamma"
         if alpha is None or beta is None:
-            raise ValueError(
-                "Parameters alpha and beta must be specified. Eg. Gamma_Distribution(alpha=5,beta=2)"
-            )
+            raise ValueError("Parameters alpha and beta must be specified. Eg. Gamma_Distribution(alpha=5,beta=2)")
         self.alpha = float(alpha)
         self.beta = float(beta)
         self.gamma = float(gamma)
         self.parameters = np.array([self.alpha, self.beta, self.gamma])
-        mean, var, skew, kurt = ss.gamma.stats(
-            self.beta, scale=self.alpha, loc=self.gamma, moments="mvsk"
-        )
+        mean, var, skew, kurt = ss.gamma.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="mvsk")
         self.mean = float(mean)
         self.variance = float(var)
-        self.standard_deviation = var ** 0.5
+        self.standard_deviation = var**0.5
         self.skewness = float(skew)
         self.kurtosis = kurt + 3
         self.excess_kurtosis = float(kurt)
@@ -4002,12 +3743,7 @@ class Gamma_Distribution:
             )
             self.name2 = "Gamma_3P"
         else:
-            self.param_title = str(
-                "α="
-                + round_and_string(self.alpha, dec)
-                + ",β="
-                + round_and_string(self.beta, dec)
-            )
+            self.param_title = str("α=" + round_and_string(self.alpha, dec) + ",β=" + round_and_string(self.beta, dec))
             self.param_title_long = str(
                 "Gamma Distribution (α="
                 + round_and_string(self.alpha, dec)
@@ -4097,9 +3833,7 @@ class Gamma_Distribution:
         be based on the distribution's parameters. No plotting keywords are
         accepted.
         """
-        X, xvals, xmin, xmax = distributions_input_checking(
-            self, "ALL", xvals, xmin, xmax
-        )
+        X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
 
         pdf = ss.gamma.pdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         cdf = ss.gamma.cdf(X, self.beta, scale=self.alpha, loc=self.gamma)
@@ -4191,18 +3925,10 @@ class Gamma_Distribution:
         text_mode = str("Mode = " + round_and_string(self.mode, dec))
         text_b5 = str("$5^{th}$ quantile = " + round_and_string(self.b5, dec))
         text_b95 = str("$95^{th}$ quantile = " + round_and_string(self.b95, dec))
-        text_std = str(
-            "Standard deviation = " + round_and_string(self.standard_deviation,dec))
-        text_var = str(
-            "Variance = " + round_and_string(self.variance, dec)
-        )
-        text_skew = str(
-            "Skewness = " + round_and_string(self.skewness, dec)
-        )
-        text_ex_kurt = str(
-            "Excess kurtosis = "
-            + round_and_string(self.excess_kurtosis, dec)
-        )
+        text_std = str("Standard deviation = " + round_and_string(self.standard_deviation, dec))
+        text_var = str("Variance = " + round_and_string(self.variance, dec))
+        text_skew = str("Skewness = " + round_and_string(self.skewness, dec))
+        text_ex_kurt = str("Excess kurtosis = " + round_and_string(self.excess_kurtosis, dec))
         plt.text(0, 9, text_mean)
         plt.text(0, 8, text_median)
         plt.text(0, 7, text_mode)
@@ -4255,18 +3981,13 @@ class Gamma_Distribution:
         pdf = ss.gamma.pdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         pdf = unpack_single_arrays(pdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
 
             plt.plot(X, pdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Probability density")
-            text_title = str(
-                "Gamma Distribution\n"
-                + " Probability Density Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Gamma Distribution\n" + " Probability Density Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -4294,7 +4015,7 @@ class Gamma_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the CDF (cumulative distribution function)
@@ -4362,25 +4083,18 @@ class Gamma_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         cdf = ss.gamma.cdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         cdf = unpack_single_arrays(cdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
 
             p = plt.plot(X, cdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction failing")
-            text_title = str(
-                "Gamma Distribution\n"
-                + " Cumulative Distribution Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Gamma Distribution\n" + " Cumulative Distribution Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -4405,16 +4119,12 @@ class Gamma_Distribution:
                 color=p[0].get_color(),
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="CDF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="CDF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.quantile(CI_y), upper_CI
             elif CI_type == "reliability":
-                cdf_point = ss.gamma.cdf(
-                    CI_x, self.beta, scale=self.alpha, loc=self.gamma
-                )
+                cdf_point = ss.gamma.cdf(CI_x, self.beta, scale=self.alpha, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(cdf_point), upper_CI
         else:
             return cdf
@@ -4430,7 +4140,7 @@ class Gamma_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the SF (survival function)
@@ -4498,22 +4208,18 @@ class Gamma_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         sf = ss.gamma.sf(X, self.beta, scale=self.alpha, loc=self.gamma)
         sf = unpack_single_arrays(sf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
 
             p = plt.plot(X, sf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction surviving")
-            text_title = str(
-                "Gamma Distribution\n" + " Survival Function " + "\n" + self.param_title
-            )
+            text_title = str("Gamma Distribution\n" + " Survival Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -4538,16 +4244,12 @@ class Gamma_Distribution:
                 color=p[0].get_color(),
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="SF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="SF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(CI_y), upper_CI
             elif CI_type == "reliability":
-                sf_point = ss.gamma.sf(
-                    CI_x, self.beta, scale=self.alpha, loc=self.gamma
-                )
+                sf_point = ss.gamma.sf(CI_x, self.beta, scale=self.alpha, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(sf_point), upper_CI
         else:
             return sf
@@ -4593,15 +4295,13 @@ class Gamma_Distribution:
         )
         hf = unpack_single_arrays(hf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
 
             plt.plot(X, hf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Hazard")
-            text_title = str(
-                "Gamma Distribution\n" + " Hazard Function " + "\n" + self.param_title
-            )
+            text_title = str("Gamma Distribution\n" + " Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -4629,7 +4329,7 @@ class Gamma_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the CHF (cumulative hazard function)
@@ -4697,27 +4397,20 @@ class Gamma_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         chf = -np.log(ss.gamma.sf(X, self.beta, scale=self.alpha, loc=self.gamma))
         chf = unpack_single_arrays(chf)
         self._chf = chf  # required by the CI plotting part
         self._X = X
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
 
             p = plt.plot(X, chf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Cumulative hazard")
-            text_title = str(
-                "Gamma Distribution\n"
-                + " Cumulative Hazard Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Gamma Distribution\n" + " Cumulative Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -4742,16 +4435,12 @@ class Gamma_Distribution:
                 color=p[0].get_color(),
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="CHF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="CHF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(np.exp(-CI_y)), upper_CI
             elif CI_type == "reliability":
-                chf_point = -np.log(
-                    ss.gamma.sf(CI_x, self.beta, scale=self.alpha, loc=self.gamma)
-                )
+                chf_point = -np.log(ss.gamma.sf(CI_x, self.beta, scale=self.alpha, loc=self.gamma))
                 return lower_CI, unpack_single_arrays(chf_point), upper_CI
         else:
             return chf
@@ -4821,7 +4510,10 @@ class Gamma_Distribution:
         MRL : float
             The mean residual life
         """
-        R = lambda x: ss.gamma.sf(x, self.beta, scale=self.alpha, loc=self.gamma)
+
+        def R(x):
+            return ss.gamma.sf(x, self.beta, scale=self.alpha, loc=self.gamma)
+
         integral_R, error = integrate.quad(R, t, np.inf)
         MRL = integral_R / R(t)
         return MRL
@@ -4895,13 +4587,11 @@ class Gamma_Distribution:
         -----
         This is the same as rvs in scipy.stats
         """
-        if type(number_of_samples) != int or number_of_samples < 1:
+        if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             np.random.seed(seed)
-        RVS = ss.gamma.rvs(
-            self.beta, scale=self.alpha, loc=self.gamma, size=number_of_samples
-        )
+        RVS = ss.gamma.rvs(self.beta, scale=self.alpha, loc=self.gamma, size=number_of_samples)
         return RVS
 
 
@@ -4951,18 +4641,14 @@ class Beta_Distribution:
         self.name = "Beta"
         self.name2 = "Beta_2P"
         if alpha is None or beta is None:
-            raise ValueError(
-                "Parameters alpha and beta must be specified. Eg. Beta_Distribution(alpha=5,beta=2)"
-            )
+            raise ValueError("Parameters alpha and beta must be specified. Eg. Beta_Distribution(alpha=5,beta=2)")
         self.alpha = float(alpha)
         self.beta = float(beta)
         self.parameters = np.array([self.alpha, self.beta])
-        mean, var, skew, kurt = ss.beta.stats(
-            self.alpha, self.beta, 0, 1, moments="mvsk"
-        )
+        mean, var, skew, kurt = ss.beta.stats(self.alpha, self.beta, 0, 1, moments="mvsk")
         self.mean = float(mean)
         self.variance = float(var)
-        self.standard_deviation = var ** 0.5
+        self.standard_deviation = var**0.5
         self.skewness = float(skew)
         self.kurtosis = kurt + 3
         self.excess_kurtosis = float(kurt)
@@ -4971,18 +4657,9 @@ class Beta_Distribution:
             self.mode = (self.alpha - 1) / (self.beta + self.alpha - 2)
         else:
             self.mode = r"No mode exists unless $\alpha$ > 1 and $\beta$ > 1"
-        self.param_title = str(
-            "α="
-            + round_and_string(self.alpha, dec)
-            + ",β="
-            + round_and_string(self.beta, dec)
-        )
+        self.param_title = str("α=" + round_and_string(self.alpha, dec) + ",β=" + round_and_string(self.beta, dec))
         self.param_title_long = str(
-            "Beta Distribution (α="
-            + round_and_string(self.alpha, dec)
-            + ",β="
-            + round_and_string(self.beta, dec)
-            + ")"
+            "Beta Distribution (α=" + round_and_string(self.alpha, dec) + ",β=" + round_and_string(self.beta, dec) + ")"
         )
         self.b5 = ss.beta.ppf(0.05, self.alpha, self.beta, 0, 1)
         self.b95 = ss.beta.ppf(0.95, self.alpha, self.beta, 0, 1)
@@ -4990,9 +4667,7 @@ class Beta_Distribution:
         # the pdf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
         self._pdf0 = ss.beta.pdf(0, self.alpha, self.beta, 0, 1)
         # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
-        self._hf0 = ss.beta.pdf(0, self.alpha, self.beta, 0, 1) / ss.beta.sf(
-            0, self.alpha, self.beta, 0, 1
-        )
+        self._hf0 = ss.beta.pdf(0, self.alpha, self.beta, 0, 1) / ss.beta.sf(0, self.alpha, self.beta, 0, 1)
         self.Z = None  # this is necessary because distributions_input_checking looks for this value
 
     def plot(self, xvals=None, xmin=None, xmax=None):
@@ -5022,9 +4697,7 @@ class Beta_Distribution:
         be based on the distribution's parameters. No plotting keywords are
         accepted.
         """
-        X, xvals, xmin, xmax = distributions_input_checking(
-            self, "ALL", xvals, xmin, xmax
-        )
+        X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
 
         pdf = ss.beta.pdf(X, self.alpha, self.beta, 0, 1)
         cdf = ss.beta.cdf(X, self.alpha, self.beta, 0, 1)
@@ -5113,24 +4786,16 @@ class Beta_Distribution:
         plt.xlim([0, 10])
         text_mean = str("Mean = " + round_and_string(self.mean, dec))
         text_median = str("Median = " + round_and_string(self.median, dec))
-        if type(self.mode) == str:
+        if isinstance(self.mode, str):
             text_mode = str("Mode = " + str(self.mode))  # required when mode is str
         else:
             text_mode = str("Mode = " + round_and_string(self.mode, dec))
         text_b5 = str("$5^{th}$ quantile = " + round_and_string(self.b5, dec))
         text_b95 = str("$95^{th}$ quantile = " + round_and_string(self.b95, dec))
-        text_std = str(
-            "Standard deviation = " + round_and_string(self.standard_deviation,dec))
-        text_var = str(
-            "Variance = " + round_and_string(self.variance, dec)
-        )
-        text_skew = str(
-            "Skewness = " + round_and_string(self.skewness, dec)
-        )
-        text_ex_kurt = str(
-            "Excess kurtosis = "
-            + round_and_string(self.excess_kurtosis, dec)
-        )
+        text_std = str("Standard deviation = " + round_and_string(self.standard_deviation, dec))
+        text_var = str("Variance = " + round_and_string(self.variance, dec))
+        text_skew = str("Skewness = " + round_and_string(self.skewness, dec))
+        text_ex_kurt = str("Excess kurtosis = " + round_and_string(self.excess_kurtosis, dec))
         plt.text(0, 9, text_mean)
         plt.text(0, 8, text_median)
         plt.text(0, 7, text_mode)
@@ -5183,18 +4848,13 @@ class Beta_Distribution:
         pdf = ss.beta.pdf(X, self.alpha, self.beta, 0, 1)
         pdf = unpack_single_arrays(pdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
 
             plt.plot(X, pdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Probability density")
-            text_title = str(
-                "Beta Distribution\n"
-                + " Probability Density Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Beta Distribution\n" + " Probability Density Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -5243,25 +4903,18 @@ class Beta_Distribution:
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "CDF", xvals, xmin, xmax, show_plot
-        )
+        X, xvals, xmin, xmax, show_plot = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot)
 
         cdf = ss.beta.cdf(X, self.alpha, self.beta, 0, 1)
         cdf = unpack_single_arrays(cdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
 
             plt.plot(X, cdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction failing")
-            text_title = str(
-                "Beta Distribution\n"
-                + " Cumulative Distribution Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Beta Distribution\n" + " Cumulative Distribution Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -5317,15 +4970,13 @@ class Beta_Distribution:
         sf = ss.beta.sf(X, self.alpha, self.beta, 0, 1)
         sf = unpack_single_arrays(sf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
 
             plt.plot(X, sf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction surviving")
-            text_title = str(
-                "Beta Distribution\n" + " Survival Function " + "\n" + self.param_title
-            )
+            text_title = str("Beta Distribution\n" + " Survival Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -5378,20 +5029,16 @@ class Beta_Distribution:
             self, "HF", xvals, xmin, xmax, show_plot
         )  # lgtm [py/mismatched-multiple-assignment]
 
-        hf = ss.beta.pdf(X, self.alpha, self.beta, 0, 1) / ss.beta.sf(
-            X, self.alpha, self.beta, 0, 1
-        )
+        hf = ss.beta.pdf(X, self.alpha, self.beta, 0, 1) / ss.beta.sf(X, self.alpha, self.beta, 0, 1)
         hf = unpack_single_arrays(hf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
 
             plt.plot(X, hf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Hazard")
-            text_title = str(
-                "Beta Distribution\n" + " Hazard Function " + "\n" + self.param_title
-            )
+            text_title = str("Beta Distribution\n" + " Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -5449,18 +5096,13 @@ class Beta_Distribution:
         self._chf = chf  # required by the CI plotting part
         self._X = X
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
 
             plt.plot(X, chf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Cumulative hazard")
-            text_title = str(
-                "Beta Distribution\n"
-                + " Cumulative Hazard Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Beta Distribution\n" + " Cumulative Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -5542,7 +5184,10 @@ class Beta_Distribution:
         MRL : float
             The mean residual life
         """
-        R = lambda x: ss.beta.sf(x, self.alpha, self.beta, 0, 1)
+
+        def R(x):
+            return ss.beta.sf(x, self.alpha, self.beta, 0, 1)
+
         integral_R, error = integrate.quad(R, t, np.inf)
         MRL = integral_R / R(t)
         return MRL
@@ -5602,7 +5247,7 @@ class Beta_Distribution:
         -----
         This is the same as rvs in scipy.stats
         """
-        if type(number_of_samples) != int or number_of_samples < 1:
+        if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             np.random.seed(seed)
@@ -5617,9 +5262,7 @@ class Beta_Distribution:
         while checked is False:
             RVS = RVS[RVS < 1]  # remove 1's
             if len(RVS) < number_of_samples:  # resample if required
-                resamples = ss.beta.rvs(
-                    self.alpha, self.beta, 0, 1, size=number_of_samples - len(RVS)
-                )
+                resamples = ss.beta.rvs(self.alpha, self.beta, 0, 1, size=number_of_samples - len(RVS))
                 RVS = np.append(RVS, resamples)  # append the new samples
             else:
                 checked = True
@@ -5685,29 +5328,21 @@ class Loglogistic_Distribution:
         self.parameters = np.array([self.alpha, self.beta, self.gamma])
 
         if self.beta > 1:
-            self.mean = float(
-                ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="m")
-            )
+            self.mean = float(ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="m"))
         else:
             self.mean = r"no mean when $\beta \leq 1$"
         if self.beta > 2:
-            self.variance = float(
-                ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="v")
-            )
-            self.standard_deviation = self.variance ** 0.5
+            self.variance = float(ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="v"))
+            self.standard_deviation = self.variance**0.5
         else:
             self.variance = r"no variance when $\beta \leq 2$"
             self.standard_deviation = r"no stdev when $\beta \leq 2$"
         if self.beta > 3:
-            self.skewness = float(
-                ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="s")
-            )
+            self.skewness = float(ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="s"))
         else:
             self.skewness = r"no skewness when $\beta \leq 3$"
         if self.beta > 4:
-            self.excess_kurtosis = float(
-                ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="k")
-            )
+            self.excess_kurtosis = float(ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="k"))
             self.kurtosis = self.excess_kurtosis + 3
         else:
             self.excess_kurtosis = r"no kurtosis when $\beta \leq 4$"
@@ -5715,10 +5350,7 @@ class Loglogistic_Distribution:
 
         self.median = ss.fisk.median(self.beta, scale=self.alpha, loc=self.gamma)
         if self.beta >= 1:
-            self.mode = (
-                self.alpha * ((self.beta - 1) / (self.beta + 1)) ** (1 / self.beta)
-                + self.gamma
-            )
+            self.mode = self.alpha * ((self.beta - 1) / (self.beta + 1)) ** (1 / self.beta) + self.gamma
         else:
             self.mode = self.gamma
         if self.gamma != 0:
@@ -5741,12 +5373,7 @@ class Loglogistic_Distribution:
             )
             self.name2 = "Loglogistic_3P"
         else:
-            self.param_title = str(
-                "α="
-                + round_and_string(self.alpha, dec)
-                + ",β="
-                + round_and_string(self.beta, dec)
-            )
+            self.param_title = str("α=" + round_and_string(self.alpha, dec) + ",β=" + round_and_string(self.beta, dec))
             self.param_title_long = str(
                 "Loglogistic Distribution (α="
                 + round_and_string(self.alpha, dec)
@@ -5824,17 +5451,14 @@ class Loglogistic_Distribution:
         accepted.
         """
 
-        X, xvals, xmin, xmax = distributions_input_checking(
-            self, "ALL", xvals, xmin, xmax
-        )
+        X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
 
         pdf = ss.fisk.pdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         cdf = ss.fisk.cdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         sf = ss.fisk.sf(X, self.beta, scale=self.alpha, loc=self.gamma)
-        hf = (
-            (self.beta / self.alpha)
-            * ((X - self.gamma) / self.alpha) ** (self.beta - 1)
-        ) / (1 + ((X - self.gamma) / self.alpha) ** self.beta)
+        hf = ((self.beta / self.alpha) * ((X - self.gamma) / self.alpha) ** (self.beta - 1)) / (
+            1 + ((X - self.gamma) / self.alpha) ** self.beta
+        )
         hf = zeroise_below_gamma(X=X, Y=hf, gamma=self.gamma)
         chf = np.log(1 + ((X - self.gamma) / self.alpha) ** self.beta)
         chf = zeroise_below_gamma(X=X, Y=chf, gamma=self.gamma)
@@ -5923,48 +5547,32 @@ class Loglogistic_Distribution:
         text_b95 = str("$95^{th}$ quantile = " + round_and_string(self.b95, dec))
         text_mode = str("Mode = " + round_and_string(self.mode, dec))
 
-        if type(self.mean) == str:
+        if isinstance(self.mean, str):
             text_mean = str("Mean = " + str(self.mean))  # required when mean is str
         else:
             text_mean = str("Mean = " + round_and_string(self.mean, dec))
 
-        if type(self.standard_deviation) == str:
+        if isinstance(self.standard_deviation, str):
             text_std = str(
                 "Standard deviation = " + str(self.standard_deviation)
             )  # required when standard deviation is str
         else:
-            text_std = str(
-                "Standard deviation = "
-                + round_and_string(self.standard_deviation, dec)
-            )
+            text_std = str("Standard deviation = " + round_and_string(self.standard_deviation, dec))
 
-        if type(self.variance) == str:
-            text_var = str(
-                "Variance = " + str(self.variance)
-            )  # required when variance is str
+        if isinstance(self.variance, str):
+            text_var = str("Variance = " + str(self.variance))  # required when variance is str
         else:
-            text_var = str(
-                "Variance = " + round_and_string(self.variance, dec)
-            )
+            text_var = str("Variance = " + round_and_string(self.variance, dec))
 
-        if type(self.skewness) == str:
-            text_skew = str(
-                "Skewness = " + str(self.skewness)
-            )  # required when skewness is str
+        if isinstance(self.skewness, str):
+            text_skew = str("Skewness = " + str(self.skewness))  # required when skewness is str
         else:
-            text_skew = str(
-                "Skewness = " + round_and_string(self.skewness, dec)
-            )
+            text_skew = str("Skewness = " + round_and_string(self.skewness, dec))
 
-        if type(self.excess_kurtosis) == str:
-            text_ex_kurt = str(
-                "Excess kurtosis = " + str(self.excess_kurtosis)
-            )  # required when excess kurtosis is str
+        if isinstance(self.excess_kurtosis, str):
+            text_ex_kurt = str("Excess kurtosis = " + str(self.excess_kurtosis))  # required when excess kurtosis is str
         else:
-            text_ex_kurt = str(
-                "Excess kurtosis = "
-                + round_and_string(self.excess_kurtosis, dec)
-            )
+            text_ex_kurt = str("Excess kurtosis = " + round_and_string(self.excess_kurtosis, dec))
 
         plt.text(0, 9, text_mean)
         plt.text(0, 8, text_median)
@@ -6019,18 +5627,13 @@ class Loglogistic_Distribution:
         pdf = ss.fisk.pdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         pdf = unpack_single_arrays(pdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, pdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Probability density")
-            text_title = str(
-                "Loglogistic Distribution\n"
-                + " Probability Density Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Loglogistic Distribution\n" + " Probability Density Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -6058,7 +5661,7 @@ class Loglogistic_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the CDF (cumulative distribution function)
@@ -6126,24 +5729,19 @@ class Loglogistic_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         cdf = ss.fisk.cdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         cdf = unpack_single_arrays(cdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             p = plt.plot(X, cdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction failing")
             text_title = str(
-                "Loglogistic Distribution\n"
-                + " Cumulative Distribution Function "
-                + "\n"
-                + self.param_title
+                "Loglogistic Distribution\n" + " Cumulative Distribution Function " + "\n" + self.param_title
             )
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
@@ -6169,16 +5767,12 @@ class Loglogistic_Distribution:
                 color=p[0].get_color(),
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="CDF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="CDF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.quantile(CI_y), upper_CI
             elif CI_type == "reliability":
-                cdf_point = ss.fisk.cdf(
-                    CI_x, self.beta, scale=self.alpha, loc=self.gamma
-                )
+                cdf_point = ss.fisk.cdf(CI_x, self.beta, scale=self.alpha, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(cdf_point), upper_CI
         else:
             return cdf
@@ -6194,7 +5788,7 @@ class Loglogistic_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the SF (survival function)
@@ -6263,25 +5857,18 @@ class Loglogistic_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         sf = ss.fisk.sf(X, self.beta, scale=self.alpha, loc=self.gamma)
         sf = unpack_single_arrays(sf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             p = plt.plot(X, sf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction surviving")
-            text_title = str(
-                "Loglogistic Distribution\n"
-                + " Survival Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Loglogistic Distribution\n" + " Survival Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -6306,9 +5893,7 @@ class Loglogistic_Distribution:
                 color=p[0].get_color(),
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="SF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="SF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(CI_y), upper_CI
@@ -6355,25 +5940,19 @@ class Loglogistic_Distribution:
             self, "HF", xvals, xmin, xmax, show_plot
         )  # lgtm [py/mismatched-multiple-assignment]
 
-        hf = (
-            (self.beta / self.alpha)
-            * ((X - self.gamma) / self.alpha) ** (self.beta - 1)
-        ) / (1 + ((X - self.gamma) / self.alpha) ** self.beta)
+        hf = ((self.beta / self.alpha) * ((X - self.gamma) / self.alpha) ** (self.beta - 1)) / (
+            1 + ((X - self.gamma) / self.alpha) ** self.beta
+        )
         hf = zeroise_below_gamma(X=X, Y=hf, gamma=self.gamma)
         hf = unpack_single_arrays(hf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, hf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Hazard")
-            text_title = str(
-                "Loglogistic Distribution\n"
-                + " Hazard Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Loglogistic Distribution\n" + " Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -6401,7 +5980,7 @@ class Loglogistic_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the CHF (cumulative hazard function)
@@ -6470,9 +6049,7 @@ class Loglogistic_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         chf = np.log(1 + ((X - self.gamma) / self.alpha) ** self.beta)
         chf = zeroise_below_gamma(X=X, Y=chf, gamma=self.gamma)
@@ -6480,18 +6057,13 @@ class Loglogistic_Distribution:
         self._chf = chf  # required by the CI plotting part
         self._X = X
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             p = plt.plot(X, chf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Cumulative hazard")
-            text_title = str(
-                "Loglogistic Distribution\n"
-                + " Cumulative Hazard Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Loglogistic Distribution\n" + " Cumulative Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
 
@@ -6516,9 +6088,7 @@ class Loglogistic_Distribution:
                 color=p[0].get_color(),
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="CHF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="CHF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(np.exp(-CI_y)), upper_CI
@@ -6597,7 +6167,10 @@ class Loglogistic_Distribution:
         MRL : float
             The mean residual life
         """
-        R = lambda x: ss.fisk.sf(x, self.beta, scale=self.alpha, loc=self.gamma)
+
+        def R(x):
+            return ss.fisk.sf(x, self.beta, scale=self.alpha, loc=self.gamma)
+
         integral_R, error = integrate.quad(R, t, np.inf)
         MRL = integral_R / R(t)
         return MRL
@@ -6671,13 +6244,11 @@ class Loglogistic_Distribution:
         -----
         This is the same as rvs in scipy.stats
         """
-        if type(number_of_samples) != int or number_of_samples < 1:
+        if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             np.random.seed(seed)
-        RVS = ss.fisk.rvs(
-            self.beta, scale=self.alpha, loc=self.gamma, size=number_of_samples
-        )
+        RVS = ss.fisk.rvs(self.beta, scale=self.alpha, loc=self.gamma, size=number_of_samples)
         return RVS
 
 
@@ -6726,33 +6297,22 @@ class Gumbel_Distribution:
         self.name = "Gumbel"
         self.name2 = "Gumbel_2P"
         if mu is None or sigma is None:
-            raise ValueError(
-                "Parameters mu and sigma must be specified. Eg. Gumbel_Distribution(mu=5,sigma=2)"
-            )
+            raise ValueError("Parameters mu and sigma must be specified. Eg. Gumbel_Distribution(mu=5,sigma=2)")
         self.mu = float(mu)
         self.sigma = float(sigma)
         self.parameters = np.array([self.mu, self.sigma])
         mean, var, skew, kurt = ss.gumbel_l.stats(self.mu, self.sigma, moments="mvsk")
         self.mean = float(mean)
-        self.standard_deviation = float(var ** 0.5)
+        self.standard_deviation = float(var**0.5)
         self.variance = float(var)
         self.skewness = float(skew)
         self.kurtosis = float(kurt + 3)
         self.excess_kurtosis = float(kurt)
         self.median = mu + sigma * np.log(np.log(2))
         self.mode = mu
-        self.param_title = str(
-            "μ="
-            + round_and_string(self.mu, dec)
-            + ",σ="
-            + round_and_string(self.sigma, dec)
-        )
+        self.param_title = str("μ=" + round_and_string(self.mu, dec) + ",σ=" + round_and_string(self.sigma, dec))
         self.param_title_long = str(
-            "Gumbel Distribution (μ="
-            + round_and_string(self.mu, dec)
-            + ",σ="
-            + round_and_string(self.sigma, dec)
-            + ")"
+            "Gumbel Distribution (μ=" + round_and_string(self.mu, dec) + ",σ=" + round_and_string(self.sigma, dec) + ")"
         )
         self.b5 = ss.gumbel_l.ppf(0.05, loc=self.mu, scale=self.sigma)
         self.b95 = ss.gumbel_l.ppf(0.95, loc=self.mu, scale=self.sigma)
@@ -6819,9 +6379,7 @@ class Gumbel_Distribution:
         be based on the distribution's parameters. No plotting keywords are
         accepted.
         """
-        X, xvals, xmin, xmax = distributions_input_checking(
-            self, "ALL", xvals, xmin, xmax
-        )
+        X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
 
         pdf = ss.gumbel_l.pdf(X, self.mu, self.sigma)
         cdf = ss.gumbel_l.cdf(X, self.mu, self.sigma)
@@ -6913,20 +6471,10 @@ class Gumbel_Distribution:
         text_mode = str("Mode = " + round_and_string(self.mode, dec))
         text_b5 = str("$5^{th}$ quantile = " + round_and_string(self.b5, dec))
         text_b95 = str("$95^{th}$ quantile = " + round_and_string(self.b95, dec))
-        text_std = str(
-            "Standard deviation = "
-            + round_and_string(self.standard_deviation, dec)
-        )
-        text_var = str(
-            "Variance = " + round_and_string(self.variance, dec)
-        )
-        text_skew = str(
-            "Skewness = " + round_and_string(self.skewness, dec)
-        )
-        text_ex_kurt = str(
-            "Excess kurtosis = "
-            + round_and_string(self.excess_kurtosis, dec)
-        )
+        text_std = str("Standard deviation = " + round_and_string(self.standard_deviation, dec))
+        text_var = str("Variance = " + round_and_string(self.variance, dec))
+        text_skew = str("Skewness = " + round_and_string(self.skewness, dec))
+        text_ex_kurt = str("Excess kurtosis = " + round_and_string(self.excess_kurtosis, dec))
         plt.text(0, 9, text_mean)
         plt.text(0, 8, text_median)
         plt.text(0, 7, text_mode)
@@ -6979,18 +6527,13 @@ class Gumbel_Distribution:
         pdf = ss.gumbel_l.pdf(X, self.mu, self.sigma)
         pdf = unpack_single_arrays(pdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, pdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Probability density")
-            text_title = str(
-                "Gumbel Distribution\n"
-                + " Probability Density Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Gumbel Distribution\n" + " Probability Density Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.85)
 
@@ -7018,7 +6561,7 @@ class Gumbel_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the CDF (cumulative distribution function)
@@ -7086,25 +6629,18 @@ class Gumbel_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         cdf = ss.gumbel_l.cdf(X, self.mu, self.sigma)
         cdf = unpack_single_arrays(cdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             p = plt.plot(X, cdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction failing")
-            text_title = str(
-                "Gumbel Distribution\n"
-                + " Cumulative Distribution Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Gumbel Distribution\n" + " Cumulative Distribution Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.85)
 
@@ -7129,9 +6665,7 @@ class Gumbel_Distribution:
                 color=p[0].get_color(),
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="CDF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="CDF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.quantile(CI_y), upper_CI
@@ -7152,7 +6686,7 @@ class Gumbel_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the SF (survival function)
@@ -7220,25 +6754,18 @@ class Gumbel_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         sf = ss.gumbel_l.sf(X, self.mu, self.sigma)
         sf = unpack_single_arrays(sf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             p = plt.plot(X, sf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction surviving")
-            text_title = str(
-                "Gumbel Distribution\n"
-                + " Survival Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Gumbel Distribution\n" + " Survival Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.85)
 
@@ -7263,9 +6790,7 @@ class Gumbel_Distribution:
                 color=p[0].get_color(),
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="SF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="SF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(CI_y), upper_CI
@@ -7314,15 +6839,13 @@ class Gumbel_Distribution:
         hf = np.exp((X - self.mu) / self.sigma) / self.sigma
         hf = unpack_single_arrays(hf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, hf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Hazard")
-            text_title = str(
-                "Gumbel Distribution\n" + " Hazard Function " + "\n" + self.param_title
-            )
+            text_title = str("Gumbel Distribution\n" + " Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.85)
 
@@ -7350,7 +6873,7 @@ class Gumbel_Distribution:
         CI=None,
         CI_y=None,
         CI_x=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plots the CHF (cumulative hazard function)
@@ -7418,27 +6941,20 @@ class Gumbel_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(
-            self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        )
+        ) = distributions_input_checking(self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
 
         chf = np.exp((X - self.mu) / self.sigma)
         chf = unpack_single_arrays(chf)
         self._X = X
         self._chf = chf
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             p = plt.plot(X, chf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Cumulative hazard")
-            text_title = str(
-                "Gumbel Distribution\n"
-                + " Cumulative Hazard Function "
-                + "\n"
-                + self.param_title
-            )
+            text_title = str("Gumbel Distribution\n" + " Cumulative Hazard Function " + "\n" + self.param_title)
             plt.title(text_title)
             plt.subplots_adjust(top=0.85)
 
@@ -7463,9 +6979,7 @@ class Gumbel_Distribution:
                 color=p[0].get_color(),
             )
 
-        lower_CI, upper_CI = extract_CI(
-            dist=self, func="CHF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x
-        )
+        lower_CI, upper_CI = extract_CI(dist=self, func="CHF", CI_type=CI_type, CI=CI, CI_y=CI_y, CI_x=CI_x)
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(np.exp(-CI_y)), upper_CI
@@ -7540,7 +7054,10 @@ class Gumbel_Distribution:
         MRL : float
             The mean residual life
         """
-        R = lambda x: ss.gumbel_l.sf(x, loc=self.mu, scale=self.sigma)
+
+        def R(x):
+            return ss.gumbel_l.sf(x, loc=self.mu, scale=self.sigma)
+
         integral_R, error = integrate.quad(R, t, np.inf)
         MRL = integral_R / R(t)
         return MRL
@@ -7600,7 +7117,7 @@ class Gumbel_Distribution:
         -----
         This is the same as rvs in scipy.stats
         """
-        if type(number_of_samples) != int or number_of_samples < 1:
+        if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             np.random.seed(seed)
@@ -7674,9 +7191,7 @@ class Competing_Risks_Model:
 
     def __init__(self, distributions):
         if type(distributions) not in [list, np.ndarray]:
-            raise ValueError(
-                "distributions must be a list or array of distribution objects."
-            )
+            raise ValueError("distributions must be a list or array of distribution objects.")
         contains_normal_or_gumbel = False
         for dist in distributions:
             if type(dist) not in [
@@ -7693,14 +7208,14 @@ class Competing_Risks_Model:
                     "distributions must be an array or list of probability distributions. Each distribution must be created using the reliability.Distributions module."
                 )
             if type(dist) in [Normal_Distribution, Gumbel_Distribution]:
-                contains_normal_or_gumbel = True  # check if we can have negative xvals (allowable if only normal and gumbel are in the mixture)
+                contains_normal_or_gumbel = (
+                    True  # check if we can have negative xvals (allowable if only normal and gumbel are in the mixture)
+                )
         self.__contains_normal_or_gumbel = contains_normal_or_gumbel
         self.distributions = distributions  # this just passes the distributions to the __combiner which is used by the other functions along with the xvals. No combining can occur without xvals.
         self.name = "Competing risks"
         self.num_dists = len(distributions)
-        self.name2 = str(
-            "Competing risks using " + str(self.num_dists) + " distributions"
-        )
+        self.name2 = str("Competing risks using " + str(self.num_dists) + " distributions")
 
         # This is essentially just the same as the __combiner method but more automated with a high amount of detail for the X array to minimize errors
         xmax = -1e100
@@ -7711,7 +7226,7 @@ class Competing_Risks_Model:
         number_of_params = 0
         for dist in distributions:
             if dist.parameters[-1] == 0:
-                params_in_dist = len(dist.parameters)-1
+                params_in_dist = len(dist.parameters) - 1
             else:
                 params_in_dist = len(dist.parameters)
             number_of_params += params_in_dist
@@ -7719,9 +7234,7 @@ class Competing_Risks_Model:
             xmin = min(xmin, dist.quantile(1e-10))
             xmax999 = max(xmax999, dist.quantile(0.999))
             xmin001 = min(xmin001, dist.quantile(0.001))
-            xmax_inf = max(
-                xmax_inf, dist.quantile(1 - 1e-10)
-            )  # effective infinity used by MRL
+            xmax_inf = max(xmax_inf, dist.quantile(1 - 1e-10))  # effective infinity used by MRL
         self.__number_of_params = number_of_params
         self.__xmax999 = xmax999
         self.__xmin001 = xmin001
@@ -7741,12 +7254,8 @@ class Competing_Risks_Model:
                 sf *= distributions[i].SF(X, show_plot=False)
                 hf += distributions[i].HF(X, show_plot=False)
             else:
-                sf *= np.hstack(
-                    [Y_negative_ones, distributions[i].SF(X_positive, show_plot=False)]
-                )
-                hf += np.hstack(
-                    [Y_negative_zeros, distributions[i].HF(X_positive, show_plot=False)]
-                )
+                sf *= np.hstack([Y_negative_ones, distributions[i].SF(X_positive, show_plot=False)])
+                hf += np.hstack([Y_negative_zeros, distributions[i].HF(X_positive, show_plot=False)])
         pdf = hf * sf
         np.nan_to_num(
             pdf, copy=False, nan=0.0, posinf=None, neginf=None
@@ -7756,16 +7265,10 @@ class Competing_Risks_Model:
         self.__pdf_init = pdf  # used by random_samples
         self.__sf_init = sf  # used by quantile and inverse_SF
         self.mean = integrate.simps(pdf * X, x=X)
-        self.standard_deviation = (
-            integrate.simps(pdf * (X - self.mean) ** 2, x=X)
-        ) ** 0.5
-        self.variance = self.standard_deviation ** 2
-        self.skewness = integrate.simps(
-            pdf * ((X - self.mean) / self.standard_deviation) ** 3, x=X
-        )
-        self.kurtosis = integrate.simps(
-            pdf * ((X - self.mean) / self.standard_deviation) ** 4, x=X
-        )
+        self.standard_deviation = (integrate.simps(pdf * (X - self.mean) ** 2, x=X)) ** 0.5
+        self.variance = self.standard_deviation**2
+        self.skewness = integrate.simps(pdf * ((X - self.mean) / self.standard_deviation) ** 3, x=X)
+        self.kurtosis = integrate.simps(pdf * ((X - self.mean) / self.standard_deviation) ** 4, x=X)
         self.mode = X[np.argmax(pdf)]
         self.median = X[np.argmin(abs(sf - 0.5))]
         self.excess_kurtosis = self.kurtosis - 3
@@ -7786,10 +7289,7 @@ class Competing_Risks_Model:
             X = xvals
         else:
             if xmin is None:
-                if (
-                    self.__xmin001 > 0
-                    and self.__xmin001 - (self.__xmax999 - self.__xmin001) * 0.3 < 0
-                ):
+                if self.__xmin001 > 0 and self.__xmin001 - (self.__xmax999 - self.__xmin001) * 0.3 < 0:
                     xmin = 0  # if its positive but close to zero then just make it zero
                 else:
                     xmin = self.__xmin001
@@ -7826,12 +7326,8 @@ class Competing_Risks_Model:
                 sf *= distributions[i].SF(X, show_plot=False)
                 hf += distributions[i].HF(X, show_plot=False)
             else:
-                sf *= np.hstack(
-                    [Y_negative_ones, distributions[i].SF(X_positive, show_plot=False)]
-                )
-                hf += np.hstack(
-                    [Y_negative_zeros, distributions[i].HF(X_positive, show_plot=False)]
-                )
+                sf *= np.hstack([Y_negative_ones, distributions[i].SF(X_positive, show_plot=False)])
+                hf += np.hstack([Y_negative_zeros, distributions[i].HF(X_positive, show_plot=False)])
         pdf = sf * hf
         np.nan_to_num(
             pdf, copy=False, nan=0.0, posinf=None, neginf=None
@@ -7961,18 +7457,10 @@ class Competing_Risks_Model:
         text_mode = str("Mode = " + round_and_string(self.mode, dec))
         text_b5 = str("$5^{th}$ quantile = " + round_and_string(self.b5, dec))
         text_b95 = str("$95^{th}$ quantile = " + round_and_string(self.b95, dec))
-        text_std = str(
-            "Standard deviation = " + round_and_string(self.standard_deviation,dec))
-        text_var = str(
-            "Variance = " + round_and_string(self.variance, dec)
-        )
-        text_skew = str(
-            "Skewness = " + round_and_string(self.skewness, dec)
-        )
-        text_ex_kurt = str(
-            "Excess kurtosis = "
-            + round_and_string(self.excess_kurtosis, dec)
-        )
+        text_std = str("Standard deviation = " + round_and_string(self.standard_deviation, dec))
+        text_var = str("Variance = " + round_and_string(self.variance, dec))
+        text_skew = str("Skewness = " + round_and_string(self.skewness, dec))
+        text_ex_kurt = str("Excess kurtosis = " + round_and_string(self.excess_kurtosis, dec))
         plt.text(0, 9, text_mean)
         plt.text(0, 8, text_median)
         plt.text(0, 7, text_mode)
@@ -7986,16 +7474,7 @@ class Competing_Risks_Model:
         plt.subplots_adjust(hspace=0.3, top=0.84)
         plt.show()
 
-    def PDF(
-        self,
-        xvals=None,
-        xmin=None,
-        xmax=None,
-        show_plot=True,
-        plot_components=False,
-        **kwargs
-    ):
-
+    def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
         """
         Plots the PDF (probability density function)
 
@@ -8035,10 +7514,8 @@ class Competing_Risks_Model:
         if len(self.__xvals) < 2:
             show_plot = False
 
-        if show_plot == True:
-            if (
-                plot_components is True
-            ):  # this will plot the distributions that make up the components of the model
+        if show_plot is True:
+            if plot_components is True:  # this will plot the distributions that make up the components of the model
                 X_positive = self.__xvals[self.__xvals >= 0]
                 for dist in self.distributions:
                     if type(dist) not in [Normal_Distribution, Gumbel_Distribution]:
@@ -8054,9 +7531,7 @@ class Competing_Risks_Model:
             plt.plot(self.__xvals, self.__pdf, label=textlabel, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Probability density")
-            text_title = str(
-                "Competing Risks Model\n" + " Probability Density Function"
-            )
+            text_title = str("Competing Risks Model\n" + " Probability Density Function")
             plt.title(text_title)
             plt.subplots_adjust(top=0.87)
 
@@ -8073,15 +7548,7 @@ class Competing_Risks_Model:
 
         return unpack_single_arrays(self.__pdf)
 
-    def CDF(
-        self,
-        xvals=None,
-        xmin=None,
-        xmax=None,
-        show_plot=True,
-        plot_components=False,
-        **kwargs
-    ):
+    def CDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
         """
         Plots the CDF (cumulative distribution function)
 
@@ -8122,10 +7589,8 @@ class Competing_Risks_Model:
         if len(self.__xvals) < 2:
             show_plot = False
 
-        if show_plot == True:
-            if (
-                plot_components is True
-            ):  # this will plot the distributions that make up the components of the model
+        if show_plot is True:
+            if plot_components is True:  # this will plot the distributions that make up the components of the model
                 X_positive = self.__xvals[self.__xvals >= 0]
                 for dist in self.distributions:
                     if type(dist) not in [Normal_Distribution, Gumbel_Distribution]:
@@ -8140,9 +7605,7 @@ class Competing_Risks_Model:
             plt.plot(self.__xvals, self.__cdf, label=textlabel, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction failing")
-            text_title = str(
-                "Competing Risks Model\n" + " Cumulative Distribution Function"
-            )
+            text_title = str("Competing Risks Model\n" + " Cumulative Distribution Function")
             plt.title(text_title)
             plt.subplots_adjust(top=0.87)
 
@@ -8159,15 +7622,7 @@ class Competing_Risks_Model:
 
         return unpack_single_arrays(self.__cdf)
 
-    def SF(
-        self,
-        xvals=None,
-        xmin=None,
-        xmax=None,
-        show_plot=True,
-        plot_components=False,
-        **kwargs
-    ):
+    def SF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
         """
         Plots the SF (survival function)
 
@@ -8207,10 +7662,8 @@ class Competing_Risks_Model:
         if len(self.__xvals) < 2:
             show_plot = False
 
-        if show_plot == True:
-            if (
-                plot_components is True
-            ):  # this will plot the distributions that make up the components of the model
+        if show_plot is True:
+            if plot_components is True:  # this will plot the distributions that make up the components of the model
                 X_positive = self.__xvals[self.__xvals >= 0]
                 for dist in self.distributions:
                     if type(dist) not in [Normal_Distribution, Gumbel_Distribution]:
@@ -8242,15 +7695,7 @@ class Competing_Risks_Model:
 
         return unpack_single_arrays(self.__sf)
 
-    def HF(
-        self,
-        xvals=None,
-        xmin=None,
-        xmax=None,
-        show_plot=True,
-        plot_components=False,
-        **kwargs
-    ):
+    def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
         """
         Plots the HF (hazard function)
 
@@ -8290,10 +7735,8 @@ class Competing_Risks_Model:
         if len(self.__xvals) < 2:
             show_plot = False
 
-        if show_plot == True:
-            if (
-                plot_components is True
-            ):  # this will plot the distributions that make up the components of the model
+        if show_plot is True:
+            if plot_components is True:  # this will plot the distributions that make up the components of the model
                 X_positive = self.__xvals[self.__xvals >= 0]
                 for dist in self.distributions:
                     if type(dist) not in [Normal_Distribution, Gumbel_Distribution]:
@@ -8326,15 +7769,7 @@ class Competing_Risks_Model:
 
         return unpack_single_arrays(self.__hf)
 
-    def CHF(
-        self,
-        xvals=None,
-        xmin=None,
-        xmax=None,
-        show_plot=True,
-        plot_components=False,
-        **kwargs
-    ):
+    def CHF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
         """
         Plots the CHF (cumulative hazard function)
 
@@ -8374,10 +7809,8 @@ class Competing_Risks_Model:
         if len(self.__xvals) < 2:
             show_plot = False
 
-        if show_plot == True:
-            if (
-                plot_components is True
-            ):  # this will plot the distributions that make up the components of the model
+        if show_plot is True:
+            if plot_components is True:  # this will plot the distributions that make up the components of the model
                 X_positive = self.__xvals[self.__xvals >= 0]
                 for dist in self.distributions:
                     if type(dist) not in [Normal_Distribution, Gumbel_Distribution]:
@@ -8566,7 +7999,7 @@ class Competing_Risks_Model:
         -----
         This is the same as rvs in scipy.stats
         """
-        if type(number_of_samples) != int or number_of_samples < 1:
+        if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             np.random.seed(seed)
@@ -8644,9 +8077,7 @@ class Mixture_Model:
 
     def __init__(self, distributions, proportions=None):
         if type(distributions) not in [list, np.ndarray]:
-            raise ValueError(
-                "distributions must be a list or array of distribution objects."
-            )
+            raise ValueError("distributions must be a list or array of distribution objects.")
         contains_normal_or_gumbel = False
         for dist in distributions:
             if type(dist) not in [
@@ -8663,16 +8094,16 @@ class Mixture_Model:
                     "distributions must be an array or list of probability distributions. Each distribution must be created using the reliability.Distributions module."
                 )
             if type(dist) in [Normal_Distribution, Gumbel_Distribution]:
-                contains_normal_or_gumbel = True  # check if we can have negative xvals (allowable if only normal and gumbel are in the mixture)
+                contains_normal_or_gumbel = (
+                    True  # check if we can have negative xvals (allowable if only normal and gumbel are in the mixture)
+                )
         self.__contains_normal_or_gumbel = contains_normal_or_gumbel
 
         if proportions is not None:
             if np.sum(proportions) != 1:
                 raise ValueError("the sum of the proportions must be 1")
             if len(proportions) != len(distributions):
-                raise ValueError(
-                    "the length of the proportions array must match the length of the distributions array"
-                )
+                raise ValueError("the length of the proportions array must match the length of the distributions array")
         else:
             proportions = np.ones_like(distributions) / len(
                 distributions
@@ -8693,18 +8124,16 @@ class Mixture_Model:
         number_of_params = 0
         for dist in distributions:
             if dist.parameters[-1] == 0:
-                params_in_dist = len(dist.parameters)-1
+                params_in_dist = len(dist.parameters) - 1
             else:
                 params_in_dist = len(dist.parameters)
-            number_of_params += (params_in_dist + 1) # plus 1 for the proportion
+            number_of_params += params_in_dist + 1  # plus 1 for the proportion
             xmax = max(xmax, dist.quantile(1 - 1e-10))
             xmin = min(xmin, dist.quantile(1e-10))
             xmax999 = max(xmax999, dist.quantile(0.999))
             xmin001 = min(xmin001, dist.quantile(0.001))
-            xmax_inf = max(
-                xmax_inf, dist.quantile(1 - 1e-10)
-            )  # effective infinity used by MRL
-        self.__number_of_params = number_of_params - 1 # minus 1 because last proportion is not needed as they sum to 1
+            xmax_inf = max(xmax_inf, dist.quantile(1 - 1e-10))  # effective infinity used by MRL
+        self.__number_of_params = number_of_params - 1  # minus 1 because last proportion is not needed as they sum to 1
         self.__xmax999 = xmax999
         self.__xmin001 = xmin001
         self.__xmax_inf = xmax_inf
@@ -8725,31 +8154,23 @@ class Mixture_Model:
                 cdf += np.hstack(
                     [
                         Y_negative,
-                        distributions[i].CDF(X_positive, show_plot=False)
-                        * proportions[i],
+                        distributions[i].CDF(X_positive, show_plot=False) * proportions[i],
                     ]
                 )
                 pdf += np.hstack(
                     [
                         Y_negative,
-                        distributions[i].PDF(X_positive, show_plot=False)
-                        * proportions[i],
+                        distributions[i].PDF(X_positive, show_plot=False) * proportions[i],
                     ]
                 )
         self.__pdf_init = pdf
         self.__cdf_init = cdf
         self.__xvals_init = X
         self.mean = integrate.simps(pdf * X, x=X)
-        self.standard_deviation = (
-            integrate.simps(pdf * (X - self.mean) ** 2, x=X)
-        ) ** 0.5
-        self.variance = self.standard_deviation ** 2
-        self.skewness = integrate.simps(
-            pdf * ((X - self.mean) / self.standard_deviation) ** 3, x=X
-        )
-        self.kurtosis = integrate.simps(
-            pdf * ((X - self.mean) / self.standard_deviation) ** 4, x=X
-        )
+        self.standard_deviation = (integrate.simps(pdf * (X - self.mean) ** 2, x=X)) ** 0.5
+        self.variance = self.standard_deviation**2
+        self.skewness = integrate.simps(pdf * ((X - self.mean) / self.standard_deviation) ** 3, x=X)
+        self.kurtosis = integrate.simps(pdf * ((X - self.mean) / self.standard_deviation) ** 4, x=X)
         self.mode = X[np.argmax(pdf)]
         self.median = X[np.argmin(abs((1 - cdf) - 0.5))]
         self.excess_kurtosis = self.kurtosis - 3
@@ -8771,10 +8192,7 @@ class Mixture_Model:
             X = xvals
         else:
             if xmin is None:
-                if (
-                    self.__xmin001 > 0
-                    and self.__xmin001 - (self.__xmax999 - self.__xmin001) * 0.3 < 0
-                ):
+                if self.__xmin001 > 0 and self.__xmin001 - (self.__xmax999 - self.__xmin001) * 0.3 < 0:
                     xmin = 0  # if its positive but close to zero then just make it zero
                 else:
                     xmin = self.__xmin001
@@ -8813,15 +8231,13 @@ class Mixture_Model:
                 cdf += np.hstack(
                     [
                         Y_negative,
-                        distributions[i].CDF(X_positive, show_plot=False)
-                        * proportions[i],
+                        distributions[i].CDF(X_positive, show_plot=False) * proportions[i],
                     ]
                 )
                 pdf += np.hstack(
                     [
                         Y_negative,
-                        distributions[i].PDF(X_positive, show_plot=False)
-                        * proportions[i],
+                        distributions[i].PDF(X_positive, show_plot=False) * proportions[i],
                     ]
                 )
 
@@ -8952,18 +8368,10 @@ class Mixture_Model:
         text_mode = str("Mode = " + round_and_string(self.mode, dec))
         text_b5 = str("$5^{th}$ quantile = " + round_and_string(self.b5, dec))
         text_b95 = str("$95^{th}$ quantile = " + round_and_string(self.b95, dec))
-        text_std = str(
-            "Standard deviation = " + round_and_string(self.standard_deviation,dec))
-        text_var = str(
-            "Variance = " + round_and_string(self.variance, dec)
-        )
-        text_skew = str(
-            "Skewness = " + round_and_string(self.skewness, dec)
-        )
-        text_ex_kurt = str(
-            "Excess kurtosis = "
-            + round_and_string(self.excess_kurtosis, dec)
-        )
+        text_std = str("Standard deviation = " + round_and_string(self.standard_deviation, dec))
+        text_var = str("Variance = " + round_and_string(self.variance, dec))
+        text_skew = str("Skewness = " + round_and_string(self.skewness, dec))
+        text_ex_kurt = str("Excess kurtosis = " + round_and_string(self.excess_kurtosis, dec))
         plt.text(0, 9, text_mean)
         plt.text(0, 8, text_median)
         plt.text(0, 7, text_mode)
@@ -8977,15 +8385,7 @@ class Mixture_Model:
         plt.subplots_adjust(hspace=0.3, top=0.84)
         plt.show()
 
-    def PDF(
-        self,
-        xvals=None,
-        xmin=None,
-        xmax=None,
-        show_plot=True,
-        plot_components=False,
-        **kwargs
-    ):
+    def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
         """
         Plots the PDF (probability density function)
 
@@ -9025,10 +8425,8 @@ class Mixture_Model:
         if len(self.__xvals) < 2:
             show_plot = False
 
-        if show_plot == True:
-            if (
-                plot_components is True
-            ):  # this will plot the distributions that make up the components of the model
+        if show_plot is True:
+            if plot_components is True:  # this will plot the distributions that make up the components of the model
                 X_positive = self.__xvals[self.__xvals >= 0]
                 for dist in self.distributions:
                     if type(dist) not in [Normal_Distribution, Gumbel_Distribution]:
@@ -9062,15 +8460,7 @@ class Mixture_Model:
 
         return unpack_single_arrays(self.__pdf)
 
-    def CDF(
-        self,
-        xvals=None,
-        xmin=None,
-        xmax=None,
-        show_plot=True,
-        plot_components=False,
-        **kwargs
-    ):
+    def CDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
         """
         Plots the CDF (cumulative distribution function)
 
@@ -9110,10 +8500,8 @@ class Mixture_Model:
         if len(self.__xvals) < 2:
             show_plot = False
 
-        if show_plot == True:
-            if (
-                plot_components is True
-            ):  # this will plot the distributions that make up the components of the model
+        if show_plot is True:
+            if plot_components is True:  # this will plot the distributions that make up the components of the model
                 X_positive = self.__xvals[self.__xvals >= 0]
                 for dist in self.distributions:
                     if type(dist) not in [Normal_Distribution, Gumbel_Distribution]:
@@ -9145,15 +8533,7 @@ class Mixture_Model:
 
         return unpack_single_arrays(self.__cdf)
 
-    def SF(
-        self,
-        xvals=None,
-        xmin=None,
-        xmax=None,
-        show_plot=True,
-        plot_components=False,
-        **kwargs
-    ):
+    def SF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
         """
         Plots the SF (survival function)
 
@@ -9193,10 +8573,8 @@ class Mixture_Model:
         if len(self.__xvals) < 2:
             show_plot = False
 
-        if show_plot == True:
-            if (
-                plot_components is True
-            ):  # this will plot the distributions that make up the components of the model
+        if show_plot is True:
+            if plot_components is True:  # this will plot the distributions that make up the components of the model
                 X_positive = self.__xvals[self.__xvals >= 0]
                 for dist in self.distributions:
                     if type(dist) not in [Normal_Distribution, Gumbel_Distribution]:
@@ -9228,15 +8606,7 @@ class Mixture_Model:
 
         return unpack_single_arrays(self.__sf)
 
-    def HF(
-        self,
-        xvals=None,
-        xmin=None,
-        xmax=None,
-        show_plot=True,
-        plot_components=False,
-        **kwargs
-    ):
+    def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
         """
         Plots the HF (hazard function)
 
@@ -9276,11 +8646,9 @@ class Mixture_Model:
         if len(self.__xvals) < 2:
             show_plot = False
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
-            if (
-                plot_components is True
-            ):  # this will plot the distributions that make up the components of the model
+            if plot_components is True:  # this will plot the distributions that make up the components of the model
                 X_positive = self.__xvals[self.__xvals >= 0]
                 for dist in self.distributions:
                     if type(dist) not in [Normal_Distribution, Gumbel_Distribution]:
@@ -9312,15 +8680,7 @@ class Mixture_Model:
 
         return unpack_single_arrays(self.__hf)
 
-    def CHF(
-        self,
-        xvals=None,
-        xmin=None,
-        xmax=None,
-        show_plot=True,
-        plot_components=False,
-        **kwargs
-    ):
+    def CHF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
         """
         Plots the CHF (cumulative hazard function)
 
@@ -9360,11 +8720,9 @@ class Mixture_Model:
         if len(self.__xvals) < 2:
             show_plot = False
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()
-            if (
-                plot_components is True
-            ):  # this will plot the distributions that make up the components of the model
+            if plot_components is True:  # this will plot the distributions that make up the components of the model
                 X_positive = self.__xvals[self.__xvals >= 0]
                 for dist in self.distributions:
                     if type(dist) not in [Normal_Distribution, Gumbel_Distribution]:
@@ -9462,9 +8820,7 @@ class Mixture_Model:
         None
 
         """
-        colorprint(
-            "Descriptive statistics for Mixture Model", bold=True, underline=True
-        )
+        colorprint("Descriptive statistics for Mixture Model", bold=True, underline=True)
         print("Mean = ", self.mean)
         print("Median =", self.median)
         print("Mode =", self.mode)
@@ -9505,16 +8861,12 @@ class Mixture_Model:
                         Normal_Distribution,
                         Gumbel_Distribution,
                     ]:
-                        cdf += (
-                            self.distributions[i].CDF(X, show_plot=False)
-                            * self.proportions[i]
-                        )
+                        cdf += self.distributions[i].CDF(X, show_plot=False) * self.proportions[i]
                     else:
                         cdf += np.hstack(
                             [
                                 Y_negative,
-                                self.distributions[i].CDF(X_positive, show_plot=False)
-                                * self.proportions[i],
+                                self.distributions[i].CDF(X_positive, show_plot=False) * self.proportions[i],
                             ]
                         )
             else:
@@ -9524,15 +8876,9 @@ class Mixture_Model:
                         Normal_Distribution,
                         Gumbel_Distribution,
                     ]:
-                        cdf += (
-                            self.distributions[i].CDF(X, show_plot=False)
-                            * self.proportions[i]
-                        )
+                        cdf += self.distributions[i].CDF(X, show_plot=False) * self.proportions[i]
                     elif X > 0:
-                        cdf += (
-                            self.distributions[i].CDF(X, show_plot=False)
-                            * self.proportions[i]
-                        )
+                        cdf += self.distributions[i].CDF(X, show_plot=False) * self.proportions[i]
             return 1 - cdf
 
         t_full = np.linspace(t, self.__xmax_inf, 1000000)
@@ -9561,7 +8907,7 @@ class Mixture_Model:
         -----
         This is the same as rvs in scipy.stats
         """
-        if type(number_of_samples) != int or number_of_samples < 1:
+        if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             np.random.seed(seed)
@@ -9628,7 +8974,6 @@ class DSZI_Model:
     """
 
     def __init__(self, distribution, DS=None, ZI=None):
-
         if DS is None and ZI is None:
             raise ValueError(
                 "DS and ZI cannot both be unspecified. Please specify one or both of these parameters to create a DS, ZI, or DSZI model."
@@ -9638,7 +8983,10 @@ class DSZI_Model:
         if ZI is None:
             ZI = float(0)
         if DS == 1 and ZI == 0:
-            colorprint('WARNING: A DSZI model with DS = 1 and ZI = 0 is equivalent to the base distribution. There is no need to use a DSZI distribution if DS = 1 and ZI = 0.',text_color='red')
+            colorprint(
+                "WARNING: A DSZI model with DS = 1 and ZI = 0 is equivalent to the base distribution. There is no need to use a DSZI distribution if DS = 1 and ZI = 0.",
+                text_color="red",
+            )
         if ZI > DS:
             raise ValueError(
                 "DS can not be greater than ZI. DS is the maximum of the CDF. ZI is the minimum of the CDF."
@@ -9688,9 +9036,7 @@ class DSZI_Model:
             self.__number_of_params = params_in_dist + 1
         else:  # DSZI
             self.__model_title = "DSZI Model"
-            self.name2 = (
-                "Defective Subpopulation Zero Inflated " + self.__base_distribution.name
-            )
+            self.name2 = "Defective Subpopulation Zero Inflated " + self.__base_distribution.name
             self.__number_of_params = params_in_dist + 2
 
         xmax = self.__base_distribution.quantile(1 - 1e-10)
@@ -9734,9 +9080,7 @@ class DSZI_Model:
         accepted.
         """
 
-        X = generate_X_array(
-            dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax
-        )  # obtain the X array
+        X = generate_X_array(dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax)  # obtain the X array
 
         pdf0 = self.__base_distribution.PDF(xvals=X, show_plot=False)
         pdf = pdf0 * (self.DS - self.ZI)  # the DSZI formula for the PDF
@@ -9829,18 +9173,10 @@ class DSZI_Model:
         text_mode = str("Mode = " + round_and_string(self.mode, dec))
         text_b5 = str("$5^{th}$ quantile = " + round_and_string(self.b5, dec))
         text_b95 = str("$95^{th}$ quantile = " + round_and_string(self.b95, dec))
-        text_std = str(
-            "Standard deviation = " + round_and_string(self.standard_deviation,dec))
-        text_var = str(
-            "Variance = " + round_and_string(self.variance, dec)
-        )
-        text_skew = str(
-            "Skewness = " + round_and_string(self.skewness, dec)
-        )
-        text_ex_kurt = str(
-            "Excess kurtosis = "
-            + round_and_string(self.excess_kurtosis, dec)
-        )
+        text_std = str("Standard deviation = " + round_and_string(self.standard_deviation, dec))
+        text_var = str("Variance = " + round_and_string(self.variance, dec))
+        text_skew = str("Skewness = " + round_and_string(self.skewness, dec))
+        text_ex_kurt = str("Excess kurtosis = " + round_and_string(self.excess_kurtosis, dec))
         plt.text(0, 9, text_mean)
         plt.text(0, 8, text_median)
         plt.text(0, 7, text_mode)
@@ -9887,23 +9223,17 @@ class DSZI_Model:
         be based on the distribution's parameters.
         """
         # obtain the X array
-        if (
-            xmin is None
-            and xmax is None
-            and type(xvals) not in [list, np.ndarray, type(None)]
-        ):
+        if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
             X = xvals
             show_plot = False
         else:
-            X = generate_X_array(
-                dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax
-            )
+            X = generate_X_array(dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax)
 
         pdf0 = self.__base_distribution.PDF(xvals=X, show_plot=False)
         pdf = pdf0 * (self.DS - self.ZI)  # the DSZI formula for the PDF
         pdf = unpack_single_arrays(pdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, pdf, **kwargs)
@@ -9959,31 +9289,23 @@ class DSZI_Model:
         be based on the distribution's parameters.
         """
         # obtain the X array
-        if (
-            xmin is None
-            and xmax is None
-            and type(xvals) not in [list, np.ndarray, type(None)]
-        ):
+        if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
             X = xvals
             show_plot = False
         else:
-            X = generate_X_array(
-                dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax
-            )
+            X = generate_X_array(dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax)
 
         cdf0 = self.__base_distribution.CDF(xvals=X, show_plot=False)
         cdf = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
         cdf = unpack_single_arrays(cdf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, cdf, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Fraction failing")
-            text_title = str(
-                self.__model_title + "\n" + "Cumulative Distribution Function"
-            )
+            text_title = str(self.__model_title + "\n" + "Cumulative Distribution Function")
             plt.title(text_title)
             plt.subplots_adjust(top=0.85)
 
@@ -10033,24 +9355,18 @@ class DSZI_Model:
         be based on the distribution's parameters.
         """
         # obtain the X array
-        if (
-            xmin is None
-            and xmax is None
-            and type(xvals) not in [list, np.ndarray, type(None)]
-        ):
+        if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
             X = xvals
             show_plot = False
         else:
-            X = generate_X_array(
-                dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax
-            )
+            X = generate_X_array(dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax)
 
         cdf0 = self.__base_distribution.CDF(xvals=X, show_plot=False)
         cdf = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
         sf = 1 - cdf
         sf = unpack_single_arrays(sf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, sf, **kwargs)
@@ -10106,17 +9422,11 @@ class DSZI_Model:
         be based on the distribution's parameters.
         """
         # obtain the X array
-        if (
-            xmin is None
-            and xmax is None
-            and type(xvals) not in [list, np.ndarray, type(None)]
-        ):
+        if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
             X = xvals
             show_plot = False
         else:
-            X = generate_X_array(
-                dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax
-            )
+            X = generate_X_array(dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax)
 
         pdf0 = self.__base_distribution.PDF(xvals=X, show_plot=False)
         pdf = pdf0 * (self.DS - self.ZI)  # the DSZI formula for the PDF
@@ -10125,7 +9435,7 @@ class DSZI_Model:
         hf = pdf / (1 - cdf)  # pdf/sf
         hf = unpack_single_arrays(hf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, hf, **kwargs)
@@ -10181,24 +9491,18 @@ class DSZI_Model:
         be based on the distribution's parameters.
         """
         # obtain the X array
-        if (
-            xmin is None
-            and xmax is None
-            and type(xvals) not in [list, np.ndarray, type(None)]
-        ):
+        if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
             X = xvals
             show_plot = False
         else:
-            X = generate_X_array(
-                dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax
-            )
+            X = generate_X_array(dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax)
 
         cdf0 = self.__base_distribution.CDF(xvals=X, show_plot=False)
         cdf = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
         chf = -np.log(1 - cdf)  # -ln(sf)
         chf = unpack_single_arrays(chf)
 
-        if show_plot == True:
+        if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, chf, **kwargs)
@@ -10240,20 +9544,12 @@ class DSZI_Model:
         if type(q) in [int, float, np.float64]:
             if q < self.ZI or q > self.DS:
                 raise ValueError(
-                    "Quantile must be between ZI and DS. ZI = "
-                    + str(self.ZI)
-                    + ", DS = "
-                    + str(self.DS)
-                    + "."
+                    "Quantile must be between ZI and DS. ZI = " + str(self.ZI) + ", DS = " + str(self.DS) + "."
                 )
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
                 raise ValueError(
-                    "Quantile must be between ZI and DS. ZI = "
-                    + str(self.ZI)
-                    + ", DS = "
-                    + str(self.DS)
-                    + "."
+                    "Quantile must be between ZI and DS. ZI = " + str(self.ZI) + ", DS = " + str(self.DS) + "."
                 )
         else:
             raise ValueError("Quantile must be of type float, list, array")
@@ -10375,10 +9671,8 @@ class DSZI_Model:
             if self.DS < 1:
                 raise ValueError("right_censored_time must be provided if DS is not 1")
             else:
-                right_censored_time = (
-                    1  # dummy value which is multiplied by an empty array.
-                )
-        if type(number_of_samples) != int or number_of_samples < 1:
+                right_censored_time = 1  # dummy value which is multiplied by an empty array.
+        if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             np.random.seed(seed)
@@ -10395,9 +9689,7 @@ class DSZI_Model:
         zeros = np.zeros(num_ZI)
         failures = self.__base_distribution.random_samples(int(num_failures), seed=seed)
         right_censored = np.ones(num_DS) * right_censored_time
-        failures = np.hstack(
-            [zeros, failures]
-        )  # combine the zeros and failure times into "failures"
+        failures = np.hstack([zeros, failures])  # combine the zeros and failure times into "failures"
 
         # this moves failures into right_censored if they exceed right_censored_time. Only applied if there are right censored times (DS < 1)
         if self.DS < 1 and max(failures) > right_censored_time:
@@ -10405,9 +9697,7 @@ class DSZI_Model:
                 "WARNING: some of the failure times exceeded the right_censored_time. These failures have been converted to the right_censored_time and moved into the right_censored array. This may bias the random samples so you should set a higher right_censored_time if possible.",
                 text_color="red",
             )
-            num_failure_beyond_right_censored_time = len(
-                np.where(failures > right_censored_time)[0]
-            )
+            num_failure_beyond_right_censored_time = len(np.where(failures > right_censored_time)[0])
             failures = np.delete(failures, np.where(failures > right_censored_time))
             right_censored = np.append(
                 right_censored,

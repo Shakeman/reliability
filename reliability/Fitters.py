@@ -40,54 +40,52 @@ highly successful, and whenever it fails the initial guess will be used and a
 warning will be displayed.
 """
 
-import numpy as np
-from numpy.linalg import LinAlgError
+import autograd.numpy as anp
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
-from scipy.optimize import minimize
 import scipy.stats as ss
+from autograd import value_and_grad
+from autograd.differential_operators import hessian
+from autograd.scipy.special import beta as abeta
+from autograd.scipy.special import erf
+from autograd.scipy.special import gamma as agamma
+from autograd_gamma import betainc, gammaincc
+from numpy.linalg import LinAlgError
+from scipy.optimize import minimize
+
 from reliability.Distributions import (
-    Weibull_Distribution,
-    Gamma_Distribution,
     Beta_Distribution,
-    Exponential_Distribution,
-    Normal_Distribution,
-    Lognormal_Distribution,
-    Loglogistic_Distribution,
-    Gumbel_Distribution,
-    Mixture_Model,
     Competing_Risks_Model,
     DSZI_Model,
+    Exponential_Distribution,
+    Gamma_Distribution,
+    Gumbel_Distribution,
+    Loglogistic_Distribution,
+    Lognormal_Distribution,
+    Mixture_Model,
+    Normal_Distribution,
+    Weibull_Distribution,
 )
 from reliability.Nonparametric import KaplanMeier
 from reliability.Probability_plotting import plotting_positions
 from reliability.Utils import (
-    round_and_string,
-    anderson_darling,
-    fitters_input_checking,
-    colorprint,
-    least_squares,
-    MLE_optimization,
     LS_optimization,
-    xy_downsample,
+    MLE_optimization,
+    anderson_darling,
+    colorprint,
     extract_CI,
+    fitters_input_checking,
+    least_squares,
+    round_and_string,
+    xy_downsample,
 )
-import autograd.numpy as anp
-from autograd import value_and_grad
-from autograd.differential_operators import hessian
-from autograd.scipy.special import gamma as agamma
-from autograd.scipy.special import beta as abeta
-from autograd.scipy.special import erf
-from autograd_gamma import betainc
-from autograd_gamma import gammaincc
 
 anp.seterr("ignore")
 dec = 3  # number of decimals to use when rounding fitted parameters in labels
 
 # change pandas display options
-pd.options.display.float_format = (
-    "{:g}".format
-)  # improves formatting of numbers in dataframe
+pd.options.display.float_format = "{:g}".format  # improves formatting of numbers in dataframe
 pd.options.display.max_columns = 9  # shows the dataframe without ... truncation
 pd.options.display.width = 200  # prevents wrapping after default 80 characters
 
@@ -219,7 +217,6 @@ class Fit_Everything:
         show_best_distribution_probability_plot=True,
         downsample_scatterplot=True,
     ):
-
         inputs = fitters_input_checking(
             dist="Everything",
             failures=failures,
@@ -236,25 +233,15 @@ class Fit_Everything:
             method = "LS"
 
         if show_histogram_plot not in [True, False]:
-            raise ValueError(
-                "show_histogram_plot must be either True or False. Defaults to True."
-            )
+            raise ValueError("show_histogram_plot must be either True or False. Defaults to True.")
         if print_results not in [True, False]:
-            raise ValueError(
-                "print_results must be either True or False. Defaults to True."
-            )
+            raise ValueError("print_results must be either True or False. Defaults to True.")
         if show_PP_plot not in [True, False]:
-            raise ValueError(
-                "show_PP_plot must be either True or False. Defaults to True."
-            )
+            raise ValueError("show_PP_plot must be either True or False. Defaults to True.")
         if show_probability_plot not in [True, False]:
-            raise ValueError(
-                "show_probability_plot must be either True or False. Defaults to True."
-            )
+            raise ValueError("show_probability_plot must be either True or False. Defaults to True.")
         if show_best_distribution_probability_plot not in [True, False]:
-            raise ValueError(
-                "show_best_distribution_probability_plot must be either True or False. Defaults to True."
-            )
+            raise ValueError("show_best_distribution_probability_plot must be either True or False. Defaults to True.")
 
         self.failures = failures
         self.right_censored = right_censored
@@ -434,9 +421,7 @@ class Fit_Everything:
             self.Weibull_3P_AICc = self.__Weibull_3P_params.AICc
             self.Weibull_3P_AD = self.__Weibull_3P_params.AD
             self.Weibull_3P_optimizer = self.__Weibull_3P_params.optimizer
-            self._parametric_CDF_Weibull_3P = self.__Weibull_3P_params.distribution.CDF(
-                xvals=d, show_plot=False
-            )
+            self._parametric_CDF_Weibull_3P = self.__Weibull_3P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -483,9 +468,7 @@ class Fit_Everything:
             self.Gamma_3P_AICc = self.__Gamma_3P_params.AICc
             self.Gamma_3P_AD = self.__Gamma_3P_params.AD
             self.Gamma_3P_optimizer = self.__Gamma_3P_params.optimizer
-            self._parametric_CDF_Gamma_3P = self.__Gamma_3P_params.distribution.CDF(
-                xvals=d, show_plot=False
-            )
+            self._parametric_CDF_Gamma_3P = self.__Gamma_3P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -530,8 +513,8 @@ class Fit_Everything:
             self.Exponential_2P_AICc = self.__Exponential_2P_params.AICc
             self.Exponential_2P_AD = self.__Exponential_2P_params.AD
             self.Exponential_2P_optimizer = self.__Exponential_2P_params.optimizer
-            self._parametric_CDF_Exponential_2P = (
-                self.__Exponential_2P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Exponential_2P = self.__Exponential_2P_params.distribution.CDF(
+                xvals=d, show_plot=False
             )
             df = pd.concat(
                 [
@@ -578,9 +561,7 @@ class Fit_Everything:
             self.Lognormal_3P_AICc = self.__Lognormal_3P_params.AICc
             self.Lognormal_3P_AD = self.__Lognormal_3P_params.AD
             self.Lognormal_3P_optimizer = self.__Lognormal_3P_params.optimizer
-            self._parametric_CDF_Lognormal_3P = (
-                self.__Lognormal_3P_params.distribution.CDF(xvals=d, show_plot=False)
-            )
+            self._parametric_CDF_Lognormal_3P = self.__Lognormal_3P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -625,9 +606,7 @@ class Fit_Everything:
             self.Normal_2P_AICc = self.__Normal_2P_params.AICc
             self.Normal_2P_AD = self.__Normal_2P_params.AD
             self.Normal_2P_optimizer = self.__Normal_2P_params.optimizer
-            self._parametric_CDF_Normal_2P = self.__Normal_2P_params.distribution.CDF(
-                xvals=d, show_plot=False
-            )
+            self._parametric_CDF_Normal_2P = self.__Normal_2P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -673,9 +652,7 @@ class Fit_Everything:
             self.Lognormal_2P_AICc = self.__Lognormal_2P_params.AICc
             self.Lognormal_2P_AD = self.__Lognormal_2P_params.AD
             self.Lognormal_2P_optimizer = self.__Lognormal_2P_params.optimizer
-            self._parametric_CDF_Lognormal_2P = (
-                self.__Lognormal_2P_params.distribution.CDF(xvals=d, show_plot=False)
-            )
+            self._parametric_CDF_Lognormal_2P = self.__Lognormal_2P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -720,9 +697,7 @@ class Fit_Everything:
             self.Gumbel_2P_AICc = self.__Gumbel_2P_params.AICc
             self.Gumbel_2P_AD = self.__Gumbel_2P_params.AD
             self.Gumbel_2P_optimizer = self.__Gumbel_2P_params.optimizer
-            self._parametric_CDF_Gumbel_2P = self.__Gumbel_2P_params.distribution.CDF(
-                xvals=d, show_plot=False
-            )
+            self._parametric_CDF_Gumbel_2P = self.__Gumbel_2P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -768,9 +743,7 @@ class Fit_Everything:
             self.Weibull_2P_AICc = self.__Weibull_2P_params.AICc
             self.Weibull_2P_AD = self.__Weibull_2P_params.AD
             self.Weibull_2P_optimizer = self.__Weibull_2P_params.optimizer
-            self._parametric_CDF_Weibull_2P = self.__Weibull_2P_params.distribution.CDF(
-                xvals=d, show_plot=False
-            )
+            self._parametric_CDF_Weibull_2P = self.__Weibull_2P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -812,16 +785,14 @@ class Fit_Everything:
             self.Weibull_Mixture_beta_1 = self.__Weibull_Mixture_params.beta_1
             self.Weibull_Mixture_alpha_2 = self.__Weibull_Mixture_params.alpha_2
             self.Weibull_Mixture_beta_2 = self.__Weibull_Mixture_params.beta_2
-            self.Weibull_Mixture_proportion_1 = (
-                self.__Weibull_Mixture_params.proportion_1
-            )
+            self.Weibull_Mixture_proportion_1 = self.__Weibull_Mixture_params.proportion_1
             self.Weibull_Mixture_loglik = self.__Weibull_Mixture_params.loglik
             self.Weibull_Mixture_BIC = self.__Weibull_Mixture_params.BIC
             self.Weibull_Mixture_AICc = self.__Weibull_Mixture_params.AICc
             self.Weibull_Mixture_AD = self.__Weibull_Mixture_params.AD
             self.Weibull_Mixture_optimizer = self.__Weibull_Mixture_params.optimizer
-            self._parametric_CDF_Weibull_Mixture = (
-                self.__Weibull_Mixture_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Weibull_Mixture = self.__Weibull_Mixture_params.distribution.CDF(
+                xvals=d, show_plot=False
             )
             df = pd.concat(
                 [
@@ -869,9 +840,7 @@ class Fit_Everything:
             self.Weibull_CR_AICc = self.__Weibull_CR_params.AICc
             self.Weibull_CR_AD = self.__Weibull_CR_params.AD
             self.Weibull_CR_optimizer = self.__Weibull_CR_params.optimizer
-            self._parametric_CDF_Weibull_CR = self.__Weibull_CR_params.distribution.CDF(
-                xvals=d, show_plot=False
-            )
+            self._parametric_CDF_Weibull_CR = self.__Weibull_CR_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -917,9 +886,7 @@ class Fit_Everything:
             self.Weibull_DS_AICc = self.__Weibull_DS_params.AICc
             self.Weibull_DS_AD = self.__Weibull_DS_params.AD
             self.Weibull_DS_optimizer = self.__Weibull_DS_params.optimizer
-            self._parametric_CDF_Weibull_DS = self.__Weibull_DS_params.distribution.CDF(
-                xvals=d, show_plot=False
-            )
+            self._parametric_CDF_Weibull_DS = self.__Weibull_DS_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -966,9 +933,7 @@ class Fit_Everything:
             self.Gamma_2P_AICc = self.__Gamma_2P_params.AICc
             self.Gamma_2P_AD = self.__Gamma_2P_params.AD
             self.Gamma_2P_optimizer = self.__Gamma_2P_params.optimizer
-            self._parametric_CDF_Gamma_2P = self.__Gamma_2P_params.distribution.CDF(
-                xvals=d, show_plot=False
-            )
+            self._parametric_CDF_Gamma_2P = self.__Gamma_2P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -1013,8 +978,8 @@ class Fit_Everything:
             self.Exponential_1P_AICc = self.__Exponential_1P_params.AICc
             self.Exponential_1P_AD = self.__Exponential_1P_params.AD
             self.Exponential_1P_optimizer = self.__Exponential_1P_params.optimizer
-            self._parametric_CDF_Exponential_1P = (
-                self.__Exponential_1P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Exponential_1P = self.__Exponential_1P_params.distribution.CDF(
+                xvals=d, show_plot=False
             )
             df = pd.concat(
                 [
@@ -1061,8 +1026,8 @@ class Fit_Everything:
             self.Loglogistic_2P_AICc = self.__Loglogistic_2P_params.AICc
             self.Loglogistic_2P_AD = self.__Loglogistic_2P_params.AD
             self.Loglogistic_2P_optimizer = self.__Loglogistic_2P_params.optimizer
-            self._parametric_CDF_Loglogistic_2P = (
-                self.__Loglogistic_2P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Loglogistic_2P = self.__Loglogistic_2P_params.distribution.CDF(
+                xvals=d, show_plot=False
             )
             df = pd.concat(
                 [
@@ -1109,8 +1074,8 @@ class Fit_Everything:
             self.Loglogistic_3P_AICc = self.__Loglogistic_3P_params.AICc
             self.Loglogistic_3P_AD = self.__Loglogistic_3P_params.AD
             self.Loglogistic_3P_optimizer = self.__Loglogistic_3P_params.optimizer
-            self._parametric_CDF_Loglogistic_3P = (
-                self.__Loglogistic_3P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Loglogistic_3P = self.__Loglogistic_3P_params.distribution.CDF(
+                xvals=d, show_plot=False
             )
             df = pd.concat(
                 [
@@ -1156,9 +1121,7 @@ class Fit_Everything:
             self.Beta_2P_AICc = self.__Beta_2P_params.AICc
             self.Beta_2P_AD = self.__Beta_2P_params.AD
             self.Beta_2P_optimizer = self.__Beta_2P_params.optimizer
-            self._parametric_CDF_Beta_2P = self.__Beta_2P_params.distribution.CDF(
-                xvals=d, show_plot=False
-            )
+            self._parametric_CDF_Beta_2P = self.__Beta_2P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -1188,13 +1151,10 @@ class Fit_Everything:
             )
 
         # change to sorting by BIC if there is insufficient data to get the AICc for everything that was fitted
-        if (
-            sort_by in ["AIC", "aic", "aicc", "AICc"]
-            and "Insufficient data" in df["AICc"].values
-        ):
+        if sort_by in ["AIC", "aic", "aicc", "AICc"] and "Insufficient data" in df["AICc"].values:
             sort_by = "BIC"
         # sort the dataframe by BIC, AICc, or AD. Smallest AICc, BIC, AD is better fit
-        if type(sort_by) != str:
+        if not isinstance(sort_by, str):
             raise ValueError(
                 "Invalid input to sort_by. Options are 'BIC', 'AICc', 'AD', or 'Log-likelihood'. Default is 'BIC'."
             )
@@ -1212,13 +1172,9 @@ class Fit_Everything:
             "LOGLIKELIHOOD",
             "LOG LIKELIHOOD",
         ]:
-            df["LLabs"] = abs(
-                df["Log-likelihood"]
-            )  # need to create a new column for the absolute value before sorting
+            df["LLabs"] = abs(df["Log-likelihood"])  # need to create a new column for the absolute value before sorting
             df2 = df.sort_values(by="LLabs")
-            df2.drop(
-                "LLabs", axis=1, inplace=True
-            )  # remove the column created just for sorting
+            df2.drop("LLabs", axis=1, inplace=True)  # remove the column created just for sorting
         else:
             raise ValueError(
                 "Invalid input to sort_by. Options are 'BIC', 'AICc', 'AD', or 'Log-likelihood'. Default is 'BIC'."
@@ -1231,9 +1187,7 @@ class Fit_Everything:
         best_dist = self.results["Distribution"].values[0]
         self.best_distribution_name = best_dist
         if best_dist == "Weibull_2P":
-            self.best_distribution = Weibull_Distribution(
-                alpha=self.Weibull_2P_alpha, beta=self.Weibull_2P_beta
-            )
+            self.best_distribution = Weibull_Distribution(alpha=self.Weibull_2P_alpha, beta=self.Weibull_2P_beta)
         elif best_dist == "Weibull_3P":
             self.best_distribution = Weibull_Distribution(
                 alpha=self.Weibull_3P_alpha,
@@ -1241,12 +1195,8 @@ class Fit_Everything:
                 gamma=self.Weibull_3P_gamma,
             )
         elif best_dist == "Weibull_Mixture":
-            d1 = Weibull_Distribution(
-                alpha=self.Weibull_Mixture_alpha_1, beta=self.Weibull_Mixture_beta_1
-            )
-            d2 = Weibull_Distribution(
-                alpha=self.Weibull_Mixture_alpha_2, beta=self.Weibull_Mixture_beta_2
-            )
+            d1 = Weibull_Distribution(alpha=self.Weibull_Mixture_alpha_1, beta=self.Weibull_Mixture_beta_1)
+            d2 = Weibull_Distribution(alpha=self.Weibull_Mixture_alpha_2, beta=self.Weibull_Mixture_beta_2)
             self.best_distribution = Mixture_Model(
                 distributions=[d1, d2],
                 proportions=[
@@ -1255,22 +1205,14 @@ class Fit_Everything:
                 ],
             )
         elif best_dist == "Weibull_CR":
-            d1 = Weibull_Distribution(
-                alpha=self.Weibull_CR_alpha_1, beta=self.Weibull_CR_beta_1
-            )
-            d2 = Weibull_Distribution(
-                alpha=self.Weibull_CR_alpha_2, beta=self.Weibull_CR_beta_2
-            )
+            d1 = Weibull_Distribution(alpha=self.Weibull_CR_alpha_1, beta=self.Weibull_CR_beta_1)
+            d2 = Weibull_Distribution(alpha=self.Weibull_CR_alpha_2, beta=self.Weibull_CR_beta_2)
             self.best_distribution = Competing_Risks_Model(distributions=[d1, d2])
         if best_dist == "Weibull_DS":
-            d1 = Weibull_Distribution(
-                alpha=self.Weibull_DS_alpha, beta=self.Weibull_DS_beta
-            )
+            d1 = Weibull_Distribution(alpha=self.Weibull_DS_alpha, beta=self.Weibull_DS_beta)
             self.best_distribution = DSZI_Model(distribution=d1, DS=self.Weibull_DS_DS)
         elif best_dist == "Gamma_2P":
-            self.best_distribution = Gamma_Distribution(
-                alpha=self.Gamma_2P_alpha, beta=self.Gamma_2P_beta
-            )
+            self.best_distribution = Gamma_Distribution(alpha=self.Gamma_2P_alpha, beta=self.Gamma_2P_beta)
         elif best_dist == "Gamma_3P":
             self.best_distribution = Gamma_Distribution(
                 alpha=self.Gamma_3P_alpha,
@@ -1278,9 +1220,7 @@ class Fit_Everything:
                 gamma=self.Gamma_3P_gamma,
             )
         elif best_dist == "Lognormal_2P":
-            self.best_distribution = Lognormal_Distribution(
-                mu=self.Lognormal_2P_mu, sigma=self.Lognormal_2P_sigma
-            )
+            self.best_distribution = Lognormal_Distribution(mu=self.Lognormal_2P_mu, sigma=self.Lognormal_2P_sigma)
         elif best_dist == "Lognormal_3P":
             self.best_distribution = Lognormal_Distribution(
                 mu=self.Lognormal_3P_mu,
@@ -1288,21 +1228,15 @@ class Fit_Everything:
                 gamma=self.Lognormal_3P_gamma,
             )
         elif best_dist == "Exponential_1P":
-            self.best_distribution = Exponential_Distribution(
-                Lambda=self.Exponential_1P_lambda
-            )
+            self.best_distribution = Exponential_Distribution(Lambda=self.Exponential_1P_lambda)
         elif best_dist == "Exponential_2P":
             self.best_distribution = Exponential_Distribution(
                 Lambda=self.Exponential_2P_lambda, gamma=self.Exponential_2P_gamma
             )
         elif best_dist == "Normal_2P":
-            self.best_distribution = Normal_Distribution(
-                mu=self.Normal_2P_mu, sigma=self.Normal_2P_sigma
-            )
+            self.best_distribution = Normal_Distribution(mu=self.Normal_2P_mu, sigma=self.Normal_2P_sigma)
         elif best_dist == "Beta_2P":
-            self.best_distribution = Beta_Distribution(
-                alpha=self.Beta_2P_alpha, beta=self.Beta_2P_beta
-            )
+            self.best_distribution = Beta_Distribution(alpha=self.Beta_2P_alpha, beta=self.Beta_2P_beta)
         elif best_dist == "Loglogistic_2P":
             self.best_distribution = Loglogistic_Distribution(
                 alpha=self.Loglogistic_2P_alpha, beta=self.Loglogistic_2P_beta
@@ -1314,9 +1248,7 @@ class Fit_Everything:
                 gamma=self.Loglogistic_3P_gamma,
             )
         elif best_dist == "Gumbel_2P":
-            self.best_distribution = Gumbel_Distribution(
-                mu=self.Gumbel_2P_mu, sigma=self.Gumbel_2P_sigma
-            )
+            self.best_distribution = Gumbel_Distribution(mu=self.Gumbel_2P_mu, sigma=self.Gumbel_2P_sigma)
 
         # print the results
         if print_results is True:  # printing occurs by default
@@ -1345,9 +1277,7 @@ class Fit_Everything:
 
         if show_best_distribution_probability_plot is True:
             # plotting enabled by default
-            self.best_distribution_probability_plot = Fit_Everything.__probability_plot(
-                self, best_only=True
-            )
+            self.best_distribution_probability_plot = Fit_Everything.__probability_plot(self, best_only=True)
 
         if (
             show_histogram_plot is True
@@ -1470,13 +1400,9 @@ class Fit_Everything:
             if counter > 10:
                 ls = "--"
             if item == "Weibull_2P":
-                self.__Weibull_2P_params.distribution.PDF(
-                    label=r"Weibull_2P ($\alpha , \beta$)", linestyle=ls
-                )
+                self.__Weibull_2P_params.distribution.PDF(label=r"Weibull_2P ($\alpha , \beta$)", linestyle=ls)
             elif item == "Weibull_3P":
-                self.__Weibull_3P_params.distribution.PDF(
-                    label=r"Weibull_3P ($\alpha , \beta , \gamma$)", linestyle=ls
-                )
+                self.__Weibull_3P_params.distribution.PDF(label=r"Weibull_3P ($\alpha , \beta , \gamma$)", linestyle=ls)
             elif item == "Weibull_Mixture":
                 self.__Weibull_Mixture_params.distribution.PDF(
                     label=r"Weibull_Mixture ($\alpha_1 , \beta_1 , \alpha_2 , \beta_2 , p_1$)",
@@ -1496,49 +1422,33 @@ class Fit_Everything:
                     xmax=xmax * 2,
                 )
             elif item == "Gamma_2P":
-                self.__Gamma_2P_params.distribution.PDF(
-                    label=r"Gamma_2P ($\alpha , \beta$)", linestyle=ls
-                )
+                self.__Gamma_2P_params.distribution.PDF(label=r"Gamma_2P ($\alpha , \beta$)", linestyle=ls)
             elif item == "Gamma_3P":
-                self.__Gamma_3P_params.distribution.PDF(
-                    label=r"Gamma_3P ($\alpha , \beta , \gamma$)", linestyle=ls
-                )
+                self.__Gamma_3P_params.distribution.PDF(label=r"Gamma_3P ($\alpha , \beta , \gamma$)", linestyle=ls)
             elif item == "Exponential_1P":
-                self.__Exponential_1P_params.distribution.PDF(
-                    label=r"Exponential_1P ($\lambda$)", linestyle=ls
-                )
+                self.__Exponential_1P_params.distribution.PDF(label=r"Exponential_1P ($\lambda$)", linestyle=ls)
             elif item == "Exponential_2P":
                 self.__Exponential_2P_params.distribution.PDF(
                     label=r"Exponential_2P ($\lambda , \gamma$)", linestyle=ls
                 )
             elif item == "Lognormal_2P":
-                self.__Lognormal_2P_params.distribution.PDF(
-                    label=r"Lognormal_2P ($\mu , \sigma$)", linestyle=ls
-                )
+                self.__Lognormal_2P_params.distribution.PDF(label=r"Lognormal_2P ($\mu , \sigma$)", linestyle=ls)
             elif item == "Lognormal_3P":
                 self.__Lognormal_3P_params.distribution.PDF(
                     label=r"Lognormal_3P ($\mu , \sigma , \gamma$)", linestyle=ls
                 )
             elif item == "Normal_2P":
-                self.__Normal_2P_params.distribution.PDF(
-                    label=r"Normal_2P ($\mu , \sigma$)", linestyle=ls
-                )
+                self.__Normal_2P_params.distribution.PDF(label=r"Normal_2P ($\mu , \sigma$)", linestyle=ls)
             elif item == "Gumbel_2P":
-                self.__Gumbel_2P_params.distribution.PDF(
-                    label=r"Gumbel_2P ($\mu , \sigma$)", linestyle=ls
-                )
+                self.__Gumbel_2P_params.distribution.PDF(label=r"Gumbel_2P ($\mu , \sigma$)", linestyle=ls)
             elif item == "Loglogistic_2P":
-                self.__Loglogistic_2P_params.distribution.PDF(
-                    label=r"Loglogistic_2P ($\alpha , \beta$)", linestyle=ls
-                )
+                self.__Loglogistic_2P_params.distribution.PDF(label=r"Loglogistic_2P ($\alpha , \beta$)", linestyle=ls)
             elif item == "Loglogistic_3P":
                 self.__Loglogistic_3P_params.distribution.PDF(
                     label=r"Loglogistic_3P ($\alpha , \beta , \gamma$)", linestyle=ls
                 )
             elif item == "Beta_2P":
-                self.__Beta_2P_params.distribution.PDF(
-                    label=r"Beta_2P ($\alpha , \beta$)", linestyle=ls
-                )
+                self.__Beta_2P_params.distribution.PDF(label=r"Beta_2P ($\alpha , \beta$)", linestyle=ls)
         handles, labels = plt.gca().get_legend_handles_labels()
         lgd = plt.gca().legend(
             handles,
@@ -1557,9 +1467,7 @@ class Fit_Everything:
 
         # Cumulative Distribution Functions
         plt.subplot(133)
-        _, ecdf_y = plotting_positions(
-            failures=self.failures, right_censored=self.right_censored
-        )
+        _, ecdf_y = plotting_positions(failures=self.failures, right_censored=self.right_censored)
         plt.bar(
             center,
             hist_cumulative * max(ecdf_y),
@@ -1581,9 +1489,7 @@ class Fit_Everything:
             elif item == "Weibull_3P":
                 self.__Weibull_3P_params.distribution.CDF(plot_CI=False, linestyle=ls)
             elif item == "Weibull_Mixture":
-                self.__Weibull_Mixture_params.distribution.CDF(
-                    linestyle=ls, xmax=xmax * 2
-                )
+                self.__Weibull_Mixture_params.distribution.CDF(linestyle=ls, xmax=xmax * 2)
             elif item == "Weibull_CR":
                 self.__Weibull_CR_params.distribution.CDF(linestyle=ls, xmax=xmax * 2)
             elif item == "Weibull_DS":
@@ -1593,13 +1499,9 @@ class Fit_Everything:
             elif item == "Gamma_3P":
                 self.__Gamma_3P_params.distribution.CDF(plot_CI=False, linestyle=ls)
             elif item == "Exponential_1P":
-                self.__Exponential_1P_params.distribution.CDF(
-                    plot_CI=False, linestyle=ls
-                )
+                self.__Exponential_1P_params.distribution.CDF(plot_CI=False, linestyle=ls)
             elif item == "Exponential_2P":
-                self.__Exponential_2P_params.distribution.CDF(
-                    plot_CI=False, linestyle=ls
-                )
+                self.__Exponential_2P_params.distribution.CDF(plot_CI=False, linestyle=ls)
             elif item == "Lognormal_2P":
                 self.__Lognormal_2P_params.distribution.CDF(plot_CI=False, linestyle=ls)
             elif item == "Lognormal_3P":
@@ -1609,13 +1511,9 @@ class Fit_Everything:
             elif item == "Gumbel_2P":
                 self.__Gumbel_2P_params.distribution.CDF(plot_CI=False, linestyle=ls)
             elif item == "Loglogistic_2P":
-                self.__Loglogistic_2P_params.distribution.CDF(
-                    plot_CI=False, linestyle=ls
-                )
+                self.__Loglogistic_2P_params.distribution.CDF(plot_CI=False, linestyle=ls)
             elif item == "Loglogistic_3P":
-                self.__Loglogistic_3P_params.distribution.CDF(
-                    plot_CI=False, linestyle=ls
-                )
+                self.__Loglogistic_3P_params.distribution.CDF(plot_CI=False, linestyle=ls)
             elif item == "Beta_2P":
                 self.__Beta_2P_params.distribution.CDF(linestyle=ls)
         plt.xlim(xmin, xmax)
@@ -1736,9 +1634,7 @@ class Fit_Everything:
                     plotlim = max_yy
 
             # downsample if necessary
-            x_scatter, y_scatter = xy_downsample(
-                xx, yy, downsample_factor=self.__downsample_scatterplot
-            )
+            x_scatter, y_scatter = xy_downsample(xx, yy, downsample_factor=self.__downsample_scatterplot)
             # plot the scatterplot
             plt.scatter(x_scatter, y_scatter, marker=".", color="k")
             plt.title(item)
@@ -1757,15 +1653,14 @@ class Fit_Everything:
         Generates a subplot of all the probability plots
         """
         from reliability.Probability_plotting import (
-            Weibull_probability_plot,
-            Normal_probability_plot,
-            Gamma_probability_plot,
-            Exponential_probability_plot,
             Beta_probability_plot,
-            Lognormal_probability_plot,
             Exponential_probability_plot_Weibull_Scale,
-            Loglogistic_probability_plot,
+            Gamma_probability_plot,
             Gumbel_probability_plot,
+            Loglogistic_probability_plot,
+            Lognormal_probability_plot,
+            Normal_probability_plot,
+            Weibull_probability_plot,
         )
 
         plt.figure()
@@ -1779,9 +1674,7 @@ class Fit_Everything:
             plotting_order = [self.results["Distribution"].values[0]]
 
         # xvals is used by Weibull_Mixture, Weibull_CR, and Weibull_DS
-        xvals = np.logspace(
-            np.log10(min(self.failures)) - 3, np.log10(max(self.failures)) + 1, 1000
-        )
+        xvals = np.logspace(np.log10(min(self.failures)) - 3, np.log10(max(self.failures)) + 1, 1000)
         for item in plotting_order:
             if best_only is False:
                 plt.subplot(rows, cols, subplot_counter)
@@ -2067,7 +1960,6 @@ class Fit_Weibull_2P:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         inputs = fitters_input_checking(
             dist="Weibull_2P",
             failures=failures,
@@ -2141,12 +2033,8 @@ class Fit_Weibull_2P:
                 self.alpha_SE = abs(covariance_matrix[0][0]) ** 0.5
                 self.beta_SE = abs(covariance_matrix[1][1]) ** 0.5
                 self.Cov_alpha_beta = covariance_matrix[0][1]
-                self.alpha_upper = self.alpha * (
-                    np.exp(Z * (self.alpha_SE / self.alpha))
-                )
-                self.alpha_lower = self.alpha * (
-                    np.exp(-Z * (self.alpha_SE / self.alpha))
-                )
+                self.alpha_upper = self.alpha * (np.exp(Z * (self.alpha_SE / self.alpha)))
+                self.alpha_lower = self.alpha * (np.exp(-Z * (self.alpha_SE / self.alpha)))
                 self.beta_upper = self.beta * (np.exp(Z * (self.beta_SE / self.beta)))
                 self.beta_lower = self.beta * (np.exp(-Z * (self.beta_SE / self.beta)))
             except LinAlgError:
@@ -2171,22 +2059,18 @@ class Fit_Weibull_2P:
 
         else:  # this is for when force beta is specified
             hessian_matrix = hessian(Fit_Weibull_2P.LL_fb)(
-                np.array(tuple([self.alpha])),
+                np.array((self.alpha,)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
-                np.array(tuple([force_beta])),
+                np.array((force_beta,)),
             )
             try:
                 covariance_matrix = np.linalg.inv(hessian_matrix)
                 self.alpha_SE = abs(covariance_matrix[0][0]) ** 0.5
                 self.beta_SE = 0
                 self.Cov_alpha_beta = 0
-                self.alpha_upper = self.alpha * (
-                    np.exp(Z * (self.alpha_SE / self.alpha))
-                )
-                self.alpha_lower = self.alpha * (
-                    np.exp(-Z * (self.alpha_SE / self.alpha))
-                )
+                self.alpha_upper = self.alpha * (np.exp(Z * (self.alpha_SE / self.alpha)))
+                self.alpha_lower = self.alpha * (np.exp(-Z * (self.alpha_SE / self.alpha)))
                 self.beta_upper = self.beta
                 self.beta_lower = self.beta
             except LinAlgError:
@@ -2272,22 +2156,18 @@ class Fit_Weibull_2P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -2314,13 +2194,7 @@ class Fit_Weibull_2P:
             print(self.goodness_of_fit.to_string(index=False), "\n")
 
             if quantiles is not None:
-                print(
-                    str(
-                        "Table of quantiles ("
-                        + str(CI_rounded)
-                        + "% CI bounds on time):"
-                    )
-                )
+                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
                 print(self.quantiles.to_string(index=False), "\n")
 
         if show_probability_plot is True:
@@ -2534,7 +2408,6 @@ class Fit_Weibull_2P_grouped:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         if dataframe is None or type(dataframe) is not pd.core.frame.DataFrame:
             raise ValueError(
                 'dataframe must be a pandas dataframe with the columns "category" (F for failure or C for censored), "time" (the failure times), and "quantity" (the number of events at each time)'
@@ -2688,9 +2561,7 @@ class Fit_Weibull_2P_grouped:
                 runs = 0
                 delta_BIC = 1
                 BIC_array = [1000000]
-                while (
-                    delta_BIC > 0.001 and runs < 10
-                ):  # exits after BIC convergence or 10 iterations
+                while delta_BIC > 0.001 and runs < 10:  # exits after BIC convergence or 10 iterations
                     runs += 1
                     result = minimize(
                         value_and_grad(Fit_Weibull_2P_grouped.LL),
@@ -2724,9 +2595,7 @@ class Fit_Weibull_2P_grouped:
                 BIC_array = [1000000]
                 guess = [guess[0]]
                 k = len(guess)
-                while (
-                    delta_BIC > 0.001 and runs < 10
-                ):  # exits after BIC convergence or 5 iterations
+                while delta_BIC > 0.001 and runs < 10:  # exits after BIC convergence or 5 iterations
                     runs += 1
                     result = minimize(
                         value_and_grad(Fit_Weibull_2P_grouped.LL_fb),
@@ -2795,12 +2664,8 @@ class Fit_Weibull_2P_grouped:
                 self.alpha_SE = abs(covariance_matrix[0][0]) ** 0.5
                 self.beta_SE = abs(covariance_matrix[1][1]) ** 0.5
                 self.Cov_alpha_beta = covariance_matrix[0][1]
-                self.alpha_upper = self.alpha * (
-                    np.exp(Z * (self.alpha_SE / self.alpha))
-                )
-                self.alpha_lower = self.alpha * (
-                    np.exp(-Z * (self.alpha_SE / self.alpha))
-                )
+                self.alpha_upper = self.alpha * (np.exp(Z * (self.alpha_SE / self.alpha)))
+                self.alpha_lower = self.alpha * (np.exp(-Z * (self.alpha_SE / self.alpha)))
                 self.beta_upper = self.beta * (np.exp(Z * (self.beta_SE / self.beta)))
                 self.beta_lower = self.beta * (np.exp(-Z * (self.beta_SE / self.beta)))
             except LinAlgError:
@@ -2825,24 +2690,20 @@ class Fit_Weibull_2P_grouped:
 
         else:  # this is for when force beta is specified
             hessian_matrix = hessian(Fit_Weibull_2P_grouped.LL_fb)(
-                np.array(tuple([self.alpha])),
+                np.array((self.alpha,)),
                 np.array(tuple(failure_times)),
                 np.array(tuple(right_censored_times)),
                 np.array(tuple(failure_qty)),
                 np.array(tuple(right_censored_qty)),
-                np.array(tuple([force_beta])),
+                np.array((force_beta,)),
             )
             try:
                 covariance_matrix = np.linalg.inv(hessian_matrix)
                 self.alpha_SE = abs(covariance_matrix[0][0]) ** 0.5
                 self.beta_SE = 0
                 self.Cov_alpha_beta = 0
-                self.alpha_upper = self.alpha * (
-                    np.exp(Z * (self.alpha_SE / self.alpha))
-                )
-                self.alpha_lower = self.alpha * (
-                    np.exp(-Z * (self.alpha_SE / self.alpha))
-                )
+                self.alpha_upper = self.alpha * (np.exp(Z * (self.alpha_SE / self.alpha)))
+                self.alpha_lower = self.alpha * (np.exp(-Z * (self.alpha_SE / self.alpha)))
                 self.beta_upper = self.beta
                 self.beta_lower = self.beta
             except LinAlgError:
@@ -2941,22 +2802,18 @@ class Fit_Weibull_2P_grouped:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -2966,9 +2823,7 @@ class Fit_Weibull_2P_grouped:
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
-                str(
-                    "Results from Fit_Weibull_2P_grouped (" + str(CI_rounded) + "% CI):"
-                ),
+                str("Results from Fit_Weibull_2P_grouped (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
@@ -2985,13 +2840,7 @@ class Fit_Weibull_2P_grouped:
             print(self.goodness_of_fit.to_string(index=False), "\n")
 
             if quantiles is not None:
-                print(
-                    str(
-                        "Table of quantiles ("
-                        + str(CI_rounded)
-                        + "% CI bounds on time):"
-                    )
-                )
+                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
                 print(self.quantiles.to_string(index=False), "\n")
 
         if show_probability_plot is True:
@@ -3173,7 +3022,6 @@ class Fit_Weibull_3P:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         inputs = fitters_input_checking(
             dist="Weibull_3P",
             failures=failures,
@@ -3281,20 +3129,14 @@ class Fit_Weibull_3P:
                 self.beta_SE = abs(covariance_matrix[1][1]) ** 0.5
                 self.gamma_SE = abs(covariance_matrix_for_gamma[2][2]) ** 0.5
                 self.Cov_alpha_beta = covariance_matrix[0][1]
-                self.alpha_upper = self.alpha * (
-                    np.exp(Z * (self.alpha_SE / self.alpha))
-                )
-                self.alpha_lower = self.alpha * (
-                    np.exp(-Z * (self.alpha_SE / self.alpha))
-                )
+                self.alpha_upper = self.alpha * (np.exp(Z * (self.alpha_SE / self.alpha)))
+                self.alpha_lower = self.alpha * (np.exp(-Z * (self.alpha_SE / self.alpha)))
                 self.beta_upper = self.beta * (np.exp(Z * (self.beta_SE / self.beta)))
                 self.beta_lower = self.beta * (np.exp(-Z * (self.beta_SE / self.beta)))
                 self.gamma_upper = self.gamma * (
                     np.exp(Z * (self.gamma_SE / self.gamma))
                 )  # here we assume gamma can only be positive as there are bounds placed on it in the optimizer. Minitab assumes positive or negative so bounds are different
-                self.gamma_lower = self.gamma * (
-                    np.exp(-Z * (self.gamma_SE / self.gamma))
-                )
+                self.gamma_lower = self.gamma * (np.exp(-Z * (self.gamma_SE / self.gamma)))
             except LinAlgError:
                 # this exception is rare but can occur with some optimizers
                 colorprint(
@@ -3378,22 +3220,18 @@ class Fit_Weibull_3P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -3420,13 +3258,7 @@ class Fit_Weibull_3P:
             print(self.goodness_of_fit.to_string(index=False), "\n")
 
             if quantiles is not None:
-                print(
-                    str(
-                        "Table of quantiles ("
-                        + str(CI_rounded)
-                        + "% CI bounds on time):"
-                    )
-                )
+                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
                 print(self.quantiles.to_string(index=False), "\n")
 
         if show_probability_plot is True:
@@ -3628,7 +3460,6 @@ class Fit_Weibull_Mixture:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         inputs = fitters_input_checking(
             dist="Weibull_Mixture",
             failures=failures,
@@ -3642,9 +3473,7 @@ class Fit_Weibull_Mixture:
         optimizer = inputs.optimizer
 
         n = len(failures) + len(right_censored)
-        _, y = plotting_positions(
-            failures=failures, right_censored=right_censored
-        )  # this is only used to find AD
+        _, y = plotting_positions(failures=failures, right_censored=right_censored)  # this is only used to find AD
 
         # this algorithm is used to estimate the dividing line between the two groups
         # firstly it fits a gaussian kde to the histogram
@@ -3775,7 +3604,7 @@ class Fit_Weibull_Mixture:
         self.loglik = LL2 * -0.5
         k = 5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -3812,44 +3641,24 @@ class Fit_Weibull_Mixture:
             self.beta_2_SE = 0
             self.proportion_1_SE = 0
 
-        self.alpha_1_upper = self.alpha_1 * (
-            np.exp(Z * (self.alpha_1_SE / self.alpha_1))
-        )
-        self.alpha_1_lower = self.alpha_1 * (
-            np.exp(-Z * (self.alpha_1_SE / self.alpha_1))
-        )
+        self.alpha_1_upper = self.alpha_1 * (np.exp(Z * (self.alpha_1_SE / self.alpha_1)))
+        self.alpha_1_lower = self.alpha_1 * (np.exp(-Z * (self.alpha_1_SE / self.alpha_1)))
         self.beta_1_upper = self.beta_1 * (np.exp(Z * (self.beta_1_SE / self.beta_1)))
         self.beta_1_lower = self.beta_1 * (np.exp(-Z * (self.beta_1_SE / self.beta_1)))
-        self.alpha_2_upper = self.alpha_2 * (
-            np.exp(Z * (self.alpha_2_SE / self.alpha_2))
-        )
-        self.alpha_2_lower = self.alpha_2 * (
-            np.exp(-Z * (self.alpha_2_SE / self.alpha_2))
-        )
+        self.alpha_2_upper = self.alpha_2 * (np.exp(Z * (self.alpha_2_SE / self.alpha_2)))
+        self.alpha_2_lower = self.alpha_2 * (np.exp(-Z * (self.alpha_2_SE / self.alpha_2)))
         self.beta_2_upper = self.beta_2 * (np.exp(Z * (self.beta_2_SE / self.beta_2)))
         self.beta_2_lower = self.beta_2 * (np.exp(-Z * (self.beta_2_SE / self.beta_2)))
         self.proportion_1_upper = self.proportion_1 / (
             self.proportion_1
             + (1 - self.proportion_1)
-            * (
-                np.exp(
-                    -Z
-                    * self.proportion_1_SE
-                    / (self.proportion_1 * (1 - self.proportion_1))
-                )
-            )
+            * (np.exp(-Z * self.proportion_1_SE / (self.proportion_1 * (1 - self.proportion_1))))
         )
         # ref: http://reliawiki.org/index.php/The_Mixed_Weibull_Distribution
         self.proportion_1_lower = self.proportion_1 / (
             self.proportion_1
             + (1 - self.proportion_1)
-            * (
-                np.exp(
-                    Z
-                    * self.proportion_1_SE
-                    / (self.proportion_1 * (1 - self.proportion_1))
-                )
-            )
+            * (np.exp(Z * self.proportion_1_SE / (self.proportion_1 * (1 - self.proportion_1))))
         )
 
         Data = {
@@ -3895,16 +3704,12 @@ class Fit_Weibull_Mixture:
         )
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -3962,9 +3767,7 @@ class Fit_Weibull_Mixture:
                     + round_and_string(self.beta_2, dec)
                     + ")"
                 )
-            xvals = np.logspace(
-                np.log10(min(failures)) - 3, np.log10(max(failures)) + 1, 1000
-            )
+            xvals = np.logspace(np.log10(min(failures)) - 3, np.log10(max(failures)) + 1, 1000)
             self.distribution.CDF(xvals=xvals, label=label_str, **kwargs)
             # need to add this manually as Weibull_probability_plot can only add Weibull_2P and Weibull_3P using __fitted_dist_params
             plt.title("Probability Plot\nWeibull Mixture CDF")
@@ -3973,25 +3776,19 @@ class Fit_Weibull_Mixture:
     @staticmethod
     def logf(t, a1, b1, a2, b2, p):  # Log Mixture PDF (2 parameter Weibull)
         return anp.log(
-            p * ((b1 * t ** (b1 - 1)) / (a1 ** b1)) * anp.exp(-((t / a1) ** b1))
-            + (1 - p) * ((b2 * t ** (b2 - 1)) / (a2 ** b2)) * anp.exp(-((t / a2) ** b2))
+            p * ((b1 * t ** (b1 - 1)) / (a1**b1)) * anp.exp(-((t / a1) ** b1))
+            + (1 - p) * ((b2 * t ** (b2 - 1)) / (a2**b2)) * anp.exp(-((t / a2) ** b2))
         )
 
     @staticmethod
     def logR(t, a1, b1, a2, b2, p):  # Log Mixture SF (2 parameter Weibull)
-        return anp.log(
-            p * anp.exp(-((t / a1) ** b1)) + (1 - p) * anp.exp(-((t / a2) ** b2))
-        )
+        return anp.log(p * anp.exp(-((t / a1) ** b1)) + (1 - p) * anp.exp(-((t / a2) ** b2)))
 
     @staticmethod
     def LL(params, T_f, T_rc):
         # Log Mixture Likelihood function (2 parameter weibull)
-        LL_f = Fit_Weibull_Mixture.logf(
-            T_f, params[0], params[1], params[2], params[3], params[4]
-        ).sum()
-        LL_rc = Fit_Weibull_Mixture.logR(
-            T_rc, params[0], params[1], params[2], params[3], params[4]
-        ).sum()
+        LL_f = Fit_Weibull_Mixture.logf(T_f, params[0], params[1], params[2], params[3], params[4]).sum()
+        LL_rc = Fit_Weibull_Mixture.logR(T_rc, params[0], params[1], params[2], params[3], params[4]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -4126,7 +3923,6 @@ class Fit_Weibull_CR:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         inputs = fitters_input_checking(
             dist="Weibull_CR",
             failures=failures,
@@ -4140,9 +3936,7 @@ class Fit_Weibull_CR:
         optimizer = inputs.optimizer
 
         n = len(failures) + len(right_censored)
-        _, y = plotting_positions(
-            failures=failures, right_censored=right_censored
-        )  # this is only used to find AD
+        _, y = plotting_positions(failures=failures, right_censored=right_censored)  # this is only used to find AD
 
         # this algorithm is used to estimate the dividing line between the two groups
         # firstly it fits a gaussian kde to the histogram
@@ -4257,7 +4051,7 @@ class Fit_Weibull_CR:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -4292,20 +4086,12 @@ class Fit_Weibull_CR:
             self.alpha_2_SE = 0
             self.beta_2_SE = 0
 
-        self.alpha_1_upper = self.alpha_1 * (
-            np.exp(Z * (self.alpha_1_SE / self.alpha_1))
-        )
-        self.alpha_1_lower = self.alpha_1 * (
-            np.exp(-Z * (self.alpha_1_SE / self.alpha_1))
-        )
+        self.alpha_1_upper = self.alpha_1 * (np.exp(Z * (self.alpha_1_SE / self.alpha_1)))
+        self.alpha_1_lower = self.alpha_1 * (np.exp(-Z * (self.alpha_1_SE / self.alpha_1)))
         self.beta_1_upper = self.beta_1 * (np.exp(Z * (self.beta_1_SE / self.beta_1)))
         self.beta_1_lower = self.beta_1 * (np.exp(-Z * (self.beta_1_SE / self.beta_1)))
-        self.alpha_2_upper = self.alpha_2 * (
-            np.exp(Z * (self.alpha_2_SE / self.alpha_2))
-        )
-        self.alpha_2_lower = self.alpha_2 * (
-            np.exp(-Z * (self.alpha_2_SE / self.alpha_2))
-        )
+        self.alpha_2_upper = self.alpha_2 * (np.exp(Z * (self.alpha_2_SE / self.alpha_2)))
+        self.alpha_2_lower = self.alpha_2 * (np.exp(-Z * (self.alpha_2_SE / self.alpha_2)))
         self.beta_2_upper = self.beta_2 * (np.exp(Z * (self.beta_2_SE / self.beta_2)))
         self.beta_2_lower = self.beta_2 * (np.exp(-Z * (self.beta_2_SE / self.beta_2)))
 
@@ -4343,16 +4129,12 @@ class Fit_Weibull_CR:
         )
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -4408,9 +4190,7 @@ class Fit_Weibull_CR:
                     + round_and_string(self.beta_2, dec)
                     + ")"
                 )
-            xvals = np.logspace(
-                np.log10(min(failures)) - 3, np.log10(max(failures)) + 1, 1000
-            )
+            xvals = np.logspace(np.log10(min(failures)) - 3, np.log10(max(failures)) + 1, 1000)
             self.distribution.CDF(xvals=xvals, label=label_str, **kwargs)
             plt.title("Probability Plot\nWeibull Competing Risks CDF")
             self.probability_plot = plt.gca()
@@ -4418,8 +4198,7 @@ class Fit_Weibull_CR:
     @staticmethod
     def logf(t, a1, b1, a2, b2):  # Log PDF (Competing Risks)
         return anp.log(
-            -(-(b2 * (t / a2) ** b2) / t - (b1 * (t / a1) ** b1) / t)
-            * anp.exp(-((t / a2) ** b2) - (t / a1) ** b1)
+            -(-(b2 * (t / a2) ** b2) / t - (b1 * (t / a1) ** b1) / t) * anp.exp(-((t / a2) ** b2) - (t / a1) ** b1)
         )
 
     @staticmethod
@@ -4429,12 +4208,8 @@ class Fit_Weibull_CR:
     @staticmethod
     def LL(params, T_f, T_rc):
         # Log Likelihood function (Competing Risks)
-        LL_f = Fit_Weibull_CR.logf(
-            T_f, params[0], params[1], params[2], params[3]
-        ).sum()
-        LL_rc = Fit_Weibull_CR.logR(
-            T_rc, params[0], params[1], params[2], params[3]
-        ).sum()
+        LL_f = Fit_Weibull_CR.logf(T_f, params[0], params[1], params[2], params[3]).sum()
+        LL_rc = Fit_Weibull_CR.logR(T_rc, params[0], params[1], params[2], params[3]).sum()
         return -(LL_f + LL_rc)
 
 
@@ -4642,26 +4417,14 @@ class Fit_Weibull_DSZI:
             self.DS_lower = 1  # DS=1 causes a divide by zero error for CIs
             self.DS_upper = 1
         else:
-            self.DS_upper = self.DS / (
-                self.DS
-                + (1 - self.DS) * (np.exp(-Z * self.DS_SE / (self.DS * (1 - self.DS))))
-            )
-            self.DS_lower = self.DS / (
-                self.DS
-                + (1 - self.DS) * (np.exp(Z * self.DS_SE / (self.DS * (1 - self.DS))))
-            )
+            self.DS_upper = self.DS / (self.DS + (1 - self.DS) * (np.exp(-Z * self.DS_SE / (self.DS * (1 - self.DS)))))
+            self.DS_lower = self.DS / (self.DS + (1 - self.DS) * (np.exp(Z * self.DS_SE / (self.DS * (1 - self.DS)))))
         if self.ZI == 0:
             self.ZI_upper = 0  # ZI = 0 causes a divide by zero error for CIs
             self.ZI_lower = 0
         else:
-            self.ZI_upper = self.ZI / (
-                self.ZI
-                + (1 - self.ZI) * (np.exp(-Z * self.ZI_SE / (self.ZI * (1 - self.ZI))))
-            )
-            self.ZI_lower = self.ZI / (
-                self.ZI
-                + (1 - self.ZI) * (np.exp(Z * self.ZI_SE / (self.ZI * (1 - self.ZI))))
-            )
+            self.ZI_upper = self.ZI / (self.ZI + (1 - self.ZI) * (np.exp(-Z * self.ZI_SE / (self.ZI * (1 - self.ZI)))))
+            self.ZI_lower = self.ZI / (self.ZI + (1 - self.ZI) * (np.exp(Z * self.ZI_SE / (self.ZI * (1 - self.ZI)))))
 
         results_data = {
             "Parameter": ["Alpha", "Beta", "DS", "ZI"],
@@ -4699,13 +4462,11 @@ class Fit_Weibull_DSZI:
         # goodness of fit measures
         n = len(failures) + len(right_censored)
         k = 4
-        LL2 = 2 * Fit_Weibull_DSZI.LL(
-            params, failures_zeros, failures_no_zeros, right_censored
-        )
+        LL2 = 2 * Fit_Weibull_DSZI.LL(params, failures_zeros, failures_no_zeros, right_censored)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -4713,16 +4474,12 @@ class Fit_Weibull_DSZI:
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
         # moves all the y values for the x=0 points to be equal to the value of ZI.
         y = np.where(x == 0, self.ZI, y)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -4795,16 +4552,12 @@ class Fit_Weibull_DSZI:
             )
             self.distribution.CDF(xvals=xvals, label=label_str, **kwargs)
             # need to add this manually as Weibull_probability_plot can only add Weibull_2P and Weibull_3P using __fitted_dist_params
-            plt.title(
-                "Probability Plot\nWeibull Defective Subpopulation Zero Inflated CDF"
-            )
+            plt.title("Probability Plot\nWeibull Defective Subpopulation Zero Inflated CDF")
             self.probability_plot = plt.gca()
 
     @staticmethod
     def logf(t, a, b, ds, zi):  # Log PDF (Weibull DSZI)
-        return (
-            (b - 1) * anp.log(t / a) + anp.log(b / a) - (t / a) ** b + anp.log(ds - zi)
-        )
+        return (b - 1) * anp.log(t / a) + anp.log(b / a) - (t / a) ** b + anp.log(ds - zi)
 
     @staticmethod
     def logR(t, a, b, ds, zi):  # Log SF (Weibull DSZI)
@@ -4817,12 +4570,8 @@ class Fit_Weibull_DSZI:
             LL_0 = anp.log(params[3]) * len(T_0)  # deals with t=0
         else:
             LL_0 = 0  # enables fitting when ZI = 0 to avoid log(0) error
-        LL_f = Fit_Weibull_DSZI.logf(
-            T_f, params[0], params[1], params[2], params[3]
-        ).sum()
-        LL_rc = Fit_Weibull_DSZI.logR(
-            T_rc, params[0], params[1], params[2], params[3]
-        ).sum()
+        LL_f = Fit_Weibull_DSZI.logf(T_f, params[0], params[1], params[2], params[3]).sum()
+        LL_rc = Fit_Weibull_DSZI.logR(T_rc, params[0], params[1], params[2], params[3]).sum()
         return -(LL_0 + LL_f + LL_rc)
 
 
@@ -4933,7 +4682,6 @@ class Fit_Weibull_DS:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         inputs = fitters_input_checking(
             dist="Weibull_DS",
             failures=failures,
@@ -5012,14 +4760,8 @@ class Fit_Weibull_DS:
             self.DS_lower = 1  # DS=1 causes a divide by zero error for CIs
             self.DS_upper = 1
         else:
-            self.DS_upper = self.DS / (
-                self.DS
-                + (1 - self.DS) * (np.exp(-Z * self.DS_SE / (self.DS * (1 - self.DS))))
-            )
-            self.DS_lower = self.DS / (
-                self.DS
-                + (1 - self.DS) * (np.exp(Z * self.DS_SE / (self.DS * (1 - self.DS))))
-            )
+            self.DS_upper = self.DS / (self.DS + (1 - self.DS) * (np.exp(-Z * self.DS_SE / (self.DS * (1 - self.DS)))))
+            self.DS_lower = self.DS / (self.DS + (1 - self.DS) * (np.exp(Z * self.DS_SE / (self.DS * (1 - self.DS)))))
 
         results_data = {
             "Parameter": ["Alpha", "Beta", "DS"],
@@ -5050,22 +4792,18 @@ class Fit_Weibull_DS:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -5118,9 +4856,7 @@ class Fit_Weibull_DS:
                     + round_and_string(self.DS, dec)
                     + ")"
                 )
-            xvals = np.logspace(
-                np.log10(min(failures)) - 3, np.log10(max(failures)) + 1, 1000
-            )
+            xvals = np.logspace(np.log10(min(failures)) - 3, np.log10(max(failures)) + 1, 1000)
             self.distribution.CDF(xvals=xvals, label=label_str, **kwargs)
             # need to add this manually as Weibull_probability_plot can only add Weibull_2P and Weibull_3P using __fitted_dist_params
             plt.title("Probability Plot\nWeibull Defective Subpopulation CDF")
@@ -5250,7 +4986,6 @@ class Fit_Weibull_ZI:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         # need to remove zeros before passing to fitters input checking
         failures = np.asarray(failures)
         failures_no_zeros = failures[failures != 0]
@@ -5335,14 +5070,8 @@ class Fit_Weibull_ZI:
             self.ZI_upper = 0  # ZI = 0 causes a divide by zero error for CIs
             self.ZI_lower = 0
         else:
-            self.ZI_upper = self.ZI / (
-                self.ZI
-                + (1 - self.ZI) * (np.exp(-Z * self.ZI_SE / (self.ZI * (1 - self.ZI))))
-            )
-            self.ZI_lower = self.ZI / (
-                self.ZI
-                + (1 - self.ZI) * (np.exp(Z * self.ZI_SE / (self.ZI * (1 - self.ZI))))
-            )
+            self.ZI_upper = self.ZI / (self.ZI + (1 - self.ZI) * (np.exp(-Z * self.ZI_SE / (self.ZI * (1 - self.ZI)))))
+            self.ZI_lower = self.ZI / (self.ZI + (1 - self.ZI) * (np.exp(Z * self.ZI_SE / (self.ZI * (1 - self.ZI)))))
 
         results_data = {
             "Parameter": ["Alpha", "Beta", "ZI"],
@@ -5369,13 +5098,11 @@ class Fit_Weibull_ZI:
         # goodness of fit measures
         n = len(failures) + len(right_censored)
         k = 3
-        LL2 = 2 * Fit_Weibull_ZI.LL(
-            params, failures_zeros, failures_no_zeros, right_censored
-        )
+        LL2 = 2 * Fit_Weibull_ZI.LL(params, failures_zeros, failures_no_zeros, right_censored)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
@@ -5383,16 +5110,12 @@ class Fit_Weibull_ZI:
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
         # moves all the y values for the x=0 points to be equal to the value of ZI.
         y = np.where(x == 0, self.ZI, y)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -5466,9 +5189,7 @@ class Fit_Weibull_ZI:
 
     @staticmethod
     def logf(t, a, b, zi):  # Log PDF (Weibull ZI)
-        return (
-            (b - 1) * anp.log(t / a) + anp.log(b / a) - (t / a) ** b + anp.log(1 - zi)
-        )
+        return (b - 1) * anp.log(t / a) + anp.log(b / a) - (t / a) ** b + anp.log(1 - zi)
 
     @staticmethod
     def logR(t, a, b, zi):  # Log SF (Weibull ZI)
@@ -5610,7 +5331,6 @@ class Fit_Exponential_1P:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         inputs = fitters_input_checking(
             dist="Exponential_1P",
             failures=failures,
@@ -5671,16 +5391,10 @@ class Fit_Exponential_1P:
         try:
             covariance_matrix = np.linalg.inv(hessian_matrix)
             self.Lambda_SE = abs(covariance_matrix[0][0]) ** 0.5
-            self.Lambda_upper = self.Lambda * (
-                np.exp(Z * (self.Lambda_SE / self.Lambda))
-            )
-            self.Lambda_lower = self.Lambda * (
-                np.exp(-Z * (self.Lambda_SE / self.Lambda))
-            )
+            self.Lambda_upper = self.Lambda * (np.exp(Z * (self.Lambda_SE / self.Lambda)))
+            self.Lambda_lower = self.Lambda * (np.exp(-Z * (self.Lambda_SE / self.Lambda)))
             self.Lambda_inv = 1 / self.Lambda
-            self.Lambda_SE_inv = abs(
-                1 / self.Lambda * np.log(self.Lambda / self.Lambda_upper) / Z
-            )
+            self.Lambda_SE_inv = abs(1 / self.Lambda * np.log(self.Lambda / self.Lambda_upper) / Z)
             self.Lambda_lower_inv = 1 / self.Lambda_upper
             self.Lambda_upper_inv = 1 / self.Lambda_lower
         except LinAlgError:
@@ -5720,9 +5434,7 @@ class Fit_Exponential_1P:
                 "Upper CI",
             ],
         )
-        self.distribution = Exponential_Distribution(
-            Lambda=self.Lambda, Lambda_SE=self.Lambda_SE, CI=CI
-        )
+        self.distribution = Exponential_Distribution(Lambda=self.Lambda, Lambda_SE=self.Lambda_SE, CI=CI)
 
         if quantiles is not None:
             point_estimate = self.distribution.quantile(q=quantiles)
@@ -5756,22 +5468,18 @@ class Fit_Exponential_1P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -5798,13 +5506,7 @@ class Fit_Exponential_1P:
             print(self.goodness_of_fit.to_string(index=False), "\n")
 
             if quantiles is not None:
-                print(
-                    str(
-                        "Table of quantiles ("
-                        + str(CI_rounded)
-                        + "% CI bounds on time):"
-                    )
-                )
+                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
                 print(self.quantiles.to_string(index=False), "\n")
 
         if show_probability_plot is True:
@@ -6057,18 +5759,12 @@ class Fit_Exponential_2P:
             covariance_matrix = np.linalg.inv(hessian_matrix)
             self.Lambda_SE = abs(covariance_matrix[0][0]) ** 0.5
             self.gamma_SE = 0
-            self.Lambda_upper = self.Lambda * (
-                np.exp(Z * (self.Lambda_SE / self.Lambda))
-            )
-            self.Lambda_lower = self.Lambda * (
-                np.exp(-Z * (self.Lambda_SE / self.Lambda))
-            )
+            self.Lambda_upper = self.Lambda * (np.exp(Z * (self.Lambda_SE / self.Lambda)))
+            self.Lambda_lower = self.Lambda * (np.exp(-Z * (self.Lambda_SE / self.Lambda)))
             self.gamma_upper = self.gamma
             self.gamma_lower = self.gamma
             self.Lambda_inv = 1 / self.Lambda
-            self.Lambda_SE_inv = abs(
-                1 / self.Lambda * np.log(self.Lambda / self.Lambda_upper) / Z
-            )
+            self.Lambda_SE_inv = abs(1 / self.Lambda * np.log(self.Lambda / self.Lambda_upper) / Z)
             self.Lambda_lower_inv = 1 / self.Lambda_upper
             self.Lambda_upper_inv = 1 / self.Lambda_lower
         except LinAlgError:
@@ -6148,22 +5844,18 @@ class Fit_Exponential_2P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -6190,13 +5882,7 @@ class Fit_Exponential_2P:
             print(self.goodness_of_fit.to_string(index=False), "\n")
 
             if quantiles is not None:
-                print(
-                    str(
-                        "Table of quantiles ("
-                        + str(CI_rounded)
-                        + "% CI bounds on time):"
-                    )
-                )
+                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
                 print(self.quantiles.to_string(index=False), "\n")
 
         if show_probability_plot is True:
@@ -6377,7 +6063,6 @@ class Fit_Normal_2P:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         inputs = fitters_input_checking(
             dist="Normal_2P",
             failures=failures,
@@ -6450,16 +6135,10 @@ class Fit_Normal_2P:
                 self.mu_SE = abs(covariance_matrix[0][0]) ** 0.5
                 self.sigma_SE = abs(covariance_matrix[1][1]) ** 0.5
                 self.Cov_mu_sigma = covariance_matrix[0][1]
-                self.mu_upper = self.mu + (
-                    Z * self.mu_SE
-                )  # these are unique to normal and lognormal mu params
+                self.mu_upper = self.mu + (Z * self.mu_SE)  # these are unique to normal and lognormal mu params
                 self.mu_lower = self.mu + (-Z * self.mu_SE)
-                self.sigma_upper = self.sigma * (
-                    np.exp(Z * (self.sigma_SE / self.sigma))
-                )
-                self.sigma_lower = self.sigma * (
-                    np.exp(-Z * (self.sigma_SE / self.sigma))
-                )
+                self.sigma_upper = self.sigma * (np.exp(Z * (self.sigma_SE / self.sigma)))
+                self.sigma_lower = self.sigma * (np.exp(-Z * (self.sigma_SE / self.sigma)))
             except LinAlgError:
                 # this exception is rare but can occur with some optimizers
                 colorprint(
@@ -6482,19 +6161,17 @@ class Fit_Normal_2P:
 
         else:
             hessian_matrix = hessian(Fit_Normal_2P.LL_fs)(
-                np.array(tuple([self.mu])),
+                np.array((self.mu,)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
-                np.array(tuple([force_sigma])),
+                np.array((force_sigma,)),
             )
             try:
                 covariance_matrix = np.linalg.inv(hessian_matrix)
                 self.mu_SE = abs(covariance_matrix[0][0]) ** 0.5
                 self.sigma_SE = 0
                 self.Cov_mu_sigma = 0
-                self.mu_upper = self.mu + (
-                    Z * self.mu_SE
-                )  # these are unique to normal and lognormal mu params
+                self.mu_upper = self.mu + (Z * self.mu_SE)  # these are unique to normal and lognormal mu params
                 self.mu_lower = self.mu + (-Z * self.mu_SE)
                 self.sigma_upper = self.sigma
                 self.sigma_lower = self.sigma
@@ -6577,28 +6254,22 @@ class Fit_Normal_2P:
             LL2 = 2 * Fit_Normal_2P.LL(params, failures, right_censored)
         else:
             k = 1
-            LL2 = 2 * Fit_Normal_2P.LL_fs(
-                [self.mu], failures, right_censored, force_sigma
-            )
+            LL2 = 2 * Fit_Normal_2P.LL_fs([self.mu], failures, right_censored, force_sigma)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -6625,13 +6296,7 @@ class Fit_Normal_2P:
             print(self.goodness_of_fit.to_string(index=False), "\n")
 
             if quantiles is not None:
-                print(
-                    str(
-                        "Table of quantiles ("
-                        + str(CI_rounded)
-                        + "% CI bounds on time):"
-                    )
-                )
+                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
                 print(self.quantiles.to_string(index=False), "\n")
 
         if show_probability_plot is True:
@@ -6654,13 +6319,11 @@ class Fit_Normal_2P:
 
     @staticmethod
     def logf(t, mu, sigma):  # Log PDF (Normal)
-        return anp.log(anp.exp(-0.5 * (((t - mu) / sigma) ** 2))) - anp.log(
-            (sigma * (2 * anp.pi) ** 0.5)
-        )
+        return anp.log(anp.exp(-0.5 * (((t - mu) / sigma) ** 2))) - anp.log((sigma * (2 * anp.pi) ** 0.5))
 
     @staticmethod
     def logR(t, mu, sigma):  # Log SF (Normal)
-        return anp.log((1 + erf(((mu - t) / sigma) / 2 ** 0.5)) / 2)
+        return anp.log((1 + erf(((mu - t) / sigma) / 2**0.5)) / 2)
 
     @staticmethod
     def LL(params, T_f, T_rc):  # log likelihood function (2 parameter Normal)
@@ -6808,7 +6471,6 @@ class Fit_Gumbel_2P:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         inputs = fitters_input_checking(
             dist="Gumbel_2P",
             failures=failures,
@@ -6874,9 +6536,7 @@ class Fit_Gumbel_2P:
             self.mu_SE = abs(covariance_matrix[0][0]) ** 0.5
             self.sigma_SE = abs(covariance_matrix[1][1]) ** 0.5
             self.Cov_mu_sigma = covariance_matrix[0][1]
-            self.mu_upper = self.mu + (
-                Z * self.mu_SE
-            )  # these are unique to gumbel, normal and lognormal mu params
+            self.mu_upper = self.mu + (Z * self.mu_SE)  # these are unique to gumbel, normal and lognormal mu params
             self.mu_lower = self.mu + (-Z * self.mu_SE)
             self.sigma_upper = self.sigma * (np.exp(Z * (self.sigma_SE / self.sigma)))
             self.sigma_lower = self.sigma * (np.exp(-Z * (self.sigma_SE / self.sigma)))
@@ -6959,22 +6619,18 @@ class Fit_Gumbel_2P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -7001,13 +6657,7 @@ class Fit_Gumbel_2P:
             print(self.goodness_of_fit.to_string(index=False), "\n")
 
             if quantiles is not None:
-                print(
-                    str(
-                        "Table of quantiles ("
-                        + str(CI_rounded)
-                        + "% CI bounds on time):"
-                    )
-                )
+                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
                 print(self.quantiles.to_string(index=False), "\n")
 
         if show_probability_plot is True:
@@ -7176,7 +6826,6 @@ class Fit_Lognormal_2P:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         inputs = fitters_input_checking(
             dist="Lognormal_2P",
             failures=failures,
@@ -7252,12 +6901,8 @@ class Fit_Lognormal_2P:
                 self.Cov_mu_sigma = covariance_matrix[0][1]
                 self.mu_upper = self.mu + (Z * self.mu_SE)  # mu is positive or negative
                 self.mu_lower = self.mu + (-Z * self.mu_SE)
-                self.sigma_upper = self.sigma * (
-                    np.exp(Z * (self.sigma_SE / self.sigma))
-                )  # sigma is strictly positive
-                self.sigma_lower = self.sigma * (
-                    np.exp(-Z * (self.sigma_SE / self.sigma))
-                )
+                self.sigma_upper = self.sigma * (np.exp(Z * (self.sigma_SE / self.sigma)))  # sigma is strictly positive
+                self.sigma_lower = self.sigma * (np.exp(-Z * (self.sigma_SE / self.sigma)))
             except LinAlgError:
                 # this exception is rare but can occur with some optimizers
                 colorprint(
@@ -7279,10 +6924,10 @@ class Fit_Lognormal_2P:
                 self.sigma_lower = self.sigma
         else:
             hessian_matrix = hessian(Fit_Lognormal_2P.LL_fs)(
-                np.array(tuple([self.mu])),
+                np.array((self.mu,)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
-                np.array(tuple([force_sigma])),
+                np.array((force_sigma,)),
             )
             try:
                 covariance_matrix = np.linalg.inv(hessian_matrix)
@@ -7372,28 +7017,22 @@ class Fit_Lognormal_2P:
             LL2 = 2 * Fit_Lognormal_2P.LL(params, failures, right_censored)
         else:
             k = 1
-            LL2 = 2 * Fit_Lognormal_2P.LL_fs(
-                [self.mu], failures, right_censored, force_sigma
-            )
+            LL2 = 2 * Fit_Lognormal_2P.LL_fs([self.mu], failures, right_censored, force_sigma)
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -7420,13 +7059,7 @@ class Fit_Lognormal_2P:
             print(self.goodness_of_fit.to_string(index=False), "\n")
 
             if quantiles is not None:
-                print(
-                    str(
-                        "Table of quantiles ("
-                        + str(CI_rounded)
-                        + "% CI bounds on time):"
-                    )
-                )
+                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
                 print(self.quantiles.to_string(index=False), "\n")
 
         if show_probability_plot is True:
@@ -7449,14 +7082,11 @@ class Fit_Lognormal_2P:
 
     @staticmethod
     def logf(t, mu, sigma):  # Log PDF (Lognormal)
-        return anp.log(
-            anp.exp(-0.5 * (((anp.log(t) - mu) / sigma) ** 2))
-            / (t * sigma * (2 * anp.pi) ** 0.5)
-        )
+        return anp.log(anp.exp(-0.5 * (((anp.log(t) - mu) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5))
 
     @staticmethod
     def logR(t, mu, sigma):  # Log SF (Lognormal)
-        return anp.log(0.5 - 0.5 * erf((anp.log(t) - mu) / (sigma * 2 ** 0.5)))
+        return anp.log(0.5 - 0.5 * erf((anp.log(t) - mu) / (sigma * 2**0.5)))
 
     @staticmethod
     def LL(params, T_f, T_rc):
@@ -7611,7 +7241,6 @@ class Fit_Lognormal_3P:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         inputs = fitters_input_checking(
             dist="Lognormal_3P",
             failures=failures,
@@ -7719,22 +7348,14 @@ class Fit_Lognormal_3P:
                 self.sigma_SE = abs(covariance_matrix[1][1]) ** 0.5
                 self.gamma_SE = abs(covariance_matrix_for_gamma[2][2]) ** 0.5
                 self.Cov_mu_sigma = covariance_matrix[0][1]
-                self.mu_upper = self.mu + (
-                    Z * self.mu_SE
-                )  # Mu can be positive or negative.
+                self.mu_upper = self.mu + (Z * self.mu_SE)  # Mu can be positive or negative.
                 self.mu_lower = self.mu + (-Z * self.mu_SE)
-                self.sigma_upper = self.sigma * (
-                    np.exp(Z * (self.sigma_SE / self.sigma))
-                )  # sigma is strictly positive
-                self.sigma_lower = self.sigma * (
-                    np.exp(-Z * (self.sigma_SE / self.sigma))
-                )
+                self.sigma_upper = self.sigma * (np.exp(Z * (self.sigma_SE / self.sigma)))  # sigma is strictly positive
+                self.sigma_lower = self.sigma * (np.exp(-Z * (self.sigma_SE / self.sigma)))
                 self.gamma_upper = self.gamma * (
                     np.exp(Z * (self.gamma_SE / self.gamma))
                 )  # here we assume gamma can only be positive as there are bounds placed on it in the optimizer. Minitab assumes positive or negative so bounds are different
-                self.gamma_lower = self.gamma * (
-                    np.exp(-Z * (self.gamma_SE / self.gamma))
-                )
+                self.gamma_lower = self.gamma * (np.exp(-Z * (self.gamma_SE / self.gamma)))
             except LinAlgError:
                 # this exception is rare but can occur with some optimizers
                 colorprint(
@@ -7818,22 +7439,18 @@ class Fit_Lognormal_3P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -7860,13 +7477,7 @@ class Fit_Lognormal_3P:
             print(self.goodness_of_fit.to_string(index=False), "\n")
 
             if quantiles is not None:
-                print(
-                    str(
-                        "Table of quantiles ("
-                        + str(CI_rounded)
-                        + "% CI bounds on time):"
-                    )
-                )
+                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
                 print(self.quantiles.to_string(index=False), "\n")
 
         if show_probability_plot is True:
@@ -7903,13 +7514,12 @@ class Fit_Lognormal_3P:
     @staticmethod
     def logf(t, mu, sigma, gamma):  # Log PDF (3 parameter Lognormal)
         return anp.log(
-            anp.exp(-0.5 * (((anp.log(t - gamma) - mu) / sigma) ** 2))
-            / ((t - gamma) * sigma * (2 * anp.pi) ** 0.5)
+            anp.exp(-0.5 * (((anp.log(t - gamma) - mu) / sigma) ** 2)) / ((t - gamma) * sigma * (2 * anp.pi) ** 0.5)
         )
 
     @staticmethod
     def logR(t, mu, sigma, gamma):  # Log SF (3 parameter Lognormal)
-        return anp.log(0.5 - 0.5 * erf((anp.log(t - gamma) - mu) / (sigma * 2 ** 0.5)))
+        return anp.log(0.5 - 0.5 * erf((anp.log(t - gamma) - mu) / (sigma * 2**0.5)))
 
     @staticmethod
     def LL(params, T_f, T_rc):
@@ -8067,7 +7677,6 @@ class Fit_Gamma_2P:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         inputs = fitters_input_checking(
             dist="Gamma_2P",
             failures=failures,
@@ -8236,22 +7845,18 @@ class Fit_Gamma_2P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -8278,13 +7883,7 @@ class Fit_Gamma_2P:
             print(self.goodness_of_fit.to_string(index=False), "\n")
 
             if quantiles is not None:
-                print(
-                    str(
-                        "Table of quantiles ("
-                        + str(CI_rounded)
-                        + "% CI bounds on time):"
-                    )
-                )
+                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
                 print(self.quantiles.to_string(index=False), "\n")
 
         if show_probability_plot is True:
@@ -8307,7 +7906,7 @@ class Fit_Gamma_2P:
 
     @staticmethod
     def logf_ab(t, a, b):  # Log PDF (2 parameter Gamma) - alpha, beta parametrisation
-        return anp.log(t ** (b - 1)) - anp.log((a ** b) * agamma(b)) - (t / a)
+        return anp.log(t ** (b - 1)) - anp.log((a**b) * agamma(b)) - (t / a)
 
     @staticmethod
     def logR_ab(t, a, b):  # Log SF (2 parameter Gamma) - alpha, beta parametrisation
@@ -8322,11 +7921,7 @@ class Fit_Gamma_2P:
 
     @staticmethod
     def logf_mb(t, m, b):  # Log PDF (2 parameter Gamma) - mu, beta parametrisation
-        return (
-            anp.log(t ** (b - 1))
-            - anp.log((anp.exp(m) ** b) * agamma(b))
-            - (t / anp.exp(m))
-        )
+        return anp.log(t ** (b - 1)) - anp.log((anp.exp(m) ** b) * agamma(b)) - (t / anp.exp(m))
 
     @staticmethod
     def logR_mb(t, m, b):  # Log SF (2 parameter Gamma) - mu, beta parametrisation
@@ -8501,7 +8096,6 @@ class Fit_Gamma_3P:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         inputs = fitters_input_checking(
             dist="Gamma_3P",
             failures=failures,
@@ -8626,22 +8220,14 @@ class Fit_Gamma_3P:
                 self.gamma_SE = abs(covariance_matrix_for_gamma[2][2]) ** 0.5
                 self.Cov_alpha_beta = covariance_matrix_ab[0][1]
                 self.Cov_mu_beta = covariance_matrix_mb[0][1]
-                self.alpha_upper = self.alpha * (
-                    np.exp(Z * (self.alpha_SE / self.alpha))
-                )
-                self.alpha_lower = self.alpha * (
-                    np.exp(-Z * (self.alpha_SE / self.alpha))
-                )
+                self.alpha_upper = self.alpha * (np.exp(Z * (self.alpha_SE / self.alpha)))
+                self.alpha_lower = self.alpha * (np.exp(-Z * (self.alpha_SE / self.alpha)))
                 self.mu_upper = self.mu * (np.exp(Z * (self.mu_SE / self.mu)))
                 self.mu_lower = self.mu * (np.exp(-Z * (self.mu_SE / self.mu)))
                 self.beta_upper = self.beta * (np.exp(Z * (self.beta_SE / self.beta)))
                 self.beta_lower = self.beta * (np.exp(-Z * (self.beta_SE / self.beta)))
-                self.gamma_upper = self.gamma * (
-                    np.exp(Z * (self.gamma_SE / self.gamma))
-                )
-                self.gamma_lower = self.gamma * (
-                    np.exp(-Z * (self.gamma_SE / self.gamma))
-                )
+                self.gamma_upper = self.gamma * (np.exp(Z * (self.gamma_SE / self.gamma)))
+                self.gamma_lower = self.gamma * (np.exp(-Z * (self.gamma_SE / self.gamma)))
             except LinAlgError:
                 # this exception is rare but can occur with some optimizers
                 colorprint(
@@ -8732,22 +8318,18 @@ class Fit_Gamma_3P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -8774,13 +8356,7 @@ class Fit_Gamma_3P:
             print(self.goodness_of_fit.to_string(index=False), "\n")
 
             if quantiles is not None:
-                print(
-                    str(
-                        "Table of quantiles ("
-                        + str(CI_rounded)
-                        + "% CI bounds on time):"
-                    )
-                )
+                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
                 print(self.quantiles.to_string(index=False), "\n")
 
         if show_probability_plot is True:
@@ -8816,9 +8392,7 @@ class Fit_Gamma_3P:
 
     @staticmethod
     def logf_abg(t, a, b, g):  # Log PDF (3 parameter Gamma) - alpha,beta,gamma
-        return (
-            anp.log((t - g) ** (b - 1)) - anp.log((a ** b) * agamma(b)) - ((t - g) / a)
-        )
+        return anp.log((t - g) ** (b - 1)) - anp.log((a**b) * agamma(b)) - ((t - g) / a)
 
     @staticmethod
     def logR_abg(t, a, b, g):  # Log SF (3 parameter Gamma) - alpha,beta,gamma
@@ -8833,11 +8407,7 @@ class Fit_Gamma_3P:
 
     @staticmethod
     def logf_mbg(t, m, b, g):  # Log PDF (3 parameter Gamma) - mu,beta,gamma
-        return (
-            anp.log((t - g) ** (b - 1))
-            - anp.log((anp.exp(m) ** b) * agamma(b))
-            - ((t - g) / anp.exp(m))
-        )
+        return anp.log((t - g) ** (b - 1)) - anp.log((anp.exp(m) ** b) * agamma(b)) - ((t - g) / anp.exp(m))
 
     @staticmethod
     def logR_mbg(t, m, b, g):  # Log SF (3 parameter Gamma) - mu,beta,gamma
@@ -8973,7 +8543,6 @@ class Fit_Beta_2P:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         inputs = fitters_input_checking(
             dist="Beta_2P",
             failures=failures,
@@ -9105,22 +8674,18 @@ class Fit_Beta_2P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -9147,13 +8712,7 @@ class Fit_Beta_2P:
             print(self.goodness_of_fit.to_string(index=False), "\n")
 
             if quantiles is not None:
-                print(
-                    str(
-                        "Table of quantiles ("
-                        + str(CI_rounded)
-                        + "% CI bounds on time):"
-                    )
-                )
+                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
                 print(self.quantiles.to_string(index=False), "\n")
 
         if show_probability_plot is True:
@@ -9315,7 +8874,6 @@ class Fit_Loglogistic_2P:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         inputs = fitters_input_checking(
             dist="Loglogistic_2P",
             failures=failures,
@@ -9465,22 +9023,18 @@ class Fit_Loglogistic_2P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -9507,13 +9061,7 @@ class Fit_Loglogistic_2P:
             print(self.goodness_of_fit.to_string(index=False), "\n")
 
             if quantiles is not None:
-                print(
-                    str(
-                        "Table of quantiles ("
-                        + str(CI_rounded)
-                        + "% CI bounds on time):"
-                    )
-                )
+                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
                 print(self.quantiles.to_string(index=False), "\n")
 
         if show_probability_plot is True:
@@ -9536,9 +9084,7 @@ class Fit_Loglogistic_2P:
 
     @staticmethod
     def logf(t, a, b):  # Log PDF (2 parameter Loglogistic)
-        return (
-            anp.log(b / a) - (b + 1) * anp.log(t / a) - 2 * anp.log(1 + (t / a) ** -b)
-        )
+        return anp.log(b / a) - (b + 1) * anp.log(t / a) - 2 * anp.log(1 + (t / a) ** -b)
 
     @staticmethod
     def logR(t, a, b):  # Log SF (2 parameter Loglogistic)
@@ -9690,7 +9236,6 @@ class Fit_Loglogistic_3P:
         downsample_scatterplot=True,
         **kwargs,
     ):
-
         inputs = fitters_input_checking(
             dist="Loglogistic_3P",
             failures=failures,
@@ -9797,20 +9342,14 @@ class Fit_Loglogistic_3P:
                 self.beta_SE = abs(covariance_matrix[1][1]) ** 0.5
                 self.gamma_SE = abs(covariance_matrix_for_gamma[2][2]) ** 0.5
                 self.Cov_alpha_beta = covariance_matrix[0][1]
-                self.alpha_upper = self.alpha * (
-                    np.exp(Z * (self.alpha_SE / self.alpha))
-                )
-                self.alpha_lower = self.alpha * (
-                    np.exp(-Z * (self.alpha_SE / self.alpha))
-                )
+                self.alpha_upper = self.alpha * (np.exp(Z * (self.alpha_SE / self.alpha)))
+                self.alpha_lower = self.alpha * (np.exp(-Z * (self.alpha_SE / self.alpha)))
                 self.beta_upper = self.beta * (np.exp(Z * (self.beta_SE / self.beta)))
                 self.beta_lower = self.beta * (np.exp(-Z * (self.beta_SE / self.beta)))
                 self.gamma_upper = self.gamma * (
                     np.exp(Z * (self.gamma_SE / self.gamma))
                 )  # here we assume gamma can only be positive as there are bounds placed on it in the optimizer. Minitab assumes positive or negative so bounds are different
-                self.gamma_lower = self.gamma * (
-                    np.exp(-Z * (self.gamma_SE / self.gamma))
-                )
+                self.gamma_lower = self.gamma * (np.exp(-Z * (self.gamma_SE / self.gamma)))
             except LinAlgError:
                 # this exception is rare but can occur with some optimizers
                 colorprint(
@@ -9894,22 +9433,18 @@ class Fit_Loglogistic_3P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k ** 2 + 2 * k) / (n - k - 1)
+            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = "Insufficient data"
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(
-            fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y
-        )
+        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
-        self.goodness_of_fit = pd.DataFrame(
-            GoF_data, columns=["Goodness of fit", "Value"]
-        )
+        self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
             CI_rounded = CI * 100
@@ -9936,13 +9471,7 @@ class Fit_Loglogistic_3P:
             print(self.goodness_of_fit.to_string(index=False), "\n")
 
             if quantiles is not None:
-                print(
-                    str(
-                        "Table of quantiles ("
-                        + str(CI_rounded)
-                        + "% CI bounds on time):"
-                    )
-                )
+                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
                 print(self.quantiles.to_string(index=False), "\n")
 
         if show_probability_plot is True:
@@ -9978,11 +9507,7 @@ class Fit_Loglogistic_3P:
 
     @staticmethod
     def logf(t, a, b, g):  # Log PDF (3 parameter Loglogistic)
-        return (
-            anp.log(b / a)
-            - (b + 1) * anp.log((t - g) / a)
-            - 2 * anp.log(1 + ((t - g) / a) ** -b)
-        )
+        return anp.log(b / a) - (b + 1) * anp.log((t - g) / a) - 2 * anp.log(1 + ((t - g) / a) ** -b)
 
     @staticmethod
     def logR(t, a, b, g):  # Log SF (3 parameter Loglogistic)

@@ -24,33 +24,35 @@ KStest - performs the Kolmogorov-Smirnov goodness of fit test to determine if we
     can accept or reject the hypothesis that data is from a distribution.
 """
 
-import scipy.stats as ss
+import math
+import time
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import math
-import time
+import scipy.stats as ss
+
 from reliability.Distributions import (
-    Normal_Distribution,
-    Weibull_Distribution,
-    Lognormal_Distribution,
-    Exponential_Distribution,
-    Gamma_Distribution,
     Beta_Distribution,
-    Loglogistic_Distribution,
-    Gumbel_Distribution,
-    Mixture_Model,
     Competing_Risks_Model,
     DSZI_Model,
+    Exponential_Distribution,
+    Gamma_Distribution,
+    Gumbel_Distribution,
+    Loglogistic_Distribution,
+    Lognormal_Distribution,
+    Mixture_Model,
+    Normal_Distribution,
+    Weibull_Distribution,
 )
 from reliability.Fitters import (
-    Fit_Weibull_2P,
-    Fit_Normal_2P,
+    Fit_Beta_2P,
     Fit_Gamma_2P,
+    Fit_Gumbel_2P,
     Fit_Loglogistic_2P,
     Fit_Lognormal_2P,
-    Fit_Gumbel_2P,
-    Fit_Beta_2P,
+    Fit_Normal_2P,
+    Fit_Weibull_2P,
 )
 from reliability.Utils import colorprint, get_axes_limits
 
@@ -87,9 +89,9 @@ def one_sample_proportion(trials=None, successes=None, CI=0.95, print_results=Tr
         n = 1
     else:
         n = 2
-    if type(trials) is not int:
+    if not isinstance(trials, int):
         raise ValueError("trials must be an integer")
-    if type(successes) is not int:
+    if not isinstance(successes, int) is not int:
         raise ValueError("successes must be an integer")
 
     V1_lower = 2 * successes
@@ -178,25 +180,15 @@ def two_proportion_test(
     """
     if CI < 0.5 or CI >= 1:
         raise ValueError("CI must be between 0.5 and 1. Default is 0.95")
-    if (
-        sample_1_trials is None
-        or sample_1_successes is None
-        or sample_2_trials is None
-        or sample_2_successes is None
-    ):
-        raise ValueError(
-            "You must specify the number of trials and successes for both samples."
-        )
+    if sample_1_trials is None or sample_1_successes is None or sample_2_trials is None or sample_2_successes is None:
+        raise ValueError("You must specify the number of trials and successes for both samples.")
     if sample_1_successes > sample_1_trials or sample_2_successes > sample_2_trials:
         raise ValueError("successes cannot be greater than trials")
     p1 = sample_1_successes / sample_1_trials
     p2 = sample_2_successes / sample_2_trials
     diff = p1 - p2
     Z = ss.norm.ppf(1 - ((1 - CI) / 2))
-    k = (
-        Z
-        * ((p1 * (1 - p1) / sample_1_trials) + (p2 * (1 - p2) / sample_2_trials)) ** 0.5
-    )
+    k = Z * ((p1 * (1 - p1) / sample_1_trials) + (p2 * (1 - p2) / sample_2_trials)) ** 0.5
     lower = diff - k
     upper = diff + k
     if lower < 0 and upper > 0:
@@ -238,9 +230,7 @@ def two_proportion_test(
     return lower, upper, result
 
 
-def sample_size_no_failures(
-    reliability, CI=0.95, lifetimes=1, weibull_shape=1, print_results=True
-):
+def sample_size_no_failures(reliability, CI=0.95, lifetimes=1, weibull_shape=1, print_results=True):
     """
     This is used to determine the sample size required for a test in which no
     failures are expected, and the desired outcome is the lower bound on the
@@ -281,13 +271,9 @@ def sample_size_no_failures(
             "Weibull shape must be greater than 0. Default (exponential distribution) is 1. If unknown then use 1."
         )
     if lifetimes > 5:
-        print(
-            "Testing for greater than 5 lifetimes is highly unlikely to result in zero failures."
-        )
+        print("Testing for greater than 5 lifetimes is highly unlikely to result in zero failures.")
     if lifetimes <= 0:
-        raise ValueError(
-            "lifetimes must be >0. Default is 1. No more than 5 is recommended due to test feasibility."
-        )
+        raise ValueError("lifetimes must be >0. Default is 1. No more than 5 is recommended due to test feasibility.")
     n = int(
         np.ceil((np.log(1 - CI)) / (lifetimes**weibull_shape * np.log(reliability)))
     )  # rounds up to nearest integer
@@ -445,9 +431,7 @@ def sequential_sampling_chart(
         "Failures to accept": acceptance_array,
         "Failures to reject": rejection_array,
     }
-    df = pd.DataFrame(
-        data, columns=["Samples", "Failures to accept", "Failures to reject"]
-    )
+    df = pd.DataFrame(data, columns=["Samples", "Failures to accept", "Failures to reject"])
     df.loc[df["Failures to accept"] < 0, "Failures to accept"] = "x"
     df.loc[df["Failures to reject"] < 0, "Failures to reject"] = "x"
 
@@ -599,7 +583,6 @@ class reliability_test_planner:
         time_terminated=True,
         print_results=True,
     ):
-
         print_CI_warn = False  # used later if the CI is calculated
         if CI is not None:
             if CI < 0.5 or CI >= 1:
@@ -625,9 +608,7 @@ class reliability_test_planner:
         elif one_sided is False:
             sides = 2
         else:
-            raise ValueError(
-                "one_sided must be True or False. Default is True for the one sided confidence interval."
-            )
+            raise ValueError("one_sided must be True or False. Default is True for the one sided confidence interval.")
 
         if print_results not in [True, False]:
             raise ValueError("print_results must be True or False. Default is True.")
@@ -636,35 +617,23 @@ class reliability_test_planner:
             if number_of_failures % 1 != 0 or number_of_failures < 0:
                 raise ValueError("number_of_failures must be a positive integer")
 
-        if (
-            MTBF is None
-            and number_of_failures is not None
-            and CI is not None
-            and test_duration is not None
-        ):
+        if MTBF is None and number_of_failures is not None and CI is not None and test_duration is not None:
             soln_type = "MTBF"
             MTBF = (2 * test_duration) / ss.chi2.ppf(CI_adj, 2 * number_of_failures + p)
 
-        elif (
-            MTBF is not None
-            and number_of_failures is None
-            and CI is not None
-            and test_duration is not None
-        ):
+        elif MTBF is not None and number_of_failures is None and CI is not None and test_duration is not None:
             soln_type = "failures"
             number_of_failures = 0
             while (
                 True
             ):  # this requires an iterative search. Begins at 0 and increments by 1 until the solution is found
-                result = (2 * test_duration) / ss.chi2.ppf(
-                    CI_adj, 2 * number_of_failures + p
-                ) - MTBF
-                if (
-                    result < 0
-                ):  # solution is found when result returns a negative number (indicating too many failures)
+                result = (2 * test_duration) / ss.chi2.ppf(CI_adj, 2 * number_of_failures + p) - MTBF
+                if result < 0:  # solution is found when result returns a negative number (indicating too many failures)
                     break
                 number_of_failures += 1
-            number_of_failures -= 1  # correction for the last failure added to ensure we keep the MTBF above the minimum requirement
+            number_of_failures -= (
+                1  # correction for the last failure added to ensure we keep the MTBF above the minimum requirement
+            )
 
             MTBF_check = (2 * test_duration) / ss.chi2.ppf(
                 CI_adj, 2 * 0 + p
@@ -674,16 +643,9 @@ class reliability_test_planner:
                     "The specified MTBF is not possible given the specified test_duration. You must increase your test_duration or decrease your MTBF."
                 )
 
-        elif (
-            MTBF is not None
-            and number_of_failures is not None
-            and CI is None
-            and test_duration is not None
-        ):
+        elif MTBF is not None and number_of_failures is not None and CI is None and test_duration is not None:
             soln_type = "CI"
-            CI_calc = ss.chi2.cdf(
-                test_duration / (MTBF * 0.5), 2 * number_of_failures + p
-            )
+            CI_calc = ss.chi2.cdf(test_duration / (MTBF * 0.5), 2 * number_of_failures + p)
             if one_sided is True:
                 CI = CI_calc
             else:
@@ -693,21 +655,11 @@ class reliability_test_planner:
             if CI < 0.5:
                 print_CI_warn = True
 
-        elif (
-            MTBF is not None
-            and number_of_failures is not None
-            and CI is not None
-            and test_duration is None
-        ):
+        elif MTBF is not None and number_of_failures is not None and CI is not None and test_duration is None:
             soln_type = "test_duration"
             test_duration = ss.chi2.ppf(CI_adj, 2 * number_of_failures + p) * MTBF / 2
 
-        elif (
-            MTBF is not None
-            and number_of_failures is not None
-            and CI is not None
-            and test_duration is not None
-        ):
+        elif MTBF is not None and number_of_failures is not None and CI is not None and test_duration is not None:
             raise ValueError("All inputs were specified. Nothing to calculate.")
 
         else:
@@ -735,9 +687,7 @@ class reliability_test_planner:
             print("Test duration:", self.test_duration)
             print("MTBF (lower confidence bound):", self.MTBF)
             print("Number of failures:", self.number_of_failures)
-            print(
-                str("Confidence interval (" + str(sides) + " sided): " + str(self.CI))
-            )
+            print(str("Confidence interval (" + str(sides) + " sided): " + str(self.CI)))
             if print_CI_warn is True:
                 colorprint(
                     "WARNING: The calculated CI is less than 0.5. This indicates that the desired MTBF is unachievable for the specified test_duration and number_of_failures.",
@@ -967,7 +917,6 @@ class chi2test:
         print_results=True,
         show_plot=True,
     ):
-
         # ensure the input is a distribution object
         standard_distributions = [
             Weibull_Distribution,
@@ -1002,9 +951,7 @@ class chi2test:
             )
 
         if significance <= 0 or significance > 0.5:
-            raise ValueError(
-                "significance should be between 0 and 0.5. Default is 0.05 which gives 95% confidence"
-            )
+            raise ValueError("significance should be between 0 and 0.5. Default is 0.05 which gives 95% confidence")
 
         if bins is None:
             bins = "auto"
@@ -1018,24 +965,18 @@ class chi2test:
         )  # get a histogram of the data to find the observed values
 
         if sum(observed) != len(data):
-            colorprint(
-                "WARNING: the bins do not encompass all of the data", text_color="red"
-            )
+            colorprint("WARNING: the bins do not encompass all of the data", text_color="red")
             colorprint(
                 str("data range: " + str(min(data)) + " to " + str(max(data))),
                 text_color="red",
             )
             colorprint(
-                str(
-                    "bins range: " + str(min(bin_edges)) + " to " + str(max(bin_edges))
-                ),
+                str("bins range: " + str(min(bin_edges)) + " to " + str(max(bin_edges))),
                 text_color="red",
             )
             observed, bin_edges = np.histogram(data, bins="auto", density=False)
             colorprint('bins has been reset to "auto".', text_color="red")
-            colorprint(
-                str("The new bins are: " + str(bin_edges) + "\n"), text_color="red"
-            )
+            colorprint(str("The new bins are: " + str(bin_edges) + "\n"), text_color="red")
 
         if min(bin_edges < 0) and type(distribution) not in [
             Normal_Distribution,
@@ -1056,9 +997,7 @@ class chi2test:
         n = len(observed)
         if type(distribution) in standard_distributions:
             parameters = distribution.parameters
-            if (
-                parameters[-1] == 0
-            ):  # if the gamma parameter is 0 then adjust the number of parameters to ignore gamma
+            if parameters[-1] == 0:  # if the gamma parameter is 0 then adjust the number of parameters to ignore gamma
                 k = len(parameters) - 1
             else:
                 k = len(parameters)
@@ -1079,9 +1018,7 @@ class chi2test:
             )
 
         self.bin_edges = bin_edges
-        self.chisquared_statistic, _ = ss.chisquare(
-            f_obs=observed, f_exp=expected, ddof=k
-        )
+        self.chisquared_statistic, _ = ss.chisquare(f_obs=observed, f_exp=expected, ddof=k)
         self.chisquared_critical_value = ss.chi2.ppf(1 - significance, df=n - k - 1)
         if self.chisquared_statistic < self.chisquared_critical_value:
             self.hypothesis = "ACCEPT"
@@ -1107,9 +1044,7 @@ class chi2test:
             )
 
         if show_plot is True:
-            bin_edges_to_plot = np.nan_to_num(
-                x=bin_edges, posinf=max(data) * 1000, neginf=min(data)
-            )
+            bin_edges_to_plot = np.nan_to_num(x=bin_edges, posinf=max(data) * 1000, neginf=min(data))
             plt.hist(
                 x=data,
                 bins=bin_edges_to_plot,
@@ -1121,23 +1056,19 @@ class chi2test:
                 label="Cumulative Histogram",
             )
             distribution.CDF(label=dist_title)
-            plt.title(
-                "Chi-squared test\nHypothesised distribution CDF vs cumulative histogram of data"
-            )
+            plt.title("Chi-squared test\nHypothesised distribution CDF vs cumulative histogram of data")
             if type(distribution) == DSZI_Model:
-                xmax = max(data)*1.1
+                xmax = max(data) * 1.1
                 xmin = min(data)
             else:
                 xmax = max(distribution.quantile(0.9999), max(data))
                 xmin = min(distribution.quantile(0.0001), min(data))
 
-            if (
-                xmin > 0 and xmin / (xmax - xmin) < 0.05
-            ):  # if xmin is near zero then set it to zero
+            if xmin > 0 and xmin / (xmax - xmin) < 0.05:  # if xmin is near zero then set it to zero
                 xmin = 0
             plt.xlim(xmin, xmax)
             plt.ylim(0, 1.1)
-            plt.legend(loc='upper left')
+            plt.legend(loc="upper left")
             plt.subplots_adjust(top=0.9)
 
 
@@ -1178,10 +1109,7 @@ class KStest:
         accept the hypothesis that the data is from the specified distribution.
     """
 
-    def __init__(
-        self, distribution, data, significance=0.05, print_results=True, show_plot=True
-    ):
-
+    def __init__(self, distribution, data, significance=0.05, print_results=True, show_plot=True):
         # ensure the input is a distribution object
         standard_distributions = [
             Weibull_Distribution,
@@ -1213,12 +1141,10 @@ class KStest:
             )
 
         if significance <= 0 or significance > 0.5:
-            raise ValueError(
-                "significance should be between 0 and 0.5. Default is 0.05 which gives 95% confidence"
-            )
+            raise ValueError("significance should be between 0 and 0.5. Default is 0.05 which gives 95% confidence")
 
         # need to sort data to ensure it is ascending
-        if type(data) is list:
+        if isinstance(data, list):
             data = np.sort(np.array(data))
         elif type(data) is np.ndarray:
             data = np.sort(data)
@@ -1247,9 +1173,7 @@ class KStest:
             else:
                 dist_title = distribution.param_title_long
 
-            colorprint(
-                "Results from Kolmogorov-Smirnov test:", bold=True, underline=True
-            )
+            colorprint("Results from Kolmogorov-Smirnov test:", bold=True, underline=True)
             print("Kolmogorov-Smirnov statistic:", self.KS_statistic)
             print("Kolmogorov-Smirnov critical value:", self.KS_critical_value)
 
@@ -1275,26 +1199,22 @@ class KStest:
             plt.plot(SN_plot_x, SN_plot_y, label="Empirical CDF")
 
             if type(distribution) == DSZI_Model:
-                xmax = max(data)*1.2
+                xmax = max(data) * 1.2
                 xmin = min(data)
             else:
                 xmax = max(distribution.quantile(0.9999), max(data))
                 xmin = min(distribution.quantile(0.0001), min(data))
 
-            if (
-                xmin > 0 and xmin / (xmax - xmin) < 0.05
-            ):  # if xmin is near zero then set it to zero
+            if xmin > 0 and xmin / (xmax - xmin) < 0.05:  # if xmin is near zero then set it to zero
                 xmin = 0
             plt.xlim(xmin, xmax)
             plt.ylim(0, 1.1)
-            plt.title(
-                "Kolmogorov-Smirnov test\nHypothesised distribution CDF vs empirical CDF of data"
-            )
-            plt.legend(loc='upper left')
+            plt.title("Kolmogorov-Smirnov test\nHypothesised distribution CDF vs empirical CDF of data")
+            plt.legend(loc="upper left")
             plt.subplots_adjust(top=0.9)
 
 
-def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method='MLE', color=None):
+def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method="MLE", color=None):
     """
     Generates a likelihood contour plot. This is used for comparing distributions for statistically significant
     differences.
@@ -1354,7 +1274,7 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
     grid_upper_multiplier = 4
     grid_resolution = 500
 
-    if type(CI) == float:
+    if isinstance(CI, float):
         CI = [CI]
     CI = np.asarray(CI)
     CI = np.sort(CI)[::-1]
@@ -1367,8 +1287,12 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
             show_probability_plot=False,
             print_results=False,
         )
-        X_array = np.linspace(fit.alpha_lower * grid_lower_multiplier, fit.alpha_upper * grid_upper_multiplier, grid_resolution)
-        Y_array = np.linspace(fit.beta_lower * grid_lower_multiplier, fit.beta_upper * grid_upper_multiplier, grid_resolution)
+        X_array = np.linspace(
+            fit.alpha_lower * grid_lower_multiplier, fit.alpha_upper * grid_upper_multiplier, grid_resolution
+        )
+        Y_array = np.linspace(
+            fit.beta_lower * grid_lower_multiplier, fit.beta_upper * grid_upper_multiplier, grid_resolution
+        )
         params = [fit.alpha, fit.beta]
         logf = Fit_Weibull_2P.logf
         logR = Fit_Weibull_2P.logR
@@ -1382,8 +1306,12 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
             show_probability_plot=False,
             print_results=False,
         )
-        X_array = np.linspace(fit.alpha_lower * grid_lower_multiplier, fit.alpha_upper * grid_upper_multiplier, grid_resolution)
-        Y_array = np.linspace(fit.beta_lower * grid_lower_multiplier, fit.beta_upper * grid_upper_multiplier, grid_resolution)
+        X_array = np.linspace(
+            fit.alpha_lower * grid_lower_multiplier, fit.alpha_upper * grid_upper_multiplier, grid_resolution
+        )
+        Y_array = np.linspace(
+            fit.beta_lower * grid_lower_multiplier, fit.beta_upper * grid_upper_multiplier, grid_resolution
+        )
         params = [fit.alpha, fit.beta]
         logf = Fit_Gamma_2P.logf_ab
         logR = Fit_Gamma_2P.logR_ab
@@ -1397,8 +1325,12 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
             show_probability_plot=False,
             print_results=False,
         )
-        X_array = np.linspace(fit.alpha_lower * grid_lower_multiplier, fit.alpha_upper * grid_upper_multiplier, grid_resolution)
-        Y_array = np.linspace(fit.beta_lower * grid_lower_multiplier, fit.beta_upper * grid_upper_multiplier, grid_resolution)
+        X_array = np.linspace(
+            fit.alpha_lower * grid_lower_multiplier, fit.alpha_upper * grid_upper_multiplier, grid_resolution
+        )
+        Y_array = np.linspace(
+            fit.beta_lower * grid_lower_multiplier, fit.beta_upper * grid_upper_multiplier, grid_resolution
+        )
         params = [fit.alpha, fit.beta]
         logf = Fit_Loglogistic_2P.logf
         logR = Fit_Loglogistic_2P.logR
@@ -1412,8 +1344,12 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
             show_probability_plot=False,
             print_results=False,
         )
-        X_array = np.linspace(fit.alpha_lower * grid_lower_multiplier, fit.alpha_upper * grid_upper_multiplier, grid_resolution)
-        Y_array = np.linspace(fit.beta_lower * grid_lower_multiplier, fit.beta_upper * grid_upper_multiplier, grid_resolution)
+        X_array = np.linspace(
+            fit.alpha_lower * grid_lower_multiplier, fit.alpha_upper * grid_upper_multiplier, grid_resolution
+        )
+        Y_array = np.linspace(
+            fit.beta_lower * grid_lower_multiplier, fit.beta_upper * grid_upper_multiplier, grid_resolution
+        )
         params = [fit.alpha, fit.beta]
         logf = Fit_Beta_2P.logf
         logR = Fit_Beta_2P.logR
@@ -1427,8 +1363,12 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
             show_probability_plot=False,
             print_results=False,
         )
-        X_array = np.linspace(fit.mu_lower * grid_lower_multiplier, fit.mu_upper * grid_upper_multiplier, grid_resolution)
-        Y_array = np.linspace(fit.sigma_lower * grid_lower_multiplier, fit.sigma_upper * grid_upper_multiplier, grid_resolution)
+        X_array = np.linspace(
+            fit.mu_lower * grid_lower_multiplier, fit.mu_upper * grid_upper_multiplier, grid_resolution
+        )
+        Y_array = np.linspace(
+            fit.sigma_lower * grid_lower_multiplier, fit.sigma_upper * grid_upper_multiplier, grid_resolution
+        )
         params = [fit.mu, fit.sigma]
         logf = Fit_Normal_2P.logf
         logR = Fit_Normal_2P.logR
@@ -1442,8 +1382,12 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
             show_probability_plot=False,
             print_results=False,
         )
-        X_array = np.linspace(fit.mu_lower * grid_lower_multiplier, fit.mu_upper * grid_upper_multiplier, grid_resolution)
-        Y_array = np.linspace(fit.sigma_lower * grid_lower_multiplier, fit.sigma_upper * grid_upper_multiplier, grid_resolution)
+        X_array = np.linspace(
+            fit.mu_lower * grid_lower_multiplier, fit.mu_upper * grid_upper_multiplier, grid_resolution
+        )
+        Y_array = np.linspace(
+            fit.sigma_lower * grid_lower_multiplier, fit.sigma_upper * grid_upper_multiplier, grid_resolution
+        )
         params = [fit.mu, fit.sigma]
         logf = Fit_Lognormal_2P.logf
         logR = Fit_Lognormal_2P.logR
@@ -1458,18 +1402,19 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
             show_probability_plot=False,
             print_results=False,
         )
-        X_array = np.linspace(fit.mu_lower * grid_lower_multiplier, fit.mu_upper * grid_upper_multiplier, grid_resolution)
-        Y_array = np.linspace(fit.sigma_lower * grid_lower_multiplier, fit.sigma_upper * grid_upper_multiplier, grid_resolution)
+        X_array = np.linspace(
+            fit.mu_lower * grid_lower_multiplier, fit.mu_upper * grid_upper_multiplier, grid_resolution
+        )
+        Y_array = np.linspace(
+            fit.sigma_lower * grid_lower_multiplier, fit.sigma_upper * grid_upper_multiplier, grid_resolution
+        )
         params = [fit.mu, fit.sigma]
         logf = Fit_Gumbel_2P.logf
         logR = Fit_Gumbel_2P.logR
         xlabel = "Mu"
         ylabel = "Sigma"
     else:
-        raise ValueError(
-            str(distribution)
-            + " cannot be used for likelihood plot as it does not have 2 parameters."
-        )
+        raise ValueError(str(distribution) + " cannot be used for likelihood plot as it does not have 2 parameters.")
 
     X, Y = np.meshgrid(X_array, Y_array)
     LLmax = LLfunction(params[0], params[1], failures, right_censored)
@@ -1502,9 +1447,7 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
             colors=(color,),
             linestyles=("solid",),
         )
-        plt.contourf(
-            X, Y, LLmesh, [LLcontour, LLmax], colors=color, alpha=0.5 / len(CI)
-        )
+        plt.contourf(X, Y, LLmesh, [LLcontour, LLmax], colors=color, alpha=0.5 / len(CI))
         # get the plotting limits
         v = contour.collections[0].get_paths()[0].vertices
         xmin = min(xmin, min(v[:, 0]))

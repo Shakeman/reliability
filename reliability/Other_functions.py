@@ -21,28 +21,30 @@ distribution_explorer - generates an interactive window to explore probability
     distributions using sliders for their parameters
 """
 
+import time
+import warnings
+
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy.stats as ss
 from matplotlib.lines import Line2D
+from matplotlib.widgets import RadioButtons, Slider
 from mplcursors import cursor
-import warnings
+
 from reliability.Distributions import (
-    Weibull_Distribution,
-    Normal_Distribution,
-    Lognormal_Distribution,
+    Beta_Distribution,
+    Competing_Risks_Model,
     Exponential_Distribution,
     Gamma_Distribution,
-    Beta_Distribution,
-    Loglogistic_Distribution,
     Gumbel_Distribution,
+    Loglogistic_Distribution,
+    Lognormal_Distribution,
     Mixture_Model,
-    Competing_Risks_Model,
+    Normal_Distribution,
+    Weibull_Distribution,
 )
 from reliability.Fitters import Fit_Everything
 from reliability.Utils import colorprint, round_and_string
-from matplotlib.widgets import Slider, RadioButtons
-import scipy.stats as ss
-import time
 
 
 def stress_strength(stress, strength, show_plot=True, print_results=True, warn=True):
@@ -116,9 +118,7 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
             "Stress and Strength must both be probability distributions. First define the distribution using reliability.Distributions.___"
         )
     if (
-        type(stress) == Normal_Distribution
-        and type(strength) == Normal_Distribution
-        and warn is True
+        type(stress) == Normal_Distribution and type(strength) == Normal_Distribution and warn is True
     ):  # supress the warning by setting warn=False
         colorprint(
             "WARNING: If strength and stress are both Normal distributions, it is more accurate to use the exact formula. The exact formula is supported in the function stress_strength_normal. To supress this warning set warn=False",
@@ -137,9 +137,7 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
         trapezoids,
     )  # we take the min and max here since there may be cases when stress > strength
 
-    prob_of_failure = np.trapz(
-        strength.PDF(x, show_plot=False) * stress.SF(x, show_plot=False), x
-    )
+    prob_of_failure = np.trapz(strength.PDF(x, show_plot=False) * stress.SF(x, show_plot=False), x)
     if prob_of_failure > 1:
         colorprint(
             "WARNING: The probability of failure is wrong. One of the distributions likely has an asymptote where the values along the y-axis approach infinity which has caused the integration to fail. There is no solution to this other than to use a distribution that does not have an asymptote.",
@@ -163,13 +161,9 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
         if abs(xmin) < (xmax - xmin) / 4:
             xmin = 0  # if the lower bound on xmin is near zero (relative to the entire range) then just make it zero
 
-        if type(stress) == Beta_Distribution and stress.quantile(
-            0.5
-        ) < strength.quantile(0.5):
+        if type(stress) == Beta_Distribution and stress.quantile(0.5) < strength.quantile(0.5):
             xmin = 0
-        if type(strength) == Beta_Distribution and stress.quantile(
-            0.5
-        ) < strength.quantile(0.5):
+        if type(strength) == Beta_Distribution and stress.quantile(0.5) < strength.quantile(0.5):
             xmax = 1
         xvals = np.linspace(xmin, xmax, 10000)
         stress_PDF = stress.PDF(xvals=xvals, show_plot=False)
@@ -208,9 +202,7 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
             linestyle="--",
         )
 
-        failure_text = str(
-            "Probability of\nfailure = " + round_and_string(prob_of_failure, 4)
-        )
+        failure_text = str("Probability of\nfailure = " + round_and_string(prob_of_failure, 4))
 
         plt.legend(title=failure_text)
         plt.title("Stress - Strength Interference Plot")
@@ -253,9 +245,7 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
     return prob_of_failure
 
 
-def stress_strength_normal(
-    stress, strength, show_plot=True, print_results=True, warn=True
-):
+def stress_strength_normal(stress, strength, show_plot=True, print_results=True, warn=True):
     """
     Given the probability distributions for stress and strength, this module
     will find the probability of failure due to stress-strength interference.
@@ -292,7 +282,7 @@ def stress_strength_normal(
         raise ValueError(
             "Both stress and strength must be a Normal_Distribution. If you need another distribution then use stress_strength rather than stress_strength_normal"
         )
-    if stress.mean > strength.mean and warn == True:
+    if stress.mean > strength.mean and warn is True:
         colorprint(
             "WARNING: The mean of the stress distribution is above the mean of the strength distribution. Please check you have assigned stress and strength to the correct variables. To supress this warning set warn=False",
             text_color="red",
@@ -302,9 +292,7 @@ def stress_strength_normal(
     mu_strength = strength.mu
     sigma_stress = stress.sigma
     mu_stress = stress.mu
-    prob_of_failure = ss.norm.cdf(
-        -(mu_strength - mu_stress) / ((sigma_strength**2 + sigma_stress**2) ** 0.5)
-    )
+    prob_of_failure = ss.norm.cdf(-(mu_strength - mu_stress) / ((sigma_strength**2 + sigma_stress**2) ** 0.5))
 
     if show_plot is True:
         xlims = plt.xlim(auto=None)
@@ -347,9 +335,7 @@ def stress_strength_normal(
             linestyle="--",
         )
 
-        failure_text = str(
-            "Probability of\nfailure = " + round_and_string(prob_of_failure, 4)
-        )
+        failure_text = str("Probability of\nfailure = " + round_and_string(prob_of_failure, 4))
         plt.legend(title=failure_text)
         plt.title("Stress - Strength Interference Plot")
         plt.ylabel("Probability Density")
@@ -362,9 +348,7 @@ def stress_strength_normal(
                 auto=None,
             )
         else:
-            plt.xlim(
-                min(stress.b5, strength.b5), max(stress.b95, strength.b95), auto=None
-            )
+            plt.xlim(min(stress.b5, strength.b5), max(stress.b95, strength.b95), auto=None)
         plt.ylim(bottom=0, auto=None)
 
     if print_results is True:
@@ -450,13 +434,8 @@ class similar_distributions:
                 "distribution must be a probability distribution object from the reliability.Distributions module. First define the distribution using Reliability.Distributions.___"
             )
 
-        if (
-            type(number_of_distributions_to_show) is not int
-            or number_of_distributions_to_show < 2
-        ):
-            raise ValueError(
-                "number_of_distributions_to_show must be an integer greater than 1"
-            )
+        if not isinstance(number_of_distributions_to_show, int) or number_of_distributions_to_show < 2:
+            raise ValueError("number_of_distributions_to_show must be an integer greater than 1")
 
         # sample the CDF from 0.001 to 0.999. These samples will be used to fit all other distributions.
         RVS = distribution.quantile(np.linspace(0.001, 0.999, 698))
@@ -585,16 +564,10 @@ class similar_distributions:
                 )
             elif dist_name == "Exponential_1P":
                 ranked_distributions_objects.append(
-                    Exponential_Distribution(
-                        Lambda=fitted_results.Exponential_1P_lambda
-                    )
+                    Exponential_Distribution(Lambda=fitted_results.Exponential_1P_lambda)
                 )
                 ranked_distributions_labels.append(
-                    str(
-                        "Exponential_1P (lambda="
-                        + str(round(fitted_results.Exponential_1P_lambda, sigfig))
-                        + ")"
-                    )
+                    str("Exponential_1P (lambda=" + str(round(fitted_results.Exponential_1P_lambda, sigfig)) + ")")
                 )
             elif dist_name == "Beta_2P":
                 ranked_distributions_objects.append(
@@ -717,13 +690,9 @@ class similar_distributions:
                         ranked_distributions_labels.append(
                             str(
                                 "Exponential_1P (lambda="
-                                + str(
-                                    round(fitted_results.Exponential_1P_lambda, sigfig)
-                                )
+                                + str(round(fitted_results.Exponential_1P_lambda, sigfig))
                                 + ",γ="
-                                + str(
-                                    round(fitted_results.Exponential_2P_gamma, sigfig)
-                                )
+                                + str(round(fitted_results.Exponential_2P_gamma, sigfig))
                                 + ")"
                             )
                         )
@@ -739,15 +708,11 @@ class similar_distributions:
                         ranked_distributions_labels.append(
                             str(
                                 "Loglogistic_3P (α="
-                                + str(
-                                    round(fitted_results.Loglogistic_3P_alpha, sigfig)
-                                )
+                                + str(round(fitted_results.Loglogistic_3P_alpha, sigfig))
                                 + ",β="
                                 + str(round(fitted_results.Loglogistic_3P_beta, sigfig))
                                 + ",γ="
-                                + str(
-                                    round(fitted_results.Loglogistic_3P_gamma, sigfig)
-                                )
+                                + str(round(fitted_results.Loglogistic_3P_gamma, sigfig))
                                 + ")"
                             )
                         )
@@ -767,19 +732,14 @@ class similar_distributions:
                 "most similar distributions are:",
             )
             counter = 0
-            while (
-                counter < number_of_distributions_to_show
-                and counter < number_of_distributions_fitted
-            ):
+            while counter < number_of_distributions_to_show and counter < number_of_distributions_fitted:
                 dist = ranked_distributions_objects[counter]
                 print(dist.param_title_long)
                 counter += 1
 
         if show_plot is True:
             plt.figure(figsize=(14, 6))
-            plt.suptitle(
-                str("Plot of similar distributions to " + distribution.param_title_long)
-            )
+            plt.suptitle(str("Plot of similar distributions to " + distribution.param_title_long))
             counter = 0
             xlower = distribution.quantile(0.001)
             xupper = distribution.quantile(0.999)
@@ -789,13 +749,8 @@ class similar_distributions:
                 label=str("Input distribution [" + distribution.name2 + "]"),
                 linestyle="--",
             )
-            while (
-                counter < number_of_distributions_to_show
-                and counter < number_of_distributions_fitted
-            ):
-                ranked_distributions_objects[counter].PDF(
-                    label=ranked_distributions_labels[counter]
-                )
+            while counter < number_of_distributions_to_show and counter < number_of_distributions_fitted:
+                ranked_distributions_objects[counter].PDF(label=ranked_distributions_labels[counter])
                 counter += 1
             plt.xlim([xlower - x_delta * 0.1, xupper + x_delta * 0.1])
             plt.legend()
@@ -806,13 +761,8 @@ class similar_distributions:
                 label=str("Input distribution [" + distribution.name2 + "]"),
                 linestyle="--",
             )
-            while (
-                counter < number_of_distributions_to_show
-                and counter < number_of_distributions_fitted
-            ):
-                ranked_distributions_objects[counter].CDF(
-                    label=ranked_distributions_labels[counter]
-                )
+            while counter < number_of_distributions_to_show and counter < number_of_distributions_fitted:
+                ranked_distributions_objects[counter].CDF(label=ranked_distributions_labels[counter])
                 counter += 1
             plt.xlim([xlower - x_delta * 0.1, xupper + x_delta * 0.1])
             plt.legend()
@@ -821,9 +771,7 @@ class similar_distributions:
             plt.show()
 
 
-def histogram(
-    data, white_above=None, bins=None, density=True, cumulative=False, **kwargs
-):
+def histogram(data, white_above=None, bins=None, density=True, cumulative=False, **kwargs):
     """
     Plots a histogram using the data specified. This is similar to plt.hist
     except that it sets better defaults and also shades the bins white above a
@@ -896,7 +844,7 @@ def histogram(
         bins=bins,
         edgecolor=edgecolor,
         linewidth=linewidth,
-        **kwargs
+        **kwargs,
     )  # plots the histogram of the data
 
     if white_above is not None:
@@ -976,9 +924,7 @@ class make_right_censored_data:
                     "fraction_censored must be >= 0 and < 1. The default is 0.5 which will right censor half the data"
                 )
             number_of_items_to_censor = int(np.floor(len(data) * fraction_censored))
-            self.right_censored = data[0:number_of_items_to_censor] * np.random.rand(
-                number_of_items_to_censor
-            )
+            self.right_censored = data[0:number_of_items_to_censor] * np.random.rand(number_of_items_to_censor)
             self.failures = data[number_of_items_to_censor:]
 
         # singly censored
@@ -1111,9 +1057,7 @@ class make_ALT_data:
 
         if dual_stress is True:
             if type(stress_2) not in [list, np.ndarray]:
-                raise ValueError(
-                    "stress_2 must be a list or array of the stress levels"
-                )
+                raise ValueError("stress_2 must be a list or array of the stress levels")
             stress_2 = np.asarray(stress_2)
             if use_level_stress is not None:
                 if len(use_level_stress) != 2:
@@ -1126,54 +1070,40 @@ class make_ALT_data:
                 raise ValueError("stress_1 and stress_2 must be the same length")
 
         if fraction_censored < 0 or fraction_censored >= 1:
-            raise ValueError(
-                "fraction_censored must be 0 for no censoring or between 0 and 1 for right censoring"
-            )
+            raise ValueError("fraction_censored must be 0 for no censoring or between 0 and 1 for right censoring")
 
         # life stress model calculations
         if life_stress_model == "Exponential":
             if a is None or b is None:
-                raise ValueError(
-                    "a and b must be specified for the Exponential life-stress model"
-                )
+                raise ValueError("a and b must be specified for the Exponential life-stress model")
             if b <= 0:
                 raise ValueError("b must be positive")
             life_model = b * np.exp(a / stress_1)
         elif life_stress_model == "Eyring":
             if a is None or c is None:
-                raise ValueError(
-                    "a and c must be specified for the Eyring life-stress model"
-                )
+                raise ValueError("a and c must be specified for the Eyring life-stress model")
             life_model = (1 / stress_1) * np.exp(-(c - a / stress_1))
         elif life_stress_model == "Power":
             if a is None or n is None:
-                raise ValueError(
-                    "a and n must be specified for the Power life-stress model"
-                )
+                raise ValueError("a and n must be specified for the Power life-stress model")
             if a <= 0:
                 raise ValueError("a must be positive")
             life_model = a * stress_1 ** float(n)
         elif life_stress_model == "Dual_Exponential":
             if a is None or b is None or c is None:
-                raise ValueError(
-                    "a, b, and c must be specified for the Dual_Exponential life-stress model"
-                )
+                raise ValueError("a, b, and c must be specified for the Dual_Exponential life-stress model")
             if c <= 0:
                 raise ValueError("c must be positive")
             life_model = c * np.exp(a / stress_1 + b / stress_2)
         elif life_stress_model == "Power_Exponential":
             if a is None or c is None or n is None:
-                raise ValueError(
-                    "a, c, and n must be specified for the Power_Exponential life-stress model"
-                )
+                raise ValueError("a, c, and n must be specified for the Power_Exponential life-stress model")
             if c <= 0:
                 raise ValueError("c must be positive")
             life_model = c * (stress_2 ** float(n)) * np.exp(a / stress_1)
         elif life_stress_model == "Dual_Power":
             if c is None or n is None or m is None:
-                raise ValueError(
-                    "c, n, and m must be specified for the Dual_Power life-stress model"
-                )
+                raise ValueError("c, n, and m must be specified for the Dual_Power life-stress model")
             if c <= 0:
                 raise ValueError("c must be positive")
             life_model = c * (stress_1 ** float(m)) * (stress_2 ** float(n))
@@ -1193,35 +1123,25 @@ class make_ALT_data:
         def __make_dist(life):
             if distribution == "Weibull":
                 if beta is None:
-                    raise ValueError(
-                        "beta must be specified for the Weibull distribution"
-                    )
+                    raise ValueError("beta must be specified for the Weibull distribution")
                 dist = Weibull_Distribution(alpha=life, beta=beta)
             elif distribution == "Lognormal":
                 if sigma is None:
-                    raise ValueError(
-                        "sigma must be specified for the Lognormal distribution"
-                    )
+                    raise ValueError("sigma must be specified for the Lognormal distribution")
                 dist = Lognormal_Distribution(mu=np.log(life), sigma=sigma)
             elif distribution == "Normal":
                 if sigma is None:
-                    raise ValueError(
-                        "sigma must be specified for the Normal distribution"
-                    )
+                    raise ValueError("sigma must be specified for the Normal distribution")
                 dist = Normal_Distribution(mu=life, sigma=sigma)
             elif distribution == "Exponential":
                 dist = Exponential_Distribution(Lambda=1 / life)
             else:
-                raise ValueError(
-                    "distribution must be one of Weibull, Lognormal, Normal, Exponential"
-                )
+                raise ValueError("distribution must be one of Weibull, Lognormal, Normal, Exponential")
             return dist
 
         for i in range(num_stresses):
             dist = __make_dist(life=life_model[i])
-            raw_data = dist.random_samples(
-                number_of_samples=number_of_samples, seed=seeds[i]
-            )
+            raw_data = dist.random_samples(number_of_samples=number_of_samples, seed=seeds[i])
             if min(raw_data) <= 0:
                 raise ValueError(
                     "The values entered for the ALT model will result in negative failure times.\n"
@@ -1233,28 +1153,16 @@ class make_ALT_data:
                 failures.extend(raw_data)
                 failure_stresses_1.extend(list(np.ones_like(raw_data) * stress_1[i]))
                 if dual_stress is True:
-                    failure_stresses_2.extend(
-                        list(np.ones_like(raw_data) * stress_2[i])
-                    )
+                    failure_stresses_2.extend(list(np.ones_like(raw_data) * stress_2[i]))
             else:
-                data = make_right_censored_data(
-                    raw_data, fraction_censored=fraction_censored, seed=seeds[i]
-                )
+                data = make_right_censored_data(raw_data, fraction_censored=fraction_censored, seed=seeds[i])
                 failures.extend(data.failures)
                 right_censored.extend(data.right_censored)
-                failure_stresses_1.extend(
-                    list(np.ones_like(data.failures) * stress_1[i])
-                )
-                right_censored_stresses_1.extend(
-                    list(np.ones_like(data.right_censored) * stress_1[i])
-                )
+                failure_stresses_1.extend(list(np.ones_like(data.failures) * stress_1[i]))
+                right_censored_stresses_1.extend(list(np.ones_like(data.right_censored) * stress_1[i]))
                 if dual_stress is True:
-                    failure_stresses_2.extend(
-                        list(np.ones_like(data.failures) * stress_2[i])
-                    )
-                    right_censored_stresses_2.extend(
-                        list(np.ones_like(data.right_censored) * stress_2[i])
-                    )
+                    failure_stresses_2.extend(list(np.ones_like(data.failures) * stress_2[i]))
+                    right_censored_stresses_2.extend(list(np.ones_like(data.right_censored) * stress_2[i]))
 
         if dual_stress is False:
             self.failures = failures
@@ -1312,7 +1220,7 @@ class crosshairs:
             raise ValueError(
                 "dateformat type must be str or None. For acceptable strings see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes"
             )
-        if type(decimals) is not int:
+        if not isinstance(decimals, int):
             raise ValueError("decimals must be int")
         if type(xlabel) not in [str, type(None)]:
             raise ValueError("xlabel must be string or None")
@@ -1323,11 +1231,12 @@ class crosshairs:
             "ignore"
         )  # required when using fill_between due to warning in mplcursors: "UserWarning: Pick support for PolyCollection is missing."
         ch = cursor(hover=True)
-        add_lines_and_text_with_kwargs = (
-            lambda _: crosshairs.__add_lines_and_text_to_crosshairs(
+
+        def add_lines_and_text_with_kwargs(_):
+            return crosshairs.__add_lines_and_text_to_crosshairs(
                 _, decimals, dateformat, **kwargs
-            )
-        )  # adds the line's kwargs before connecting it to cursor
+            )  # adds the line's kwargs before connecting it to cursor
+
         ch.connect("add", add_lines_and_text_with_kwargs)
         plt.gcf().canvas.mpl_connect(
             "axes_leave_event", crosshairs.__hide_crosshairs
@@ -1342,9 +1251,12 @@ class crosshairs:
             "ignore"
         )  # required when using fill_between due to warning in mplcursors: "UserWarning: Pick support for PolyCollection is missing."
         annot = cursor(multiple=True, bindings={"toggle_visible": "h"})
-        format_annotation_labeled = lambda _: crosshairs.__format_annotation(
-            _, decimals, dateformat, [xlabel, ylabel]
-        )  # adds the labels to the 'format_annotation' function before connecting it to cursor
+
+        def format_annotation_labeled(_):
+            return crosshairs.__format_annotation(
+                _, decimals, dateformat, [xlabel, ylabel]
+            )  # adds the labels to the 'format_annotation' function before connecting it to cursor
+
         annot.connect("add", format_annotation_labeled)
 
     @staticmethod
@@ -1395,27 +1307,11 @@ class crosshairs:
 
         x, y = sel.target
         lines = [
-            Line2D(
-                [x, x],
-                [0, 1],
-                transform=ax.get_xaxis_transform(),
-                c=color,
-                lw=linewidth,
-                ls=linestyle,
-                **kwargs
-            ),
-            Line2D(
-                [0, 1],
-                [y, y],
-                transform=ax.get_yaxis_transform(),
-                c=color,
-                lw=linewidth,
-                ls=linestyle,
-                **kwargs
-            ),
+            Line2D([x, x], [0, 1], transform=ax.get_xaxis_transform(), c=color, lw=linewidth, ls=linestyle, **kwargs),
+            Line2D([0, 1], [y, y], transform=ax.get_yaxis_transform(), c=color, lw=linewidth, ls=linestyle, **kwargs),
         ]
 
-        if type(dateformat) is str:
+        if isinstance(dateformat, str):
             x_string = time.strftime(dateformat, time.gmtime(x * 24 * 3600))
         else:
             if decimals == 0:
@@ -1438,7 +1334,7 @@ class crosshairs:
                 fontsize=fontsize,
                 fontweight=fontweight,
                 fontstyle=fontstyle,
-                **kwargs
+                **kwargs,
             ),
             ax.text(
                 s=x_string,
@@ -1449,7 +1345,7 @@ class crosshairs:
                 fontsize=fontsize,
                 fontweight=fontweight,
                 fontstyle=fontstyle,
-                **kwargs
+                **kwargs,
             ),
         ]
 
@@ -1466,7 +1362,7 @@ class crosshairs:
         # this is some simple formatting for the annotations (applied on mouse click)
         [x, y] = sel.annotation.xy
 
-        if type(dateformat) is str:
+        if isinstance(dateformat, str):
             x_string = time.strftime(dateformat, time.gmtime(x * 24 * 3600))
         else:
             if decimals == 0:
@@ -1488,8 +1384,7 @@ class crosshairs:
         ax = event.inaxes  # this gets the axes where the event occurred.
         if len(ax.texts) >= 2:  # the lines can't be deleted if they haven't been drawn.
             if (
-                ax.texts[-1].get_position()[1] == 0
-                and ax.texts[-2].get_position()[0] == 0
+                ax.texts[-1].get_position()[1] == 0 and ax.texts[-2].get_position()[0] == 0
             ):  # this identifies the texts (crosshair text coords) based on their combination of unique properties
                 ax.lines[-1].set_visible(False)
                 ax.lines[-2].set_visible(False)
@@ -1553,9 +1448,7 @@ class distribution_explorer:
         plt.title("CHF")
         plt.xlabel("")
         plt.ylabel("")
-        plt.subplots_adjust(
-            left=0.07, right=0.98, top=0.9, bottom=0.25, wspace=0.18, hspace=0.30
-        )
+        plt.subplots_adjust(left=0.07, right=0.98, top=0.9, bottom=0.25, wspace=0.18, hspace=0.30)
 
         # initialise the sliders
         x0 = 0.1
@@ -1590,9 +1483,7 @@ class distribution_explorer:
             valinit=dist.gamma,
             facecolor=self.active_color,
         )
-        plt.subplots_adjust(
-            left=0.07, right=0.98, top=0.9, bottom=0.25, wspace=0.18, hspace=0.30
-        )
+        plt.subplots_adjust(left=0.07, right=0.98, top=0.9, bottom=0.25, wspace=0.18, hspace=0.30)
 
         # initialise the radio button
         radio_ax = plt.axes([0.708, 0.25, 0.27, 0.28], facecolor=self.background_color)
@@ -1624,132 +1515,92 @@ class distribution_explorer:
             param_names = ["Alpha", "Beta", "Gamma"]
             plt.sca(self.ax0)
             plt.cla()
-            self.s0 = Slider(
-                self.ax0, param_names[0], valmin=0.1, valmax=500, valinit=dist.alpha
-            )
+            self.s0 = Slider(self.ax0, param_names[0], valmin=0.1, valmax=500, valinit=dist.alpha)
             plt.sca(self.ax1)
             plt.cla()
-            self.s1 = Slider(
-                self.ax1, param_names[1], valmin=0.2, valmax=25, valinit=dist.beta
-            )
+            self.s1 = Slider(self.ax1, param_names[1], valmin=0.2, valmax=25, valinit=dist.beta)
             plt.sca(self.ax2)
             plt.cla()
             self.ax2.set_visible(True)
-            self.s2 = Slider(
-                self.ax2, param_names[2], valmin=0, valmax=500, valinit=dist.gamma
-            )
+            self.s2 = Slider(self.ax2, param_names[2], valmin=0, valmax=500, valinit=dist.gamma)
         elif self.name == "Gamma":
             dist = Gamma_Distribution(alpha=100, beta=5, gamma=0)
             param_names = ["Alpha", "Beta", "Gamma"]
             plt.sca(self.ax0)
             plt.cla()
-            self.s0 = Slider(
-                self.ax0, param_names[0], valmin=0.1, valmax=500, valinit=dist.alpha
-            )
+            self.s0 = Slider(self.ax0, param_names[0], valmin=0.1, valmax=500, valinit=dist.alpha)
             plt.sca(self.ax1)
             plt.cla()
-            self.s1 = Slider(
-                self.ax1, param_names[1], valmin=0.2, valmax=25, valinit=dist.beta
-            )
+            self.s1 = Slider(self.ax1, param_names[1], valmin=0.2, valmax=25, valinit=dist.beta)
             plt.sca(self.ax2)
             plt.cla()
             self.ax2.set_visible(True)
-            self.s2 = Slider(
-                self.ax2, param_names[2], valmin=0, valmax=500, valinit=dist.gamma
-            )
+            self.s2 = Slider(self.ax2, param_names[2], valmin=0, valmax=500, valinit=dist.gamma)
         elif self.name == "Loglogistic":
             dist = Loglogistic_Distribution(alpha=100, beta=8, gamma=0)
             param_names = ["Alpha", "Beta", "Gamma"]
             plt.sca(self.ax0)
             plt.cla()
-            self.s0 = Slider(
-                self.ax0, param_names[0], valmin=0.1, valmax=500, valinit=dist.alpha
-            )
+            self.s0 = Slider(self.ax0, param_names[0], valmin=0.1, valmax=500, valinit=dist.alpha)
             plt.sca(self.ax1)
             plt.cla()
-            self.s1 = Slider(
-                self.ax1, param_names[1], valmin=0.2, valmax=50, valinit=dist.beta
-            )
+            self.s1 = Slider(self.ax1, param_names[1], valmin=0.2, valmax=50, valinit=dist.beta)
             plt.sca(self.ax2)
             plt.cla()
             self.ax2.set_visible(True)
-            self.s2 = Slider(
-                self.ax2, param_names[2], valmin=0, valmax=500, valinit=dist.gamma
-            )
+            self.s2 = Slider(self.ax2, param_names[2], valmin=0, valmax=500, valinit=dist.gamma)
         elif self.name == "Lognormal":
             dist = Lognormal_Distribution(mu=2.5, sigma=0.5, gamma=0)
             param_names = ["Mu", "Sigma", "Gamma"]
             plt.sca(self.ax0)
             plt.cla()
-            self.s0 = Slider(
-                self.ax0, param_names[0], valmin=0, valmax=5, valinit=dist.mu
-            )
+            self.s0 = Slider(self.ax0, param_names[0], valmin=0, valmax=5, valinit=dist.mu)
             plt.sca(self.ax1)
             plt.cla()
-            self.s1 = Slider(
-                self.ax1, param_names[1], valmin=0.01, valmax=2, valinit=dist.sigma
-            )
+            self.s1 = Slider(self.ax1, param_names[1], valmin=0.01, valmax=2, valinit=dist.sigma)
             plt.sca(self.ax2)
             plt.cla()
             self.ax2.set_visible(True)
-            self.s2 = Slider(
-                self.ax2, param_names[2], valmin=0, valmax=500, valinit=dist.gamma
-            )
+            self.s2 = Slider(self.ax2, param_names[2], valmin=0, valmax=500, valinit=dist.gamma)
         elif self.name == "Normal":
             dist = Normal_Distribution(mu=0, sigma=10)
             param_names = ["Mu", "Sigma", ""]
             plt.sca(self.ax0)
             plt.cla()
-            self.s0 = Slider(
-                self.ax0, param_names[0], valmin=-100, valmax=100, valinit=dist.mu
-            )
+            self.s0 = Slider(self.ax0, param_names[0], valmin=-100, valmax=100, valinit=dist.mu)
             plt.sca(self.ax1)
             plt.cla()
-            self.s1 = Slider(
-                self.ax1, param_names[1], valmin=0.01, valmax=20, valinit=dist.sigma
-            )
+            self.s1 = Slider(self.ax1, param_names[1], valmin=0.01, valmax=20, valinit=dist.sigma)
             self.ax2.set_visible(False)
         elif self.name == "Gumbel":
             dist = Gumbel_Distribution(mu=0, sigma=10)
             param_names = ["Mu", "Sigma", ""]
             plt.sca(self.ax0)
             plt.cla()
-            self.s0 = Slider(
-                self.ax0, param_names[0], valmin=-100, valmax=100, valinit=dist.mu
-            )
+            self.s0 = Slider(self.ax0, param_names[0], valmin=-100, valmax=100, valinit=dist.mu)
             plt.sca(self.ax1)
             plt.cla()
-            self.s1 = Slider(
-                self.ax1, param_names[1], valmin=0.01, valmax=20, valinit=dist.sigma
-            )
+            self.s1 = Slider(self.ax1, param_names[1], valmin=0.01, valmax=20, valinit=dist.sigma)
             self.ax2.set_visible(False)
         elif self.name == "Exponential":
             dist = Exponential_Distribution(Lambda=1, gamma=0)
             param_names = ["Lambda", "Gamma", ""]
             plt.sca(self.ax0)
             plt.cla()
-            self.s0 = Slider(
-                self.ax0, param_names[0], valmin=0.001, valmax=5, valinit=dist.Lambda
-            )
+            self.s0 = Slider(self.ax0, param_names[0], valmin=0.001, valmax=5, valinit=dist.Lambda)
             plt.sca(self.ax1)
             plt.cla()
-            self.s1 = Slider(
-                self.ax1, param_names[1], valmin=0, valmax=500, valinit=dist.gamma
-            )
+            self.s1 = Slider(self.ax1, param_names[1], valmin=0, valmax=500, valinit=dist.gamma)
             self.ax2.set_visible(False)
         elif self.name == "Beta":
             dist = Beta_Distribution(alpha=2, beta=2)
             param_names = ["Alpha", "Beta", ""]
             plt.sca(self.ax0)
             plt.cla()
-            self.s0 = Slider(
-                self.ax0, param_names[0], valmin=0.01, valmax=5, valinit=dist.alpha
-            )
+            self.s0 = Slider(self.ax0, param_names[0], valmin=0.01, valmax=5, valinit=dist.alpha)
             plt.sca(self.ax1)
             plt.cla()
-            self.s1 = Slider(
-                self.ax1, param_names[1], valmin=0.01, valmax=5, valinit=dist.beta
-            )
+            self.s1 = Slider(self.ax1, param_names[1], valmin=0.01, valmax=5, valinit=dist.beta)
             self.ax2.set_visible(False)
         else:
             raise ValueError(str(self.name + " is an unknown distribution name"))
@@ -1813,21 +1664,21 @@ class distribution_explorer:
         plt.title("CHF")
         plt.xlabel("")
         plt.ylabel("")
-        plt.subplots_adjust(
-            left=0.07, right=0.98, top=0.9, bottom=0.25, wspace=0.18, hspace=0.30
-        )
+        plt.subplots_adjust(left=0.07, right=0.98, top=0.9, bottom=0.25, wspace=0.18, hspace=0.30)
         plt.suptitle(dist.param_title_long, fontsize=15)
         plt.draw()
 
     def __interactive(self, initial_run=False):
-        update_params_wrapper = lambda _: distribution_explorer.__update_params(_, self)
-        update_distribution_wrapper = (
-            lambda name: distribution_explorer.__update_distribution(name, self)
-        )
+        def update_params_wrapper(_):
+            return distribution_explorer.__update_params(_, self)
+
+        def update_distribution_wrapper(name):
+            return distribution_explorer.__update_distribution(name, self)
+
         self.s0.on_changed(update_params_wrapper)
         self.s1.on_changed(update_params_wrapper)
         self.s2.on_changed(update_params_wrapper)
-        if initial_run == True:
+        if initial_run is True:
             self.radio.on_clicked(update_distribution_wrapper)
             plt.show()
         else:

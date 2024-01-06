@@ -9,24 +9,26 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-from datetime import date
 import os
 import sys
+from datetime import date
 
-sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath('../'))
+# The full version, including alpha/beta/rc tags
+import reliability
+
+sys.path.insert(0, os.path.abspath("."))
+sys.path.insert(0, os.path.abspath("../"))
 
 # The master toctree document.
 master_doc = "index"
 
 # -- Project information -----------------------------------------------------
 
-project = 'reliability'
+project = "reliability"
 copyright = "2019-{},  Matthew Reid".format(date.today().year)
-author = 'Matthew Reid'
+author = "Matthew Reid"
 
-# The full version, including alpha/beta/rc tags
-import reliability
+
 version = reliability.__version__
 release = version
 
@@ -53,13 +55,13 @@ napoleon_use_rtype = False
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx_rtd_theme"
 
 # # Add any paths that contain custom static files (such as style sheets) here,
 # # relative to this directory. They are copied after the builtin static files,

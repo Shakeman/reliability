@@ -14,10 +14,11 @@ and right censored data. Confidence intervals are provided using the Greenwood
 formula with Normal approximation (as implemented in Minitab).
 """
 
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import scipy.stats as ss
+
 from reliability.Utils import colorprint
 
 pd.set_option("display.width", 200)  # prevents wrapping after default 80 characters
@@ -110,22 +111,16 @@ class KaplanMeier:
         plot_type="SF",
         **kwargs
     ):
-        np.seterr(
-            divide="ignore"
-        )  # divide by zero occurs if last detapoint is a failure so risk set is zero
+        np.seterr(divide="ignore")  # divide by zero occurs if last detapoint is a failure so risk set is zero
 
         if failures is None:
-            raise ValueError(
-                "failures must be provided to calculate non-parametric estimates."
-            )
+            raise ValueError("failures must be provided to calculate non-parametric estimates.")
         if right_censored is None:
             right_censored = []  # create empty array so it can be added in hstack
         if plot_type not in ["CDF", "SF", "CHF", "cdf", "sf", "chf"]:
             raise ValueError("plot_type must be CDF, SF, or CHF. Default is SF.")
         if CI < 0 or CI > 1:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals.")
         if len(failures) < 2:
             raise ValueError(
                 str(
@@ -162,10 +157,7 @@ class KaplanMeier:
             if i == 1:
                 KM.append((remaining_array[i - 1] - c[i - 1]) / remaining_array[i - 1])
             else:
-                KM.append(
-                    ((remaining_array[i - 1] - c[i - 1]) / remaining_array[i - 1])
-                    * KM[i - 2]
-                )
+                KM.append(((remaining_array[i - 1] - c[i - 1]) / remaining_array[i - 1]) * KM[i - 2])
             # greenwood confidence interval calculations. Uses Normal approximation (same method as in Minitab)
             if c[i - 1] == 1:
                 risk_set = n - i + 1
@@ -271,11 +263,7 @@ class KaplanMeier:
             if plot_type in ["SF", "sf"]:
                 p = plt.plot(self.xvals, self.SF, **kwargs)
                 if plot_CI is True:  # plots the confidence bounds
-                    title_text = str(
-                        "Kaplan-Meier SF estimate\n with "
-                        + str(CI_rounded)
-                        + "% confidence bounds"
-                    )
+                    title_text = str("Kaplan-Meier SF estimate\n with " + str(CI_rounded) + "% confidence bounds")
                     plt.fill_between(
                         self.xvals,
                         self.SF_lower,
@@ -294,11 +282,7 @@ class KaplanMeier:
             elif plot_type in ["CDF", "cdf"]:
                 p = plt.plot(self.xvals, self.CDF, **kwargs)
                 if plot_CI is True:  # plots the confidence bounds
-                    title_text = str(
-                        "Kaplan-Meier CDF estimate\n with "
-                        + str(CI_rounded)
-                        + "% confidence bounds"
-                    )
+                    title_text = str("Kaplan-Meier CDF estimate\n with " + str(CI_rounded) + "% confidence bounds")
                     plt.fill_between(
                         self.xvals,
                         self.CDF_lower,
@@ -321,11 +305,7 @@ class KaplanMeier:
                 p = plt.plot(self.xvals, self.CHF, **kwargs)
                 CHF_upper = np.nan_to_num(self.CHF_upper, posinf=1e10)
                 if plot_CI is True:  # plots the confidence bounds
-                    title_text = str(
-                        "Kaplan-Meier CHF estimate\n with "
-                        + str(CI_rounded)
-                        + "% confidence bounds"
-                    )
+                    title_text = str("Kaplan-Meier CHF estimate\n with " + str(CI_rounded) + "% confidence bounds")
                     plt.fill_between(
                         self.xvals,
                         self.CHF_lower,
@@ -435,22 +415,16 @@ class NelsonAalen:
         plot_type="SF",
         **kwargs
     ):
-        np.seterr(
-            divide="ignore"
-        )  # divide by zero occurs if last detapoint is a failure so risk set is zero
+        np.seterr(divide="ignore")  # divide by zero occurs if last detapoint is a failure so risk set is zero
 
         if failures is None:
-            raise ValueError(
-                "failures must be provided to calculate non-parametric estimates."
-            )
+            raise ValueError("failures must be provided to calculate non-parametric estimates.")
         if right_censored is None:
             right_censored = []  # create empty array so it can be added in hstack
         if plot_type not in ["CDF", "SF", "CHF", "cdf", "sf", "chf"]:
             raise ValueError("plot_type must be CDF, SF, or CHF. Default is SF.")
         if CI < 0 or CI > 1:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals.")
         if len(failures) < 2:
             raise ValueError(
                 str(
@@ -595,11 +569,7 @@ class NelsonAalen:
             if plot_type in ["SF", "sf"]:
                 p = plt.plot(self.xvals, self.SF, **kwargs)
                 if plot_CI is True:  # plots the confidence bounds
-                    title_text = str(
-                        "Nelson-Aalen SF estimate\n with "
-                        + str(CI_rounded)
-                        + "% confidence bounds"
-                    )
+                    title_text = str("Nelson-Aalen SF estimate\n with " + str(CI_rounded) + "% confidence bounds")
                     plt.fill_between(
                         self.xvals,
                         self.SF_lower,
@@ -618,11 +588,7 @@ class NelsonAalen:
             elif plot_type in ["CDF", "cdf"]:
                 p = plt.plot(self.xvals, self.CDF, **kwargs)
                 if plot_CI is True:  # plots the confidence bounds
-                    title_text = str(
-                        "Nelson-Aalen CDF estimate\n with "
-                        + str(CI_rounded)
-                        + "% confidence bounds"
-                    )
+                    title_text = str("Nelson-Aalen CDF estimate\n with " + str(CI_rounded) + "% confidence bounds")
                     plt.fill_between(
                         self.xvals,
                         self.CDF_lower,
@@ -645,11 +611,7 @@ class NelsonAalen:
                 p = plt.plot(self.xvals, self.CHF, **kwargs)
                 CHF_upper = np.nan_to_num(self.CHF_upper, posinf=1e10)
                 if plot_CI is True:  # plots the confidence bounds
-                    title_text = str(
-                        "Nelson-Aalen CHF estimate\n with "
-                        + str(CI_rounded)
-                        + "% confidence bounds"
-                    )
+                    title_text = str("Nelson-Aalen CHF estimate\n with " + str(CI_rounded) + "% confidence bounds")
                     plt.fill_between(
                         self.xvals,
                         self.CHF_lower,
@@ -769,19 +731,14 @@ class RankAdjustment:
         plot_type="SF",
         **kwargs
     ):
-
         if failures is None:
-            raise ValueError(
-                "failures must be provided to calculate non-parametric estimates."
-            )
+            raise ValueError("failures must be provided to calculate non-parametric estimates.")
         if right_censored is None:
             right_censored = []  # create empty array so it can be added in hstack
         if plot_type not in ["CDF", "SF", "CHF", "cdf", "sf", "chf"]:
             raise ValueError("plot_type must be CDF, SF, or CHF. Default is SF.")
         if CI < 0 or CI > 1:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals.")
         if len(failures) < 2:
             raise ValueError(
                 str(
@@ -808,7 +765,7 @@ class RankAdjustment:
         # obtain the rank adjustment estimates
         from reliability.Probability_plotting import (
             plotting_positions,
-        )  # can't have this at the start of the function because of circular import
+        )
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a, sort=True)
         # create the stepwise plot using the plotting positions
@@ -827,9 +784,7 @@ class RankAdjustment:
         # convert the plotting positions (which are only for the failures) into the full Rank Adjustment column by adding the values for the censored data
         RA = []
         y_extended = [0]
-        y_extended.extend(
-            y
-        )  # need to add 0 to the start of the plotting positions since the CDF always starts at 0
+        y_extended.extend(y)  # need to add 0 to the start of the plotting positions since the CDF always starts at 0
         failure_counter = 0
         RA_upper = []  # upper CI
         RA_lower = []  # lower CI
@@ -932,11 +887,7 @@ class RankAdjustment:
             if plot_type in ["SF", "sf"]:
                 p = plt.plot(self.xvals, self.SF, **kwargs)
                 if plot_CI is True:  # plots the confidence bounds
-                    title_text = str(
-                        "Rank-Adjustment SF estimate\n with "
-                        + str(CI_rounded)
-                        + "% confidence bounds"
-                    )
+                    title_text = str("Rank-Adjustment SF estimate\n with " + str(CI_rounded) + "% confidence bounds")
                     plt.fill_between(
                         self.xvals,
                         self.SF_lower,
@@ -955,11 +906,7 @@ class RankAdjustment:
             elif plot_type in ["CDF", "cdf"]:
                 p = plt.plot(self.xvals, self.CDF, **kwargs)
                 if plot_CI is True:  # plots the confidence bounds
-                    title_text = str(
-                        "Rank Adjustment CDF estimate\n with "
-                        + str(CI_rounded)
-                        + "% confidence bounds"
-                    )
+                    title_text = str("Rank Adjustment CDF estimate\n with " + str(CI_rounded) + "% confidence bounds")
                     plt.fill_between(
                         self.xvals,
                         self.CDF_lower,
@@ -969,9 +916,7 @@ class RankAdjustment:
                         linewidth=0,
                     )
                 else:
-                    title_text = (
-                        "Rank Adjustment estimate of Cumulative Density Function"
-                    )
+                    title_text = "Rank Adjustment estimate of Cumulative Density Function"
                 plt.xlabel("Failure units")
                 plt.ylabel("Fraction Failing")
                 plt.title(title_text)
@@ -984,11 +929,7 @@ class RankAdjustment:
                 p = plt.plot(self.xvals, self.CHF, **kwargs)
                 CHF_upper = np.nan_to_num(self.CHF_upper, posinf=1e10)
                 if plot_CI is True:  # plots the confidence bounds
-                    title_text = str(
-                        "Rank Adjustment CHF estimate\n with "
-                        + str(CI_rounded)
-                        + "% confidence bounds"
-                    )
+                    title_text = str("Rank Adjustment CHF estimate\n with " + str(CI_rounded) + "% confidence bounds")
                     plt.fill_between(
                         self.xvals,
                         self.CHF_lower,
@@ -998,9 +939,7 @@ class RankAdjustment:
                         linewidth=0,
                     )
                 else:
-                    title_text = (
-                        "Rank Adjustment estimate of Cumulative Hazard Function"
-                    )
+                    title_text = "Rank Adjustment estimate of Cumulative Hazard Function"
                 plt.xlabel("Failure units")
                 plt.ylabel("Cumulative Hazard")
                 plt.title(title_text)

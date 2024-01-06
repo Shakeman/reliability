@@ -33,7 +33,8 @@ X as this is the same as F from FR format.
 
 import numpy as np
 import pandas as pd
-from reliability.Utils import colorprint, write_df_to_xlsx, removeNaNs
+
+from reliability.Utils import colorprint, removeNaNs, write_df_to_xlsx
 
 
 class xlsx_to_XCN:
@@ -183,9 +184,7 @@ class xlsx_to_XCN:
         self.C = XCN.C
         self.N = XCN.N
         Data = {"event time": self.X, "censor code": self.C, "number of events": self.N}
-        self.__df = pd.DataFrame(
-            data=Data, columns=["event time", "censor code", "number of events"]
-        )
+        self.__df = pd.DataFrame(data=Data, columns=["event time", "censor code", "number of events"])
 
     def print(self):
         """
@@ -481,9 +480,7 @@ class XCN_to_FNRN:
     """
 
     def __init__(self, X, C, N=None, censor_code=None, failure_code=None):
-        FR = XCN_to_FR(
-            X=X, C=C, N=N, censor_code=censor_code, failure_code=failure_code
-        )
+        FR = XCN_to_FR(X=X, C=C, N=N, censor_code=censor_code, failure_code=failure_code)
         FNRN = FR_to_FNRN(failures=FR.failures, right_censored=FR.right_censored)
         self.failures = FNRN.failures
         self.num_failures = FNRN.num_failures
@@ -761,9 +758,7 @@ class FR_to_XCN:
                         9           C                 4
     """
 
-    def __init__(
-        self, failures, right_censored=None, censor_code="C", failure_code="F"
-    ):
+    def __init__(self, failures, right_censored=None, censor_code="C", failure_code="F"):
         if type(failures) not in [list, np.ndarray]:
             raise ValueError("failures must be a list or array.")
         if right_censored is not None:
@@ -773,13 +768,9 @@ class FR_to_XCN:
             self.X = np.hstack([FNRN.failures, FNRN.right_censored])
             self.N = np.hstack([FNRN.num_failures, FNRN.num_right_censored])
             if type(failure_code) not in [str, float, int, np.float64]:
-                raise ValueError(
-                    "failure_code must be a string or number. Default is 'F'"
-                )
+                raise ValueError("failure_code must be a string or number. Default is 'F'")
             if type(censor_code) not in [str, float, int, np.float64]:
-                raise ValueError(
-                    "censor_code must be a string or number. Default is 'C'"
-                )
+                raise ValueError("censor_code must be a string or number. Default is 'C'")
             F_cens = [failure_code] * len(FNRN.failures)
             C_cens = [censor_code] * len(FNRN.right_censored)
             self.C = np.hstack([F_cens, C_cens])
@@ -788,14 +779,10 @@ class FR_to_XCN:
             self.X = FNRN.failures
             self.N = FNRN.num_failures
             if type(failure_code) not in [str, float, int, np.float64]:
-                raise ValueError(
-                    "failure_code must be a string or number. Default is 'F'"
-                )
+                raise ValueError("failure_code must be a string or number. Default is 'F'")
             self.C = np.array([failure_code] * len(FNRN.failures))
         Data = {"event time": self.X, "censor code": self.C, "number of events": self.N}
-        self.__df = pd.DataFrame(
-            data=Data, columns=["event time", "censor code", "number of events"]
-        )
+        self.__df = pd.DataFrame(data=Data, columns=["event time", "censor code", "number of events"])
 
     def print(self):
         """
@@ -894,9 +881,7 @@ class FNRN_to_XCN:
             if type(num_right_censored) not in [list, np.ndarray]:
                 raise ValueError("num_right_censored must be a list or array.")
             if len(right_censored) != len(num_right_censored):
-                raise ValueError(
-                    "right_censored and num_right_censored must be the same length."
-                )
+                raise ValueError("right_censored and num_right_censored must be the same length.")
             FR = FNRN_to_FR(
                 failures=failures,
                 num_failures=num_failures,
@@ -909,13 +894,9 @@ class FNRN_to_XCN:
             self.X = np.hstack([FNRN.failures, FNRN.right_censored])
             self.N = np.hstack([FNRN.num_failures, FNRN.num_right_censored])
             if type(failure_code) not in [str, float, int, np.float64]:
-                raise ValueError(
-                    "failure_code must be a string or number. Default is 'F'"
-                )
+                raise ValueError("failure_code must be a string or number. Default is 'F'")
             if type(censor_code) not in [str, float, int, np.float64]:
-                raise ValueError(
-                    "censor_code must be a string or number. Default is 'C'"
-                )
+                raise ValueError("censor_code must be a string or number. Default is 'C'")
             F_cens = [failure_code] * len(FNRN.failures)
             C_cens = [censor_code] * len(FNRN.right_censored)
             self.C = np.hstack([F_cens, C_cens])
@@ -927,15 +908,11 @@ class FNRN_to_XCN:
             self.X = FNRN.failures
             self.N = FNRN.num_failures
             if type(failure_code) not in [str, float, int, np.float64]:
-                raise ValueError(
-                    "failure_code must be a string or number. Default is 'F'"
-                )
+                raise ValueError("failure_code must be a string or number. Default is 'F'")
             self.C = np.array([failure_code] * len(FNRN.failures))
         # make the dataframe for printing and writing to excel
         Data = {"event time": self.X, "censor code": self.C, "number of events": self.N}
-        self.__df = pd.DataFrame(
-            data=Data, columns=["event time", "censor code", "number of events"]
-        )
+        self.__df = pd.DataFrame(data=Data, columns=["event time", "censor code", "number of events"])
 
     def print(self):
         """
@@ -1011,9 +988,7 @@ class FR_to_FNRN:
         if right_censored is not None:
             if type(right_censored) not in [list, np.ndarray]:
                 raise ValueError("right_censored must be a list or array.")
-            self.right_censored, self.num_right_censored = np.unique(
-                right_censored, return_counts=True
-            )
+            self.right_censored, self.num_right_censored = np.unique(right_censored, return_counts=True)
         else:
             self.right_censored = None
             self.num_right_censored = None
@@ -1126,9 +1101,7 @@ class FNRN_to_FR:
                                        7
     """
 
-    def __init__(
-        self, failures, num_failures, right_censored=None, num_right_censored=None
-    ):
+    def __init__(self, failures, num_failures, right_censored=None, num_right_censored=None):
         if type(failures) not in [list, np.ndarray]:
             raise ValueError("failures must be a list or array.")
         if type(num_failures) not in [list, np.ndarray]:
@@ -1147,14 +1120,10 @@ class FNRN_to_FR:
             if type(num_right_censored) not in [list, np.ndarray]:
                 raise ValueError("num_right_censored must be a list or array.")
             if len(right_censored) != len(num_right_censored):
-                raise ValueError(
-                    "right_censored and num_right_censored must be the same length."
-                )
+                raise ValueError("right_censored and num_right_censored must be the same length.")
             right_censored_out = np.array([])
             for i, rc in enumerate(right_censored):
-                right_censored_out = np.append(
-                    right_censored_out, np.ones(int(num_right_censored[i])) * rc
-                )
+                right_censored_out = np.append(right_censored_out, np.ones(int(num_right_censored[i])) * rc)
             self.right_censored = right_censored_out
 
             f, rc = list(self.failures), list(self.right_censored)

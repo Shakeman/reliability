@@ -15,15 +15,16 @@ MCF_parametric - Mean Cumulative Function Parametric. Fits a parametric model to
     the data obtained from MCF_nonparametric
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
-from scipy import integrate
+import numpy as np
 import pandas as pd
 import scipy.stats as ss
-from scipy.optimize import curve_fit
-from reliability.Utils import colorprint, round_and_string
-from matplotlib.ticker import ScalarFormatter
 from matplotlib.axes import SubplotBase
+from matplotlib.ticker import ScalarFormatter
+from scipy import integrate
+from scipy.optimize import curve_fit
+
+from reliability.Utils import colorprint, round_and_string
 
 
 class reliability_growth:
@@ -88,14 +89,7 @@ class reliability_growth:
     """
 
     def __init__(
-        self,
-        times=None,
-        target_MTBF=None,
-        show_plot=True,
-        print_results=True,
-        log_scale=False,
-        model="Duane",
-        **kwargs
+        self, times=None, target_MTBF=None, show_plot=True, print_results=True, log_scale=False, model="Duane", **kwargs
     ):
         if type(times) in [list, np.ndarray]:
             times = np.sort(np.asarray(times))
@@ -103,10 +97,8 @@ class reliability_growth:
             raise ValueError("times must be an array or list of failure times")
 
         if min(times) <= 0:
-            raise ValueError(
-                "failure times cannot be negative. times must be an array or list of failure times"
-            )
-        if type(model) is not str:
+            raise ValueError("failure times cannot be negative. times must be an array or list of failure times")
+        if not isinstance(model, str):
             raise ValueError('model must be either "Duane" or "Crow-AMSAA".')
         if model.upper() in ["DUANE", "D"]:
             model = "Duane"
@@ -130,12 +122,16 @@ class reliability_growth:
 
         if model == "Crow-AMSAA":
             self.Beta = n / (n * np.log(max_time) - np.log(times).sum())
-            self.Lambda = n / (max_time ** self.Beta)
+            self.Lambda = n / (max_time**self.Beta)
             self.growth_rate = 1 - self.Beta
-            self.DMTBF_I = 1 / (self.Lambda * self.Beta * max_time ** (self.Beta - 1)) # Demonstrated MTBF (instantaneous). Reported by reliasoft
-            self.DFI_I = 1 / self.DMTBF_I # Demonstrated failure intensity (instantaneous). Reported by reliasoft
-            self.DMTBF_C = (1/self.Lambda)*max_time**(1-self.Beta) # Demonstrated failure intensity (cumulative)
-            self.DFI_C = 1/ self.DMTBF_C # Demonstrated MTBF (cumulative)
+            self.DMTBF_I = 1 / (
+                self.Lambda * self.Beta * max_time ** (self.Beta - 1)
+            )  # Demonstrated MTBF (instantaneous). Reported by reliasoft
+            self.DFI_I = 1 / self.DMTBF_I  # Demonstrated failure intensity (instantaneous). Reported by reliasoft
+            self.DMTBF_C = (1 / self.Lambda) * max_time ** (
+                1 - self.Beta
+            )  # Demonstrated failure intensity (cumulative)
+            self.DFI_C = 1 / self.DMTBF_C  # Demonstrated MTBF (cumulative)
         else:  # Duane
             x = np.log(times)
             y = np.log(MTBF_c)
@@ -143,10 +139,12 @@ class reliability_growth:
             z = np.polyfit(x, y, 1)
             self.Alpha = z[0]
             b = np.exp(z[1])
-            self.DMTBF_C = b * (max_time ** self.Alpha)  # Demonstrated MTBF (cumulative)
+            self.DMTBF_C = b * (max_time**self.Alpha)  # Demonstrated MTBF (cumulative)
             self.DFI_C = 1 / self.DMTBF_C  # Demonstrated failure intensity (cumulative)
-            self.DFI_I = (1 - self.Alpha) * self.DFI_C # Demonstrated failure intensity (instantaneous). Reported by reliasoft
-            self.DMTBF_I = 1 / self.DFI_I # Demonstrated MTBF (instantaneous). Reported by reliasoft
+            self.DFI_I = (
+                1 - self.Alpha
+            ) * self.DFI_C  # Demonstrated failure intensity (instantaneous). Reported by reliasoft
+            self.DMTBF_I = 1 / self.DFI_I  # Demonstrated MTBF (instantaneous). Reported by reliasoft
             self.A = 1 / b
 
         if target_MTBF is not None:
@@ -183,10 +181,8 @@ class reliability_growth:
             print("Demonstrated failure intensity (instantaneous):", round_and_string(self.DFI_I))
 
             if target_MTBF is not None:
-                print(
-                    "Time to reach target MTBF:", round_and_string(self.time_to_target)
-                )
-            print('') #blank line
+                print("Time to reach target MTBF:", round_and_string(self.time_to_target))
+            print("")  # blank line
 
         if show_plot is True:
             if log_scale is True:
@@ -199,7 +195,7 @@ class reliability_growth:
             if model == "Crow-AMSAA":
                 MTBF = 1 / (self.Lambda * x_array ** (self.Beta - 1))
             else:  # Duane
-                MTBF = b * x_array ** self.Alpha
+                MTBF = b * x_array**self.Alpha
 
             # kwargs handling
             if "color" in kwargs:
@@ -329,7 +325,7 @@ class optimal_replacement_time:
         show_ratio_plot=True,
         print_results=True,
         q=0,
-        **kwargs
+        **kwargs,
     ):
         if "color" in kwargs:
             c = kwargs.pop("color")
@@ -349,19 +345,18 @@ class optimal_replacement_time:
             alpha_multiple = 4
             t = np.linspace(1, weibull_alpha * alpha_multiple, 100000)
             CPUT = ((cost_PM * (t / weibull_alpha) ** weibull_beta) + cost_CM) / t
-            ORT = weibull_alpha * (
-                (cost_CM / (cost_PM * (weibull_beta - 1))) ** (1 / weibull_beta)
-            )
-            min_cost = (
-                (cost_PM * (ORT / weibull_alpha) ** weibull_beta) + cost_CM
-            ) / ORT
+            ORT = weibull_alpha * ((cost_CM / (cost_PM * (weibull_beta - 1))) ** (1 / weibull_beta))
+            min_cost = ((cost_PM * (ORT / weibull_alpha) ** weibull_beta) + cost_CM) / ORT
         elif q == 0:  # as good as new
             alpha_multiple = 3
             t = np.linspace(1, weibull_alpha * alpha_multiple, 10000)
 
             # survival function and its integral
-            calc_SF = lambda x: np.exp(-((x / weibull_alpha) ** weibull_beta))
-            integrate_SF = lambda x: integrate.quad(calc_SF, 0, x)[0]
+            def calc_SF(x):
+                return np.exp(-((x / weibull_alpha) ** weibull_beta))
+
+            def integrate_SF(x):
+                return integrate.quad(calc_SF, 0, x)[0]
 
             # vectorize them
             vcalc_SF = np.vectorize(calc_SF)
@@ -385,9 +380,7 @@ class optimal_replacement_time:
         ORT_rounded = round_and_string(ORT, decimals=2)
 
         if print_results is True:
-            colorprint(
-                "Results from optimal_replacement_time:", bold=True, underline=True
-            )
+            colorprint("Results from optimal_replacement_time:", bold=True, underline=True)
             if q == 0:
                 print("Cost model assuming as good as new replacement (q=0):")
             else:
@@ -399,10 +392,7 @@ class optimal_replacement_time:
                 ORT_rounded,
             )
 
-        if (
-            show_time_plot is True
-            or issubclass(type(show_time_plot), SubplotBase) is True
-        ):
+        if show_time_plot is True or issubclass(type(show_time_plot), SubplotBase) is True:
             if issubclass(type(show_time_plot), SubplotBase) is True:
                 plt.sca(ax=show_time_plot)  # use the axes passed
             else:
@@ -422,10 +412,7 @@ class optimal_replacement_time:
             plt.ylim([0, min_cost * 2])
             plt.xlim([0, weibull_alpha * alpha_multiple])
 
-        if (
-            show_ratio_plot is True
-            or issubclass(type(show_ratio_plot), SubplotBase) is True
-        ):
+        if show_ratio_plot is True or issubclass(type(show_ratio_plot), SubplotBase) is True:
             if issubclass(type(show_ratio_plot), SubplotBase) is True:
                 plt.sca(ax=show_ratio_plot)  # use the axes passed
             else:
@@ -437,13 +424,14 @@ class optimal_replacement_time:
 
             # get the ORT from the minimum CPUT for each CC
             if q == 1:
-                calc_ORT = lambda x: weibull_alpha * (
-                    (x / (cost_PM * (weibull_beta - 1))) ** (1 / weibull_beta)
-                )
+
+                def calc_ORT(x):
+                    return weibull_alpha * (x / (cost_PM * (weibull_beta - 1))) ** (1 / weibull_beta)
+
             else:  # q = 0
-                calc_ORT = lambda x: t[
-                    np.argmin((cost_PM * sf + x * (1 - sf)) / integral)
-                ]
+
+                def calc_ORT(x):
+                    return t[np.argmin((cost_PM * sf + x * (1 - sf)) / integral)]
 
             vcalc_ORT = np.vectorize(calc_ORT)
             ORT_array = vcalc_ORT(CC)
@@ -553,7 +541,7 @@ class ROCOF:
         test_end=None,
         show_plot=True,
         print_results=True,
-        **kwargs
+        **kwargs,
     ):
         if times_between_failures is not None and failure_times is not None:
             raise ValueError(
@@ -562,7 +550,7 @@ class ROCOF:
         if times_between_failures is not None:
             if any(t <= 0 for t in times_between_failures):
                 raise ValueError("times_between_failures cannot be less than zero")
-            if type(times_between_failures) == list:
+            if isinstance(times_between_failures, list):
                 ti = times_between_failures
             elif type(times_between_failures) == np.ndarray:
                 ti = list(times_between_failures)
@@ -571,24 +559,20 @@ class ROCOF:
         if failure_times is not None:
             if any(t <= 0 for t in failure_times):
                 raise ValueError("failure_times cannot be less than zero")
-            if type(failure_times) == list:
+            if isinstance(failure_times, list):
                 failure_times = np.sort(np.array(failure_times))
             elif type(failure_times) == np.ndarray:
                 failure_times = np.sort(failure_times)
             else:
                 raise ValueError("failure_times must be a list or array")
-            failure_times[1:] -= failure_times[
-                :-1
-            ].copy()  # this is the opposite of np.cumsum
+            failure_times[1:] -= failure_times[:-1].copy()  # this is the opposite of np.cumsum
             ti = list(failure_times)
         if test_end is not None and type(test_end) not in [float, int]:
             raise ValueError(
                 "test_end should be a float or int. Use test_end to specify the end time of a test which was not failure terminated."
             )
         if CI <= 0 or CI >= 1:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence interval.")
         if test_end is None:
             tn = sum(ti)
             n = len(ti) - 1
@@ -626,7 +610,7 @@ class ROCOF:
         x = np.arange(1, len(ti) + 1)
         if U < z_crit:
             B = len(ti) / (sum(np.log(tn / np.array(tc))))
-            L = len(ti) / (tn ** B)
+            L = len(ti) / (tn**B)
             self.trend = "improving"
             self.Beta_hat = B
             self.Lambda_hat = L
@@ -639,7 +623,7 @@ class ROCOF:
                 x_to_plot = x[:-1]
         elif U > -z_crit:
             B = len(ti) / (sum(np.log(tn / np.array(tc))))
-            L = len(ti) / (tn ** B)
+            L = len(ti) / (tn**B)
             self.trend = "worsening"
             self.Beta_hat = B
             self.Lambda_hat = L
@@ -667,13 +651,7 @@ class ROCOF:
             colorprint("Results from ROCOF analysis:", bold=True, underline=True)
             print(results_str)
             if U < z_crit:
-                print(
-                    str(
-                        "At "
-                        + str(CI_rounded)
-                        + "% confidence level the ROCOF is IMPROVING. Assume NHPP."
-                    )
-                )
+                print(str("At " + str(CI_rounded) + "% confidence level the ROCOF is IMPROVING. Assume NHPP."))
                 print(
                     "ROCOF assuming NHPP has parameters: Beta_hat =",
                     round_and_string(B, decimals=3),
@@ -681,13 +659,7 @@ class ROCOF:
                     round_and_string(L, decimals=4),
                 )
             elif U > -z_crit:
-                print(
-                    str(
-                        "At "
-                        + str(CI_rounded)
-                        + "% confidence level the ROCOF is WORSENING. Assume NHPP."
-                    )
-                )
+                print(str("At " + str(CI_rounded) + "% confidence level the ROCOF is WORSENING. Assume NHPP."))
                 print(
                     "ROCOF assuming NHPP has parameters: Beta_hat =",
                     round_and_string(B, decimals=3),
@@ -695,13 +667,7 @@ class ROCOF:
                     round_and_string(L, decimals=4),
                 )
             else:
-                print(
-                    str(
-                        "At "
-                        + str(CI_rounded)
-                        + "% confidence level the ROCOF is CONSTANT. Assume HPP."
-                    )
-                )
+                print(str("At " + str(CI_rounded) + "% confidence level the ROCOF is CONSTANT. Assume HPP."))
                 print(
                     "ROCOF assuming HPP is",
                     round_and_string(rocof, decimals=4),
@@ -821,12 +787,9 @@ class MCF_nonparametric:
         MCF_nonparametric(data=times)
     """
 
-    def __init__(
-        self, data, CI=0.95, print_results=True, show_plot=True, plot_CI=True, **kwargs
-    ):
-
+    def __init__(self, data, CI=0.95, print_results=True, show_plot=True, plot_CI=True, **kwargs):
         # check input is a list
-        if type(data) == list:
+        if isinstance(data, list):
             pass
         elif type(data) == np.ndarray:
             data = list(data)
@@ -836,17 +799,15 @@ class MCF_nonparametric:
         # check each item is a list and fix up any ndarrays to be lists.
         test_for_single_system = []
         for i, item in enumerate(data):
-            if type(item) == list:
+            if isinstance(item, list):
                 test_for_single_system.append(False)
             elif type(item) == np.ndarray:
                 data[i] = list(item)
                 test_for_single_system.append(False)
-            elif type(item) == int or type(item) == float:
+            elif isinstance(item, int) or isinstance(item, float):
                 test_for_single_system.append(True)
             else:
-                raise ValueError(
-                    "Each item in the data must be a list or numpy array. eg. data = [[1,3,5],[3,6,8]]"
-                )
+                raise ValueError("Each item in the data must be a list or numpy array. eg. data = [[1,3,5],[3,6,8]]")
         # Wraps the data in another list if all elements were numbers.
         if all(test_for_single_system):  # checks if all are True
             data = [data]
@@ -868,14 +829,10 @@ class MCF_nonparametric:
                     end_times.append(t)
 
         if CI < 0 or CI > 1:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals (two sided)."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals (two sided).")
 
         if max(end_times) < max(repair_times):
-            raise ValueError(
-                "The final end time must not be less than the final repair time."
-            )
+            raise ValueError("The final end time must not be less than the final repair time.")
         last_time = max(end_times)
         C_array = ["C"] * len(end_times)
         F_array = ["F"] * len(repair_times)
@@ -905,15 +862,9 @@ class MCF_nonparametric:
             if i == 0:
                 if states_sorted[i] == "F":  # first event is a failure
                     MCF_array.append(r_inv)
-                    Var_array.append(
-                        (r_inv ** 2) * ((1 - r_inv) ** 2 + (r - 1) * (0 - r_inv) ** 2)
-                    )
-                    MCF_lower_array.append(
-                        MCF_array[i] / np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i])
-                    )
-                    MCF_upper_array.append(
-                        MCF_array[i] * np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i])
-                    )
+                    Var_array.append((r_inv**2) * ((1 - r_inv) ** 2 + (r - 1) * (0 - r_inv) ** 2))
+                    MCF_lower_array.append(MCF_array[i] / np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
+                    MCF_upper_array.append(MCF_array[i] * np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
                 else:  # first event is censored
                     MCF_array.append("")
                     Var_array.append("")
@@ -932,33 +883,16 @@ class MCF_nonparametric:
                         MCF_array[i_adj - 1] == ""
                     ):  # this is the case where the first system only has one event that was censored and there is no data on the first line
                         MCF_array.append(r_inv)
-                        Var_array.append(
-                            (r_inv ** 2)
-                            * ((1 - r_inv) ** 2 + (r - 1) * (0 - r_inv) ** 2)
-                        )
-                        MCF_lower_array.append(
-                            MCF_array[i]
-                            / np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i])
-                        )
-                        MCF_upper_array.append(
-                            MCF_array[i]
-                            * np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i])
-                        )
+                        Var_array.append((r_inv**2) * ((1 - r_inv) ** 2 + (r - 1) * (0 - r_inv) ** 2))
+                        MCF_lower_array.append(MCF_array[i] / np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
+                        MCF_upper_array.append(MCF_array[i] * np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
                     else:  # this the normal case where there was previous data
                         MCF_array.append(r_inv + MCF_array[i_adj - 1])
                         Var_array.append(
-                            (r_inv ** 2)
-                            * ((1 - r_inv) ** 2 + (r - 1) * (0 - r_inv) ** 2)
-                            + Var_array[i_adj - 1]
+                            (r_inv**2) * ((1 - r_inv) ** 2 + (r - 1) * (0 - r_inv) ** 2) + Var_array[i_adj - 1]
                         )
-                        MCF_lower_array.append(
-                            MCF_array[i]
-                            / np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i])
-                        )
-                        MCF_upper_array.append(
-                            MCF_array[i]
-                            * np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i])
-                        )
+                        MCF_lower_array.append(MCF_array[i] / np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
+                        MCF_upper_array.append(MCF_array[i] * np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
                     C_seq = 0
                 else:  # censored event
                     r -= 1
@@ -979,9 +913,7 @@ class MCF_nonparametric:
             "MCF_upper": MCF_upper_array,
             "variance": Var_array,
         }
-        printable_results = pd.DataFrame(
-            data, columns=["state", "time", "MCF_lower", "MCF", "MCF_upper", "variance"]
-        )
+        printable_results = pd.DataFrame(data, columns=["state", "time", "MCF_lower", "MCF", "MCF_upper", "variance"])
 
         indices_to_drop = printable_results[printable_results["state"] == "C"].index
         plotting_results = printable_results.drop(indices_to_drop, inplace=False)
@@ -1003,12 +935,8 @@ class MCF_nonparametric:
             CI_rounded = int(CI * 100)
 
         if print_results is True:
-            pd.set_option(
-                "display.width", 200
-            )  # prevents wrapping after default 80 characters
-            pd.set_option(
-                "display.max_columns", 9
-            )  # shows the dataframe without ... truncation
+            pd.set_option("display.width", 200)  # prevents wrapping after default 80 characters
+            pd.set_option("display.max_columns", 9)  # shows the dataframe without ... truncation
             colorprint(
                 str("Mean Cumulative Function results (" + str(CI_rounded) + "% CI):"),
                 bold=True,
@@ -1025,7 +953,7 @@ class MCF_nonparametric:
             y_MCF.append(RESULTS_MCF[0])
             y_upper.append(RESULTS_upper[0])
             y_lower.append(RESULTS_lower[0])
-            for i, t in enumerate(RESULTS_time):
+            for i, _ in enumerate(RESULTS_time):
                 if i > 0:
                     x_MCF.append(RESULTS_time[i])
                     y_MCF.append(RESULTS_MCF[i - 1])
@@ -1046,15 +974,8 @@ class MCF_nonparametric:
             else:
                 col = "steelblue"
             if plot_CI is True:
-                plt.fill_between(
-                    x_MCF, y_lower, y_upper, color=col, alpha=0.3, linewidth=0
-                )
-                title_str = str(
-                    title_str
-                    + "\nwith "
-                    + str(CI_rounded)
-                    + "% one-sided confidence interval bounds"
-                )
+                plt.fill_between(x_MCF, y_lower, y_upper, color=col, alpha=0.3, linewidth=0)
+                title_str = str(title_str + "\nwith " + str(CI_rounded) + "% one-sided confidence interval bounds")
             plt.plot(x_MCF, y_MCF, color=col, **kwargs)
             plt.xlabel("Time")
             plt.ylabel("Mean cumulative number of failures")
@@ -1168,14 +1089,9 @@ class MCF_parametric:
         MCF_parametric(data=times)
     """
 
-    def __init__(
-        self, data, CI=0.95, plot_CI=True, print_results=True, show_plot=True, **kwargs
-    ):
-
+    def __init__(self, data, CI=0.95, plot_CI=True, print_results=True, show_plot=True, **kwargs):
         if CI <= 0 or CI >= 1:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
         MCF_NP = MCF_nonparametric(
             data=data, print_results=False, show_plot=False
@@ -1202,17 +1118,15 @@ class MCF_parametric:
         fit = curve_fit(__MCF_eqn, self.times, self.MCF, p0=guess)
         alpha = fit[0][0]
         beta = fit[0][1]
-        var_alpha = fit[1][0][
-            0
-        ]  # curve_fit returns the variance and covariance from the optimizer
+        var_alpha = fit[1][0][0]  # curve_fit returns the variance and covariance from the optimizer
         var_beta = fit[1][1][1]
         cov_alpha_beta = fit[1][0][1]
 
         Z = -ss.norm.ppf((1 - CI) / 2)
         self.alpha = alpha
-        self.alpha_SE = var_alpha ** 0.5
+        self.alpha_SE = var_alpha**0.5
         self.beta = beta
-        self.beta_SE = var_beta ** 0.5
+        self.beta_SE = var_beta**0.5
         self.cov_alpha_beta = cov_alpha_beta
         self.alpha_upper = self.alpha * (np.exp(Z * (self.alpha_SE / self.alpha)))
         self.alpha_lower = self.alpha * (np.exp(-Z * (self.alpha_SE / self.alpha)))
@@ -1242,28 +1156,18 @@ class MCF_parametric:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             colorprint(
-                str(
-                    "Mean Cumulative Function Parametric Model ("
-                    + str(CI_rounded)
-                    + "% CI):"
-                ),
+                str("Mean Cumulative Function Parametric Model (" + str(CI_rounded) + "% CI):"),
                 bold=True,
                 underline=True,
             )
             print("MCF = (t/α)^β")
             print(self.results.to_string(index=False), "\n")
             if self.beta_upper <= 1:
-                print(
-                    "Since Beta is less than 1, the system repair rate is IMPROVING over time."
-                )
+                print("Since Beta is less than 1, the system repair rate is IMPROVING over time.")
             elif self.beta_lower < 1 and self.beta_upper > 1:
-                print(
-                    "Since Beta is approximately 1, the system repair rate is remaining CONSTANT over time."
-                )
+                print("Since Beta is approximately 1, the system repair rate is remaining CONSTANT over time.")
             else:
-                print(
-                    "Since Beta is greater than 1, the system repair rate is WORSENING over time."
-                )
+                print("Since Beta is greater than 1, the system repair rate is WORSENING over time.")
 
         if show_plot is True:
             if "color" in kwargs:
@@ -1290,12 +1194,8 @@ class MCF_parametric:
             if plot_CI is True:
                 p1 = -(beta / alpha) * (x_line / alpha) ** beta
                 p2 = ((x_line / alpha) ** beta) * np.log(x_line / alpha)
-                var = (
-                    var_alpha * p1 ** 2
-                    + var_beta * p2 ** 2
-                    + 2 * p1 * p2 * cov_alpha_beta
-                )
-                SD = var ** 0.5
+                var = var_alpha * p1**2 + var_beta * p2**2 + 2 * p1 * p2 * cov_alpha_beta
+                SD = var**0.5
                 y_line_lower = y_line * np.exp((-Z * SD) / y_line)
                 y_line_upper = y_line * np.exp((Z * SD) / y_line)
                 plt.fill_between(
@@ -1307,9 +1207,7 @@ class MCF_parametric:
                     linewidth=0,
                 )
 
-            plt.scatter(
-                self.times, self.MCF, marker=marker, color=marker_color, **kwargs
-            )
+            plt.scatter(self.times, self.MCF, marker=marker, color=marker_color, **kwargs)
             plt.ylabel("Mean cumulative number of failures")
             plt.xlabel("Time")
             title_str = str(

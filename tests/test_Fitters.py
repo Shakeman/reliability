@@ -1,14 +1,45 @@
-from reliability.Fitters import Fit_Weibull_2P, Fit_Weibull_3P, Fit_Gamma_2P, Fit_Gamma_3P, Fit_Lognormal_2P, Fit_Lognormal_3P, Fit_Loglogistic_2P, Fit_Loglogistic_3P, Fit_Normal_2P, Fit_Exponential_1P, Fit_Exponential_2P, Fit_Beta_2P, Fit_Gumbel_2P, Fit_Weibull_Mixture, Fit_Weibull_CR, Fit_Everything
-from reliability.Distributions import Weibull_Distribution, Gamma_Distribution, Lognormal_Distribution, Loglogistic_Distribution, Normal_Distribution, Exponential_Distribution, Beta_Distribution, Gumbel_Distribution, Mixture_Model, Competing_Risks_Model
-from reliability.Other_functions import make_right_censored_data
-from numpy.testing import assert_allclose
 import warnings
+
+from numpy.testing import assert_allclose
+
+from reliability.Distributions import (
+    Beta_Distribution,
+    Competing_Risks_Model,
+    Exponential_Distribution,
+    Gamma_Distribution,
+    Gumbel_Distribution,
+    Loglogistic_Distribution,
+    Lognormal_Distribution,
+    Mixture_Model,
+    Normal_Distribution,
+    Weibull_Distribution,
+)
+from reliability.Fitters import (
+    Fit_Beta_2P,
+    Fit_Everything,
+    Fit_Exponential_1P,
+    Fit_Exponential_2P,
+    Fit_Gamma_2P,
+    Fit_Gamma_3P,
+    Fit_Gumbel_2P,
+    Fit_Loglogistic_2P,
+    Fit_Loglogistic_3P,
+    Fit_Lognormal_2P,
+    Fit_Lognormal_3P,
+    Fit_Normal_2P,
+    Fit_Weibull_2P,
+    Fit_Weibull_3P,
+    Fit_Weibull_CR,
+    Fit_Weibull_Mixture,
+)
+from reliability.Other_functions import make_right_censored_data
 
 # I would like to make these smaller but the slight differences in different python versions (3.6-3.9) mean that tight tolerances result in test failures
 atol = 1e-3
-atol_big = 0 # 0 means it will not look at the absolute difference
+atol_big = 0  # 0 means it will not look at the absolute difference
 rtol = 1e-3
-rtol_big = 0.1 # 10% variation
+rtol_big = 0.1  # 10% variation
+
 
 def test_Fit_Weibull_2P():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
@@ -17,7 +48,13 @@ def test_Fit_Weibull_2P():
     rawdata = dist.random_samples(20, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
 
-    MLE = Fit_Weibull_2P(failures=data.failures, right_censored=data.right_censored, method='MLE', show_probability_plot=False, print_results=False)
+    MLE = Fit_Weibull_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='MLE',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(MLE.alpha, 45.099010886086354, rtol=rtol, atol=atol)
     assert_allclose(MLE.beta, 2.7827531773597984, rtol=rtol, atol=atol)
     assert_allclose(MLE.gamma, 0, rtol=rtol, atol=atol)
@@ -27,7 +64,13 @@ def test_Fit_Weibull_2P():
     assert_allclose(MLE.AD, 55.60004028891652, rtol=rtol, atol=atol)
     assert_allclose(MLE.Cov_alpha_beta, -0.9178064889295378, rtol=rtol, atol=atol)
 
-    LS = Fit_Weibull_2P(failures=data.failures, right_censored=data.right_censored, method='LS', show_probability_plot=False, print_results=False)
+    LS = Fit_Weibull_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='LS',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(LS.alpha, 42.91333312142757, rtol=rtol, atol=atol)
     assert_allclose(LS.beta, 2.9657153686461033, rtol=rtol, atol=atol)
     assert_allclose(LS.gamma, 0, rtol=rtol, atol=atol)
@@ -45,7 +88,13 @@ def test_Fit_Weibull_3P():
     rawdata = dist.random_samples(20, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
 
-    MLE = Fit_Weibull_3P(failures=data.failures, right_censored=data.right_censored, method='MLE', show_probability_plot=False, print_results=False)
+    MLE = Fit_Weibull_3P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='MLE',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(MLE.alpha, 33.0123537701021, rtol=rtol, atol=atol)
     assert_allclose(MLE.beta, 1.327313848890964, rtol=rtol, atol=atol)
     assert_allclose(MLE.gamma, 513.7220829514334, rtol=rtol, atol=atol)
@@ -55,7 +104,13 @@ def test_Fit_Weibull_3P():
     assert_allclose(MLE.AD, 55.606805028079016, rtol=rtol, atol=atol)
     assert_allclose(MLE.Cov_alpha_beta, -0.7687781958569139, rtol=rtol, atol=atol)
 
-    LS = Fit_Weibull_3P(failures=data.failures, right_censored=data.right_censored, method='LS', show_probability_plot=False, print_results=False)
+    LS = Fit_Weibull_3P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='LS',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(LS.alpha, 32.639290779819824, rtol=rtol, atol=atol)
     assert_allclose(LS.beta, 1.2701961119432184, rtol=rtol, atol=atol)
     assert_allclose(LS.gamma, 514.5065549826453, rtol=rtol, atol=atol)
@@ -73,7 +128,13 @@ def test_Fit_Gamma_2P():
     rawdata = dist.random_samples(20, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
 
-    MLE = Fit_Gamma_2P(failures=data.failures, right_censored=data.right_censored, method='MLE', show_probability_plot=False, print_results=False)
+    MLE = Fit_Gamma_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='MLE',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(MLE.alpha, 30.895317427895733, rtol=rtol, atol=atol)
     assert_allclose(MLE.beta, 2.5300452519936405, rtol=rtol, atol=atol)
     assert_allclose(MLE.gamma, 0, rtol=rtol, atol=atol)
@@ -83,7 +144,13 @@ def test_Fit_Gamma_2P():
     assert_allclose(MLE.AD, 38.004356262808585, rtol=rtol, atol=atol)
     assert_allclose(MLE.Cov_alpha_beta, -11.610946543514364, rtol=rtol, atol=atol)
 
-    LS = Fit_Gamma_2P(failures=data.failures, right_censored=data.right_censored, method='LS', show_probability_plot=False, print_results=False)
+    LS = Fit_Gamma_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='LS',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(LS.alpha, 25.803340662553182, rtol=rtol, atol=atol)
     assert_allclose(LS.beta, 2.8344248030280284, rtol=rtol, atol=atol)
     assert_allclose(LS.gamma, 0, rtol=rtol, atol=atol)
@@ -101,7 +168,13 @@ def test_Fit_Gamma_3P():
     rawdata = dist.random_samples(20, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
 
-    MLE = Fit_Gamma_3P(failures=data.failures, right_censored=data.right_censored, method='MLE', show_probability_plot=False, print_results=False)
+    MLE = Fit_Gamma_3P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='MLE',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(MLE.alpha, 161.8637212853173, rtol=rtol, atol=atol)
     assert_allclose(MLE.beta, 0.5429184966902371, rtol=rtol, atol=atol)
     assert_allclose(MLE.gamma, 515.4451173341464, rtol=rtol, atol=atol)
@@ -111,7 +184,13 @@ def test_Fit_Gamma_3P():
     assert_allclose(MLE.AD, 38.63647775048046, rtol=rtol, atol=atol)
     assert_allclose(MLE.Cov_alpha_beta, -11.302538880460721, rtol=rtol, atol=atol)
 
-    LS = Fit_Gamma_3P(failures=data.failures, right_censored=data.right_censored, method='LS', show_probability_plot=False, print_results=False)
+    LS = Fit_Gamma_3P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='LS',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(LS.alpha, 15.52387782496473, rtol=rtol, atol=atol)
     assert_allclose(LS.beta, 6.379102526634475, rtol=rtol, atol=atol)
     assert_allclose(LS.gamma, 471.0728464561921, rtol=rtol, atol=atol)
@@ -125,11 +204,17 @@ def test_Fit_Gamma_3P():
 def test_Fit_Lognormal_2P():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
-    dist = Lognormal_Distribution(mu=1,sigma=0.5)
+    dist = Lognormal_Distribution(mu=1, sigma=0.5)
     rawdata = dist.random_samples(20, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
 
-    MLE = Fit_Lognormal_2P(failures=data.failures, right_censored=data.right_censored, method='MLE', show_probability_plot=False, print_results=False)
+    MLE = Fit_Lognormal_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='MLE',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(MLE.mu, 0.9494190246173423, rtol=rtol, atol=atol)
     assert_allclose(MLE.sigma, 0.4267323457212804, rtol=rtol, atol=atol)
     assert_allclose(MLE.gamma, 0, rtol=rtol, atol=atol)
@@ -139,7 +224,13 @@ def test_Fit_Lognormal_2P():
     assert_allclose(MLE.AD, 46.91678130009629, rtol=rtol, atol=atol)
     assert_allclose(MLE.Cov_mu_sigma, 0.002505454567167978, rtol=rtol, atol=atol)
 
-    LS = Fit_Lognormal_2P(failures=data.failures, right_censored=data.right_censored, method='LS', show_probability_plot=False, print_results=False)
+    LS = Fit_Lognormal_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='LS',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(LS.mu, 0.9427890879489974, rtol=rtol, atol=atol)
     assert_allclose(LS.sigma, 0.4475312141445822, rtol=rtol, atol=atol)
     assert_allclose(LS.gamma, 0, rtol=rtol, atol=atol)
@@ -153,11 +244,17 @@ def test_Fit_Lognormal_2P():
 def test_Fit_Lognormal_3P():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
-    dist = Lognormal_Distribution(mu=1,sigma=0.5, gamma=500)
+    dist = Lognormal_Distribution(mu=1, sigma=0.5, gamma=500)
     rawdata = dist.random_samples(20, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
 
-    MLE = Fit_Lognormal_3P(failures=data.failures, right_censored=data.right_censored, method='MLE', show_probability_plot=False, print_results=False)
+    MLE = Fit_Lognormal_3P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='MLE',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(MLE.mu, 0.5608879850309877, rtol=rtol, atol=atol)
     assert_allclose(MLE.sigma, 0.7396271168422542, rtol=rtol, atol=atol)
     assert_allclose(MLE.gamma, 500.79568888668746, rtol=rtol, atol=atol)
@@ -167,7 +264,13 @@ def test_Fit_Lognormal_3P():
     assert_allclose(MLE.AD, 46.95299490218758, rtol=rtol, atol=atol)
     assert_allclose(MLE.Cov_mu_sigma, 0.007500058692172027, rtol=rtol, atol=atol)
 
-    LS = Fit_Lognormal_3P(failures=data.failures, right_censored=data.right_censored, method='LS', show_probability_plot=False, print_results=False)
+    LS = Fit_Lognormal_3P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='LS',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(LS.mu, 0.976088004545536, rtol=rtol, atol=atol)
     assert_allclose(LS.sigma, 0.4340076639560259, rtol=rtol, atol=atol)
     assert_allclose(LS.gamma, 499.9229609896007, rtol=rtol, atol=atol)
@@ -185,7 +288,13 @@ def test_Fit_Loglogistic_2P():
     rawdata = dist.random_samples(200, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
 
-    MLE = Fit_Loglogistic_2P(failures=data.failures, right_censored=data.right_censored, method='MLE', show_probability_plot=False, print_results=False)
+    MLE = Fit_Loglogistic_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='MLE',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(MLE.alpha, 50.25178370302894, rtol=rtol, atol=atol)
     assert_allclose(MLE.beta, 7.869851191923439, rtol=rtol, atol=atol)
     assert_allclose(MLE.gamma, 0, rtol=rtol, atol=atol)
@@ -195,7 +304,13 @@ def test_Fit_Loglogistic_2P():
     assert_allclose(MLE.AD, 582.5464625675626, rtol=rtol, atol=atol)
     assert_allclose(MLE.Cov_alpha_beta, -0.14731273967044273, rtol=rtol, atol=atol)
 
-    LS = Fit_Loglogistic_2P(failures=data.failures, right_censored=data.right_censored, method='LS', show_probability_plot=False, print_results=False)
+    LS = Fit_Loglogistic_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='LS',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(LS.alpha, 50.657493341191135, rtol=rtol, atol=atol)
     assert_allclose(LS.beta, 7.389285094946194, rtol=rtol, atol=atol)
     assert_allclose(LS.gamma, 0, rtol=rtol, atol=atol)
@@ -213,7 +328,13 @@ def test_Fit_Loglogistic_3P():
     rawdata = dist.random_samples(200, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
 
-    MLE = Fit_Loglogistic_3P(failures=data.failures, right_censored=data.right_censored, method='MLE', show_probability_plot=False, print_results=False)
+    MLE = Fit_Loglogistic_3P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='MLE',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(MLE.alpha, 64.53821169314404, rtol=rtol_big, atol=atol_big)
     assert_allclose(MLE.beta, 10.5120425994396, rtol=rtol_big, atol=atol_big)
     assert_allclose(MLE.gamma, 485.67966960645543, rtol=rtol_big, atol=atol_big)
@@ -223,7 +344,13 @@ def test_Fit_Loglogistic_3P():
     assert_allclose(MLE.AD, 582.5422181701142, rtol=rtol, atol=atol)
     assert_allclose(MLE.Cov_alpha_beta, -0.18810779930161473, rtol=rtol, atol=atol)
 
-    LS = Fit_Loglogistic_3P(failures=data.failures, right_censored=data.right_censored, method='LS', show_probability_plot=False, print_results=False)
+    LS = Fit_Loglogistic_3P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='LS',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(LS.alpha, 62.356306952705054, rtol=rtol, atol=atol)
     assert_allclose(LS.beta, 10.033505691693987, rtol=rtol, atol=atol)
     assert_allclose(LS.gamma, 487.9071761434245, rtol=rtol, atol=atol)
@@ -237,10 +364,16 @@ def test_Fit_Loglogistic_3P():
 def test_Fit_Normal_2P():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
-    dist = Normal_Distribution(mu=50,sigma=8)
+    dist = Normal_Distribution(mu=50, sigma=8)
     rawdata = dist.random_samples(20, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
-    MLE = Fit_Normal_2P(failures=data.failures, right_censored=data.right_censored,method='MLE', show_probability_plot=False, print_results=False)
+    MLE = Fit_Normal_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='MLE',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(MLE.mu, 49.01641649924297, rtol=rtol, atol=atol)
     assert_allclose(MLE.sigma, 6.653242350482225, rtol=rtol, atol=atol)
     assert_allclose(MLE.AICc, 91.15205546551952, rtol=rtol, atol=atol)
@@ -249,7 +382,13 @@ def test_Fit_Normal_2P():
     assert_allclose(MLE.AD, 63.64069171746617, rtol=rtol, atol=atol)
     assert_allclose(MLE.Cov_mu_sigma, 1.0395705891908218, rtol=rtol, atol=atol)
 
-    LS = Fit_Normal_2P(failures=data.failures, right_censored=data.right_censored,method='LS', show_probability_plot=False, print_results=False)
+    LS = Fit_Normal_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='LS',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(LS.mu, 48.90984235374872, rtol=rtol, atol=atol)
     assert_allclose(LS.sigma, 6.990098677785364, rtol=rtol, atol=atol)
     assert_allclose(LS.AICc, 91.21601631804141, rtol=rtol, atol=atol)
@@ -262,11 +401,17 @@ def test_Fit_Normal_2P():
 def test_Fit_Gumbel_2P():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
-    dist = Gumbel_Distribution(mu=50,sigma=8)
+    dist = Gumbel_Distribution(mu=50, sigma=8)
     rawdata = dist.random_samples(20, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
 
-    MLE = Fit_Gumbel_2P(failures=data.failures, right_censored=data.right_censored, method='MLE', show_probability_plot=False, print_results=False)
+    MLE = Fit_Gumbel_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='MLE',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(MLE.mu, 47.97813932110471, rtol=rtol, atol=atol)
     assert_allclose(MLE.sigma, 5.487155810067562, rtol=rtol, atol=atol)
     assert_allclose(MLE.AICc, 83.17550426530995, rtol=rtol, atol=atol)
@@ -275,7 +420,13 @@ def test_Fit_Gumbel_2P():
     assert_allclose(MLE.AD, 76.43706903015115, rtol=rtol, atol=atol)
     assert_allclose(MLE.Cov_mu_sigma, 1.8549915988421086, rtol=rtol, atol=atol)
 
-    LS = Fit_Gumbel_2P(failures=data.failures, right_censored=data.right_censored, method='LS', show_probability_plot=False, print_results=False)
+    LS = Fit_Gumbel_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='LS',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(LS.mu, 46.43212585298994, rtol=rtol, atol=atol)
     assert_allclose(LS.sigma, 4.827795060868229, rtol=rtol, atol=atol)
     assert_allclose(LS.AICc, 83.88382894786476, rtol=rtol, atol=atol)
@@ -292,14 +443,26 @@ def test_Fit_Exponential_1P():
     rawdata = dist.random_samples(20, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
 
-    MLE = Fit_Exponential_1P(failures=data.failures, right_censored=data.right_censored, method='MLE', show_probability_plot=False, print_results=False)
+    MLE = Fit_Exponential_1P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='MLE',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(MLE.Lambda, 6.101198944227536, rtol=rtol, atol=atol)
     assert_allclose(MLE.AICc, -22.032339191099148, rtol=rtol, atol=atol)
     assert_allclose(MLE.BIC, -21.25882913976738, rtol=rtol, atol=atol)
     assert_allclose(MLE.loglik, 12.127280706660684, rtol=rtol, atol=atol)
     assert_allclose(MLE.AD, 29.59913306667145, rtol=rtol, atol=atol)
 
-    LS = Fit_Exponential_1P(failures=data.failures, right_censored=data.right_censored, method='LS', show_probability_plot=False, print_results=False)
+    LS = Fit_Exponential_1P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='LS',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(LS.Lambda, 5.776959885774546, rtol=rtol, atol=atol)
     assert_allclose(LS.AICc, -21.988412212242917, rtol=rtol, atol=atol)
     assert_allclose(LS.BIC, -21.214902160911148, rtol=rtol, atol=atol)
@@ -314,7 +477,13 @@ def test_Fit_Exponential_2P():
     rawdata = dist.random_samples(20, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
 
-    MLE = Fit_Exponential_2P(failures=data.failures, right_censored=data.right_censored, method='MLE', show_probability_plot=False, print_results=False)
+    MLE = Fit_Exponential_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='MLE',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(MLE.Lambda, 7.062867654421206, rtol=rtol, atol=atol)
     assert_allclose(MLE.gamma, 500.016737532126, rtol=rtol, atol=atol)
     assert_allclose(MLE.AICc, -23.939665128347745, rtol=rtol, atol=atol)
@@ -322,7 +491,13 @@ def test_Fit_Exponential_2P():
     assert_allclose(MLE.loglik, 14.322773740644461, rtol=rtol, atol=atol)
     assert_allclose(MLE.AD, 29.413655089419287, rtol=rtol, atol=atol)
 
-    LS = Fit_Exponential_2P(failures=data.failures, right_censored=data.right_censored, method='LS', show_probability_plot=False, print_results=False)
+    LS = Fit_Exponential_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='LS',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(LS.Lambda, 6.4445633542175, rtol=rtol, atol=atol)
     assert_allclose(LS.gamma, 500.01368943066706, rtol=rtol, atol=atol)
     assert_allclose(LS.AICc, -23.031777273560103, rtol=rtol, atol=atol)
@@ -338,7 +513,13 @@ def test_Fit_Beta_2P():
     rawdata = dist.random_samples(20, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
 
-    MLE = Fit_Beta_2P(failures=data.failures, right_censored=data.right_censored, method='MLE', show_probability_plot=False, print_results=False)
+    MLE = Fit_Beta_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='MLE',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(MLE.alpha, 7.429048118107467, rtol=rtol, atol=atol)
     assert_allclose(MLE.beta, 6.519338516778177, rtol=rtol, atol=atol)
     assert_allclose(MLE.AICc, 4.947836247236739, rtol=rtol, atol=atol)
@@ -347,7 +528,13 @@ def test_Fit_Beta_2P():
     assert_allclose(MLE.AD, 63.64510718930826, rtol=rtol, atol=atol)
     assert_allclose(MLE.Cov_alpha_beta, 9.993273704064205, rtol=rtol, atol=atol)
 
-    LS = Fit_Beta_2P(failures=data.failures, right_censored=data.right_censored, method='LS', show_probability_plot=False, print_results=False)
+    LS = Fit_Beta_2P(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='LS',
+        show_probability_plot=False,
+        print_results=False,
+    )
     assert_allclose(LS.alpha, 6.699688942917093, rtol=rtol, atol=atol)
     assert_allclose(LS.beta, 5.9477941734033575, rtol=rtol, atol=atol)
     assert_allclose(LS.AICc, 5.02116420233583, rtol=rtol, atol=atol)
@@ -366,7 +553,9 @@ def test_Fit_Weibull_Mixture():
     raw_data = dist.random_samples(100, seed=2)
     data = make_right_censored_data(data=raw_data, threshold=dist.mean)
 
-    MLE = Fit_Weibull_Mixture(failures=data.failures, right_censored=data.right_censored, show_probability_plot=False, print_results=False)
+    MLE = Fit_Weibull_Mixture(
+        failures=data.failures, right_censored=data.right_censored, show_probability_plot=False, print_results=False
+    )
     assert_allclose(MLE.alpha_1, 11.06604639424718, rtol=rtol, atol=atol)
     assert_allclose(MLE.beta_1, 2.735078296796997, rtol=rtol, atol=atol)
     assert_allclose(MLE.alpha_2, 34.325433665495346, rtol=rtol, atol=atol)
@@ -387,7 +576,9 @@ def test_Fit_Weibull_CR():
     CR_model = Competing_Risks_Model(distributions=[d1, d2])
     raw_data = CR_model.random_samples(100, seed=2)
     data = make_right_censored_data(data=raw_data, threshold=40)
-    MLE = Fit_Weibull_CR(failures=data.failures, right_censored=data.right_censored, show_probability_plot=False, print_results=False)
+    MLE = Fit_Weibull_CR(
+        failures=data.failures, right_censored=data.right_censored, show_probability_plot=False, print_results=False
+    )
     assert_allclose(MLE.alpha_1, 53.05674752263902, rtol=rtol, atol=atol)
     assert_allclose(MLE.beta_1, 1.9411091317375062, rtol=rtol, atol=atol)
     assert_allclose(MLE.alpha_2, 38.026383998212154, rtol=rtol, atol=atol)
@@ -404,10 +595,30 @@ def test_Fit_Everything():
     dist = Beta_Distribution(alpha=5, beta=4)
     rawdata = dist.random_samples(200, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
-    MLE = Fit_Everything(failures=data.failures, right_censored=data.right_censored, method='MLE', show_probability_plot=False, show_histogram_plot=False, show_PP_plot=False, show_best_distribution_probability_plot=False, print_results=False)
-    LS = Fit_Everything(failures=data.failures, right_censored=data.right_censored, method='LS', show_probability_plot=False, show_histogram_plot=False, show_PP_plot=False, show_best_distribution_probability_plot=False, print_results=False)
+    MLE = Fit_Everything(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='MLE',
+        show_probability_plot=False,
+        show_histogram_plot=False,
+        show_PP_plot=False,
+        show_best_distribution_probability_plot=False,
+        print_results=False,
+    )
+    LS = Fit_Everything(
+        failures=data.failures,
+        right_censored=data.right_censored,
+        method='LS',
+        show_probability_plot=False,
+        show_histogram_plot=False,
+        show_PP_plot=False,
+        show_best_distribution_probability_plot=False,
+        print_results=False,
+    )
 
-    assert_allclose(MLE.best_distribution.alpha, 0.5796887225805948, rtol=rtol, atol=atol) # best fit here is a Beta distribution
+    assert_allclose(
+        MLE.best_distribution.alpha, 0.5796887225805948, rtol=rtol, atol=atol
+    )  # best fit here is a Beta distribution
     assert_allclose(MLE.best_distribution.beta, 4.205258710807067, rtol=rtol, atol=atol)
 
     assert_allclose(MLE.Weibull_2P_alpha, 0.5796887225805948, rtol=rtol, atol=atol)
@@ -509,7 +720,9 @@ def test_Fit_Everything():
     assert_allclose(MLE.Exponential_1P_loglik, -95.35632179558792, rtol=rtol, atol=atol)
     assert_allclose(MLE.Exponential_1P_AD, 551.326873807673, rtol=rtol, atol=atol)
 
-    assert_allclose(LS.best_distribution.mu, 0.5350756091376212, rtol=rtol, atol=atol) # best fit here is a Normal distribution
+    assert_allclose(
+        LS.best_distribution.mu, 0.5350756091376212, rtol=rtol, atol=atol
+    )  # best fit here is a Normal distribution
     assert_allclose(LS.best_distribution.sigma, 0.15352298167936318, rtol=rtol, atol=atol)
 
     assert_allclose(LS.Weibull_2P_alpha, 0.5948490848650297, rtol=rtol, atol=atol)

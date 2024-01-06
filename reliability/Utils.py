@@ -42,24 +42,25 @@ Included functions are:
 - zeroise_below_gamma - sets all y values to zero when x < gamma. Used when the HF and CHF equations are specified
 """
 
-import numpy as np
-import scipy.stats as ss
-import matplotlib.pyplot as plt
-from matplotlib.axes import _axes
-from matplotlib.figure import Figure
-from matplotlib.collections import PolyCollection, LineCollection
-from matplotlib import ticker, colors
-from autograd import jacobian as jac
-from autograd_gamma import gammainccinv as agammainccinv
-from autograd_gamma import gammaincc as agammaincc
-from autograd import value_and_grad
-import autograd.numpy as anp
-from scipy.special import gammainc, betainc, erf
-from scipy.optimize import curve_fit, minimize, OptimizeWarning
-from numpy.linalg import LinAlgError
-import warnings
 import os
+import warnings
+
+import autograd.numpy as anp
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+import scipy.stats as ss
+from autograd import jacobian as jac
+from autograd import value_and_grad
+from autograd_gamma import gammaincc as agammaincc
+from autograd_gamma import gammainccinv as agammainccinv
+from matplotlib import colors, ticker
+from matplotlib.axes import _axes
+from matplotlib.collections import LineCollection, PolyCollection
+from matplotlib.figure import Figure
+from numpy.linalg import LinAlgError
+from scipy.optimize import OptimizeWarning, curve_fit, minimize
+from scipy.special import betainc, erf, gammainc
 
 warnings.filterwarnings(
     action="ignore", category=OptimizeWarning
@@ -69,7 +70,9 @@ warnings.filterwarnings(
 )  # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
 
 
-def round_and_string(number, decimals=5, integer_floats_to_ints=True, large_scientific_limit=1e9, small_scientific_limit=1e-4):
+def round_and_string(
+    number, decimals=5, integer_floats_to_ints=True, large_scientific_limit=1e9, small_scientific_limit=1e-4
+):
     """
     This function is used to round a number to a specified number of decimals and convert to string.
     It is used heavily in the formatting of the parameter titles within reliability.Distributions
@@ -116,7 +119,7 @@ def round_and_string(number, decimals=5, integer_floats_to_ints=True, large_scie
         original: 100000000.0  // new: 100000000
         original: 1e+20  // new: 1e+20
     """
-    if decimals <1:
+    if decimals < 1:
         decimals = 0
 
     if np.isfinite(number):  # check the input is not NaN
@@ -128,9 +131,9 @@ def round_and_string(number, decimals=5, integer_floats_to_ints=True, large_scie
         elif abs(number) >= large_scientific_limit or abs(number) <= small_scientific_limit:
             if decimal != 0:
                 # special formatting is only applied when the number is a float in the ranges specified above
-                out = str('{:0.' + str(decimals) + 'e}').format(number)
-                excess_zeros = "".join(['0'] * decimals)
-                out = out.replace("."+excess_zeros+"e","e")
+                out = str("{:0." + str(decimals) + "e}").format(number)
+                excess_zeros = "".join(["0"] * decimals)
+                out = out.replace("." + excess_zeros + "e", "e")
             else:
                 out = number
                 if integer_floats_to_ints is True and decimal == 0:
@@ -139,9 +142,10 @@ def round_and_string(number, decimals=5, integer_floats_to_ints=True, large_scie
             out = round(number, decimals)
             if integer_floats_to_ints is True and decimal == 0:
                 out = int(out)
-    else: # NaN
+    else:  # NaN
         out = number
     return str(out)
+
 
 def transform_spaced(
     transform,
@@ -199,34 +203,67 @@ def transform_spaced(
     if num <= 2:
         raise ValueError("num must be greater than 2")
     if transform in ["normal", "Normal", "norm", "Norm"]:
-        fwd = lambda x: ss.norm.ppf(x)
-        inv = lambda x: ss.norm.cdf(x)
+
+        def fwd(x):
+            return ss.norm.ppf(x)
+
+        def inv(x):
+            return ss.norm.cdf(x)
+
     elif transform in ["gumbel", "Gumbel", "gbl", "gum", "Gum", "Gbl"]:
-        fwd = lambda x: ss.gumbel_l.ppf(x)
-        inv = lambda x: ss.gumbel_l.cdf(x)
+
+        def fwd(x):
+            return ss.gumbel_l.ppf(x)
+
+        def inv(x):
+            return ss.gumbel_l.cdf(x)
+
     elif transform in ["weibull", "Weibull", "weib", "Weib", "wbl"]:
-        fwd = lambda x: np.log(-np.log(1 - x))
-        inv = lambda x: 1 - np.exp(-np.exp(x))
+
+        def fwd(x):
+            return np.log(-np.log(1 - x))
+
+        def inv(x):
+            return 1 - np.exp(-np.exp(x))
+
     elif transform in ["loglogistic", "Loglogistic", "LL", "ll", "loglog"]:
-        fwd = lambda x: np.log(1 / x - 1)
-        inv = lambda x: 1 / (np.exp(x) + 1)
+
+        def fwd(x):
+            return np.log(1 / x - 1)
+
+        def inv(x):
+            return 1 / (np.exp(x) + 1)
+
     elif transform in ["exponential", "Exponential", "expon", "Expon", "exp", "Exp"]:
-        fwd = lambda x: ss.expon.ppf(x)
-        inv = lambda x: ss.expon.cdf(x)
+
+        def fwd(x):
+            return ss.expon.ppf(x)
+
+        def inv(x):
+            return ss.expon.cdf(x)
+
     elif transform in ["gamma", "Gamma", "gam", "Gam"]:
         if beta is None:
             raise ValueError("beta must be specified to use the gamma transform")
         else:
-            fwd = lambda x: ss.gamma.ppf(x, a=beta)
-            inv = lambda x: ss.gamma.cdf(x, a=beta)
+
+            def fwd(x):
+                return ss.gamma.ppf(x, a=beta)
+
+            def inv(x):
+                return ss.gamma.cdf(x, a=beta)
+
     elif transform in ["beta", "Beta"]:
         if alpha is None or beta is None:
-            raise ValueError(
-                "alpha and beta must be specified to use the beta transform"
-            )
+            raise ValueError("alpha and beta must be specified to use the beta transform")
         else:
-            fwd = lambda x: ss.beta.ppf(x, a=beta, b=alpha)
-            inv = lambda x: ss.beta.cdf(x, a=beta, b=alpha)
+
+            def fwd(x):
+                return ss.beta.ppf(x, a=beta, b=alpha)
+
+            def inv(x):
+                return ss.beta.cdf(x, a=beta, b=alpha)
+
     elif transform in [
         "lognormal",
         "Lognormal",
@@ -235,13 +272,9 @@ def transform_spaced(
         "lognorm",
         "Lognorm",
     ]:  # the transform is the same, it's just the xscale that is ln for lognormal
-        raise ValueError(
-            "the Lognormal transform is the same as the normal transform. Specify normal and try again"
-        )
+        raise ValueError("the Lognormal transform is the same as the normal transform. Specify normal and try again")
     else:
-        raise ValueError(
-            "transform must be either exponential, normal, weibull, loglogistic, gamma, or beta"
-        )
+        raise ValueError("transform must be either exponential, normal, weibull, loglogistic, gamma, or beta")
 
     # find the value of the bounds in tranform space
     upper = fwd(y_upper)
@@ -440,7 +473,7 @@ def restore_axes_limits(limits, dist, func, X, Y, xvals=None, xmin=None, xmax=No
         xlim_upper = max(xvals)
 
     # determine what to set the xlims based on whether to use_prev_lims
-    if use_prev_lims == False:
+    if use_prev_lims is False:
         xlim_LOWER = xlim_lower
         xlim_UPPER = xlim_upper
     else:  # need to consider previous axes limits
@@ -454,26 +487,18 @@ def restore_axes_limits(limits, dist, func, X, Y, xvals=None, xmin=None, xmax=No
 
     top_spacing = 1.1  # the amount of space between the max value and the upper axis limit. 1.1 means the axis lies 10% above the max value
     if func in ["pdf", "PDF"]:
-        if not np.isfinite(dist._pdf0) and not np.isfinite(
-            Y[-1]
-        ):  # asymptote on the left and right
+        if not np.isfinite(dist._pdf0) and not np.isfinite(Y[-1]):  # asymptote on the left and right
             ylim_upper = min(Y) * 5
-        elif (
-            not np.isfinite(Y[-1]) or dist._pdf0 == np.inf or dist._pdf0 > 10
-        ):  # asymptote on the right or on the left
+        elif not np.isfinite(Y[-1]) or dist._pdf0 == np.inf or dist._pdf0 > 10:  # asymptote on the right or on the left
             ylim_upper = max(Y)
         else:  # an increasing pdf. Not asymptote
             ylim_upper = max(Y) * top_spacing
     elif func in ["cdf", "CDF", "SF", "sf"]:
         ylim_upper = top_spacing
     elif func in ["hf", "HF"]:
-        if not np.isfinite(dist._hf0) and not np.isfinite(
-            Y[-1]
-        ):  # asymptote on the left and right
+        if not np.isfinite(dist._hf0) and not np.isfinite(Y[-1]):  # asymptote on the left and right
             ylim_upper = min(Y) * 5
-        elif (
-            not np.isfinite(Y[-1]) or dist._hf0 == np.inf or dist._hf0 > 10
-        ):  # asymptote of the right or on the left
+        elif not np.isfinite(Y[-1]) or dist._hf0 == np.inf or dist._hf0 > 10:  # asymptote of the right or on the left
             ylim_upper = max(Y)
         elif max(Y) > Y[-1]:  # a peaked hf
             ylim_upper = max(Y) * top_spacing
@@ -487,9 +512,7 @@ def restore_axes_limits(limits, dist, func, X, Y, xvals=None, xmin=None, xmax=No
         if len(np.where(X >= xlim_upper)[0]) == 0:
             idx = len(X) - 1  # this is for the mixture model and CR model
         else:
-            idx = np.where(X >= xlim_upper)[0][
-                0
-            ]  # index of the chf where it is equal to b95
+            idx = np.where(X >= xlim_upper)[0][0]  # index of the chf where it is equal to b95
         if np.isfinite(Y[idx]):
             ylim_upper = Y[idx] * top_spacing
         else:
@@ -499,7 +522,7 @@ def restore_axes_limits(limits, dist, func, X, Y, xvals=None, xmin=None, xmax=No
     ylim_lower = 0
 
     # determine what to set the ylims based on whether to use_prev_lims
-    if use_prev_lims == False:
+    if use_prev_lims is False:
         ylim_LOWER = ylim_lower
         ylim_UPPER = ylim_upper
     else:  # need to consider previous axes limits
@@ -555,19 +578,13 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                     "the value given for xvals is greater than 1. The beta distribution is bounded between 0 and 1."
                 )
             X = np.array([X])
-        elif type(X) is list:
+        elif isinstance(X, list):
             X = np.array(X)
         elif type(X) is np.ndarray:
             pass
         else:
-            raise ValueError(
-                "unexpected type in xvals. Must be int, float, list, or array"
-            )
-        if (
-            type(X) is np.ndarray
-            and min(X) < 0
-            and dist.name not in ["Normal", "Gumbel"]
-        ):
+            raise ValueError("unexpected type in xvals. Must be int, float, list, or array")
+        if type(X) is np.ndarray and min(X) < 0 and dist.name not in ["Normal", "Gumbel"]:
             raise ValueError("xvals was found to contain values below 0")
         if type(X) is np.ndarray and max(X) > 1 and dist.name == "Beta":
             raise ValueError(
@@ -588,11 +605,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                     xmax,
                     xmin,
                 )  # switch them if they are given in the wrong order
-            if (
-                (xmin < QL and xmax < QL)
-                or (xmin >= QL and xmax <= QU)
-                or (xmin > QU and xmax > QU)
-            ):
+            if (xmin < QL and xmax < QL) or (xmin >= QL and xmax <= QU) or (xmin > QU and xmax > QU):
                 X = np.linspace(xmin, xmax, points)
             elif xmin < QL and xmax > QL and xmax < QU:
                 if dist.gamma == 0:
@@ -602,14 +615,9 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                         X = np.hstack([xmin, np.geomspace(QL, xmax, points - 1)])
                 else:  # gamma > 0
                     if dist._pdf0 == 0:
-                        X = np.hstack(
-                            [xmin, dist.gamma - 1e-8, np.linspace(QL, xmax, points - 2)]
-                        )
+                        X = np.hstack([xmin, dist.gamma - 1e-8, np.linspace(QL, xmax, points - 2)])
                     else:  # pdf is asymptotic to inf at x=0
-                        detail = (
-                            np.geomspace(QL - dist.gamma, xmax - dist.gamma, points - 2)
-                            + dist.gamma
-                        )
+                        detail = np.geomspace(QL - dist.gamma, xmax - dist.gamma, points - 2) + dist.gamma
                         X = np.hstack([xmin, dist.gamma - 1e-8, detail])
             elif xmin > QL and xmin < QU and xmax > QU:
                 if dist._pdf0 == 0:
@@ -629,12 +637,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                             )
                             + dist.gamma
                         )
-                        right = (
-                            np.geomspace(
-                                QU - dist.gamma, xmax - dist.gamma, points_right
-                            )
-                            + dist.gamma
-                        )
+                        right = np.geomspace(QU - dist.gamma, xmax - dist.gamma, points_right) + dist.gamma
                     except ValueError:  # occurs for very low shape params causing QL-gamma to be zero
                         detail = np.linspace(xmin, QU, points - points_right)
                         right = np.linspace(QU, xmax, points_right)
@@ -673,10 +676,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                                 xmin,
                                 dist.gamma - 1e-8,
                                 np.linspace(QL, QU, points - (points_right + 2)),
-                                np.geomspace(
-                                    QU - dist.gamma, xmax - dist.gamma, points_right
-                                )
-                                + dist.gamma,
+                                np.geomspace(QU - dist.gamma, xmax - dist.gamma, points_right) + dist.gamma,
                             ]
                         )
                     else:  # pdf is asymptotic to inf at x=0
@@ -689,12 +689,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                                 )
                                 + dist.gamma
                             )
-                            right = (
-                                np.geomspace(
-                                    QU - dist.gamma, xmax - dist.gamma, points_right
-                                )
-                                + dist.gamma
-                            )
+                            right = np.geomspace(QU - dist.gamma, xmax - dist.gamma, points_right) + dist.gamma
                         except ValueError:  # occurs for very low shape params causing QL-gamma to be zero
                             detail = np.linspace(QL, QU, points - (points_right + 2))
                             right = np.linspace(QU, xmax, points_right)
@@ -721,9 +716,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
             if xmax is None:
                 xmax = 1
             if xmax > 1:
-                raise ValueError(
-                    "xmax must be less than or equal to 1 for the beta distribution"
-                )
+                raise ValueError("xmax must be less than or equal to 1 for the beta distribution")
             if xmin > xmax:
                 xmin, xmax = (
                     xmax,
@@ -857,43 +850,33 @@ def xy_transform(value, direction="forward", axis="x"):
         if type(value) in [int, float, np.float64]:
             if axis == "x":
                 # x transform
-                transformed_values = ax.transData.inverted().transform(
-                    (ax.transAxes.transform((value, 0.5))[0], 0.5)
-                )[0]
+                transformed_values = ax.transData.inverted().transform((ax.transAxes.transform((value, 0.5))[0], 0.5))[
+                    0
+                ]
             else:
                 # y transform
-                transformed_values = ax.transData.inverted().transform(
-                    (1, ax.transAxes.transform((1, value))[1])
-                )[1]
+                transformed_values = ax.transData.inverted().transform((1, ax.transAxes.transform((1, value))[1]))[1]
         elif type(value) in [list, np.ndarray]:
             transformed_values = []
             for item in value:
                 if axis == "x":
                     transformed_values.append(
-                        ax.transData.inverted().transform(
-                            (ax.transAxes.transform((item, 0.5))[0], 0.5)
-                        )[0]
+                        ax.transData.inverted().transform((ax.transAxes.transform((item, 0.5))[0], 0.5))[0]
                     )  # x transform
                 else:
                     transformed_values.append(
-                        ax.transData.inverted().transform(
-                            (1, ax.transAxes.transform((1, item))[1])
-                        )[1]
+                        ax.transData.inverted().transform((1, ax.transAxes.transform((1, item))[1]))[1]
                     )  # y transform
         else:
             raise ValueError("type of value is not recognized")
     else:  # direction is forward
         if type(value) in [int, float, np.float64]:
             if axis == "x":
-                transformed_values = ax.transAxes.inverted().transform(
-                    ax.transData.transform((value, 0.5))
-                )[
+                transformed_values = ax.transAxes.inverted().transform(ax.transData.transform((value, 0.5)))[
                     0
                 ]  # x transform
             else:
-                transformed_values = ax.transAxes.inverted().transform(
-                    ax.transData.transform((1, value))
-                )[
+                transformed_values = ax.transAxes.inverted().transform(ax.transData.transform((1, value)))[
                     1
                 ]  # y transform
         elif type(value) in [list, np.ndarray]:
@@ -901,24 +884,18 @@ def xy_transform(value, direction="forward", axis="x"):
             for item in value:
                 if axis == "x":
                     transformed_values.append(
-                        ax.transAxes.inverted().transform(
-                            ax.transData.transform((item, 0.5))
-                        )[0]
+                        ax.transAxes.inverted().transform(ax.transData.transform((item, 0.5)))[0]
                     )  # x transform
                 else:
                     transformed_values.append(
-                        ax.transAxes.inverted().transform(
-                            ax.transData.transform((1, value))
-                        )[1]
+                        ax.transAxes.inverted().transform(ax.transData.transform((1, value)))[1]
                     )  # y transform
         else:
             raise ValueError("type of value is not recognized")
     return transformed_values
 
 
-def probability_plot_xylims(
-    x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha=None, beta_beta=None
-):
+def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha=None, beta_beta=None):
     """
     This function finds what the x and y limits of probability plots should be
     and sets these limits. This is similar to autoscaling, but the rules here
@@ -1006,12 +983,8 @@ def probability_plot_xylims(
         min_y_tfm = axes_transforms.gamma_forward(min_y, gamma_beta)
         max_y_tfm = axes_transforms.gamma_forward(max_y, gamma_beta)
         dy_tfm = max_y_tfm - min_y_tfm
-        ylim_lower = axes_transforms.gamma_inverse(
-            min_y_tfm - dy_tfm * spacing, gamma_beta
-        )
-        ylim_upper = axes_transforms.gamma_inverse(
-            max_y_tfm + dy_tfm * spacing, gamma_beta
-        )
+        ylim_lower = axes_transforms.gamma_inverse(min_y_tfm - dy_tfm * spacing, gamma_beta)
+        ylim_upper = axes_transforms.gamma_inverse(max_y_tfm + dy_tfm * spacing, gamma_beta)
     elif dist in ["normal", "lognormal"]:
         min_y_tfm = axes_transforms.normal_forward(min_y)
         max_y_tfm = axes_transforms.normal_forward(max_y)
@@ -1028,12 +1001,8 @@ def probability_plot_xylims(
         min_y_tfm = axes_transforms.beta_forward(min_y, beta_alpha, beta_beta)
         max_y_tfm = axes_transforms.beta_forward(max_y, beta_alpha, beta_beta)
         dy_tfm = max_y_tfm - min_y_tfm
-        ylim_lower = axes_transforms.beta_inverse(
-            min_y_tfm - dy_tfm * spacing, beta_alpha, beta_beta
-        )
-        ylim_upper = axes_transforms.beta_inverse(
-            max_y_tfm + dy_tfm * spacing, beta_alpha, beta_beta
-        )
+        ylim_lower = axes_transforms.beta_inverse(min_y_tfm - dy_tfm * spacing, beta_alpha, beta_beta)
+        ylim_upper = axes_transforms.beta_inverse(max_y_tfm + dy_tfm * spacing, beta_alpha, beta_beta)
     elif dist == "loglogistic":
         min_y_tfm = axes_transforms.loglogistic_forward(min_y)
         max_y_tfm = axes_transforms.loglogistic_forward(max_y)
@@ -1115,8 +1084,8 @@ def probability_plot_xyticks(yticks=None):
             U = xupper
         elif axis == "y":
             AXIS = ax.yaxis
-            L = ylower
-            U = yupper
+        #          L = ylower
+        #           U = yupper
         else:
             raise ValueError("axis must be x or y. Default is x")
 
@@ -1214,12 +1183,12 @@ def probability_plot_xyticks(yticks=None):
             The edge distances
         """
         xtick_locations = get_tick_locations("major", axis="x")
-        left_tick_distance = xy_transform(
-            xtick_locations[0], direction="forward", axis="x"
-        ) - xy_transform(xlower, direction="forward", axis="x")
-        right_tick_distance = xy_transform(
-            xupper, direction="forward", axis="x"
-        ) - xy_transform(xtick_locations[-1], direction="forward", axis="x")
+        left_tick_distance = xy_transform(xtick_locations[0], direction="forward", axis="x") - xy_transform(
+            xlower, direction="forward", axis="x"
+        )
+        right_tick_distance = xy_transform(xupper, direction="forward", axis="x") - xy_transform(
+            xtick_locations[-1], direction="forward", axis="x"
+        )
         return left_tick_distance + right_tick_distance
 
     ################# xticks
@@ -1227,9 +1196,7 @@ def probability_plot_xyticks(yticks=None):
     LogLocator = ticker.LogLocator()
     ax = plt.gca()
     xlower, xupper = plt.xlim()
-    if (
-        xlower <= 0
-    ):  # can't use log scale if 0 (gamma) or negative numbers (normal and gumbel)
+    if xlower <= 0:  # can't use log scale if 0 (gamma) or negative numbers (normal and gumbel)
         loc_x = MaxNLocator
     elif xupper < 0.1:  # very small positive values
         loc_x = ticker.LogLocator()
@@ -1336,12 +1303,7 @@ def anderson_darling(fitted_cdf, empirical_cdf):
 
     A = -Zi - np.log(1 - Zi) + Zi_1 + np.log(1 - Zi_1)
     B = 2 * np.log(1 - Zi) * FnZi_1 - 2 * np.log(1 - Zi_1) * FnZi_1
-    C = (
-        lnZi * FnZi_1**2
-        - np.log(1 - Zi) * FnZi_1**2
-        - lnZi_1 * FnZi_1**2
-        + np.log(1 - Zi_1) * FnZi_1**2
-    )
+    C = lnZi * FnZi_1**2 - np.log(1 - Zi) * FnZi_1**2 - lnZi_1 * FnZi_1**2 + np.log(1 - Zi_1) * FnZi_1**2
     n = len(fitted_cdf)
     AD = n * ((A + B + C).sum())
     return AD
@@ -1454,9 +1416,7 @@ def colorprint(
     ]:
         text_color = "turquoise"
     else:
-        raise ValueError(
-            "Unknown text_color. Options are grey, red, green, yellow, blue, pink, turquoise."
-        )
+        raise ValueError("Unknown text_color. Options are grey, red, green, yellow, blue, pink, turquoise.")
 
     if type(background_color) not in [str, np.str_, type(None)]:
         raise ValueError("background_color must be a string")
@@ -1486,18 +1446,10 @@ def colorprint(
     ]:
         background_color = "turquoise"
     else:
-        raise ValueError(
-            "Unknown text_color. Options are grey, red, green, yellow, blue, pink, turquoise."
-        )
+        raise ValueError("Unknown text_color. Options are grey, red, green, yellow, blue, pink, turquoise.")
 
     print(
-        BOLD
-        + ITALIC
-        + UNDERLINE
-        + background_colors[background_color]
-        + text_colors[text_color]
-        + string
-        + "\033[0m"
+        BOLD + ITALIC + UNDERLINE + background_colors[background_color] + text_colors[text_color] + string + "\033[0m"
     )
 
 
@@ -1592,7 +1544,6 @@ class fitters_input_checking:
         force_sigma=None,
         CI_type=None,
     ):
-
         if dist not in [
             "Everything",
             "Weibull_2P",
@@ -1614,9 +1565,7 @@ class fitters_input_checking:
             "Weibull_DS",
             "Weibull_ZI",
         ]:
-            raise ValueError(
-                "incorrect dist specified. Use the correct name. eg. Weibull_2P"
-            )
+            raise ValueError("incorrect dist specified. Use the correct name. eg. Weibull_2P")
 
         # fill right_censored with empty list if not specified
         if right_censored is None:
@@ -1626,9 +1575,7 @@ class fitters_input_checking:
         if type(failures) not in [list, np.ndarray]:
             raise ValueError("failures must be a list or array of failure data")
         if type(right_censored) not in [list, np.ndarray]:
-            raise ValueError(
-                "right_censored must be a list or array of right censored failure data"
-            )
+            raise ValueError("right_censored must be a list or array of right censored failure data")
         failures = np.asarray(failures).astype(float)
         right_censored = np.asarray(right_censored).astype(float)
 
@@ -1637,13 +1584,9 @@ class fitters_input_checking:
             # raise an error for values below zero
             all_data = np.hstack([failures, right_censored])
             if dist == "Beta_2P" and (min(all_data) < 0 or max(all_data) > 1):
-                raise ValueError(
-                    "All failure and censoring times for the beta distribution must be between 0 and 1."
-                )
+                raise ValueError("All failure and censoring times for the beta distribution must be between 0 and 1.")
             elif min(all_data) < 0:
-                raise ValueError(
-                    "All failure and censoring times must be greater than zero."
-                )
+                raise ValueError("All failure and censoring times must be greater than zero.")
             # remove zeros and issue a warning. These are impossible since the pdf should be 0 at t=0. Leaving them in causes an error.
             rc0 = right_censored
             f0 = failures
@@ -1698,17 +1641,13 @@ class fitters_input_checking:
 
         # type and value checking for CI
         if type(CI) not in [float, np.float64]:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
         if CI <= 0 or CI >= 1:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
         # error checking for optimizer
         if optimizer is not None:
-            if type(optimizer) is not str:
+            if not isinstance(optimizer, str):
                 raise ValueError(
                     'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html'
                 )
@@ -1729,7 +1668,7 @@ class fitters_input_checking:
 
         # error checking for method
         if method is not None:
-            if type(method) is not str:
+            if not isinstance(method, str):
                 raise ValueError(
                     'method must be either "MLE" (maximum likelihood estimation), "LS" (least squares), "RRX" (rank regression on X), or "RRY" (rank regression on Y).'
                 )
@@ -1756,9 +1695,7 @@ class fitters_input_checking:
         if type(quantiles) in [str, bool]:
             if quantiles in ["auto", True, "default", "on"]:
                 # quantiles to be used as the defaults in the table of quantiles #
-                quantiles = np.array(
-                    [0.01, 0.05, 0.1, 0.2, 0.25, 0.5, 0.75, 0.8, 0.9, 0.95, 0.99]
-                )
+                quantiles = np.array([0.01, 0.05, 0.1, 0.2, 0.25, 0.5, 0.75, 0.8, 0.9, 0.95, 0.99])
         elif quantiles is not None:
             if type(quantiles) not in [list, np.ndarray]:
                 raise ValueError("quantiles must be a list or array")
@@ -1770,17 +1707,13 @@ class fitters_input_checking:
         if force_beta is not None:
             if force_beta <= 0:
                 raise ValueError("force_beta must be greater than 0.")
-            if type(force_beta) == int:
-                force_beta = float(
-                    force_beta
-                )  # autograd needs floats. crashes with ints
+            if isinstance(force_beta, int):
+                force_beta = float(force_beta)  # autograd needs floats. crashes with ints
         if force_sigma is not None:
             if force_sigma <= 0:
                 raise ValueError("force_sigma must be greater than 0.")
-            if type(force_sigma) == int:
-                force_sigma = float(
-                    force_sigma
-                )  # autograd needs floats. crashes with ints
+            if isinstance(force_sigma, int):
+                force_sigma = float(force_sigma)  # autograd needs floats. crashes with ints
 
         # minimum number of failures checking
         if dist in ["Weibull_3P", "Gamma_3P", "Lognormal_3P", "Loglogistic_3P"]:
@@ -1834,9 +1767,7 @@ class fitters_input_checking:
                 )
             elif dist == "Everything":
                 raise ValueError(
-                    "The minimum number of distinct failures required to fit everything is "
-                    + str(min_failures)
-                    + "."
+                    "The minimum number of distinct failures required to fit everything is " + str(min_failures) + "."
                 )
             else:
                 raise ValueError(
@@ -1855,10 +1786,10 @@ class fitters_input_checking:
         if CI_type is not None:
             if CI_type.upper() in ["T", "TIME"]:
                 CI_type = "time"
-            elif CI_type.upper() in ["R","REL","RELIABILITY"]:
+            elif CI_type.upper() in ["R", "REL", "RELIABILITY"]:
                 CI_type = "reliability"
-            elif CI_type.upper() in ["NONE","OFF"]:
-                CI_type = 'none'
+            elif CI_type.upper() in ["NONE", "OFF"]:
+                CI_type = "none"
             else:
                 raise ValueError('CI_type must be "time", "reliability", or "none"')
 
@@ -1972,11 +1903,8 @@ class ALT_fitters_input_checking:
         use_level_stress=None,
         optimizer=None,
     ):
-
         if dist not in ["Exponential", "Weibull", "Lognormal", "Normal", "Everything"]:
-            raise ValueError(
-                "dist must be one of Exponential, Weibull, Lognormal, Normal, Everything."
-            )
+            raise ValueError("dist must be one of Exponential, Weibull, Lognormal, Normal, Everything.")
         if life_stress_model not in [
             "Exponential",
             "Eyring",
@@ -2009,12 +1937,8 @@ class ALT_fitters_input_checking:
             min_failures_reqd = 3
 
         # failure checks
-        if is_dual_stress is True and (
-            failure_stress_1 is None or failure_stress_2 is None
-        ):
-            raise ValueError(
-                "failure_stress_1 and failure_stress_2 must be provided for dual stress models."
-            )
+        if is_dual_stress is True and (failure_stress_1 is None or failure_stress_2 is None):
+            raise ValueError("failure_stress_1 and failure_stress_2 must be provided for dual stress models.")
         if is_dual_stress is False:
             if failure_stress_1 is None:
                 raise ValueError("failure_stress_1 must be provided")
@@ -2045,9 +1969,7 @@ class ALT_fitters_input_checking:
             right_censored_stress_1 = []
             right_censored_stress_2 = []
         else:
-            if is_dual_stress is True and (
-                right_censored_stress_1 is None or right_censored_stress_2 is None
-            ):
+            if is_dual_stress is True and (right_censored_stress_1 is None or right_censored_stress_2 is None):
                 raise ValueError(
                     "right_censored_stress_1 and right_censored_stress_2 must be provided for dual stress models."
                 )
@@ -2069,26 +1991,16 @@ class ALT_fitters_input_checking:
         if type(failures) not in [list, np.ndarray]:
             raise ValueError("failures must be a list or array of failure data")
         if type(failure_stress_1) not in [list, np.ndarray]:
-            raise ValueError(
-                "failure_stress_1 must be a list or array of failure stress data"
-            )
+            raise ValueError("failure_stress_1 must be a list or array of failure stress data")
         if type(failure_stress_2) not in [list, np.ndarray]:
-            raise ValueError(
-                "failure_stress_2 must be a list or array of failure stress data"
-            )
+            raise ValueError("failure_stress_2 must be a list or array of failure stress data")
 
         if type(right_censored) not in [list, np.ndarray]:
-            raise ValueError(
-                "right_censored must be a list or array of right censored failure data"
-            )
+            raise ValueError("right_censored must be a list or array of right censored failure data")
         if type(right_censored_stress_1) not in [list, np.ndarray]:
-            raise ValueError(
-                "right_censored_stress_1 must be a list or array of right censored failure stress data"
-            )
+            raise ValueError("right_censored_stress_1 must be a list or array of right censored failure stress data")
         if type(right_censored_stress_2) not in [list, np.ndarray]:
-            raise ValueError(
-                "right_censored_stress_2 must be a list or array of right censored failure stress data"
-            )
+            raise ValueError("right_censored_stress_2 must be a list or array of right censored failure stress data")
 
         failures = np.asarray(failures).astype(float)
         failure_stress_1 = np.asarray(failure_stress_1).astype(float)
@@ -2100,46 +2012,34 @@ class ALT_fitters_input_checking:
         # check that list lengths match
         if is_dual_stress is False:
             if len(failures) != len(failure_stress_1):
-                raise ValueError(
-                    "failures must have the same number of elements as failure_stress_1"
-                )
+                raise ValueError("failures must have the same number of elements as failure_stress_1")
             if len(right_censored) != len(right_censored_stress_1):
-                raise ValueError(
-                    "right_censored must have the same number of elements as right_censored_stress_1"
-                )
+                raise ValueError("right_censored must have the same number of elements as right_censored_stress_1")
         else:
-            if len(failures) != len(failure_stress_1) or len(failures) != len(
-                failure_stress_2
-            ):
+            if len(failures) != len(failure_stress_1) or len(failures) != len(failure_stress_2):
                 raise ValueError(
                     "failures must have the same number of elements as failure_stress_1 and failure_stress_2"
                 )
-            if len(right_censored) != len(right_censored_stress_1) or len(
-                right_censored
-            ) != len(right_censored_stress_2):
+            if len(right_censored) != len(right_censored_stress_1) or len(right_censored) != len(
+                right_censored_stress_2
+            ):
                 raise ValueError(
                     "right_censored must have the same number of elements as right_censored_stress_1 and right_censored_stress_2"
                 )
 
         # raise an error for values <= 0. Not even the Normal Distribution is allowed to have failures at negative life.
         if min(np.hstack([failures, right_censored])) <= 0:
-            raise ValueError(
-                "All failure and right censored values must be greater than zero."
-            )
+            raise ValueError("All failure and right censored values must be greater than zero.")
 
         # type and value checking for CI
         if type(CI) not in [float, np.float64]:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence interval.")
         if CI <= 0 or CI >= 1:
-            raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval."
-            )
+            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence interval.")
 
         # error checking for optimizer
         if optimizer is not None:
-            if type(optimizer) is not str:
+            if not isinstance(optimizer, str):
                 raise ValueError(
                     'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html'
                 )
@@ -2186,7 +2086,7 @@ class ALT_fitters_input_checking:
             # This does not mean 2 failures at each stress.
             # All we need is as many failures as there are parameters in the model.
             total_unique_failures = 0
-            for i, failure_group in enumerate(failure_groups):
+            for _, failure_group in enumerate(failure_groups):
                 total_unique_failures += len(np.unique(failure_group))
             if total_unique_failures < min_failures_reqd:
                 if life_stress_model == "Everything":
@@ -2220,20 +2120,14 @@ class ALT_fitters_input_checking:
                 )
                 right_censored_groups = []
                 unique_right_censored_stresses = []
-                for key, items in right_censored_df_ungrouped.groupby(
-                    ["right_censored_stress_1"]
-                ):
+                for key, items in right_censored_df_ungrouped.groupby(["right_censored_stress_1"]):
                     key = key[0]
                     values = list(items.iloc[:, 0].values)
                     right_censored_groups.append(values)
                     unique_right_censored_stresses.append(key)
                     if key not in unique_failure_stresses:
                         raise ValueError(
-                            str(
-                                "The right censored stress "
-                                + str(key)
-                                + " does not appear in failure stresses."
-                            )
+                            str("The right censored stress " + str(key) + " does not appear in failure stresses.")
                         )
 
                 # add in empty lists for stresses which appear in failure_stress_1 but not in right_censored_stress_1
@@ -2247,9 +2141,7 @@ class ALT_fitters_input_checking:
             # concatenate the stresses to deal with them as a pair
             failure_stress_pairs = []
             for i in range(len(failure_stress_1)):
-                failure_stress_pairs.append(
-                    str(failure_stress_1[i]) + "_" + str(failure_stress_2[i])
-                )
+                failure_stress_pairs.append(str(failure_stress_1[i]) + "_" + str(failure_stress_2[i]))
 
             failure_df_ungrouped = pd.DataFrame(
                 data={
@@ -2269,7 +2161,7 @@ class ALT_fitters_input_checking:
             # This does not mean 2 failures at each stress.
             # All we need is as many failures as there are parameters in the model.
             total_unique_failures = 0
-            for i, failure_group in enumerate(failure_groups):
+            for _, failure_group in enumerate(failure_groups):
                 total_unique_failures += len(np.unique(failure_group))
             if total_unique_failures < min_failures_reqd:
                 if life_stress_model == "Everything":
@@ -2304,9 +2196,7 @@ class ALT_fitters_input_checking:
                 right_censored_stress_pairs = []
                 for i in range(len(right_censored_stress_1)):
                     right_censored_stress_pairs.append(
-                        str(right_censored_stress_1[i])
-                        + "_"
-                        + str(right_censored_stress_2[i])
+                        str(right_censored_stress_1[i]) + "_" + str(right_censored_stress_2[i])
                     )
 
                 right_censored_df_ungrouped = pd.DataFrame(
@@ -2318,9 +2208,7 @@ class ALT_fitters_input_checking:
                 )
                 right_censored_groups = []
                 unique_right_censored_stresses_str = []
-                for key, items in right_censored_df_ungrouped.groupby(
-                    ["right_censored_stress_pairs"]
-                ):
+                for key, items in right_censored_df_ungrouped.groupby(["right_censored_stress_pairs"]):
                     key = key[0]
                     values = list(items.iloc[:, 0].values)
                     right_censored_groups.append(values)
@@ -2462,12 +2350,7 @@ def clean_CI_arrays(xlower, xupper, ylower, yupper, plot_type="CDF", x=None, q=N
 
     # remove nans in all arrays
     for i in np.arange(len(xlower)):
-        if (
-            np.isfinite(xlower[i])
-            and np.isfinite(xupper[i])
-            and np.isfinite(ylower[i])
-            and np.isfinite(yupper[i])
-        ):
+        if np.isfinite(xlower[i]) and np.isfinite(xupper[i]) and np.isfinite(ylower[i]) and np.isfinite(yupper[i]):
             xlower_out = np.append(xlower_out, xlower[i])
             xupper_out = np.append(xupper_out, xupper[i])
             ylower_out = np.append(ylower_out, ylower[i])
@@ -2668,22 +2551,13 @@ class distribution_confidence_intervals:
         points = 200
 
         # this section plots the confidence interval
-        if (
-            self.Lambda_SE is not None
-            and self.Z is not None
-            and (plot_CI is True or q is not None or x is not None)
-        ):
-
+        if self.Lambda_SE is not None and self.Z is not None and (plot_CI is True or q is not None or x is not None):
             if func not in ["CDF", "SF", "CHF"]:
                 raise ValueError("func must be either CDF, SF, or CHF")
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError(
-                    "q must be a list or array of quantiles. Default is None"
-                )
+                raise ValueError("q must be a list or array of quantiles. Default is None")
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError(
-                    "x must be a list or array of x-values. Default is None"
-                )
+                raise ValueError("x must be a list or array of x-values. Default is None")
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -2698,9 +2572,7 @@ class distribution_confidence_intervals:
                 if CI_100 % 1 == 0:
                     CI_100 = int(CI_100)  # removes decimals if the only decimal is 0
                 # Adds the CI and CI_type to the title
-                text_title = str(
-                    text_title + "\n" + str(CI_100) + "% confidence bounds"
-                )
+                text_title = str(text_title + "\n" + str(CI_100) + "% confidence bounds")
                 # add a line to the plot title to include the confidence bounds information
                 plt.title(text_title)
                 plt.subplots_adjust(top=0.81)
@@ -2845,8 +2717,7 @@ class distribution_confidence_intervals:
 
         # this determines if the user has specified for the CI bounds to be shown or hidden.
         if (
-            validate_CI_params(self.alpha_SE, self.beta_SE, self.Cov_alpha_beta, self.Z)
-            is True
+            validate_CI_params(self.alpha_SE, self.beta_SE, self.Cov_alpha_beta, self.Z) is True
             and (plot_CI is True or q is not None or x is not None)
             and CI_type is not None
         ):
@@ -2865,13 +2736,9 @@ class distribution_confidence_intervals:
             if func not in ["CDF", "SF", "CHF"]:
                 raise ValueError("func must be either CDF, SF, or CHF")
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError(
-                    "q must be a list or array of quantiles. Default is None"
-                )
+                raise ValueError("q must be a list or array of quantiles. Default is None")
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError(
-                    "x must be a list or array of x-values. Default is None"
-                )
+                raise ValueError("x must be a list or array of x-values. Default is None")
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -2886,13 +2753,7 @@ class distribution_confidence_intervals:
                 if CI_100 % 1 == 0:
                     CI_100 = int(CI_100)
                 # Adds the CI and CI_type to the title
-                text_title = str(
-                    text_title
-                    + "\n"
-                    + str(CI_100)
-                    + "% confidence bounds on "
-                    + CI_type
-                )
+                text_title = str(text_title + "\n" + str(CI_100) + "% confidence bounds on " + CI_type)
                 plt.title(text_title)
                 plt.subplots_adjust(top=0.81)
 
@@ -2900,9 +2761,7 @@ class distribution_confidence_intervals:
                 return beta * (anp.log(t) - anp.log(alpha))  # weibull SF linearized
 
             def v(R, alpha, beta):  # v = ln(t)
-                return (1 / beta) * anp.log(-anp.log(R)) + anp.log(
-                    alpha
-                )  # weibull SF rearranged for t
+                return (1 / beta) * anp.log(-anp.log(R)) + anp.log(alpha)  # weibull SF rearranged for t
 
             du_da = jac(u, 1)  # derivative wrt alpha (bounds on reliability)
             du_db = jac(u, 2)  # derivative wrt beta (bounds on reliability)
@@ -2913,20 +2772,14 @@ class distribution_confidence_intervals:
                 return (
                     du_da(v, self.alpha, self.beta) ** 2 * self.alpha_SE**2
                     + du_db(v, self.alpha, self.beta) ** 2 * self.beta_SE**2
-                    + 2
-                    * du_da(v, self.alpha, self.beta)
-                    * du_db(v, self.alpha, self.beta)
-                    * self.Cov_alpha_beta
+                    + 2 * du_da(v, self.alpha, self.beta) * du_db(v, self.alpha, self.beta) * self.Cov_alpha_beta
                 )
 
             def var_v(self, u):  # u is reliability
                 return (
                     dv_da(u, self.alpha, self.beta) ** 2 * self.alpha_SE**2
                     + dv_db(u, self.alpha, self.beta) ** 2 * self.beta_SE**2
-                    + 2
-                    * dv_da(u, self.alpha, self.beta)
-                    * dv_db(u, self.alpha, self.beta)
-                    * self.Cov_alpha_beta
+                    + 2 * dv_da(u, self.alpha, self.beta) * dv_db(u, self.alpha, self.beta) * self.Cov_alpha_beta
                 )
 
             # Confidence bounds on time (in terms of reliability)
@@ -2939,9 +2792,7 @@ class distribution_confidence_intervals:
                     if q is not None:
                         Y = q
                     else:
-                        Y = transform_spaced(
-                            "weibull", y_lower=1e-8, y_upper=1 - 1e-8, num=points
-                        )
+                        Y = transform_spaced("weibull", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
 
                 # v is ln(t)
                 v_lower = v(Y, self.alpha, self.beta) - Z * (var_v(self, Y) ** 0.5)
@@ -3132,8 +2983,7 @@ class distribution_confidence_intervals:
         # this determines if the user has specified for the CI bounds to be shown or hidden.
 
         if (
-            validate_CI_params(self.mu_SE, self.beta_SE, self.Cov_mu_beta, self.Z)
-            is True
+            validate_CI_params(self.mu_SE, self.beta_SE, self.Cov_mu_beta, self.Z) is True
             and (plot_CI is True or q is not None or x is not None)
             and CI_type is not None
         ):
@@ -3152,13 +3002,9 @@ class distribution_confidence_intervals:
             if func not in ["CDF", "SF", "CHF"]:
                 raise ValueError("func must be either CDF, SF, or CHF")
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError(
-                    "q must be a list or array of quantiles. Default is None"
-                )
+                raise ValueError("q must be a list or array of quantiles. Default is None")
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError(
-                    "x must be a list or array of x-values. Default is None"
-                )
+                raise ValueError("x must be a list or array of x-values. Default is None")
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -3173,13 +3019,7 @@ class distribution_confidence_intervals:
                 if CI_100 % 1 == 0:
                     CI_100 = int(CI_100)
                 # Adds the CI and CI_type to the title
-                text_title = str(
-                    text_title
-                    + "\n"
-                    + str(CI_100)
-                    + "% confidence bounds on "
-                    + CI_type
-                )
+                text_title = str(text_title + "\n" + str(CI_100) + "% confidence bounds on " + CI_type)
                 plt.title(text_title)
                 plt.subplots_adjust(top=0.81)
 
@@ -3198,20 +3038,14 @@ class distribution_confidence_intervals:
                 return (
                     du_dm(v, self.mu, self.beta) ** 2 * self.mu_SE**2
                     + du_db(v, self.mu, self.beta) ** 2 * self.beta_SE**2
-                    + 2
-                    * du_dm(v, self.mu, self.beta)
-                    * du_db(v, self.mu, self.beta)
-                    * self.Cov_mu_beta
+                    + 2 * du_dm(v, self.mu, self.beta) * du_db(v, self.mu, self.beta) * self.Cov_mu_beta
                 )
 
             def var_v(self, u):  # u is reliability
                 return (
                     dv_dm(u, self.mu, self.beta) ** 2 * self.mu_SE**2
                     + dv_db(u, self.mu, self.beta) ** 2 * self.beta_SE**2
-                    + 2
-                    * dv_dm(u, self.mu, self.beta)
-                    * dv_db(u, self.mu, self.beta)
-                    * self.Cov_mu_beta
+                    + 2 * dv_dm(u, self.mu, self.beta) * dv_db(u, self.mu, self.beta) * self.Cov_mu_beta
                 )
 
             # Confidence bounds on time (in terms of reliability)
@@ -3425,8 +3259,7 @@ class distribution_confidence_intervals:
 
         # this determines if the user has specified for the CI bounds to be shown or hidden.
         if (
-            validate_CI_params(self.mu_SE, self.sigma_SE, self.Cov_mu_sigma, self.Z)
-            is True
+            validate_CI_params(self.mu_SE, self.sigma_SE, self.Cov_mu_sigma, self.Z) is True
             and (plot_CI is True or q is not None or x is not None)
             and CI_type is not None
         ):
@@ -3445,13 +3278,9 @@ class distribution_confidence_intervals:
             if func not in ["CDF", "SF", "CHF"]:
                 raise ValueError("func must be either CDF, SF, or CHF")
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError(
-                    "q must be a list or array of quantiles. Default is None"
-                )
+                raise ValueError("q must be a list or array of quantiles. Default is None")
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError(
-                    "x must be a list or array of x-values. Default is None"
-                )
+                raise ValueError("x must be a list or array of x-values. Default is None")
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -3466,13 +3295,7 @@ class distribution_confidence_intervals:
                 if CI_100 % 1 == 0:
                     CI_100 = int(CI_100)
                 # Adds the CI and CI_type to the title
-                text_title = str(
-                    text_title
-                    + "\n"
-                    + str(CI_100)
-                    + "% confidence bounds on "
-                    + CI_type
-                )
+                text_title = str(text_title + "\n" + str(CI_100) + "% confidence bounds on " + CI_type)
                 plt.title(text_title)
                 plt.subplots_adjust(top=0.81)
 
@@ -3492,20 +3315,14 @@ class distribution_confidence_intervals:
                 return (
                     du_da(v, self.mu, self.sigma) ** 2 * self.mu_SE**2
                     + du_db(v, self.mu, self.sigma) ** 2 * self.sigma_SE**2
-                    + 2
-                    * du_da(v, self.mu, self.sigma)
-                    * du_db(v, self.mu, self.sigma)
-                    * self.Cov_mu_sigma
+                    + 2 * du_da(v, self.mu, self.sigma) * du_db(v, self.mu, self.sigma) * self.Cov_mu_sigma
                 )
 
             def var_v(self, u):  # u is reliability
                 return (
                     dv_da(u, self.mu, self.sigma) ** 2 * self.mu_SE**2
                     + dv_db(u, self.mu, self.sigma) ** 2 * self.sigma_SE**2
-                    + 2
-                    * dv_da(u, self.mu, self.sigma)
-                    * dv_db(u, self.mu, self.sigma)
-                    * self.Cov_mu_sigma
+                    + 2 * dv_da(u, self.mu, self.sigma) * dv_db(u, self.mu, self.sigma) * self.Cov_mu_sigma
                 )
 
             # Confidence bounds on time (in terms of reliability)
@@ -3518,9 +3335,7 @@ class distribution_confidence_intervals:
                     if q is not None:
                         Y = q
                     else:
-                        Y = transform_spaced(
-                            "normal", y_lower=1e-8, y_upper=1 - 1e-8, num=points
-                        )
+                        Y = transform_spaced("normal", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
 
                 # v is t
                 t_lower = v(Y, self.mu, self.sigma) - Z * (var_v(self, Y) ** 0.5)
@@ -3574,9 +3389,7 @@ class distribution_confidence_intervals:
                 if x is not None:
                     t = x
                 else:
-                    t = np.linspace(
-                        self.quantile(0.00001), self.quantile(0.99999), points
-                    )
+                    t = np.linspace(self.quantile(0.00001), self.quantile(0.99999), points)
 
                 # u is reliability u = phiinv(R)
                 u_lower = u(t, self.mu, self.sigma) + Z * var_u(self, t) ** 0.5
@@ -3699,8 +3512,7 @@ class distribution_confidence_intervals:
 
         # this determines if the user has specified for the CI bounds to be shown or hidden.
         if (
-            validate_CI_params(self.mu_SE, self.sigma_SE, self.Cov_mu_sigma, self.Z)
-            is True
+            validate_CI_params(self.mu_SE, self.sigma_SE, self.Cov_mu_sigma, self.Z) is True
             and (plot_CI is True or q is not None or x is not None)
             and CI_type is not None
         ):
@@ -3719,13 +3531,9 @@ class distribution_confidence_intervals:
             if func not in ["CDF", "SF", "CHF"]:
                 raise ValueError("func must be either CDF, SF, or CHF")
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError(
-                    "q must be a list or array of quantiles. Default is None"
-                )
+                raise ValueError("q must be a list or array of quantiles. Default is None")
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError(
-                    "x must be a list or array of x-values. Default is None"
-                )
+                raise ValueError("x must be a list or array of x-values. Default is None")
 
             if q is not None:
                 q = np.asarray(q)
@@ -3741,13 +3549,7 @@ class distribution_confidence_intervals:
                 if CI_100 % 1 == 0:
                     CI_100 = int(CI_100)
                 # Adds the CI and CI_type to the title
-                text_title = str(
-                    text_title
-                    + "\n"
-                    + str(CI_100)
-                    + "% confidence bounds on "
-                    + CI_type
-                )
+                text_title = str(text_title + "\n" + str(CI_100) + "% confidence bounds on " + CI_type)
                 plt.title(text_title)
                 plt.subplots_adjust(top=0.81)
 
@@ -3767,20 +3569,14 @@ class distribution_confidence_intervals:
                 return (
                     du_da(v, self.mu, self.sigma) ** 2 * self.mu_SE**2
                     + du_db(v, self.mu, self.sigma) ** 2 * self.sigma_SE**2
-                    + 2
-                    * du_da(v, self.mu, self.sigma)
-                    * du_db(v, self.mu, self.sigma)
-                    * self.Cov_mu_sigma
+                    + 2 * du_da(v, self.mu, self.sigma) * du_db(v, self.mu, self.sigma) * self.Cov_mu_sigma
                 )
 
             def var_v(self, u):  # u is reliability
                 return (
                     dv_da(u, self.mu, self.sigma) ** 2 * self.mu_SE**2
                     + dv_db(u, self.mu, self.sigma) ** 2 * self.sigma_SE**2
-                    + 2
-                    * dv_da(u, self.mu, self.sigma)
-                    * dv_db(u, self.mu, self.sigma)
-                    * self.Cov_mu_sigma
+                    + 2 * dv_da(u, self.mu, self.sigma) * dv_db(u, self.mu, self.sigma) * self.Cov_mu_sigma
                 )
 
             if CI_type == "time":
@@ -3793,9 +3589,7 @@ class distribution_confidence_intervals:
                     if q is not None:
                         Y = q
                     else:
-                        Y = transform_spaced(
-                            "normal", y_lower=1e-8, y_upper=1 - 1e-8, num=points
-                        )
+                        Y = transform_spaced("normal", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
 
                 # v is ln(t)
                 v_lower = v(Y, self.mu, self.sigma) - Z * (var_v(self, Y) ** 0.5)
@@ -3982,8 +3776,7 @@ class distribution_confidence_intervals:
 
         # this determines if the user has specified for the CI bounds to be shown or hidden.
         if (
-            validate_CI_params(self.alpha_SE, self.beta_SE, self.Cov_alpha_beta, self.Z)
-            is True
+            validate_CI_params(self.alpha_SE, self.beta_SE, self.Cov_alpha_beta, self.Z) is True
             and (plot_CI is True or q is not None or x is not None)
             and CI_type is not None
         ):
@@ -4002,13 +3795,9 @@ class distribution_confidence_intervals:
             if func not in ["CDF", "SF", "CHF"]:
                 raise ValueError("func must be either CDF, SF, or CHF")
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError(
-                    "q must be a list or array of quantiles. Default is None"
-                )
+                raise ValueError("q must be a list or array of quantiles. Default is None")
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError(
-                    "x must be a list or array of x-values. Default is None"
-                )
+                raise ValueError("x must be a list or array of x-values. Default is None")
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -4023,13 +3812,7 @@ class distribution_confidence_intervals:
                 if CI_100 % 1 == 0:
                     CI_100 = int(CI_100)
                 # Adds the CI and CI_type to the title
-                text_title = str(
-                    text_title
-                    + "\n"
-                    + str(CI_100)
-                    + "% confidence bounds on "
-                    + CI_type
-                )
+                text_title = str(text_title + "\n" + str(CI_100) + "% confidence bounds on " + CI_type)
                 plt.title(text_title)
                 plt.subplots_adjust(top=0.81)
 
@@ -4037,9 +3820,7 @@ class distribution_confidence_intervals:
                 return beta * (anp.log(t) - anp.log(alpha))  # loglogistic SF linearized
 
             def v(R, alpha, beta):  # v = ln(t)
-                return (1 / beta) * anp.log(1 / R - 1) + anp.log(
-                    alpha
-                )  # loglogistic SF rearranged for t
+                return (1 / beta) * anp.log(1 / R - 1) + anp.log(alpha)  # loglogistic SF rearranged for t
 
             du_da = jac(u, 1)  # derivative wrt alpha (bounds on reliability)
             du_db = jac(u, 2)  # derivative wrt beta (bounds on reliability)
@@ -4050,20 +3831,14 @@ class distribution_confidence_intervals:
                 return (
                     du_da(v, self.alpha, self.beta) ** 2 * self.alpha_SE**2
                     + du_db(v, self.alpha, self.beta) ** 2 * self.beta_SE**2
-                    + 2
-                    * du_da(v, self.alpha, self.beta)
-                    * du_db(v, self.alpha, self.beta)
-                    * self.Cov_alpha_beta
+                    + 2 * du_da(v, self.alpha, self.beta) * du_db(v, self.alpha, self.beta) * self.Cov_alpha_beta
                 )
 
             def var_v(self, u):  # u is reliability
                 return (
                     dv_da(u, self.alpha, self.beta) ** 2 * self.alpha_SE**2
                     + dv_db(u, self.alpha, self.beta) ** 2 * self.beta_SE**2
-                    + 2
-                    * dv_da(u, self.alpha, self.beta)
-                    * dv_db(u, self.alpha, self.beta)
-                    * self.Cov_alpha_beta
+                    + 2 * dv_da(u, self.alpha, self.beta) * dv_db(u, self.alpha, self.beta) * self.Cov_alpha_beta
                 )
 
             if CI_type == "time":  # Confidence bounds on time (in terms of reliability)
@@ -4075,9 +3850,7 @@ class distribution_confidence_intervals:
                     if q is not None:
                         Y = q
                     else:
-                        Y = transform_spaced(
-                            "loglogistic", y_lower=1e-8, y_upper=1 - 1e-8, num=points
-                        )
+                        Y = transform_spaced("loglogistic", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
 
                 # v is ln(t)
                 v_lower = v(Y, self.alpha, self.beta) - Z * (var_v(self, Y) ** 0.5)
@@ -4129,9 +3902,7 @@ class distribution_confidence_intervals:
                 if q is not None:
                     return t_lower, t_upper
 
-            elif (
-                CI_type == "reliability"
-            ):  # Confidence bounds on Reliability (in terms of time)
+            elif CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
                 if x is not None:
                     t = x - self.gamma
                 else:
@@ -4266,8 +4037,7 @@ class distribution_confidence_intervals:
 
         # this determines if the user has specified for the CI bounds to be shown or hidden.
         if (
-            validate_CI_params(self.mu_SE, self.sigma_SE, self.Cov_mu_sigma, self.Z)
-            is True
+            validate_CI_params(self.mu_SE, self.sigma_SE, self.Cov_mu_sigma, self.Z) is True
             and (plot_CI is True or q is not None or x is not None)
             and CI_type is not None
         ):
@@ -4286,13 +4056,9 @@ class distribution_confidence_intervals:
             if func not in ["CDF", "SF", "CHF"]:
                 raise ValueError("func must be either CDF, SF, or CHF")
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError(
-                    "q must be a list or array of quantiles. Default is None"
-                )
+                raise ValueError("q must be a list or array of quantiles. Default is None")
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError(
-                    "x must be a list or array of x-values. Default is None"
-                )
+                raise ValueError("x must be a list or array of x-values. Default is None")
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -4307,13 +4073,7 @@ class distribution_confidence_intervals:
                 if CI_100 % 1 == 0:
                     CI_100 = int(CI_100)
                 # Adds the CI and CI_type to the title
-                text_title = str(
-                    text_title
-                    + "\n"
-                    + str(CI_100)
-                    + "% confidence bounds on "
-                    + CI_type
-                )
+                text_title = str(text_title + "\n" + str(CI_100) + "% confidence bounds on " + CI_type)
                 plt.title(text_title)
                 plt.subplots_adjust(top=0.81)
 
@@ -4333,20 +4093,14 @@ class distribution_confidence_intervals:
                 return (
                     du_da(v, self.mu, self.sigma) ** 2 * self.mu_SE**2
                     + du_db(v, self.mu, self.sigma) ** 2 * self.sigma_SE**2
-                    + 2
-                    * du_da(v, self.mu, self.sigma)
-                    * du_db(v, self.mu, self.sigma)
-                    * self.Cov_mu_sigma
+                    + 2 * du_da(v, self.mu, self.sigma) * du_db(v, self.mu, self.sigma) * self.Cov_mu_sigma
                 )
 
             def var_v(self, u):  # u is reliability
                 return (
                     dv_da(u, self.mu, self.sigma) ** 2 * self.mu_SE**2
                     + dv_db(u, self.mu, self.sigma) ** 2 * self.sigma_SE**2
-                    + 2
-                    * dv_da(u, self.mu, self.sigma)
-                    * dv_db(u, self.mu, self.sigma)
-                    * self.Cov_mu_sigma
+                    + 2 * dv_da(u, self.mu, self.sigma) * dv_db(u, self.mu, self.sigma) * self.Cov_mu_sigma
                 )
 
             if CI_type == "time":  # Confidence bounds on time (in terms of reliability)
@@ -4358,9 +4112,7 @@ class distribution_confidence_intervals:
                     if q is not None:
                         Y = q
                     else:
-                        Y = transform_spaced(
-                            "gumbel", y_lower=1e-8, y_upper=1 - 1e-8, num=points
-                        )
+                        Y = transform_spaced("gumbel", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
 
                 # v is t
                 t_lower = v(Y, self.mu, self.sigma) - Z * (var_v(self, Y) ** 0.5)
@@ -4409,15 +4161,11 @@ class distribution_confidence_intervals:
                 if q is not None:
                     return t_lower, t_upper
 
-            elif (
-                CI_type == "reliability"
-            ):  # Confidence bounds on Reliability (in terms of time)
+            elif CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
                 if x is not None:
                     t = x
                 else:
-                    t = np.linspace(
-                        self.quantile(0.00001), self.quantile(0.99999), points
-                    )
+                    t = np.linspace(self.quantile(0.00001), self.quantile(0.99999), points)
 
                 # u is reliability u = ln(-ln(R))
                 u_lower = u(t, self.mu, self.sigma) + Z * var_u(self, t) ** 0.5
@@ -4473,14 +4221,7 @@ class distribution_confidence_intervals:
 
 
 def linear_regression(
-    x,
-    y,
-    slope=None,
-    x_intercept=None,
-    y_intercept=None,
-    RRX_or_RRY="RRX",
-    show_plot=False,
-    **kwargs
+    x, y, slope=None, x_intercept=None, y_intercept=None, RRX_or_RRY="RRX", show_plot=False, **kwargs
 ):
     """
     This function provides the linear algebra solution to find line of best fit
@@ -4568,13 +4309,9 @@ def linear_regression(
 
     if len(x) < min_pts:
         if slope is not None:
-            err_str = str(
-                "A minimum of 1 point is required to fit the line when the slope is specified."
-            )
+            err_str = str("A minimum of 1 point is required to fit the line when the slope is specified.")
         elif x_intercept is not None and y_intercept is not None:
-            err_str = str(
-                "A minimum of 1 point is required to fit the line when the intercept is specified."
-            )
+            err_str = str("A minimum of 1 point is required to fit the line when the intercept is specified.")
         else:
             err_str = str(
                 "A minimum of 2 points are required to fit the line when slope or intercept are not specified."
@@ -4583,13 +4320,11 @@ def linear_regression(
 
     if RRX_or_RRY == "RRY":
         try:
-            solution = (
-                np.linalg.inv(xx.T.dot(xx)).dot(xx.T).dot(yy)
-            )  # linear regression formula for RRY
+            solution = np.linalg.inv(xx.T.dot(xx)).dot(xx.T).dot(yy)  # linear regression formula for RRY
         except LinAlgError:
             raise RuntimeError(
                 "An error has occurred when attempting to find the initial guess using least squares estimation.\nThis error is caused by a non-invertable matrix.\nThis can occur when there are only two very similar failure times like 10 and 10.000001.\nThere is no solution to this error, other than to use failure times that are more unique."
-            )
+            ) from None
         if y_intercept is not None:
             m = solution[0]
             c = y_intercept
@@ -4601,13 +4336,11 @@ def linear_regression(
             c = solution[1]
     else:  # RRX
         try:
-            solution = (
-                np.linalg.inv(yy.T.dot(yy)).dot(yy.T).dot(xx)
-            )  # linear regression formula for RRX
+            solution = np.linalg.inv(yy.T.dot(yy)).dot(yy.T).dot(xx)  # linear regression formula for RRX
         except LinAlgError:
             raise RuntimeError(
                 "An error has occurred when attempting to find the initial guess using least squares estimation.\nThis error is caused by a non-invertable matrix.\nThis can occur when there are only two very similar failure times like 10 and 10.000001.\nThere is no solution to this error, other than to use failure times that are more unique."
-            )
+            ) from None
         if x_intercept is not None:
             m_x = solution[0]
             m = 1 / m_x
@@ -4631,12 +4364,7 @@ def linear_regression(
         if "label" in kwargs:
             label = kwargs.pop("label")
         else:
-            label = str(
-                "y="
-                + round_and_string(m, 2)
-                + ".x + "
-                + round_and_string(c, 2)
-            )
+            label = str("y=" + round_and_string(m, 2) + ".x + " + round_and_string(c, 2))
         plt.plot(xvals, yvals, label=label, **kwargs)
         plt.xlim(min(x) - delta_x * 0.2, max(x) + delta_x * 0.2)
         plt.ylim(min(y) - delta_y * 0.2, max(y) + delta_y * 0.2)
@@ -4701,15 +4429,13 @@ def least_squares(dist, failures, right_censored, method="RRX", force_shape=None
         "Normal_2P",
         "Lognormal_2P",
     ]:
-        raise ValueError(
-            "force_shape can only be applied to Weibull_2P, Normal_2P, and Lognormal_2P"
-        )
+        raise ValueError("force_shape can only be applied to Weibull_2P, Normal_2P, and Lognormal_2P")
     if method not in ["RRX", "RRY"]:
         raise ValueError('method must be either "RRX" or "RRY". Default is RRX.')
 
     from reliability.Probability_plotting import (
         plotting_positions,
-    )  # this import needs to be here to prevent circular import if it is in the main module
+    )
 
     x, y = plotting_positions(failures=failures, right_censored=right_censored)
     x = np.array(x)
@@ -4725,9 +4451,7 @@ def least_squares(dist, failures, right_censored, method="RRX", force_shape=None
         ylin = np.log(-np.log(1 - y))
         if force_shape is not None and method == "RRX":
             force_shape = 1 / force_shape  # only needs to be inverted for RRX not RRY
-        slope, intercept = linear_regression(
-            xlin, ylin, slope=force_shape, RRX_or_RRY=method
-        )
+        slope, intercept = linear_regression(xlin, ylin, slope=force_shape, RRX_or_RRY=method)
         LS_beta = slope
         LS_alpha = np.exp(-intercept / LS_beta)
         guess = [LS_alpha, LS_beta]
@@ -4792,6 +4516,7 @@ def least_squares(dist, failures, right_censored, method="RRX", force_shape=None
         ylin = -np.log(1 - y)
         slope, _ = linear_regression(xlin, ylin, x_intercept=0, RRX_or_RRY="RRX")
         LS_Lambda = slope
+
         # NLLS for Exponential_2P
         def __exponential_2P_CDF(t, Lambda, gamma):
             return 1 - np.exp(-Lambda * (t - gamma))
@@ -4825,9 +4550,7 @@ def least_squares(dist, failures, right_censored, method="RRX", force_shape=None
         ylin = ss.norm.ppf(y)
         if force_shape is not None and method == "RRY":
             force_shape = 1 / force_shape  # only needs to be inverted for RRY not RRX
-        slope, intercept = linear_regression(
-            x, ylin, slope=force_shape, RRX_or_RRY=method
-        )
+        slope, intercept = linear_regression(x, ylin, slope=force_shape, RRX_or_RRY=method)
         LS_sigma = 1 / slope
         LS_mu = -intercept * LS_sigma
         guess = [LS_mu, LS_sigma]
@@ -4844,9 +4567,7 @@ def least_squares(dist, failures, right_censored, method="RRX", force_shape=None
         ylin = ss.norm.ppf(y)
         if force_shape is not None and method == "RRY":
             force_shape = 1 / force_shape  # only needs to be inverted for RRY not RRX
-        slope, intercept = linear_regression(
-            xlin, ylin, slope=force_shape, RRX_or_RRY=method
-        )
+        slope, intercept = linear_regression(xlin, ylin, slope=force_shape, RRX_or_RRY=method)
         LS_sigma = 1 / slope
         LS_mu = -intercept * LS_sigma
         guess = [LS_mu, LS_sigma]
@@ -5314,9 +5035,7 @@ class LS_optimization:
         LL_func_force=None,
     ):
         if method not in ["RRX", "RRY", "LS", "NLLS"]:
-            raise ValueError(
-                "method must be either RRX, RRY, LS, or NLLS. Default is LS"
-            )
+            raise ValueError("method must be either RRX, RRY, LS, or NLLS. Default is LS")
         if func_name in [
             "Weibull_3P",
             "Gamma_2P",
@@ -5326,9 +5045,7 @@ class LS_optimization:
             "Loglogistic_3P",
             "Exponential_2P",
         ]:
-            guess = least_squares(
-                dist=func_name, failures=failures, right_censored=right_censored
-            )
+            guess = least_squares(dist=func_name, failures=failures, right_censored=right_censored)
             LS_method = "NLLS"
         elif method in ["RRX", "RRY"]:
             guess = least_squares(
@@ -5349,9 +5066,7 @@ class LS_optimization:
                 force_shape=force_shape,
             )
             if force_shape is not None:
-                loglik_RRX = -LL_func_force(
-                    guess_RRX, failures, right_censored, force_shape
-                )
+                loglik_RRX = -LL_func_force(guess_RRX, failures, right_censored, force_shape)
             else:
                 loglik_RRX = -LL_func(guess_RRX, failures, right_censored)
             # RRY
@@ -5363,9 +5078,7 @@ class LS_optimization:
                 force_shape=force_shape,
             )
             if force_shape is not None:
-                loglik_RRY = -LL_func_force(
-                    guess_RRY, failures, right_censored, force_shape
-                )
+                loglik_RRY = -LL_func_force(guess_RRY, failures, right_censored, force_shape)
             else:
                 loglik_RRY = -LL_func(guess_RRY, failures, right_censored)
             # take the best one
@@ -5565,9 +5278,7 @@ class MLE_optimization:
             else:  # this will only be run for Weibull_2P, Normal_2P, and Lognormal_2P so the guess is structured with this in mind
                 bounds = [bounds[0]]
                 guess = [guess[0]]
-                while (
-                    delta_LL > 0.001 and runs < 5
-                ):  # exits after LL convergence or 5 iterations
+                while delta_LL > 0.001 and runs < 5:  # exits after LL convergence or 5 iterations
                     runs += 1
                     result = minimize(
                         value_and_grad(LL_func_force),
@@ -5578,9 +5289,7 @@ class MLE_optimization:
                         bounds=bounds,
                     )
                     guess = result.x
-                    LL2 = 2 * LL_func_force(
-                        guess, failures, right_censored, force_shape
-                    )
+                    LL2 = 2 * LL_func_force(guess, failures, right_censored, force_shape)
                     LL_array.append(np.abs(LL2))
                     delta_LL = abs(LL_array[-1] - LL_array[-2])
                     guess = result.x  # update the guess each iteration
@@ -5617,15 +5326,11 @@ class MLE_optimization:
         elif func_name == "Weibull_ZI":
             bounds = [(0.0001, None), (0.0001, None), (0, 0.99999)]
         else:
-            raise ValueError(
-                'func_name is not recognised. Use the correct name e.g. "Weibull_2P"'
-            )
+            raise ValueError('func_name is not recognised. Use the correct name e.g. "Weibull_2P"')
 
         # determine which optimizers to use
         stop_after_success = False
-        if (
-            optimizer is None
-        ):  # default is to try in this order but stop after one succeeds
+        if optimizer is None:  # default is to try in this order but stop after one succeeds
             optimizers_to_try = ["TNC", "L-BFGS-B", "nelder-mead", "powell"]
             stop_after_success = True
         else:
@@ -5816,9 +5521,7 @@ class MLE_optimization:
                         "Loglogistic_3P",
                         "Lognormal_3P",
                     ]:
-                        self.gamma = params[
-                            2
-                        ]  # gamma for Weibull_3P, Gamma_3P, Loglogistic_3P, Lognormal_3P
+                        self.gamma = params[2]  # gamma for Weibull_3P, Gamma_3P, Loglogistic_3P, Lognormal_3P
                 else:  # this will only be reached for Weibull_2P, Normal_2P and Lognormal_2P so the scale and shape extraction is fine for these
                     self.scale = params[0]
                     self.shape = force_shape
@@ -5981,9 +5684,7 @@ class ALT_MLE_optimization:
             LL_array = [1000000]
             runs = 0
             guess = initial_guess  # set the current guess as the initial guess and then update the current guess each iteration
-            while (
-                delta_LL > 0.001 and runs < 5
-            ):  # exits after BIC convergence or 5 iterations
+            while delta_LL > 0.001 and runs < 5:  # exits after BIC convergence or 5 iterations
                 runs += 1
                 # single stress model
                 if dual_stress is False:
@@ -6077,9 +5778,7 @@ class ALT_MLE_optimization:
             )
 
         if dist not in ["Weibull", "Exponential", "Lognormal", "Normal"]:
-            raise ValueError(
-                "dist must be one of Weibull, Exponential, Lognormal, Normal."
-            )
+            raise ValueError("dist must be one of Weibull, Exponential, Lognormal, Normal.")
 
         # remove the last bound as Exponential does not need a bound for shape
         if dist == "Exponential":
@@ -6092,9 +5791,7 @@ class ALT_MLE_optimization:
 
         # determine which optimizers to use
         stop_after_success = False
-        if (
-            optimizer is None
-        ):  # default is to try in this order but stop after one succeeds
+        if optimizer is None:  # default is to try in this order but stop after one succeeds
             optimizers_to_try = ["TNC", "L-BFGS-B", "nelder-mead", "powell"]
             stop_after_success = True
         else:
@@ -6430,9 +6127,7 @@ class make_fitted_dist_params_for_ALT_probplots:
             self.Lambda_SE = None
             self.gamma = 0
         else:
-            raise ValueError(
-                "dist must be one of Weibull, Normal, Lognormal, Exponential"
-            )
+            raise ValueError("dist must be one of Weibull, Normal, Lognormal, Exponential")
 
 
 def ALT_prob_plot(
@@ -6495,31 +6190,29 @@ def ALT_prob_plot(
         from reliability.Probability_plotting import plotting_positions
 
         if dist == "Weibull":
+            from reliability.Distributions import Weibull_Distribution as Distribution
             from reliability.Probability_plotting import (
                 Weibull_probability_plot as probplot,
             )
-            from reliability.Distributions import Weibull_Distribution as Distribution
         elif dist == "Lognormal":
+            from reliability.Distributions import Lognormal_Distribution as Distribution
             from reliability.Probability_plotting import (
                 Lognormal_probability_plot as probplot,
             )
-            from reliability.Distributions import Lognormal_Distribution as Distribution
         elif dist == "Normal":
+            from reliability.Distributions import Normal_Distribution as Distribution
             from reliability.Probability_plotting import (
                 Normal_probability_plot as probplot,
             )
-            from reliability.Distributions import Normal_Distribution as Distribution
         elif dist == "Exponential":
-            from reliability.Probability_plotting import (
-                Exponential_probability_plot_Weibull_Scale as probplot,
-            )
             from reliability.Distributions import (
                 Exponential_Distribution as Distribution,
             )
-        else:
-            raise ValueError(
-                "dist must be either Weibull, Lognormal, Normal, Exponential"
+            from reliability.Probability_plotting import (
+                Exponential_probability_plot_Weibull_Scale as probplot,
             )
+        else:
+            raise ValueError("dist must be either Weibull, Lognormal, Normal, Exponential")
 
         if model in ["Dual_Exponential", "Power_Exponential", "Dual_Power"]:
             dual_stress = True
@@ -6530,9 +6223,7 @@ def ALT_prob_plot(
                 "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power"
             )
 
-        color_cycle = plt.rcParams["axes.prop_cycle"].by_key()[
-            "color"
-        ]  # gets the default color cycle
+        color_cycle = plt.rcParams["axes.prop_cycle"].by_key()["color"]  # gets the default color cycle
         x_array = []
         y_array = []
         if dual_stress is True:
@@ -6555,23 +6246,17 @@ def ALT_prob_plot(
                     right_censored=rc,
                     __fitted_dist_params=fitted_dist_params,
                     color=color_cycle[i],
-                    label=str(
-                        round_and_string(stress[0])
-                        + ", "
-                        + round_and_string(stress[1])
-                    ),
+                    label=str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])),
                 )
                 # plot the original fitted line
                 if dist == "Exponential":
                     if scale_for_change_df[i] != "":
-                        Distribution(1 / scale_for_change_df[i]).CDF(
-                            linestyle="--", alpha=0.5, color=color_cycle[i]
-                        )
+                        Distribution(1 / scale_for_change_df[i]).CDF(linestyle="--", alpha=0.5, color=color_cycle[i])
                 else:
                     if scale_for_change_df[i] != "":
-                        Distribution(
-                            scale_for_change_df[i], shape_for_change_df[i]
-                        ).CDF(linestyle="--", alpha=0.5, color=color_cycle[i])
+                        Distribution(scale_for_change_df[i], shape_for_change_df[i]).CDF(
+                            linestyle="--", alpha=0.5, color=color_cycle[i]
+                        )
 
             if use_level_stress is not None:
                 if dist in ["Weibull", "Normal"]:
@@ -6580,9 +6265,7 @@ def ALT_prob_plot(
                     )
                 elif dist == "Lognormal":
                     distribution_at_use_stress = Distribution(
-                        np.log(
-                            life_func(S1=use_level_stress[0], S2=use_level_stress[1])
-                        ),
+                        np.log(life_func(S1=use_level_stress[0], S2=use_level_stress[1])),
                         shape,
                     )
                 elif dist == "Exponential":
@@ -6632,33 +6315,23 @@ def ALT_prob_plot(
                 # plot the original fitted line
                 if dist == "Exponential":
                     if scale_for_change_df[i] != "":
-                        Distribution(1 / scale_for_change_df[i]).CDF(
-                            linestyle="--", alpha=0.5, color=color_cycle[i]
-                        )
+                        Distribution(1 / scale_for_change_df[i]).CDF(linestyle="--", alpha=0.5, color=color_cycle[i])
                 else:
                     if scale_for_change_df[i] != "":
-                        Distribution(
-                            scale_for_change_df[i], shape_for_change_df[i]
-                        ).CDF(linestyle="--", alpha=0.5, color=color_cycle[i])
+                        Distribution(scale_for_change_df[i], shape_for_change_df[i]).CDF(
+                            linestyle="--", alpha=0.5, color=color_cycle[i]
+                        )
 
             if use_level_stress is not None:
                 if dist in ["Weibull", "Normal"]:
-                    distribution_at_use_stress = Distribution(
-                        life_func(S1=use_level_stress), shape
-                    )
+                    distribution_at_use_stress = Distribution(life_func(S1=use_level_stress), shape)
                 elif dist == "Lognormal":
-                    distribution_at_use_stress = Distribution(
-                        np.log(life_func(S1=use_level_stress)), shape
-                    )
+                    distribution_at_use_stress = Distribution(np.log(life_func(S1=use_level_stress)), shape)
                 elif dist == "Exponential":
-                    distribution_at_use_stress = Distribution(
-                        1 / life_func(S1=use_level_stress)
-                    )
+                    distribution_at_use_stress = Distribution(1 / life_func(S1=use_level_stress))
                 distribution_at_use_stress.CDF(
                     color=color_cycle[i + 1],
-                    label=str(
-                        round_and_string(use_level_stress) + " (use stress)"
-                    ),
+                    label=str(round_and_string(use_level_stress) + " (use stress)"),
                 )
                 x_array.extend(
                     [
@@ -6721,7 +6394,20 @@ def life_stress_plot(
         The axes handle of the plot. If ax is specified in the inputs then this
         will be the same handle.
     """
-    if ax in ['swap','swapped','flip','flipped','SWAP','SWAPPED','FLIP','FLIPPED','Swap','Swapped','Flip','Flipped']:
+    if ax in [
+        "swap",
+        "swapped",
+        "flip",
+        "flipped",
+        "SWAP",
+        "SWAPPED",
+        "FLIP",
+        "FLIPPED",
+        "Swap",
+        "Swapped",
+        "Flip",
+        "Flipped",
+    ]:
         ax = True
         swap_xy = True
     else:
@@ -6762,9 +6448,7 @@ def life_stress_plot(
             if dual_stress is True:
                 ax = fig.add_subplot(111, projection="3d")
 
-        color_cycle = plt.rcParams["axes.prop_cycle"].by_key()[
-            "color"
-        ]  # gets the default color cycle
+        color_cycle = plt.rcParams["axes.prop_cycle"].by_key()["color"]  # gets the default color cycle
 
         if dist == "Weibull":
             line_label = r"$\alpha$"
@@ -6775,9 +6459,7 @@ def life_stress_plot(
         elif dist == "Exponential":
             line_label = r"$1/\lambda$"
         else:
-            raise ValueError(
-                "dist must be either Weibull, Lognormal, Normal, Exponential"
-            )
+            raise ValueError("dist must be either Weibull, Lognormal, Normal, Exponential")
 
         if dual_stress is True:
             # collect all the stresses so we can find their min and max
@@ -6796,18 +6478,10 @@ def life_stress_plot(
             # find the upper and lower limits so we can generate the grid of points for the surface
             stress_1_delta_log = np.log(max_stress_1) - np.log(min_stress_1)
             stress_2_delta_log = np.log(max_stress_2) - np.log(min_stress_2)
-            stress_1_array_lower = np.exp(
-                np.log(min_stress_1) - stress_1_delta_log * 0.2
-            )
-            stress_2_array_lower = np.exp(
-                np.log(min_stress_2) - stress_2_delta_log * 0.2
-            )
-            stress_1_array_upper = np.exp(
-                np.log(max_stress_1) + stress_1_delta_log * 0.2
-            )
-            stress_2_array_upper = np.exp(
-                np.log(max_stress_2) + stress_2_delta_log * 0.2
-            )
+            stress_1_array_lower = np.exp(np.log(min_stress_1) - stress_1_delta_log * 0.2)
+            stress_2_array_lower = np.exp(np.log(min_stress_2) - stress_2_delta_log * 0.2)
+            stress_1_array_upper = np.exp(np.log(max_stress_1) + stress_1_delta_log * 0.2)
+            stress_2_array_upper = np.exp(np.log(max_stress_2) + stress_2_delta_log * 0.2)
             stress_1_array = np.linspace(stress_1_array_lower, stress_1_array_upper, 50)
             stress_2_array = np.linspace(stress_2_array_lower, stress_2_array_upper, 50)
             X, Y = np.meshgrid(stress_1_array, stress_2_array)
@@ -6834,10 +6508,7 @@ def life_stress_plot(
                     color=color_cycle[i],
                     s=30,
                     label=str(
-                        "Failures at stress of "
-                        + round_and_string(stress[0])
-                        + ", "
-                        + round_and_string(stress[1])
+                        "Failures at stress of " + round_and_string(stress[0]) + ", " + round_and_string(stress[1])
                     ),
                     zorder=1,
                 )
@@ -6908,9 +6579,7 @@ def life_stress_plot(
                         stress_points,
                         color=color_cycle[i],
                         alpha=0.7,
-                        label=str(
-                            "Failures at stress of " + round_and_string(stress)
-                        ),
+                        label=str("Failures at stress of " + round_and_string(stress)),
                     )
                 else:
                     plt.scatter(
@@ -6918,9 +6587,7 @@ def life_stress_plot(
                         failure_points,
                         color=color_cycle[i],
                         alpha=0.7,
-                        label=str(
-                            "Failures at stress of " + round_and_string(stress)
-                        ),
+                        label=str("Failures at stress of " + round_and_string(stress)),
                     )
             if use_level_stress is not None:
                 alpha_at_use_stress = life_func(S1=use_level_stress)
@@ -6928,37 +6595,29 @@ def life_stress_plot(
                     plt.plot(
                         [-1e20, alpha_at_use_stress, alpha_at_use_stress],
                         [use_level_stress, use_level_stress, plt.xlim()[0]],
-                        label=str(
-                            "Use stress of " + round_and_string(use_level_stress)
-                        ),
+                        label=str("Use stress of " + round_and_string(use_level_stress)),
                         color=color_cycle[i + 1],
                     )
                 else:
                     plt.plot(
                         [use_level_stress, use_level_stress, plt.xlim()[0]],
                         [-1e20, alpha_at_use_stress, alpha_at_use_stress],
-                        label=str(
-                            "Use stress of " + round_and_string(use_level_stress)
-                        ),
+                        label=str("Use stress of " + round_and_string(use_level_stress)),
                         color=color_cycle[i + 1],
                     )
             # this is a list comprehension to flatten the list of lists. np.ravel won't work here
-            flattened_failure_groups = [
-                item for sublist in failure_groups for item in sublist
-            ]
+            flattened_failure_groups = [item for sublist in failure_groups for item in sublist]
             if swap_xy is True:
                 plt.xlim(
                     0,
-                    1.2
-                    * max(life_func(S1=stress_array_lower), max(flattened_failure_groups)),
+                    1.2 * max(life_func(S1=stress_array_lower), max(flattened_failure_groups)),
                 )
                 plt.ylim(stress_array_lower, stress_array_upper)
                 plt.title("Stress-life plot\n" + dist + "-" + model + " model")
             else:
                 plt.ylim(
                     0,
-                    1.2
-                    * max(life_func(S1=stress_array_lower), max(flattened_failure_groups)),
+                    1.2 * max(life_func(S1=stress_array_lower), max(flattened_failure_groups)),
                 )
                 plt.xlim(stress_array_lower, stress_array_upper)
                 plt.title("Life-stress plot\n" + dist + "-" + model + " model")
@@ -7018,9 +6677,7 @@ def xy_downsample(x, y, downsample_factor=None, default_max_values=1000):
         if len_x / downsample_factor < 2:
             return x, y
         else:
-            indices = np.arange(
-                start=0, stop=len_x, step=int(np.floor(downsample_factor)), dtype=int
-            )
+            indices = np.arange(start=0, stop=len_x, step=int(np.floor(downsample_factor)), dtype=int)
 
             if len_x - 1 not in indices:
                 indices[-1] = len_x - 1
@@ -7149,11 +6806,7 @@ def distributions_input_checking(
         )
 
     # default values
-    if (
-        xmin is None
-        and xmax is None
-        and type(xvals) not in [list, np.ndarray, type(None)]
-    ):
+    if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
         X = xvals
         show_plot = False
     else:
@@ -7170,10 +6823,7 @@ def distributions_input_checking(
     if show_plot is None:
         show_plot = True
 
-    if plot_CI is None:
-        plot_CI == True
-
-    no_CI_array = ['None','NONE','none','OFF','Off','off']
+    no_CI_array = ["None", "NONE", "none", "OFF", "Off", "off"]
     if self.name == "Exponential":
         if CI_type not in no_CI_array and CI_type is not None:
             colorprint(
@@ -7197,7 +6847,7 @@ def distributions_input_checking(
         elif CI_type in no_CI_array:
             CI_type = None
 
-        if type(CI_type) == str:
+        if isinstance(CI_type, str):
             if CI_type.upper() in ["T", "TIME"]:
                 CI_type = "time"
             elif CI_type.upper() in ["R", "REL", "RELIABILITY"]:
@@ -7300,9 +6950,7 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
 
     if dist.name == "Exponential":
         if CI_y is not None and CI_x is not None:
-            raise ValueError(
-                "Both CI_x and CI_y have been provided. Please provide only one."
-            )
+            raise ValueError("Both CI_x and CI_y have been provided. Please provide only one.")
         if CI_y is not None:
             if func == "SF":
                 q = np.asarray(CI_y)
@@ -7312,14 +6960,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                 q = np.exp(-np.asarray(CI_y))
             else:
                 raise ValueError("func must be CDF, SF, or CHF")
-            SF_time = distribution_confidence_intervals.exponential_CI(
-                self=dist, CI=CI, q=q
-            )
+            SF_time = distribution_confidence_intervals.exponential_CI(self=dist, CI=CI, q=q)
             lower, upper = SF_time[0], SF_time[1]
         elif CI_x is not None:
-            SF_rel = distribution_confidence_intervals.exponential_CI(
-                self=dist, CI=CI, x=CI_x
-            )
+            SF_rel = distribution_confidence_intervals.exponential_CI(self=dist, CI=CI, x=CI_x)
             if func == "SF":
                 lower, upper = SF_rel[1], SF_rel[0]
             elif func == "CDF":
@@ -7332,9 +6976,7 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
             lower, upper = None, None
     else:
         if CI_y is not None and CI_x is not None:
-            raise ValueError(
-                "Both CI_x and CI_y have been provided. Please provide only one."
-            )
+            raise ValueError("Both CI_x and CI_y have been provided. Please provide only one.")
         if CI_x is not None and CI_y is None and CI_type == "time":
             colorprint(
                 'WARNING: If CI_type="time" then CI_y must be specified in order to extract the confidence bounds on time.',
@@ -7347,9 +6989,7 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                 text_color="red",
             )
             lower, upper = None, None
-        elif (CI_y is not None and CI_type == "time") or (
-            CI_x is not None and CI_type == "reliability"
-        ):
+        elif (CI_y is not None and CI_type == "time") or (CI_x is not None and CI_type == "reliability"):
             if CI_type == "time":
                 if func == "SF":
                     q = np.asarray(CI_y)
@@ -7361,9 +7001,7 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                     raise ValueError("func must be CDF, SF, or CHF")
             if dist.name == "Weibull":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.weibull_CI(
-                        self=dist, CI_type="time", CI=CI, q=q
-                    )
+                    SF_time = distribution_confidence_intervals.weibull_CI(self=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.weibull_CI(
@@ -7377,9 +7015,7 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
             elif dist.name == "Normal":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.normal_CI(
-                        self=dist, CI_type="time", CI=CI, q=q
-                    )
+                    SF_time = distribution_confidence_intervals.normal_CI(self=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.normal_CI(
@@ -7393,9 +7029,7 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[0]), -np.log(SF_rel[1])
             elif dist.name == "Lognormal":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.lognormal_CI(
-                        self=dist, CI_type="time", CI=CI, q=q
-                    )
+                    SF_time = distribution_confidence_intervals.lognormal_CI(self=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.lognormal_CI(
@@ -7409,14 +7043,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[0]), -np.log(SF_rel[1])
             elif dist.name == "Gamma":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.gamma_CI(
-                        self=dist, CI_type="time", CI=CI, q=q
-                    )
+                    SF_time = distribution_confidence_intervals.gamma_CI(self=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
-                    SF_rel = distribution_confidence_intervals.gamma_CI(
-                        self=dist, CI_type="reliability", CI=CI, x=CI_x
-                    )
+                    SF_rel = distribution_confidence_intervals.gamma_CI(self=dist, CI_type="reliability", CI=CI, x=CI_x)
                     if func == "SF":
                         lower, upper = SF_rel[0], SF_rel[1]
                     elif func == "CDF":
@@ -7425,9 +7055,7 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
             elif dist.name == "Gumbel":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.gumbel_CI(
-                        self=dist, CI_type="time", CI=CI, q=q
-                    )
+                    SF_time = distribution_confidence_intervals.gumbel_CI(self=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.gumbel_CI(
@@ -7441,9 +7069,7 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
             elif dist.name == "Loglogistic":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.loglogistic_CI(
-                        self=dist, CI_type="time", CI=CI, q=q
-                    )
+                    SF_time = distribution_confidence_intervals.loglogistic_CI(self=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.loglogistic_CI(
@@ -7509,7 +7135,6 @@ def reshow_figure(handle):
     None
         The figure is automatically shown using plt.show().
     """
-    type(ax) == _axes.Axes
     if type(handle) is not Figure and type(handle) != _axes.Axes:
         # check that the handle is either an axes or a figure
         raise ValueError("handle must be an axes handle or a figure handle")

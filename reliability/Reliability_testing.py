@@ -83,16 +83,16 @@ def one_sample_proportion(trials=None, successes=None, CI=0.95, print_results=Tr
     """
     if trials is None or successes is None:
         raise ValueError("You must specify the number of trials and successes.")
+    if not isinstance(trials, int):
+        raise ValueError("trials must be an integer")
+    if not isinstance(successes, int) is not int:
+        raise ValueError("successes must be an integer")
     if successes > trials:
         raise ValueError("successes cannot be greater than trials")
     if successes == 0 or successes == trials:  # calculate 1 sided CI in these cases
         n = 1
     else:
         n = 2
-    if not isinstance(trials, int):
-        raise ValueError("trials must be an integer")
-    if not isinstance(successes, int) is not int:
-        raise ValueError("successes must be an integer")
 
     V1_lower = 2 * successes
     V2_lower = 2 * (trials - successes + 1)

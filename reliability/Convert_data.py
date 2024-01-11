@@ -90,7 +90,7 @@ class xlsx_to_XCN:
         failure_code_in_xlsx=None,
         censor_code_in_XCN="C",
         failure_code_in_XCN="F",
-        **kwargs
+        **kwargs,
     ):
         df = pd.read_excel(io=path, **kwargs)
         cols = df.columns
@@ -248,9 +248,9 @@ class xlsx_to_FR:
             f, rc = list(self.failures), list(self.right_censored)
             len_f, len_rc = len(f), len(rc)
             max_len = max(len_f, len_rc)
-            if not max_len == len_f:
+            if max_len != len_f:
                 f.extend([""] * (max_len - len_f))
-            if not max_len == len_rc:
+            if max_len != len_rc:
                 rc.extend([""] * (max_len - len_rc))
             Data = {"failures": f, "right censored": rc}
             self.__df = pd.DataFrame(Data, columns=["failures", "right censored"])
@@ -373,10 +373,10 @@ class xlsx_to_FNRN:
             )
             len_f, len_rc = len(f), len(rc)
             max_len = max(len_f, len_rc)
-            if not max_len == len_f:
+            if max_len != len_f:
                 f.extend([""] * (max_len - len_f))
                 nf.extend([""] * (max_len - len_f))
-            if not max_len == len_rc:
+            if max_len != len_rc:
                 rc.extend([""] * (max_len - len_rc))
                 nrc.extend([""] * (max_len - len_rc))
             Data = {
@@ -496,10 +496,10 @@ class XCN_to_FNRN:
             )
             len_f, len_rc = len(f), len(rc)
             max_len = max(len_f, len_rc)
-            if not max_len == len_f:
+            if max_len != len_f:
                 f.extend([""] * (max_len - len_f))
                 nf.extend([""] * (max_len - len_f))
-            if not max_len == len_rc:
+            if max_len != len_rc:
                 rc.extend([""] * (max_len - len_rc))
                 nrc.extend([""] * (max_len - len_rc))
             Data = {
@@ -679,9 +679,9 @@ class XCN_to_FR:
             f, rc = list(self.failures), list(self.right_censored)
             len_f, len_rc = len(f), len(rc)
             max_len = max(len_f, len_rc)
-            if not max_len == len_f:
+            if max_len != len_f:
                 f.extend([""] * (max_len - len_f))
-            if not max_len == len_rc:
+            if max_len != len_rc:
                 rc.extend([""] * (max_len - len_rc))
             Data = {"failures": f, "right censored": rc}
             self.__df = pd.DataFrame(Data, columns=["failures", "right censored"])
@@ -1002,10 +1002,10 @@ class FR_to_FNRN:
             )
             len_f, len_rc = len(f), len(rc)
             max_len = max(len_f, len_rc)
-            if not max_len == len_f:
+            if max_len != len_f:
                 f.extend([""] * (max_len - len_f))
                 nf.extend([""] * (max_len - len_f))
-            if not max_len == len_rc:
+            if max_len != len_rc:
                 rc.extend([""] * (max_len - len_rc))
                 nrc.extend([""] * (max_len - len_rc))
             Data = {
@@ -1129,9 +1129,9 @@ class FNRN_to_FR:
             f, rc = list(self.failures), list(self.right_censored)
             len_f, len_rc = len(f), len(rc)
             max_len = max(len_f, len_rc)
-            if not max_len == len_f:
+            if max_len != len_f:
                 f.extend([""] * (max_len - len_f))
-            if not max_len == len_rc:
+            if max_len != len_rc:
                 rc.extend([""] * (max_len - len_rc))
             Data = {"failures": f, "right censored": rc}
             self.__df = pd.DataFrame(Data, columns=["failures", "right censored"])

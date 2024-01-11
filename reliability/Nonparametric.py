@@ -109,7 +109,7 @@ class KaplanMeier:
         plot_CI=True,
         CI=0.95,
         plot_type="SF",
-        **kwargs
+        **kwargs,
     ):
         np.seterr(divide="ignore")  # divide by zero occurs if last detapoint is a failure so risk set is zero
 
@@ -164,10 +164,9 @@ class KaplanMeier:
                 frac.append(1 / ((risk_set) * (risk_set - 1)))
                 sumfrac = sum(frac)
                 R2 = KM[i - 1] ** 2
-                if R2 > 0:  # required if the last piece of data is a failure
-                    delta = ((sumfrac * R2) ** 0.5) * z
-                else:
-                    delta = 0
+                delta = (
+                    (((sumfrac * R2) ** 0.5) * z) if R2 > 0 else 0
+                )  # required if the last piece of data is a failure
             KM_upper.append(KM[i - 1] + delta)
             KM_lower.append(KM[i - 1] - delta)
         KM_lower = np.array(KM_lower)
@@ -413,7 +412,7 @@ class NelsonAalen:
         plot_CI=True,
         CI=0.95,
         plot_type="SF",
-        **kwargs
+        **kwargs,
     ):
         np.seterr(divide="ignore")  # divide by zero occurs if last detapoint is a failure so risk set is zero
 
@@ -470,10 +469,9 @@ class NelsonAalen:
                 frac.append(1 / ((risk_set) * (risk_set - 1)))
                 sumfrac = sum(frac)
                 R2 = NA[i - 1] ** 2
-                if R2 > 0:  # required if the last piece of data is a failure
-                    delta = ((sumfrac * R2) ** 0.5) * z
-                else:
-                    delta = 0
+                delta = (
+                    (((sumfrac * R2) ** 0.5) * z) if R2 > 0 else 0
+                )  # required if the last piece of data is a failure
             NA_upper.append(NA[i - 1] + delta)
             NA_lower.append(NA[i - 1] - delta)
         NA_lower = np.array(NA_lower)
@@ -729,7 +727,7 @@ class RankAdjustment:
         plot_CI=True,
         CI=0.95,
         plot_type="SF",
-        **kwargs
+        **kwargs,
     ):
         if failures is None:
             raise ValueError("failures must be provided to calculate non-parametric estimates.")
@@ -805,10 +803,9 @@ class RankAdjustment:
                 frac.append(1 / ((risk_set) * (risk_set - 1)))
                 sumfrac = sum(frac)
                 R2 = RA[i - 1] ** 2
-                if R2 > 0:  # required if the last piece of data is a failure
-                    delta = ((sumfrac * R2) ** 0.5) * z
-                else:
-                    delta = 0
+                delta = (
+                    (((sumfrac * R2) ** 0.5) * z) if R2 > 0 else 0
+                )  # required if the last piece of data is a failure
             RA_upper.append(RA[i - 1] + delta)
             RA_lower.append(RA[i - 1] - delta)
         RA_lower = np.array(RA_lower)

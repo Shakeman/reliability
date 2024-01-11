@@ -266,18 +266,14 @@ def Weibull_probability_plot(
             text_color="red",
         )
 
-    if "color" in kwargs:
-        data_color = kwargs.get("color")
-    else:
-        data_color = "k"
+    data_color = kwargs.get("color") if "color" in kwargs else "k"
     xlabel = "Time"  # this will be overridden if gamma is fitted
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
-        if __fitted_dist_params is not None:
-            if __fitted_dist_params.gamma > 0:
-                fit_gamma = True
+        if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
+            fit_gamma = True
 
         if fit_gamma is False:
             if __fitted_dist_params is not None:
@@ -481,18 +477,14 @@ def Loglogistic_probability_plot(
             text_color="red",
         )
 
-    if "color" in kwargs:
-        data_color = kwargs.get("color")
-    else:
-        data_color = "k"
+    data_color = kwargs.get("color") if "color" in kwargs else "k"
     xlabel = "Time"  # this will be overridden if gamma is fitted
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
-        if __fitted_dist_params is not None:
-            if __fitted_dist_params.gamma > 0:
-                fit_gamma = True
+        if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
+            fit_gamma = True
 
         if fit_gamma is False:
             if __fitted_dist_params is not None:
@@ -708,18 +700,14 @@ def Exponential_probability_plot_Weibull_Scale(
             text_color="red",
         )
 
-    if "color" in kwargs:
-        data_color = kwargs.get("color")
-    else:
-        data_color = "k"
+    data_color = kwargs.get("color") if "color" in kwargs else "k"
     xlabel = "Time"  # this will be overridden if gamma is fitted
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
-        if __fitted_dist_params is not None:
-            if __fitted_dist_params.gamma > 0:
-                fit_gamma = True
+        if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
+            fit_gamma = True
 
         if fit_gamma is False:
             if __fitted_dist_params is not None:
@@ -892,10 +880,7 @@ def Gumbel_probability_plot(
             raise ValueError("right_censored must be a list or an array")
         right_censored = np.asarray(right_censored)
 
-    if "color" in kwargs:
-        data_color = kwargs.get("color")
-    else:
-        data_color = "k"
+    data_color = kwargs.get("color") if "color" in kwargs else "k"
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
@@ -1046,10 +1031,7 @@ def Normal_probability_plot(
             raise ValueError("right_censored must be a list or an array")
         right_censored = np.asarray(right_censored)
 
-    if "color" in kwargs:
-        data_color = kwargs.get("color")
-    else:
-        data_color = "k"
+    data_color = kwargs.get("color") if "color" in kwargs else "k"
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
@@ -1211,18 +1193,14 @@ def Lognormal_probability_plot(
             text_color="red",
         )
 
-    if "color" in kwargs:
-        data_color = kwargs.get("color")
-    else:
-        data_color = "k"
+    data_color = kwargs.get("color") if "color" in kwargs else "k"
     xlabel = "Time"  # this will be overridden if gamma is fitted
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
-        if __fitted_dist_params is not None:
-            if __fitted_dist_params.gamma > 0:
-                fit_gamma = True
+        if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
+            fit_gamma = True
 
         if fit_gamma is False:
             if __fitted_dist_params is not None:
@@ -1412,10 +1390,7 @@ def Beta_probability_plot(
             raise ValueError("right_censored must be a list or an array")
         right_censored = np.asarray(right_censored)
 
-    if "color" in kwargs:
-        data_color = kwargs.get("color")
-    else:
-        data_color = "k"
+    data_color = kwargs.get("color") if "color" in kwargs else "k"
 
     # We can't skip fitting when show_fitted_distribution = False because the axes scaling needs alpha and beta
     if CI <= 0 or CI >= 1:
@@ -1573,19 +1548,15 @@ def Gamma_probability_plot(
             text_color="red",
         )
 
-    if "color" in kwargs:
-        data_color = kwargs.get("color")
-    else:
-        data_color = "k"
+    data_color = kwargs.get("color") if "color" in kwargs else "k"
     xlabel = "Time"  # this will be overridden if gamma is fitted
 
     # We can't skip fitting when show_fitted_distribution = False because the axes scaling needs beta
     if CI <= 0 or CI >= 1:
         raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
-    if __fitted_dist_params is not None:
-        if __fitted_dist_params.gamma > 0:
-            fit_gamma = True
+    if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
+        fit_gamma = True
 
     if fit_gamma is False:
         if __fitted_dist_params is not None:
@@ -1802,18 +1773,14 @@ def Exponential_probability_plot(
             text_color="red",
         )
 
-    if "color" in kwargs:
-        data_color = kwargs.get("color")
-    else:
-        data_color = "k"
+    data_color = kwargs.get("color") if "color" in kwargs else "k"
     xlabel = "Time"  # this will be overridden if gamma is fitted
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
-        if __fitted_dist_params is not None:
-            if __fitted_dist_params.gamma > 0:
-                fit_gamma = True
+        if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
+            fit_gamma = True
 
         if fit_gamma is False:
             if __fitted_dist_params is not None:
@@ -1982,14 +1949,8 @@ def PP_plot_parametric(
         )
 
     # extract certain keyword arguments or specify them if they are not set
-    if "color" in kwargs:
-        color = kwargs.pop("color")
-    else:
-        color = "k"
-    if "marker" in kwargs:
-        marker = kwargs.pop("marker")
-    else:
-        marker = "."
+    color = kwargs.pop("color") if "color" in kwargs else "k"
+    marker = kwargs.pop("marker") if "marker" in kwargs else "."
 
     # generate plotting limits and create the PP_plot line
     dist_X_b01 = X_dist.quantile(0.01)
@@ -2134,14 +2095,8 @@ def QQ_plot_parametric(
     xvals = np.linspace(0.01, 0.99, 100)
 
     # extract certain keyword arguments or specify them if they are not set
-    if "color" in kwargs:
-        color = kwargs.pop("color")
-    else:
-        color = "k"
-    if "marker" in kwargs:
-        marker = kwargs.pop("marker")
-    else:
-        marker = "."
+    color = kwargs.pop("color") if "color" in kwargs else "k"
+    marker = kwargs.pop("marker") if "marker" in kwargs else "."
     # calculate the failure times at the given quantiles
     dist_X_ISF = []
     dist_Y_ISF = []
@@ -2307,18 +2262,9 @@ def PP_plot_semiparametric(
     else:
         raise ValueError("X_data_right_censored must be an array or list")
     # extract certain keyword arguments or specify them if they are not set
-    if "a" in kwargs:  # rank adjustment heuristic
-        a = kwargs.pop("a")
-    else:
-        a = None
-    if "color" in kwargs:
-        color = kwargs.pop("color")
-    else:
-        color = "k"
-    if "marker" in kwargs:
-        marker = kwargs.pop("marker")
-    else:
-        marker = "."
+    a = kwargs.pop("a") if "a" in kwargs else None  # rank adjustment heuristic
+    color = kwargs.pop("color") if "color" in kwargs else "k"
+    marker = kwargs.pop("marker") if "marker" in kwargs else "."
     if method == "KM":
         KM = KaplanMeier(
             failures=X_data_failures,
@@ -2488,19 +2434,10 @@ def QQ_plot_semiparametric(
         pass
     else:
         raise ValueError("X_data_right_censored must be an array or list")
-    if "a" in kwargs:  # rank adjustment heuristic
-        a = kwargs.pop("a")
-    else:
-        a = None
+    a = kwargs.pop("a") if "a" in kwargs else None  # rank adjustment heuristic
     # extract certain keyword arguments or specify them if they are not set
-    if "color" in kwargs:
-        color = kwargs.pop("color")
-    else:
-        color = "k"
-    if "marker" in kwargs:
-        marker = kwargs.pop("marker")
-    else:
-        marker = "."
+    color = kwargs.pop("color") if "color" in kwargs else "k"
+    marker = kwargs.pop("marker") if "marker" in kwargs else "."
 
     if method == "KM":
         KM = KaplanMeier(
@@ -2681,14 +2618,8 @@ def plot_points(failures=None, right_censored=None, func="CDF", a=None, downsamp
         raise ValueError("func must be either PDF, CDF, SF, HF, or CHF. Default is CDF")
 
     # set plotting defaults for keywords
-    if "color" in kwargs:
-        color = kwargs.pop("color")
-    else:
-        color = "k"
-    if "marker" in kwargs:
-        marker = kwargs.pop("marker")
-    else:
-        marker = "."
+    color = kwargs.pop("color") if "color" in kwargs else "k"
+    marker = kwargs.pop("marker") if "marker" in kwargs else "."
 
     # check the previous axes limits
     # this checks if there was a previous plot. If the lims were 0,1 and 0,1 then there probably wasn't.

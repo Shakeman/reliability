@@ -198,14 +198,8 @@ class reliability_growth:
                 MTBF = b * x_array**self.Alpha
 
             # kwargs handling
-            if "color" in kwargs:
-                c = kwargs.pop("color")
-            else:
-                c = "steelblue"
-            if "marker" in kwargs:
-                marker = kwargs.pop("marker")
-            else:
-                marker = "o"
+            c = kwargs.pop("color") if "color" in kwargs else "steelblue"
+            marker = kwargs.pop("marker") if "marker" in kwargs else "o"
             if "label" in kwargs:
                 label = kwargs.pop("label")
             else:
@@ -228,10 +222,7 @@ class reliability_growth:
                     for item in leg.texts:
                         if item._text == "Target MTBF":
                             target_plotted = True
-                    if target_plotted is True:
-                        target_label = None
-                    else:
-                        target_label = "Target MTBF"
+                    target_label = None if target_plotted is True else "Target MTBF"
                 else:
                     target_label = "Target MTBF"
                 # plot the red line tracing the target MTBF
@@ -327,10 +318,7 @@ class optimal_replacement_time:
         q=0,
         **kwargs,
     ):
-        if "color" in kwargs:
-            c = kwargs.pop("color")
-        else:
-            c = "steelblue"
+        c = kwargs.pop("color") if "color" in kwargs else "steelblue"
         if cost_PM > cost_CM:
             raise ValueError(
                 "Cost_PM must be less than Cost_CM otherwise preventative maintenance should not be conducted."
@@ -582,14 +570,8 @@ class ROCOF:
             if tn < sum(ti):
                 raise ValueError("test_end cannot be less than the final test time")
 
-        if "linestyle" in kwargs:
-            ls = kwargs.pop("linestyle")
-        else:
-            ls = "--"
-        if "label" in kwargs:
-            label_1 = kwargs.pop("label")
-        else:
-            label_1 = "Failure interarrival times"
+        ls = kwargs.pop("linestyle") if "linestyle" in kwargs else "--"
+        label_1 = kwargs.pop("label") if "label" in kwargs else "Failure interarrival times"
 
         tc = np.cumsum(ti[0:n])
         sum_tc = sum(tc)
@@ -608,7 +590,7 @@ class ROCOF:
         )
 
         x = np.arange(1, len(ti) + 1)
-        if U < z_crit:
+        if z_crit > U:
             B = len(ti) / (sum(np.log(tn / np.array(tc))))
             L = len(ti) / (tn**B)
             self.trend = "improving"
@@ -617,11 +599,8 @@ class ROCOF:
             self.ROCOF = "ROCOF is not provided when trend is not constant. Use Beta_hat and Lambda_hat to calculate ROCOF at a given time t."
             _rocof = L * B * tc ** (B - 1)
             MTBF = np.ones_like(tc) / _rocof
-            if test_end is not None:
-                x_to_plot = x
-            else:
-                x_to_plot = x[:-1]
-        elif U > -z_crit:
+            x_to_plot = x if test_end is not None else x[:-1]
+        elif -z_crit < U:
             B = len(ti) / (sum(np.log(tn / np.array(tc))))
             L = len(ti) / (tn**B)
             self.trend = "worsening"
@@ -630,10 +609,7 @@ class ROCOF:
             self.ROCOF = "ROCOF is not provided when trend is not constant. Use Beta_hat and Lambda_hat to calculate ROCOF at a given time t."
             _rocof = L * B * tc ** (B - 1)
             MTBF = np.ones_like(tc) / _rocof
-            if test_end is not None:
-                x_to_plot = x
-            else:
-                x_to_plot = x[:-1]
+            x_to_plot = x if test_end is not None else x[:-1]
         else:
             rocof = (n + 1) / sum(ti)
             self.trend = "constant"
@@ -650,7 +626,7 @@ class ROCOF:
         if print_results is True:
             colorprint("Results from ROCOF analysis:", bold=True, underline=True)
             print(results_str)
-            if U < z_crit:
+            if z_crit > U:
                 print(str("At " + str(CI_rounded) + "% confidence level the ROCOF is IMPROVING. Assume NHPP."))
                 print(
                     "ROCOF assuming NHPP has parameters: Beta_hat =",
@@ -658,7 +634,7 @@ class ROCOF:
                     ", Lambda_hat =",
                     round_and_string(L, decimals=4),
                 )
-            elif U > -z_crit:
+            elif -z_crit < U:
                 print(str("At " + str(CI_rounded) + "% confidence level the ROCOF is WORSENING. Assume NHPP."))
                 print(
                     "ROCOF assuming NHPP has parameters: Beta_hat =",
@@ -804,7 +780,7 @@ class MCF_nonparametric:
             elif type(item) == np.ndarray:
                 data[i] = list(item)
                 test_for_single_system.append(False)
-            elif isinstance(item, int) or isinstance(item, float):
+            elif isinstance(item, (int, float)):
                 test_for_single_system.append(True)
             else:
                 raise ValueError("Each item in the data must be a list or numpy array. eg. data = [[1,3,5],[3,6,8]]")
@@ -969,10 +945,7 @@ class MCF_nonparametric:
             y_lower.append(RESULTS_lower[-1])
             title_str = "Non-parametric estimate of the Mean Cumulative Function"
 
-            if "color" in kwargs:
-                col = kwargs.pop("color")
-            else:
-                col = "steelblue"
+            col = kwargs.pop("color") if "color" in kwargs else "steelblue"
             if plot_CI is True:
                 plt.fill_between(x_MCF, y_lower, y_upper, color=col, alpha=0.3, linewidth=0)
                 title_str = str(title_str + "\nwith " + str(CI_rounded) + "% one-sided confidence interval bounds")
@@ -1177,15 +1150,9 @@ class MCF_parametric:
                 color = "steelblue"
                 marker_color = "k"
 
-            if "marker" in kwargs:
-                marker = kwargs.pop("marker")
-            else:
-                marker = "."
+            marker = kwargs.pop("marker") if "marker" in kwargs else "."
 
-            if "label" in kwargs:
-                label = kwargs.pop("label")
-            else:
-                label = r"$\hat{MCF} = (\frac{t}{\alpha})^\beta$"
+            label = kwargs.pop("label") if "label" in kwargs else "$\\hat{MCF} = (\\frac{t}{\\alpha})^\\beta$"
 
             x_line = np.linspace(0.001, max(self.times) * 10, 1000)
             y_line = (x_line / alpha) ** beta

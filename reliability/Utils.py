@@ -376,13 +376,9 @@ def get_axes_limits():
     """
     xlims = plt.xlim(auto=None)  # get previous xlim
     ylims = plt.ylim(auto=None)  # get previous ylim
-    if xlims == (0, 1) and ylims == (
-        0,
-        1,
-    ):  # this checks if there was a previous plot. If the lims were 0,1 and 0,1 then there probably wasn't
-        use_prev_lims = False
-    else:
-        use_prev_lims = True
+    use_prev_lims = not (
+        xlims == (0, 1) and ylims == (0, 1)
+    )  # this checks if there was a previous plot. If the lims were 0,1 and 0,1 then there probably wasn't
     out = [xlims, ylims, use_prev_lims]
     return out
 
@@ -455,13 +451,7 @@ def restore_axes_limits(limits, dist, func, X, Y, xvals=None, xmin=None, xmax=No
         else:
             xlim_lower = xmin
 
-        if xmax is None:
-            if dist.name == "Beta":
-                xlim_upper = 1
-            else:
-                xlim_upper = dist.quantile(0.999)
-        else:
-            xlim_upper = xmax
+        xlim_upper = (1 if dist.name == "Beta" else dist.quantile(0.999)) if xmax is None else xmax
 
         if xlim_lower > xlim_upper:
             xlim_lower, xlim_upper = (
@@ -503,20 +493,14 @@ def restore_axes_limits(limits, dist, func, X, Y, xvals=None, xmin=None, xmax=No
         elif max(Y) > Y[-1]:  # a peaked hf
             ylim_upper = max(Y) * top_spacing
         else:  # an increasing hf. Not an asymptote
-            if len(np.where(X >= plt.xlim()[1])[0]) == 0:
-                idx = len(X) - 1  # this is for the mixture model and CR model
-            else:
-                idx = np.where(X >= plt.xlim()[1])[0][0]
+            idx = len(X) - 1 if (len(np.where(plt.xlim()[1] <= X)[0]) == 0) else np.where(plt.xlim()[1] <= X)[0][0]
+            # this is for the mixture model and CR model
             ylim_upper = Y[idx] * top_spacing
     elif func in ["chf", "CHF"]:
-        if len(np.where(X >= xlim_upper)[0]) == 0:
-            idx = len(X) - 1  # this is for the mixture model and CR model
-        else:
-            idx = np.where(X >= xlim_upper)[0][0]  # index of the chf where it is equal to b95
-        if np.isfinite(Y[idx]):
-            ylim_upper = Y[idx] * top_spacing
-        else:
-            ylim_upper = Y[idx - 1] * top_spacing
+        idx = (len(X) - 1) if (len(np.where(xlim_upper <= X)[0]) == 0) else np.where(xlim_upper <= X)[0][0]
+        # this is for the mixture model and CR model
+        # else is the index of the chf where it is equal to b95
+        ylim_upper = Y[idx] * top_spacing if np.isfinite(Y[idx]) else Y[idx - 1] * top_spacing
     else:
         raise ValueError("func is invalid")
     ylim_lower = 0
@@ -759,10 +743,7 @@ def no_reverse(x, CI_type, plot_type):
         raise ValueError("x must be a list or array")
     if len(x) < 2:
         raise ValueError("x must be a list or array with length greater than 1")
-    if CI_type == "time" and plot_type == "CHF":
-        decreasing = False
-    else:
-        decreasing = True
+    decreasing = not (CI_type == "time" and plot_type == "CHF")
 
     x = np.copy(np.asarray(x))
     if all(np.isfinite(x)):
@@ -806,10 +787,10 @@ def zeroise_below_gamma(X, Y, gamma):
         The zeroized Y array
     """
     if gamma > 0:
-        if len(np.where(X > gamma)[0]) == 0:
+        if len(np.where(gamma < X)[0]) == 0:
             Y[0::] = 0  # zeroize everything if there is no X values above gamma
         else:
-            Y[0 : (np.where(X > gamma)[0][0])] = 0  # zeroize below X=gamma
+            Y[0 : (np.where(gamma < X)[0][0])] = 0  # zeroize below X=gamma
     return Y
 
 
@@ -1016,15 +997,9 @@ def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha
 
     # correction for the case where ylims are is 0 or 1
     if ylim_lower == 0:
-        if min_y > 0:
-            ylim_lower = min_y
-        else:
-            ylim_lower = 0.00001
+        ylim_lower = min_y if min_y > 0 else 1e-05
     if ylim_upper == 1:
-        if max_y < 1:
-            ylim_upper = max_y
-        else:
-            ylim_upper = 0.99999
+        ylim_upper = max_y if max_y < 1 else 0.99999
     # set ylims
     plt.ylim(ylim_lower, ylim_upper)
 
@@ -1137,7 +1112,7 @@ def probability_plot_xyticks(yticks=None):
             else:
                 label = str((r"$%s%g\times%s^{%d}$") % (sign, multiplier, 10, exponent))
         else:  # numbers between 0.0001 and 10000 are formatted without scientific notation
-            label = str("{0:g}".format(value))
+            label = str(f"{value:g}")
         return label
 
     def customPercentFormatter(value, _):
@@ -1165,7 +1140,7 @@ def probability_plot_xyticks(yticks=None):
             value100dec = int(value100dec)
         value100whole = int(value100 - value100dec)
         combined = value100dec + value100whole
-        label = str(str(combined) + str("%"))
+        label = str(str(combined) + "%")
         return label
 
     def get_edge_distances():
@@ -1227,10 +1202,7 @@ def probability_plot_xyticks(yticks=None):
 
     num_major_x_ticks_shown = len(get_tick_locations("major", axis="x"))
     num_minor_x_xticks_shown = len(get_tick_locations("minor", axis="x"))
-    if max(abs(xlower), abs(xupper)) < 1000 and min(abs(xlower), abs(xupper)) > 0.001:
-        max_minor_ticks = 15
-    else:
-        max_minor_ticks = 10
+    max_minor_ticks = 15 if max(abs(xlower), abs(xupper)) < 1000 and min(abs(xlower), abs(xupper)) > 0.001 else 10
     if num_major_x_ticks_shown < 2 and num_minor_x_xticks_shown <= max_minor_ticks:
         ax.xaxis.set_minor_formatter(
             ticker.FuncFormatter(customFormatter)
@@ -1268,8 +1240,8 @@ def probability_plot_xyticks(yticks=None):
     ax.yaxis.set_minor_locator(loc_y_minor)  # sets the tick spacing
     ax.yaxis.set_major_formatter(ticker.FuncFormatter(customPercentFormatter))
     ax.yaxis.set_minor_formatter(ticker.FuncFormatter(customPercentFormatter))
-    ax.format_coord = lambda x, y: "x={:g}, y={:.1%}".format(
-        x, y
+    ax.format_coord = (
+        lambda x, y: f"x={x:g}, y={y:.1%}"
     )  # sets the formatting of the axes coordinates in the bottom right of the figure. Without this the FuncFormatter raw strings make it into the axes coords and don't look good.
 
 
@@ -1373,20 +1345,11 @@ def colorprint(
         None: "\033[49m",
     }
 
-    if bold is True:
-        BOLD = "\033[1m"
-    else:
-        BOLD = "\033[21m"
+    BOLD = "\x1b[1m" if bold is True else "\x1b[21m"
 
-    if underline is True:
-        UNDERLINE = "\033[4m"
-    else:
-        UNDERLINE = "\033[24m"
+    UNDERLINE = "\x1b[4m" if underline is True else "\x1b[24m"
 
-    if italic is True:
-        ITALIC = "\033[3m"
-    else:
-        ITALIC = "\033[23m"
+    ITALIC = "\x1b[3m" if italic is True else "\x1b[23m"
 
     if type(text_color) not in [str, np.str_, type(None)]:
         raise ValueError("text_color must be a string")
@@ -1732,10 +1695,7 @@ class fitters_input_checking:
             "Weibull_DS",
             "Weibull_DSZI",
         ]:
-            if force_sigma is None and force_beta is None:
-                min_failures = 2
-            else:
-                min_failures = 1
+            min_failures = 2 if force_sigma is None and force_beta is None else 1
         elif dist == "Exponential_1P":
             min_failures = 1
         elif dist in ["Weibull_Mixture", "Weibull_CR"]:
@@ -3124,10 +3084,7 @@ class distribution_confidence_intervals:
                 if x is not None:
                     t = x - self.gamma
                 else:
-                    if self.gamma == 0:
-                        t0 = 0.0001
-                    else:
-                        t0 = self.quantile(0.0000001)
+                    t0 = 0.0001 if self.gamma == 0 else self.quantile(1e-07)
                     t = np.linspace(
                         t0 - self.gamma,
                         self.quantile(0.99999) - self.gamma,
@@ -3332,10 +3289,7 @@ class distribution_confidence_intervals:
                     chf_array = np.geomspace(1e-8, self._chf[-1] * 1.5, points)
                     Y = np.exp(-chf_array)
                 else:  # CDF and SF
-                    if q is not None:
-                        Y = q
-                    else:
-                        Y = transform_spaced("normal", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
+                    Y = q if q is not None else transform_spaced("normal", y_lower=1e-08, y_upper=1 - 1e-08, num=points)
 
                 # v is t
                 t_lower = v(Y, self.mu, self.sigma) - Z * (var_v(self, Y) ** 0.5)
@@ -3386,10 +3340,7 @@ class distribution_confidence_intervals:
 
             # Confidence bounds on Reliability (in terms of time)
             elif CI_type == "reliability":
-                if x is not None:
-                    t = x
-                else:
-                    t = np.linspace(self.quantile(0.00001), self.quantile(0.99999), points)
+                t = x if x is not None else np.linspace(self.quantile(1e-05), self.quantile(0.99999), points)
 
                 # u is reliability u = phiinv(R)
                 u_lower = u(t, self.mu, self.sigma) + Z * var_u(self, t) ** 0.5
@@ -3586,10 +3537,7 @@ class distribution_confidence_intervals:
                     chf_array = np.geomspace(1e-8, self._chf[-1] * 1.5, points)
                     Y = np.exp(-chf_array)
                 else:  # CDF and SF
-                    if q is not None:
-                        Y = q
-                    else:
-                        Y = transform_spaced("normal", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
+                    Y = q if q is not None else transform_spaced("normal", y_lower=1e-08, y_upper=1 - 1e-08, num=points)
 
                 # v is ln(t)
                 v_lower = v(Y, self.mu, self.sigma) - Z * (var_v(self, Y) ** 0.5)
@@ -4109,10 +4057,7 @@ class distribution_confidence_intervals:
                     chf_array = np.geomspace(1e-8, self._chf[-1] * 1.5, points)
                     Y = np.exp(-chf_array)
                 else:  # CDF and SF
-                    if q is not None:
-                        Y = q
-                    else:
-                        Y = transform_spaced("gumbel", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
+                    Y = q if q is not None else transform_spaced("gumbel", y_lower=1e-08, y_upper=1 - 1e-08, num=points)
 
                 # v is t
                 t_lower = v(Y, self.mu, self.sigma) - Z * (var_v(self, Y) ** 0.5)
@@ -4162,10 +4107,7 @@ class distribution_confidence_intervals:
                     return t_lower, t_upper
 
             elif CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
-                if x is not None:
-                    t = x
-                else:
-                    t = np.linspace(self.quantile(0.00001), self.quantile(0.99999), points)
+                t = x if x is not None else np.linspace(self.quantile(1e-05), self.quantile(0.99999), points)
 
                 # u is reliability u = ln(-ln(R))
                 u_lower = u(t, self.mu, self.sigma) + Z * var_u(self, t) ** 0.5
@@ -4309,13 +4251,11 @@ def linear_regression(
 
     if len(x) < min_pts:
         if slope is not None:
-            err_str = str("A minimum of 1 point is required to fit the line when the slope is specified.")
+            err_str = "A minimum of 1 point is required to fit the line when the slope is specified."
         elif x_intercept is not None and y_intercept is not None:
-            err_str = str("A minimum of 1 point is required to fit the line when the intercept is specified.")
+            err_str = "A minimum of 1 point is required to fit the line when the intercept is specified."
         else:
-            err_str = str(
-                "A minimum of 2 points are required to fit the line when slope or intercept are not specified."
-            )
+            err_str = "A minimum of 2 points are required to fit the line when slope or intercept are not specified."
         raise ValueError(err_str)
 
     if RRX_or_RRY == "RRY":
@@ -4936,10 +4876,7 @@ def ALT_least_squares(model, failures, stress_1_array, stress_2_array=None):
 
     L = np.asarray(failures)
     S1 = np.asarray(stress_1_array)
-    if stress_2_array is not None:
-        S2 = np.asarray(stress_2_array)
-    else:
-        S2 = None
+    S2 = np.asarray(stress_2_array) if stress_2_array is not None else None
     if model == "Exponential":
         m, c = linear_regression(x=1 / S1, y=np.log(L), RRX_or_RRY="RRY")
         output = [m, np.exp(c)]  # a,b
@@ -5241,10 +5178,7 @@ class MLE_optimization:
             LL_array = [1000000]
             runs = 0
 
-            if func_name in ["Weibull_ZI", "Weibull_DSZI"]:
-                ZI = True
-            else:
-                ZI = False
+            ZI = func_name in ["Weibull_ZI", "Weibull_DSZI"]
 
             if ZI is True:  # Zero Inflated distribution (applies to ZI and DSZI)
                 args = (failures[failures == 0], failures[failures > 0], right_censored)
@@ -5331,7 +5265,7 @@ class MLE_optimization:
         # determine which optimizers to use
         stop_after_success = False
         if optimizer is None:  # default is to try in this order but stop after one succeeds
-            optimizers_to_try = ["TNC", "L-BFGS-B", "nelder-mead", "powell"]
+            optimizers_to_try = ["L-BFGS-B", "TNC", "nelder-mead", "powell"]
             stop_after_success = True
         else:
             if optimizer in [
@@ -5792,7 +5726,7 @@ class ALT_MLE_optimization:
         # determine which optimizers to use
         stop_after_success = False
         if optimizer is None:  # default is to try in this order but stop after one succeeds
-            optimizers_to_try = ["TNC", "L-BFGS-B", "nelder-mead", "powell"]
+            optimizers_to_try = ["L-BFGS-B", "TNC", "nelder-mead", "powell"]
             stop_after_success = True
         else:
             if optimizer in [
@@ -5801,7 +5735,7 @@ class ALT_MLE_optimization:
                 "all",
                 "ALL",
             ]:  # try all of the bounded optimizers
-                optimizers_to_try = ["TNC", "L-BFGS-B", "nelder-mead", "powell"]
+                optimizers_to_try = ["L-BFGS-B", "TNC", "nelder-mead", "powell"]
             elif optimizer.upper() == "TNC":
                 optimizers_to_try = ["TNC"]
             elif optimizer.upper() in ["L-BFGS-B", "LBFGSB"]:
@@ -5976,17 +5910,15 @@ def write_df_to_xlsx(df, path, **kwargs):
         counter1 += 1
         counter2 += 1
         try:
-            f = open(path)  # try to open the file to see if it exists
+            f = open(path)  # try to open the file to see if it exists  # noqa: SIM115
             f.close()
             if counter1 == 1:
                 colorprint(
                     "WARNING: the specified output file already exists",
                     text_color="red",
                 )
-            if counter2 == 1:
-                choice = input("Do you want to overwrite the existing file (Y/N): ")
-            else:
-                choice = "N"  # subsequent loops can only be entered if the user did not want to overwrite the file
+            choice = input("Do you want to overwrite the existing file (Y/N): ") if counter2 == 1 else "N"
+            # subsequent loops can only be entered if the user did not want to overwrite the file
             if choice.upper() == "N":
                 X = os.path.split(path)
                 Y = X[1].split(".")
@@ -6000,7 +5932,7 @@ def write_df_to_xlsx(df, path, **kwargs):
             else:
                 print("Invalid choice. Please specify Y or N")
                 counter2 = 0
-        except IOError:  # file does not exist
+        except OSError:  # file does not exist
             ready_to_write = True
     if path_changed is True:
         print("Your output file has been renamed to:", path)
@@ -6012,10 +5944,7 @@ def write_df_to_xlsx(df, path, **kwargs):
             text_color="red",
         )
         kwargs.pop("excel_writer")
-    if "index" in keys:
-        write_index = kwargs.pop("index")
-    else:
-        write_index = False
+    write_index = kwargs.pop("index") if "index" in keys else False
     df.to_excel(path, index=write_index, **kwargs)
 
 
@@ -6229,10 +6158,7 @@ def ALT_prob_plot(
         if dual_stress is True:
             for i, stress in enumerate(stresses_for_groups):
                 f = failure_groups[i]
-                if right_censored_groups is None:
-                    rc = None
-                else:
-                    rc = right_censored_groups[i]
+                rc = None if right_censored_groups is None else right_censored_groups[i]
                 # get the plotting positions so they can be given to probability_plot_xylims for autoscaling
                 x, y = plotting_positions(failures=f, right_censored=rc)
                 x_array.extend(x)
@@ -6293,10 +6219,7 @@ def ALT_prob_plot(
         else:
             for i, stress in enumerate(stresses_for_groups):
                 f = failure_groups[i]
-                if right_censored_groups is None:
-                    rc = None
-                else:
-                    rc = right_censored_groups[i]
+                rc = None if right_censored_groups is None else right_censored_groups[i]
                 # get the plotting positions so they can be given to probability_plot_xylims for autoscaling
                 x, y = plotting_positions(failures=f, right_censored=rc)
                 x_array.extend(x)
@@ -6840,10 +6763,7 @@ def distributions_input_checking(
         CI_type = None
     else:
         if CI_type is None:
-            if self.CI_type in no_CI_array or self.CI_type is None:
-                CI_type = None
-            else:
-                CI_type = self.CI_type
+            CI_type = None if self.CI_type in no_CI_array or self.CI_type is None else self.CI_type
         elif CI_type in no_CI_array:
             CI_type = None
 
@@ -7085,9 +7005,8 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                 raise ValueError("Unknown distribution")
         else:
             lower, upper = None, None
-    if type(lower) is not type(None):
-        if len(lower) == 1:  # unpack arrays of length 1
-            lower, upper = lower[0], upper[0]
+    if type(lower) is not type(None) and len(lower) == 1:  # unpack arrays of length 1
+        lower, upper = lower[0], upper[0]
     return lower, upper
 
 
@@ -7107,13 +7026,7 @@ def unpack_single_arrays(array):
         item from the array. If the input was anything else then the output will
         match the input
     """
-    if type(array) == np.ndarray:
-        if len(array) == 1:
-            out = array[0]
-        else:
-            out = array
-    else:
-        out = array
+    out = (array[0] if len(array) == 1 else array) if type(array) == np.ndarray else array
     return out
 
 

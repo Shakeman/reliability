@@ -25,7 +25,7 @@ master_doc = "index"
 # -- Project information -----------------------------------------------------
 
 project = "reliability"
-copyright = "2019-{},  Matthew Reid".format(date.today().year)
+copyright = f"2019-{date.today().year},  Matthew Reid"
 author = "Matthew Reid"
 
 

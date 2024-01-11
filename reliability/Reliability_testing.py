@@ -89,10 +89,7 @@ def one_sample_proportion(trials=None, successes=None, CI=0.95, print_results=Tr
         raise ValueError("successes must be an integer")
     if successes > trials:
         raise ValueError("successes cannot be greater than trials")
-    if successes == 0 or successes == trials:  # calculate 1 sided CI in these cases
-        n = 1
-    else:
-        n = 2
+    n = 1 if (successes == 0 or successes == trials) else 2  # calculate 1 sided CI in these cases
 
     V1_lower = 2 * successes
     V2_lower = 2 * (trials - successes + 1)
@@ -102,7 +99,7 @@ def one_sample_proportion(trials=None, successes=None, CI=0.95, print_results=Tr
 
     LOWER_LIM = np.nan_to_num(LOWER_LIM, nan=0)
     if LOWER_LIM == 0:
-        LOWER_LIM = int(0)
+        LOWER_LIM = 0
 
     V1_upper = 2 * (successes + 1)
     V2_upper = 2 * (trials - successes)
@@ -112,7 +109,7 @@ def one_sample_proportion(trials=None, successes=None, CI=0.95, print_results=Tr
 
     UPPER_LIM = np.nan_to_num(UPPER_LIM, nan=1)
     if UPPER_LIM == 1:
-        UPPER_LIM = int(1)
+        UPPER_LIM = 1
 
     CI_rounded = CI * 100
     if CI_rounded % 1 == 0:
@@ -281,10 +278,7 @@ def sample_size_no_failures(reliability, CI=0.95, lifetimes=1, weibull_shape=1, 
     CI_rounded = CI * 100
     if CI_rounded % 1 == 0:
         CI_rounded = int(CI_rounded)
-    if lifetimes != 1:
-        lifetime_string = "lifetimes."
-    else:
-        lifetime_string = "lifetime."
+    lifetime_string = "lifetimes." if lifetimes != 1 else "lifetime."
 
     if print_results is True:
         colorprint("Results from sample_size_no_failures:", bold=True, underline=True)
@@ -589,10 +583,7 @@ class reliability_test_planner:
                 raise ValueError(
                     "CI must be between 0.5 and 1. For example, specify CI=0.95 for 95% confidence interval"
                 )
-            if one_sided is True:
-                CI_adj = CI
-            else:
-                CI_adj = 1 - ((1 - CI) / 2)
+            CI_adj = CI if one_sided is True else 1 - (1 - CI) / 2
 
         if time_terminated is True:
             p = 2
@@ -613,9 +604,8 @@ class reliability_test_planner:
         if print_results not in [True, False]:
             raise ValueError("print_results must be True or False. Default is True.")
 
-        if number_of_failures is not None:
-            if number_of_failures % 1 != 0 or number_of_failures < 0:
-                raise ValueError("number_of_failures must be a positive integer")
+        if number_of_failures is not None and (number_of_failures % 1 != 0 or number_of_failures < 0):
+            raise ValueError("number_of_failures must be a positive integer")
 
         if MTBF is None and number_of_failures is not None and CI is not None and test_duration is not None:
             soln_type = "MTBF"
@@ -646,12 +636,8 @@ class reliability_test_planner:
         elif MTBF is not None and number_of_failures is not None and CI is None and test_duration is not None:
             soln_type = "CI"
             CI_calc = ss.chi2.cdf(test_duration / (MTBF * 0.5), 2 * number_of_failures + p)
-            if one_sided is True:
-                CI = CI_calc
-            else:
-                CI = 1 - (
-                    2 * (1 - CI_calc)
-                )  # this can give negative numbers, but only when the inputs result in an impossible CI.
+            CI = CI_calc if one_sided is True else (1 - (2 * (1 - CI_calc)))
+            # this can give negative numbers, but only when the inputs result in an impossible CI.
             if CI < 0.5:
                 print_CI_warn = True
 
@@ -997,10 +983,10 @@ class chi2test:
         n = len(observed)
         if type(distribution) in standard_distributions:
             parameters = distribution.parameters
-            if parameters[-1] == 0:  # if the gamma parameter is 0 then adjust the number of parameters to ignore gamma
-                k = len(parameters) - 1
-            else:
-                k = len(parameters)
+            k = (
+                (len(parameters) - 1) if parameters[-1] == 0 else len(parameters)
+            )  # if the gamma parameter is 0 then adjust the number of parameters to ignore gamma
+
         elif type(distribution) == Mixture_Model:
             k = distribution._Mixture_Model__number_of_params
         elif type(distribution) == Competing_Risks_Model:

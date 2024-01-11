@@ -696,26 +696,25 @@ class similar_distributions:
                                 + ")"
                             )
                         )
-                elif dist_name == "Loglogistic_3P":
-                    if fitted_results.Loglogistic_3P_gamma != 0:
-                        ranked_distributions_objects.append(
-                            Loglogistic_Distribution(
-                                alpha=fitted_results.Loglogistic_3P_alpha,
-                                beta=fitted_results.Loglogistic_3P_beta,
-                                gamma=fitted_results.Loglogistic_3P_gamma,
-                            )
+                elif dist_name == "Loglogistic_3P" and fitted_results.Loglogistic_3P_gamma != 0:
+                    ranked_distributions_objects.append(
+                        Loglogistic_Distribution(
+                            alpha=fitted_results.Loglogistic_3P_alpha,
+                            beta=fitted_results.Loglogistic_3P_beta,
+                            gamma=fitted_results.Loglogistic_3P_gamma,
                         )
-                        ranked_distributions_labels.append(
-                            str(
-                                "Loglogistic_3P (α="
-                                + str(round(fitted_results.Loglogistic_3P_alpha, sigfig))
-                                + ",β="
-                                + str(round(fitted_results.Loglogistic_3P_beta, sigfig))
-                                + ",γ="
-                                + str(round(fitted_results.Loglogistic_3P_gamma, sigfig))
-                                + ")"
-                            )
+                    )
+                    ranked_distributions_labels.append(
+                        str(
+                            "Loglogistic_3P (α="
+                            + str(round(fitted_results.Loglogistic_3P_alpha, sigfig))
+                            + ",β="
+                            + str(round(fitted_results.Loglogistic_3P_beta, sigfig))
+                            + ",γ="
+                            + str(round(fitted_results.Loglogistic_3P_gamma, sigfig))
+                            + ")"
                         )
+                    )
 
         number_of_distributions_fitted = len(ranked_distributions_objects)
         self.results = np.array(ranked_distributions_objects)
@@ -824,10 +823,7 @@ def histogram(data, white_above=None, bins=None, density=True, cumulative=False,
     else:
         color = "lightgrey"
 
-    if "edgecolor" in kwargs:
-        edgecolor = kwargs.pop("edgecolor")
-    else:
-        edgecolor = "k"
+    edgecolor = kwargs.pop("edgecolor") if "edgecolor" in kwargs else "k"
 
     if "linewidth" in kwargs:
         linewidth = kwargs.pop("linewidth")
@@ -1314,15 +1310,9 @@ class crosshairs:
         if isinstance(dateformat, str):
             x_string = time.strftime(dateformat, time.gmtime(x * 24 * 3600))
         else:
-            if decimals == 0:
-                x_string = int(x)
-            else:
-                x_string = round_and_string(x, decimals)
+            x_string = int(x) if decimals == 0 else round_and_string(x, decimals)
 
-        if decimals == 0:
-            y_string = int(y)
-        else:
-            y_string = round_and_string(y, decimals)
+        y_string = int(y) if decimals == 0 else round_and_string(y, decimals)
 
         texts = [
             ax.text(
@@ -1365,15 +1355,9 @@ class crosshairs:
         if isinstance(dateformat, str):
             x_string = time.strftime(dateformat, time.gmtime(x * 24 * 3600))
         else:
-            if decimals == 0:
-                x_string = int(x)
-            else:
-                x_string = round_and_string(x, decimals)
+            x_string = int(x) if decimals == 0 else round_and_string(x, decimals)
 
-        if decimals == 0:
-            y_string = int(y)
-        else:
-            y_string = round_and_string(y, decimals)
+        y_string = int(y) if decimals == 0 else round_and_string(y, decimals)
 
         text = str(label[0] + " = " + x_string + "\n" + label[1] + " = " + y_string)
         sel.annotation.set_text(text)
@@ -1382,14 +1366,14 @@ class crosshairs:
     @staticmethod
     def __hide_crosshairs(event):
         ax = event.inaxes  # this gets the axes where the event occurred.
-        if len(ax.texts) >= 2:  # the lines can't be deleted if they haven't been drawn.
-            if (
-                ax.texts[-1].get_position()[1] == 0 and ax.texts[-2].get_position()[0] == 0
-            ):  # this identifies the texts (crosshair text coords) based on their combination of unique properties
-                ax.lines[-1].set_visible(False)
-                ax.lines[-2].set_visible(False)
-                ax.texts[-1].set_visible(False)
-                ax.texts[-2].set_visible(False)
+        if (len(ax.texts) >= 2) and (
+            ax.texts[-1].get_position()[1] == 0 and ax.texts[-2].get_position()[0] == 0
+        ):  # the lines can't be deleted if they haven't been drawn.
+            # this identifies the texts (crosshair text coords) based on their combination of unique properties
+            ax.lines[-1].set_visible(False)
+            ax.lines[-2].set_visible(False)
+            ax.texts[-1].set_visible(False)
+            ax.texts[-2].set_visible(False)
         event.canvas.draw()
 
 

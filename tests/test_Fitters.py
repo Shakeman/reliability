@@ -51,7 +51,7 @@ def test_Fit_Weibull_2P():
     MLE = Fit_Weibull_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='MLE',
+        method="MLE",
         show_probability_plot=False,
         print_results=False,
     )
@@ -67,7 +67,7 @@ def test_Fit_Weibull_2P():
     LS = Fit_Weibull_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='LS',
+        method="LS",
         show_probability_plot=False,
         print_results=False,
     )
@@ -91,7 +91,7 @@ def test_Fit_Weibull_3P():
     MLE = Fit_Weibull_3P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='MLE',
+        method="MLE",
         show_probability_plot=False,
         print_results=False,
     )
@@ -107,7 +107,7 @@ def test_Fit_Weibull_3P():
     LS = Fit_Weibull_3P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='LS',
+        method="LS",
         show_probability_plot=False,
         print_results=False,
     )
@@ -131,7 +131,7 @@ def test_Fit_Gamma_2P():
     MLE = Fit_Gamma_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='MLE',
+        method="MLE",
         show_probability_plot=False,
         print_results=False,
     )
@@ -147,7 +147,7 @@ def test_Fit_Gamma_2P():
     LS = Fit_Gamma_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='LS',
+        method="LS",
         show_probability_plot=False,
         print_results=False,
     )
@@ -171,7 +171,7 @@ def test_Fit_Gamma_3P():
     MLE = Fit_Gamma_3P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='MLE',
+        method="MLE",
         show_probability_plot=False,
         print_results=False,
     )
@@ -187,7 +187,7 @@ def test_Fit_Gamma_3P():
     LS = Fit_Gamma_3P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='LS',
+        method="LS",
         show_probability_plot=False,
         print_results=False,
     )
@@ -211,7 +211,7 @@ def test_Fit_Lognormal_2P():
     MLE = Fit_Lognormal_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='MLE',
+        method="MLE",
         show_probability_plot=False,
         print_results=False,
     )
@@ -227,7 +227,7 @@ def test_Fit_Lognormal_2P():
     LS = Fit_Lognormal_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='LS',
+        method="LS",
         show_probability_plot=False,
         print_results=False,
     )
@@ -251,7 +251,7 @@ def test_Fit_Lognormal_3P():
     MLE = Fit_Lognormal_3P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='MLE',
+        method="MLE",
         show_probability_plot=False,
         print_results=False,
     )
@@ -267,7 +267,7 @@ def test_Fit_Lognormal_3P():
     LS = Fit_Lognormal_3P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='LS',
+        method="LS",
         show_probability_plot=False,
         print_results=False,
     )
@@ -291,7 +291,7 @@ def test_Fit_Loglogistic_2P():
     MLE = Fit_Loglogistic_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='MLE',
+        method="MLE",
         show_probability_plot=False,
         print_results=False,
     )
@@ -307,7 +307,7 @@ def test_Fit_Loglogistic_2P():
     LS = Fit_Loglogistic_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='LS',
+        method="LS",
         show_probability_plot=False,
         print_results=False,
     )
@@ -331,34 +331,34 @@ def test_Fit_Loglogistic_3P():
     MLE = Fit_Loglogistic_3P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='MLE',
+        method="MLE",
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(MLE.alpha, 64.53821169314404, rtol=rtol_big, atol=atol_big)
-    assert_allclose(MLE.beta, 10.5120425994396, rtol=rtol_big, atol=atol_big)
-    assert_allclose(MLE.gamma, 485.67966960645543, rtol=rtol_big, atol=atol_big)
-    assert_allclose(MLE.AICc, 943.8101901503343, rtol=rtol, atol=atol)
-    assert_allclose(MLE.BIC, 953.5826932703866, rtol=rtol, atol=atol)
-    assert_allclose(MLE.loglik, -468.84387058537123, rtol=rtol, atol=atol)
-    assert_allclose(MLE.AD, 582.5422181701142, rtol=rtol, atol=atol)
-    assert_allclose(MLE.Cov_alpha_beta, -0.18810779930161473, rtol=rtol, atol=atol)
+    assert_allclose(MLE.alpha, 62.33043394760128, rtol=rtol_big, atol=atol_big)
+    assert_allclose(MLE.beta, 10.10583310083407, rtol=rtol_big, atol=atol_big)
+    assert_allclose(MLE.gamma, 487.89067581835127, rtol=rtol_big, atol=atol_big)
+    assert_allclose(MLE.AICc, 943.8128236583473, rtol=rtol, atol=atol)
+    assert_allclose(MLE.BIC, 953.5853267783996, rtol=rtol, atol=atol)
+    assert_allclose(MLE.loglik, -468.84518733937773, rtol=rtol, atol=atol)
+    assert_allclose(MLE.AD, 582.5424432369575, rtol=rtol, atol=atol)
+    assert_allclose(MLE.Cov_alpha_beta, -0.18172619136971793, rtol=rtol, atol=atol)
 
     LS = Fit_Loglogistic_3P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='LS',
+        method="LS",
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(LS.alpha, 62.356306952705054, rtol=rtol, atol=atol)
-    assert_allclose(LS.beta, 10.033505691693987, rtol=rtol, atol=atol)
-    assert_allclose(LS.gamma, 487.9071761434245, rtol=rtol, atol=atol)
-    assert_allclose(LS.AICc, 943.8204940620113, rtol=rtol, atol=atol)
-    assert_allclose(LS.BIC, 953.5929971820636, rtol=rtol, atol=atol)
-    assert_allclose(LS.loglik, -468.84902254120976, rtol=rtol, atol=atol)
-    assert_allclose(LS.AD, 582.5422083314535, rtol=rtol, atol=atol)
-    assert_allclose(LS.Cov_alpha_beta, -0.1864715435778476, rtol=rtol, atol=atol)
+    assert_allclose(LS.alpha, 62.35642581139214, rtol=rtol, atol=atol)
+    assert_allclose(LS.beta, 10.033527117974446, rtol=rtol, atol=atol)
+    assert_allclose(LS.gamma, 487.90705692706877, rtol=rtol, atol=atol)
+    assert_allclose(LS.AICc, 943.8204938114803, rtol=rtol, atol=atol)
+    assert_allclose(LS.BIC, 953.5929969315326, rtol=rtol, atol=atol)
+    assert_allclose(LS.loglik, -468.84902241594426, rtol=rtol, atol=atol)
+    assert_allclose(LS.AD, 582.5422083349323, rtol=rtol, atol=atol)
+    assert_allclose(LS.Cov_alpha_beta, -0.18647186488112505, rtol=rtol, atol=atol)
 
 
 def test_Fit_Normal_2P():
@@ -370,7 +370,7 @@ def test_Fit_Normal_2P():
     MLE = Fit_Normal_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='MLE',
+        method="MLE",
         show_probability_plot=False,
         print_results=False,
     )
@@ -385,7 +385,7 @@ def test_Fit_Normal_2P():
     LS = Fit_Normal_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='LS',
+        method="LS",
         show_probability_plot=False,
         print_results=False,
     )
@@ -408,7 +408,7 @@ def test_Fit_Gumbel_2P():
     MLE = Fit_Gumbel_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='MLE',
+        method="MLE",
         show_probability_plot=False,
         print_results=False,
     )
@@ -423,7 +423,7 @@ def test_Fit_Gumbel_2P():
     LS = Fit_Gumbel_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='LS',
+        method="LS",
         show_probability_plot=False,
         print_results=False,
     )
@@ -446,7 +446,7 @@ def test_Fit_Exponential_1P():
     MLE = Fit_Exponential_1P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='MLE',
+        method="MLE",
         show_probability_plot=False,
         print_results=False,
     )
@@ -459,7 +459,7 @@ def test_Fit_Exponential_1P():
     LS = Fit_Exponential_1P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='LS',
+        method="LS",
         show_probability_plot=False,
         print_results=False,
     )
@@ -480,7 +480,7 @@ def test_Fit_Exponential_2P():
     MLE = Fit_Exponential_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='MLE',
+        method="MLE",
         show_probability_plot=False,
         print_results=False,
     )
@@ -494,7 +494,7 @@ def test_Fit_Exponential_2P():
     LS = Fit_Exponential_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='LS',
+        method="LS",
         show_probability_plot=False,
         print_results=False,
     )
@@ -516,7 +516,7 @@ def test_Fit_Beta_2P():
     MLE = Fit_Beta_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='MLE',
+        method="MLE",
         show_probability_plot=False,
         print_results=False,
     )
@@ -531,7 +531,7 @@ def test_Fit_Beta_2P():
     LS = Fit_Beta_2P(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='LS',
+        method="LS",
         show_probability_plot=False,
         print_results=False,
     )
@@ -598,7 +598,7 @@ def test_Fit_Everything():
     MLE = Fit_Everything(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='MLE',
+        method="MLE",
         show_probability_plot=False,
         show_histogram_plot=False,
         show_PP_plot=False,
@@ -608,7 +608,7 @@ def test_Fit_Everything():
     LS = Fit_Everything(
         failures=data.failures,
         right_censored=data.right_censored,
-        method='LS',
+        method="LS",
         show_probability_plot=False,
         show_histogram_plot=False,
         show_PP_plot=False,

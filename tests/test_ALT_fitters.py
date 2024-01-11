@@ -74,8 +74,8 @@ def test_Fit_Lognormal_Exponential():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Lognormal',
-        life_stress_model='Exponential',
+        distribution="Lognormal",
+        life_stress_model="Exponential",
         a=2000,
         b=10,
         sigma=0.5,
@@ -94,8 +94,8 @@ def test_Fit_Lognormal_Exponential():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.a, 2013.4709935653532, rtol=rtol, atol=atol)
-    assert_allclose(model.b, 9.844353808471647, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 2033.15392013689, rtol=rtol, atol=atol)
+    assert_allclose(model.b, 9.380682049168223, rtol=rtol, atol=atol)
     assert_allclose(model.sigma, 0.4901664124825419, rtol=rtol, atol=atol)
     assert_allclose(model.AICc, 3824.906495666694, rtol=rtol, atol=atol)
     assert_allclose(model.BIC, 3835.9367620095813, rtol=rtol, atol=atol)
@@ -106,8 +106,8 @@ def test_Fit_Normal_Exponential():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Normal',
-        life_stress_model='Exponential',
+        distribution="Normal",
+        life_stress_model="Exponential",
         a=500,
         b=1000,
         sigma=500,
@@ -138,8 +138,8 @@ def test_Fit_Exponential_Exponential():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Exponential',
-        life_stress_model='Exponential',
+        distribution="Exponential",
+        life_stress_model="Exponential",
         a=2000,
         b=10,
         stress_1=[500, 400, 350],
@@ -168,8 +168,8 @@ def test_Fit_Weibull_Eyring():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Weibull',
-        life_stress_model='Eyring',
+        distribution="Weibull",
+        life_stress_model="Eyring",
         a=1500,
         c=-10,
         beta=1,
@@ -188,20 +188,20 @@ def test_Fit_Weibull_Eyring():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.a, 1430.487997287318, rtol=rtol, atol=atol)
-    assert_allclose(model.c, -10.24507777025095, rtol=rtol, atol=atol)
-    assert_allclose(model.beta, 0.970434273889214, rtol=rtol, atol=atol)
-    assert_allclose(model.AICc, 4201.694921258372, rtol=rtol, atol=atol)
-    assert_allclose(model.BIC, 4212.72518760126, rtol=rtol, atol=atol)
-    assert_allclose(model.loglik, -2097.8069200886457, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 1509.2873266741617, rtol=rtol, atol=atol)
+    assert_allclose(model.c, -10.051886457997458, rtol=rtol, atol=atol)
+    assert_allclose(model.beta, 0.9696541010302344, rtol=rtol, atol=atol)
+    assert_allclose(model.AICc, 4201.877589122597, rtol=rtol, atol=atol)
+    assert_allclose(model.BIC, 4212.907855465484, rtol=rtol, atol=atol)
+    assert_allclose(model.loglik, -2097.898254020758, rtol=rtol, atol=atol)
 
 
 def test_Fit_Lognormal_Eyring():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Lognormal',
-        life_stress_model='Eyring',
+        distribution="Lognormal",
+        life_stress_model="Eyring",
         a=1500,
         c=-10,
         sigma=0.5,
@@ -220,7 +220,7 @@ def test_Fit_Lognormal_Eyring():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.a, 1513.468677222031, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 1533.14724753, rtol=rtol, atol=atol)
     assert_allclose(model.c, -9.98431861625691, rtol=rtol, atol=atol)
     assert_allclose(model.sigma, 0.49016660648069477, rtol=rtol, atol=atol)
     assert_allclose(model.AICc, 4040.853294458127, rtol=rtol, atol=atol)
@@ -232,8 +232,8 @@ def test_Fit_Normal_Eyring():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Normal',
-        life_stress_model='Eyring',
+        distribution="Normal",
+        life_stress_model="Eyring",
         a=90,
         c=-14,
         sigma=500,
@@ -252,7 +252,7 @@ def test_Fit_Normal_Eyring():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.a, 100.05607295376981, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 101.41052353, rtol=rtol, atol=atol)
     assert_allclose(model.c, -13.97387421375034, rtol=rtol, atol=atol)
     assert_allclose(model.sigma, 486.12929211552824, rtol=rtol, atol=atol)
     assert_allclose(model.AICc, 3669.8593109070534, rtol=rtol, atol=atol)
@@ -264,8 +264,8 @@ def test_Fit_Exponential_Eyring():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Exponential',
-        life_stress_model='Eyring',
+        distribution="Exponential",
+        life_stress_model="Eyring",
         a=1500,
         c=-10,
         stress_1=[500, 400, 350],
@@ -294,8 +294,8 @@ def test_Fit_Weibull_Power():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Weibull',
-        life_stress_model='Power',
+        distribution="Weibull",
+        life_stress_model="Power",
         a=5e15,
         n=-4,
         beta=2.5,
@@ -314,7 +314,7 @@ def test_Fit_Weibull_Power():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.a, 3069917722933350.0, rtol=rtol_big, atol=atol)  # larger due to variation in python versions
+    assert_allclose(model.a, 3.54549542e15, rtol=rtol_big, atol=atol)  # larger due to variation in python versions
     assert_allclose(model.n, -3.916925628937264, rtol=rtol_big, atol=atol)  # larger due to variation in python versions
     assert_allclose(model.beta, 2.399407397407449, rtol=rtol, atol=atol)
     assert_allclose(model.AICc, 6041.16703767533, rtol=rtol, atol=atol)
@@ -326,8 +326,8 @@ def test_Fit_Lognormal_Power():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Lognormal',
-        life_stress_model='Power',
+        distribution="Lognormal",
+        life_stress_model="Power",
         a=5e15,
         n=-4,
         sigma=0.5,
@@ -360,8 +360,8 @@ def test_Fit_Normal_Power():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Normal',
-        life_stress_model='Power',
+        distribution="Normal",
+        life_stress_model="Power",
         a=6e6,
         n=-1.2,
         sigma=500,
@@ -396,8 +396,8 @@ def test_Fit_Exponential_Power():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Exponential',
-        life_stress_model='Power',
+        distribution="Exponential",
+        life_stress_model="Power",
         a=5e15,
         n=-4,
         stress_1=[500, 400, 350],
@@ -415,7 +415,7 @@ def test_Fit_Exponential_Power():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.a, 1970299637780768.8, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 2.11708023e15, rtol=rtol, atol=atol)
     assert_allclose(model.n, -3.831313136385626, rtol=rtol, atol=atol)
     assert_allclose(model.AICc, 6314.7161417145035, rtol=rtol, atol=atol)
     assert_allclose(model.BIC, 6322.083302623412, rtol=rtol, atol=atol)
@@ -426,8 +426,8 @@ def test_Fit_Weibull_Dual_Exponential():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Weibull',
-        life_stress_model='Dual_Exponential',
+        distribution="Weibull",
+        life_stress_model="Dual_Exponential",
         a=50,
         b=0.1,
         c=500,
@@ -450,10 +450,10 @@ def test_Fit_Weibull_Dual_Exponential():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.a, 55.0594242239536, rtol=rtol, atol=atol)
-    assert_allclose(model.b, 0.0919548759239501, rtol=rtol, atol=atol)
-    assert_allclose(model.c, 551.6799466910546, rtol=rtol, atol=atol)
-    assert_allclose(model.beta, 2.582228157275601, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 109.3385636, rtol=rtol, atol=atol)
+    assert_allclose(model.b, 0.09291729, rtol=rtol, atol=atol)
+    assert_allclose(model.c, 456.09622917, rtol=rtol, atol=atol)
+    assert_allclose(model.beta, 2.53216375, rtol=rtol, atol=atol)
     assert_allclose(model.AICc, 6584.301151215161, rtol=rtol, atol=atol)
     assert_allclose(model.BIC, 6603.466037531028, rtol=rtol, atol=atol)
     assert_allclose(model.loglik, -3288.128229238865, rtol=rtol, atol=atol)
@@ -463,8 +463,8 @@ def test_Fit_Lognormal_Dual_Exponential():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Lognormal',
-        life_stress_model='Dual_Exponential',
+        distribution="Lognormal",
+        life_stress_model="Dual_Exponential",
         a=50,
         b=0.1,
         c=500,
@@ -487,9 +487,9 @@ def test_Fit_Lognormal_Dual_Exponential():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.a, 43.172159701914175, rtol=rtol, atol=atol)
-    assert_allclose(model.b, 0.11552196494417312, rtol=rtol, atol=atol)
-    assert_allclose(model.c, 560.5704103455569, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 73.25301902, rtol=rtol, atol=atol)
+    assert_allclose(model.b, 0.11880547, rtol=rtol, atol=atol)
+    assert_allclose(model.c, 499.62393884, rtol=rtol, atol=atol)
     assert_allclose(model.sigma, 0.4837723906057129, rtol=rtol, atol=atol)
     assert_allclose(model.AICc, 6786.541219570215, rtol=rtol, atol=atol)
     assert_allclose(model.BIC, 6805.706105886082, rtol=rtol, atol=atol)
@@ -500,8 +500,8 @@ def test_Fit_Normal_Dual_Exponential():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Normal',
-        life_stress_model='Dual_Exponential',
+        distribution="Normal",
+        life_stress_model="Dual_Exponential",
         a=60,
         b=0.1,
         c=5000,
@@ -537,8 +537,8 @@ def test_Fit_Exponential_Dual_Exponential():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Exponential',
-        life_stress_model='Dual_Exponential',
+        distribution="Exponential",
+        life_stress_model="Dual_Exponential",
         a=50,
         b=0.2,
         c=500,
@@ -560,9 +560,9 @@ def test_Fit_Exponential_Dual_Exponential():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.a, 63.96739939569158, rtol=rtol, atol=atol)
-    assert_allclose(model.b, 0.17691518863172884, rtol=rtol, atol=atol)
-    assert_allclose(model.c, 569.2878329736656, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 152.843982, rtol=rtol, atol=atol)
+    assert_allclose(model.b, 0.17461001, rtol=rtol, atol=atol)
+    assert_allclose(model.c, 421.42393619, rtol=rtol, atol=atol)
     assert_allclose(model.AICc, 11467.269078434578, rtol=rtol, atol=atol)
     assert_allclose(model.BIC, 11481.649477010264, rtol=rtol, atol=atol)
     assert_allclose(model.loglik, -5730.621146360146, rtol=rtol, atol=atol)
@@ -572,8 +572,8 @@ def test_Fit_Weibull_Dual_Power():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Weibull',
-        life_stress_model='Dual_Power',
+        distribution="Weibull",
+        life_stress_model="Dual_Power",
         c=1e15,
         m=-4,
         n=-2,
@@ -596,8 +596,8 @@ def test_Fit_Weibull_Dual_Power():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.c, 1562883141879859.5, rtol=rtol, atol=atol)
-    assert_allclose(model.m, -4.134024472114375, rtol=rtol, atol=atol)
+    assert_allclose(model.c, 1.17720289e15, rtol=rtol, atol=atol)
+    assert_allclose(model.m, -4.08880812, rtol=rtol, atol=atol)
     assert_allclose(model.n, -1.7890763670187908, rtol=rtol, atol=atol)
     assert_allclose(model.beta, 2.570622042328891, rtol=rtol, atol=atol)
     assert_allclose(model.AICc, 3624.015790007103, rtol=rtol, atol=atol)
@@ -609,8 +609,8 @@ def test_Fit_Lognormal_Dual_Power():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Lognormal',
-        life_stress_model='Dual_Power',
+        distribution="Lognormal",
+        life_stress_model="Dual_Power",
         c=1e15,
         m=-4,
         n=-2,
@@ -648,8 +648,8 @@ def test_Fit_Normal_Dual_Power():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Normal',
-        life_stress_model='Dual_Power',
+        distribution="Normal",
+        life_stress_model="Dual_Power",
         c=10000,
         m=-0.3,
         n=-0.4,
@@ -672,10 +672,10 @@ def test_Fit_Normal_Dual_Power():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.c, 9351.083262185502, rtol=rtol, atol=atol)
-    assert_allclose(model.m, -0.29053712727287395, rtol=rtol, atol=atol)
-    assert_allclose(model.n, -0.38934203114298255, rtol=rtol, atol=atol)
-    assert_allclose(model.sigma, 94.85096832637454, rtol=rtol, atol=atol)
+    assert_allclose(model.c, 10511.63415524, rtol=rtol, atol=atol)
+    assert_allclose(model.m, -0.30865636, rtol=rtol, atol=atol)
+    assert_allclose(model.n, -0.40473226, rtol=rtol, atol=atol)
+    assert_allclose(model.sigma, 93.84963682, rtol=rtol, atol=atol)
     assert_allclose(model.AICc, 3041.440875815024, rtol=rtol, atol=atol)
     assert_allclose(model.BIC, 3058.218500127905, rtol=rtol, atol=atol)
     assert_allclose(model.loglik, -1516.680033867108, rtol=rtol, atol=atol)
@@ -685,8 +685,8 @@ def test_Fit_Exponential_Dual_Power():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Exponential',
-        life_stress_model='Dual_Power',
+        distribution="Exponential",
+        life_stress_model="Dual_Power",
         c=1e15,
         m=-4,
         n=-2,
@@ -708,9 +708,9 @@ def test_Fit_Exponential_Dual_Power():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.c, 3203958968599901.5, rtol=rtol_big, atol=atol)  # larger due to variation in python versions
-    assert_allclose(model.m, -4.262981061560643, rtol=rtol, atol=atol)
-    assert_allclose(model.n, -1.7492432603910426, rtol=rtol, atol=atol)
+    assert_allclose(model.c, 1.37833563e15, rtol=rtol_big, atol=atol)  # larger due to variation in python versions
+    assert_allclose(model.m, -4.12999326, rtol=rtol, atol=atol)
+    assert_allclose(model.n, -1.72377458, rtol=rtol, atol=atol)
     assert_allclose(model.AICc, 6136.997370988174, rtol=rtol, atol=atol)
     assert_allclose(model.BIC, 6149.592808186666, rtol=rtol, atol=atol)
     assert_allclose(model.loglik, -3065.4744919457, rtol=rtol, atol=atol)
@@ -720,8 +720,8 @@ def test_Fit_Weibull_Power_Exponential():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Weibull',
-        life_stress_model='Power_Exponential',
+        distribution="Weibull",
+        life_stress_model="Power_Exponential",
         a=22,
         c=400,
         n=-0.25,
@@ -744,9 +744,9 @@ def test_Fit_Weibull_Power_Exponential():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.a, 67.69037929967578, rtol=rtol, atol=atol)
-    assert_allclose(model.c, 256.58824365759585, rtol=rtol, atol=atol)
-    assert_allclose(model.n, -0.05262375033066265, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 54.68972069, rtol=rtol, atol=atol)
+    assert_allclose(model.c, 253.34403063, rtol=rtol, atol=atol)
+    assert_allclose(model.n, -0.03048628, rtol=rtol, atol=atol)
     assert_allclose(model.beta, 2.571207071526618, rtol=rtol, atol=atol)
     assert_allclose(model.AICc, 3122.643924859823, rtol=rtol, atol=atol)
     assert_allclose(model.BIC, 3139.421549172704, rtol=rtol, atol=atol)
@@ -757,8 +757,8 @@ def test_Fit_Lognormal_Power_Exponential():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Lognormal',
-        life_stress_model='Power_Exponential',
+        distribution="Lognormal",
+        life_stress_model="Power_Exponential",
         a=200,
         c=400,
         n=-0.5,
@@ -781,9 +781,9 @@ def test_Fit_Lognormal_Power_Exponential():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.a, 192.1053043033961, rtol=rtol, atol=atol)
-    assert_allclose(model.c, 451.44824106649287, rtol=rtol, atol=atol)
-    assert_allclose(model.n, -0.4919602905576324, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 203.64166629, rtol=rtol, atol=atol)
+    assert_allclose(model.c, 391.30870096, rtol=rtol, atol=atol)
+    assert_allclose(model.n, -0.44133854, rtol=rtol, atol=atol)
     assert_allclose(model.sigma, 0.4910516937147718, rtol=rtol, atol=atol)
     assert_allclose(model.AICc, 3200.6626325485195, rtol=rtol, atol=atol)
     assert_allclose(model.BIC, 3217.4402568614005, rtol=rtol, atol=atol)
@@ -794,8 +794,8 @@ def test_Fit_Normal_Power_Exponential():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Normal',
-        life_stress_model='Power_Exponential',
+        distribution="Normal",
+        life_stress_model="Power_Exponential",
         a=70,
         c=2500,
         n=-0.25,
@@ -818,7 +818,7 @@ def test_Fit_Normal_Power_Exponential():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.a, 69.52031280338441, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 70.61416267, rtol=rtol, atol=atol)
     assert_allclose(model.c, 2498.268588097067, rtol=rtol, atol=atol)
     assert_allclose(model.n, -0.24817878201877347, rtol=rtol, atol=atol)
     assert_allclose(model.sigma, 94.48228285331875, rtol=rtol, atol=atol)
@@ -831,8 +831,8 @@ def test_Fit_Exponential_Power_Exponential():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Exponential',
-        life_stress_model='Power_Exponential',
+        distribution="Exponential",
+        life_stress_model="Power_Exponential",
         a=50,
         c=10000,
         n=-1.5,
@@ -854,9 +854,9 @@ def test_Fit_Exponential_Power_Exponential():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(model.a, 137.3857161856382, rtol=rtol, atol=atol)
-    assert_allclose(model.c, 5636.685334952079, rtol=rtol, atol=atol)
-    assert_allclose(model.n, -1.277340033750778, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 118.31010472, rtol=rtol, atol=atol)
+    assert_allclose(model.c, 3645.02571372, rtol=rtol, atol=atol)
+    assert_allclose(model.n, -1.05426527, rtol=rtol, atol=atol)
     assert_allclose(model.AICc, 5800.788764570015, rtol=rtol, atol=atol)
     assert_allclose(model.BIC, 5813.3842017685065, rtol=rtol, atol=atol)
     assert_allclose(model.loglik, -2897.37018873662, rtol=rtol, atol=atol)
@@ -895,14 +895,14 @@ def test_Fit_Everything_ALT_single_stress():
     assert_allclose(model.Weibull_Exponential_loglik, -1852.2453465921092, rtol=rtol, atol=atol)
 
     assert_allclose(model.Lognormal_Exponential_a, 2009.7501864638946, rtol=rtol, atol=atol)
-    assert_allclose(model.Lognormal_Exponential_b, 7.809262222104393, rtol=rtol, atol=atol)
+    assert_allclose(model.Lognormal_Exponential_b, 7.92564035, rtol=rtol, atol=atol)
     assert_allclose(model.Lognormal_Exponential_sigma, 0.5166917673351094, rtol=rtol, atol=atol)
     assert_allclose(model.Lognormal_Exponential_AICc, 3735.234452757792, rtol=rtol, atol=atol)
     assert_allclose(model.Lognormal_Exponential_BIC, 3746.2647191006795, rtol=rtol, atol=atol)
     assert_allclose(model.Lognormal_Exponential_loglik, -1864.5766858383554, rtol=rtol, atol=atol)
 
     assert_allclose(model.Normal_Exponential_a, 1993.9519931456607, rtol=rtol, atol=atol)
-    assert_allclose(model.Normal_Exponential_b, 9.204026230504914, rtol=rtol, atol=atol)
+    assert_allclose(model.Normal_Exponential_b, 8.93233575, rtol=rtol, atol=atol)
     assert_allclose(model.Normal_Exponential_sigma, 746.4100628682714, rtol=rtol, atol=atol)
     assert_allclose(model.Normal_Exponential_AICc, 3901.96807936702, rtol=rtol, atol=atol)
     assert_allclose(model.Normal_Exponential_BIC, 3912.9983457099074, rtol=rtol, atol=atol)
@@ -966,15 +966,15 @@ def test_Fit_Everything_ALT_single_stress():
     assert_allclose(model.Lognormal_Power_loglik, -1867.2546418289082, rtol=rtol, atol=atol)
 
     assert_allclose(
-        model.Normal_Power_a, 1.1875960546823156e16, rtol=rtol_extreme, atol=atol
+        model.Normal_Power_a, 2.89902202e15, rtol=rtol_extreme, atol=atol
     )  # much larger due to variation in python versions
     assert_allclose(
         model.Normal_Power_n, -4.968632318615027, rtol=rtol_big, atol=atol
     )  # larger due to variation in python versions
-    assert_allclose(model.Normal_Power_sigma, 751.4081379265706, rtol=rtol, atol=atol)
-    assert_allclose(model.Normal_Power_AICc, 3905.4226589659943, rtol=rtol, atol=atol)
-    assert_allclose(model.Normal_Power_BIC, 3916.4529253088817, rtol=rtol, atol=atol)
-    assert_allclose(model.Normal_Power_loglik, -1949.6707889424565, rtol=rtol, atol=atol)
+    assert_allclose(model.Normal_Power_sigma, 644.64709162, rtol=rtol, atol=atol)
+    assert_allclose(model.Normal_Power_AICc, 3963.26763092, rtol=rtol, atol=atol)
+    assert_allclose(model.Normal_Power_BIC, 3974.29789726, rtol=rtol, atol=atol)
+    assert_allclose(model.Normal_Power_loglik, -1978.59327492, rtol=rtol, atol=atol)
 
     assert_allclose(model.Exponential_Power_a, 2899022021518504.5, rtol=rtol, atol=atol)
     assert_allclose(model.Exponential_Power_n, -4.721375201743889, rtol=rtol, atol=atol)
@@ -987,8 +987,8 @@ def test_Fit_Everything_ALT_dual_stress():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     data = make_ALT_data(
-        distribution='Weibull',
-        life_stress_model='Dual_Exponential',
+        distribution="Weibull",
+        life_stress_model="Dual_Exponential",
         a=50,
         b=0.1,
         c=500,
@@ -1012,17 +1012,17 @@ def test_Fit_Everything_ALT_dual_stress():
         print_results=False,
     )
 
-    assert_allclose(model.Weibull_Dual_Exponential_a, 55.0594242239536, rtol=rtol, atol=atol)
-    assert_allclose(model.Weibull_Dual_Exponential_b, 0.0919548759239501, rtol=rtol, atol=atol)
-    assert_allclose(model.Weibull_Dual_Exponential_c, 551.6799466910546, rtol=rtol, atol=atol)
-    assert_allclose(model.Weibull_Dual_Exponential_beta, 2.582228157275601, rtol=rtol, atol=atol)
+    assert_allclose(model.Weibull_Dual_Exponential_a, 109.3385636, rtol=rtol, atol=atol)
+    assert_allclose(model.Weibull_Dual_Exponential_b, 0.09291729, rtol=rtol, atol=atol)
+    assert_allclose(model.Weibull_Dual_Exponential_c, 456.09622917, rtol=rtol, atol=atol)
+    assert_allclose(model.Weibull_Dual_Exponential_beta, 2.53216375, rtol=rtol, atol=atol)
     assert_allclose(model.Weibull_Dual_Exponential_AICc, 6584.301151215161, rtol=rtol, atol=atol)
     assert_allclose(model.Weibull_Dual_Exponential_BIC, 6603.466037531028, rtol=rtol, atol=atol)
     assert_allclose(model.Weibull_Dual_Exponential_loglik, -3288.128229238865, rtol=rtol, atol=atol)
 
-    assert_allclose(model.Lognormal_Dual_Exponential_a, 52.32884413131662, rtol=rtol, atol=atol)
-    assert_allclose(model.Lognormal_Dual_Exponential_b, 0.10088629835108626, rtol=rtol, atol=atol)
-    assert_allclose(model.Lognormal_Dual_Exponential_c, 441.3744406102187, rtol=rtol, atol=atol)
+    assert_allclose(model.Lognormal_Dual_Exponential_a, 53.03066564, rtol=rtol, atol=atol)
+    assert_allclose(model.Lognormal_Dual_Exponential_b, 0.10968515, rtol=rtol, atol=atol)
+    assert_allclose(model.Lognormal_Dual_Exponential_c, 428.90741626, rtol=rtol, atol=atol)
     assert_allclose(model.Lognormal_Dual_Exponential_sigma, 0.5313705214283074, rtol=rtol, atol=atol)
     assert_allclose(model.Lognormal_Dual_Exponential_AICc, 6652.254628391293, rtol=rtol, atol=atol)
     assert_allclose(model.Lognormal_Dual_Exponential_BIC, 6671.4195147071605, rtol=rtol, atol=atol)
@@ -1050,24 +1050,24 @@ def test_Fit_Everything_ALT_dual_stress():
         model.Normal_Dual_Exponential_loglik, -3313.5732652527927, rtol=rtol_big, atol=atol
     )  # larger due to variation in python versions
 
-    assert_allclose(model.Exponential_Dual_Exponential_a, 56.221472604483075, rtol=rtol, atol=atol)
-    assert_allclose(model.Exponential_Dual_Exponential_b, 0.09656529409565541, rtol=rtol, atol=atol)
-    assert_allclose(model.Exponential_Dual_Exponential_c, 641.8922221857204, rtol=rtol, atol=atol)
+    assert_allclose(model.Exponential_Dual_Exponential_a, 136.1545794, rtol=rtol, atol=atol)
+    assert_allclose(model.Exponential_Dual_Exponential_b, 0.10203765, rtol=rtol, atol=atol)
+    assert_allclose(model.Exponential_Dual_Exponential_c, 478.81825966, rtol=rtol, atol=atol)
     assert_allclose(model.Exponential_Dual_Exponential_AICc, 7089.224587107275, rtol=rtol, atol=atol)
     assert_allclose(model.Exponential_Dual_Exponential_BIC, 7103.604985682962, rtol=rtol, atol=atol)
     assert_allclose(model.Exponential_Dual_Exponential_loglik, -3541.5989006964946, rtol=rtol, atol=atol)
 
-    assert_allclose(model.Weibull_Dual_Power_c, 1393.8242650160057, rtol=rtol, atol=atol)
-    assert_allclose(model.Weibull_Dual_Power_m, -0.12384724446029682, rtol=rtol, atol=atol)
-    assert_allclose(model.Weibull_Dual_Power_n, -0.2592466098202316, rtol=rtol, atol=atol)
+    assert_allclose(model.Weibull_Dual_Power_c, 914.3759566, rtol=rtol, atol=atol)
+    assert_allclose(model.Weibull_Dual_Power_m, -0.05470473, rtol=rtol, atol=atol)
+    assert_allclose(model.Weibull_Dual_Power_n, -0.28962859, rtol=rtol, atol=atol)
     assert_allclose(model.Weibull_Dual_Power_beta, 2.5815730622862336, rtol=rtol, atol=atol)
     assert_allclose(model.Weibull_Dual_Power_AICc, 6583.673537008596, rtol=rtol, atol=atol)
     assert_allclose(model.Weibull_Dual_Power_BIC, 6602.838423324463, rtol=rtol, atol=atol)
     assert_allclose(model.Weibull_Dual_Power_loglik, -3287.814422135583, rtol=rtol, atol=atol)
 
-    assert_allclose(model.Lognormal_Dual_Power_c, 1105.2569803418007, rtol=rtol, atol=atol)
-    assert_allclose(model.Lognormal_Dual_Power_m, -0.12295522924057026, rtol=rtol, atol=atol)
-    assert_allclose(model.Lognormal_Dual_Power_n, -0.28075657353599415, rtol=rtol, atol=atol)
+    assert_allclose(model.Lognormal_Dual_Power_c, 914.37590837, rtol=rtol, atol=atol)
+    assert_allclose(model.Lognormal_Dual_Power_m, -0.09154364, rtol=rtol, atol=atol)
+    assert_allclose(model.Lognormal_Dual_Power_n, -0.29140721, rtol=rtol, atol=atol)
     assert_allclose(model.Lognormal_Dual_Power_sigma, 0.5306077545728608, rtol=rtol, atol=atol)
     assert_allclose(model.Lognormal_Dual_Power_AICc, 6650.71962135737, rtol=rtol, atol=atol)
     assert_allclose(model.Lognormal_Dual_Power_BIC, 6669.884507673237, rtol=rtol, atol=atol)
@@ -1095,9 +1095,9 @@ def test_Fit_Everything_ALT_dual_stress():
         model.Normal_Dual_Power_loglik, -3389.910333073077, rtol=rtol_big, atol=atol
     )  # larger due to variation in python versions
 
-    assert_allclose(model.Exponential_Dual_Power_c, 1726.735002854915, rtol=rtol, atol=atol)
-    assert_allclose(model.Exponential_Dual_Power_m, -0.13364309671965835, rtol=rtol, atol=atol)
-    assert_allclose(model.Exponential_Dual_Power_n, -0.27105475584920874, rtol=rtol, atol=atol)
+    assert_allclose(model.Exponential_Dual_Power_c, 914.37593082, rtol=rtol, atol=atol)
+    assert_allclose(model.Exponential_Dual_Power_m, -0.02871604, rtol=rtol, atol=atol)
+    assert_allclose(model.Exponential_Dual_Power_n, -0.31093619, rtol=rtol, atol=atol)
     assert_allclose(model.Exponential_Dual_Power_AICc, 7088.926283426964, rtol=rtol, atol=atol)
     assert_allclose(model.Exponential_Dual_Power_BIC, 7103.3066820026515, rtol=rtol, atol=atol)
     assert_allclose(model.Exponential_Dual_Power_loglik, -3541.4497488563393, rtol=rtol, atol=atol)
@@ -1110,9 +1110,9 @@ def test_Fit_Everything_ALT_dual_stress():
     assert_allclose(model.Weibull_Power_Exponential_BIC, 6601.283823867044, rtol=rtol, atol=atol)
     assert_allclose(model.Weibull_Power_Exponential_loglik, -3287.037122406873, rtol=rtol, atol=atol)
 
-    assert_allclose(model.Lognormal_Power_Exponential_a, 38.62820672031728, rtol=rtol, atol=atol)
-    assert_allclose(model.Lognormal_Power_Exponential_c, 479.7944662699472, rtol=rtol, atol=atol)
-    assert_allclose(model.Lognormal_Power_Exponential_n, -0.27523434626167476, rtol=rtol, atol=atol)
+    assert_allclose(model.Lognormal_Power_Exponential_a, 61.77652017, rtol=rtol, atol=atol)
+    assert_allclose(model.Lognormal_Power_Exponential_c, 444.28631096, rtol=rtol, atol=atol)
+    assert_allclose(model.Lognormal_Power_Exponential_n, -0.26714273, rtol=rtol, atol=atol)
     assert_allclose(model.Lognormal_Power_Exponential_sigma, 0.5304232436388364, rtol=rtol, atol=atol)
     assert_allclose(model.Lognormal_Power_Exponential_AICc, 6650.403864331276, rtol=rtol, atol=atol)
     assert_allclose(model.Lognormal_Power_Exponential_BIC, 6669.568750647143, rtol=rtol, atol=atol)

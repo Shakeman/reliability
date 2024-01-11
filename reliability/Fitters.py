@@ -40,6 +40,8 @@ highly successful, and whenever it fails the initial guess will be used and a
 warning will be displayed.
 """
 
+import contextlib
+
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
 import numpy as np
@@ -373,11 +375,10 @@ class Fit_Everything:
                 "Available distributions to exclude are: Weibull_2P, Weibull_3P, Normal_2P, Gamma_2P, Loglogistic_2P, Gamma_3P, Lognormal_2P, Lognormal_3P, Loglogistic_3P, Gumbel_2P, Exponential_2P, Exponential_1P, Beta_2P, Weibull_Mixture, Weibull_CR, Weibull_DS",
                 text_color="red",
             )
-        if (
-            "Beta_2P" not in excluded_distributions
+        if "Beta_2P" not in excluded_distributions and (
+            max(self._all_data) >= 1
         ):  # if Beta wasn't manually excluded, check if is needs to be automatically excluded based on data above 1
-            if max(self._all_data) >= 1:
-                excluded_distributions.append("Beta_2P")
+            excluded_distributions.append("Beta_2P")
         self.excluded_distributions = excluded_distributions
 
         # create an empty dataframe to append the data from the fitted distributions
@@ -1806,10 +1807,8 @@ class Fit_Everything:
                 ax.set_xticklabels([], minor=True)
                 ax.set_ylabel("")
                 ax.set_xlabel("")
-                try:
+                with contextlib.suppress(AttributeError):
                     ax.get_legend().remove()
-                except AttributeError:
-                    pass
                     # some plots don't have a legend added so this exception ignores them when trying to remove the legend
                 subplot_counter += 1
             else:
@@ -1982,10 +1981,7 @@ class Fit_Weibull_2P:
         self.gamma = 0
 
         # Obtain least squares estimates
-        if method == "MLE":
-            LS_method = "LS"
-        else:
-            LS_method = method
+        LS_method = "LS" if method == "MLE" else method
         LS_results = LS_optimization(
             func_name="Weibull_2P",
             LL_func=Fit_Weibull_2P.LL,
@@ -2200,10 +2196,7 @@ class Fit_Weibull_2P:
         if show_probability_plot is True:
             from reliability.Probability_plotting import Weibull_probability_plot
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             Weibull_probability_plot(
                 failures=failures,
                 right_censored=rc,
@@ -2636,9 +2629,7 @@ class Fit_Weibull_2P_grouped:
                     self.beta = force_beta
             else:  # return the initial guess with a warning
                 colorprint(
-                    str(
-                        "WARNING: MLE estimates failed for Fit_Weibull_2P_grouped. The least squares estimates have been returned. These results may not be as accurate as MLE. You may want to try another optimzer from 'L-BFGS-B','TNC','powell','nelder-mead'."
-                    ),
+                    "WARNING: MLE estimates failed for Fit_Weibull_2P_grouped. The least squares estimates have been returned. These results may not be as accurate as MLE. You may want to try another optimzer from 'L-BFGS-B','TNC','powell','nelder-mead'.",
                     text_color="red",
                 )
                 if force_beta is None:
@@ -2846,10 +2837,7 @@ class Fit_Weibull_2P_grouped:
         if show_probability_plot is True:
             from reliability.Probability_plotting import Weibull_probability_plot
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             Weibull_probability_plot(
                 failures=failures,
                 right_censored=rc,
@@ -3041,10 +3029,7 @@ class Fit_Weibull_3P:
         CI_type = inputs.CI_type
 
         # Obtain least squares estimates
-        if method == "MLE":
-            LS_method = "LS"
-        else:
-            LS_method = method
+        LS_method = "LS" if method == "MLE" else method
 
         LS_results = LS_optimization(
             func_name="Weibull_3P",
@@ -3264,10 +3249,7 @@ class Fit_Weibull_3P:
         if show_probability_plot is True:
             from reliability.Probability_plotting import Weibull_probability_plot
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             fig = Weibull_probability_plot(
                 failures=failures,
                 right_censored=rc,
@@ -3510,10 +3492,7 @@ class Fit_Weibull_Mixture:
         right_diff_max = max(right_diff)
         right_div_line = right_line_x[np.where(right_diff == right_diff_max)][0]
 
-        if left_diff_max > right_diff_max:
-            dividing_line = left_div_line
-        else:
-            dividing_line = right_div_line
+        dividing_line = left_div_line if left_diff_max > right_diff_max else right_div_line
 
         number_of_items_in_group_1 = len(np.where(failures < dividing_line)[0])
         number_of_items_in_group_2 = len(failures) - number_of_items_in_group_1
@@ -3738,10 +3717,7 @@ class Fit_Weibull_Mixture:
         if show_probability_plot is True:
             from reliability.Probability_plotting import Weibull_probability_plot
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             Weibull_probability_plot(
                 failures=failures,
                 right_censored=rc,
@@ -3973,10 +3949,7 @@ class Fit_Weibull_CR:
         right_diff_max = max(right_diff)
         right_div_line = right_line_x[np.where(right_diff == right_diff_max)][0]
 
-        if left_diff_max > right_diff_max:
-            dividing_line = left_div_line
-        else:
-            dividing_line = right_div_line
+        dividing_line = left_div_line if left_diff_max > right_diff_max else right_div_line
 
         number_of_items_in_group_1 = len(np.where(failures < dividing_line)[0])
         number_of_items_in_group_2 = len(failures) - number_of_items_in_group_1
@@ -4163,10 +4136,7 @@ class Fit_Weibull_CR:
         if show_probability_plot is True:
             from reliability.Probability_plotting import Weibull_probability_plot
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             Weibull_probability_plot(
                 failures=failures,
                 right_censored=rc,
@@ -4511,10 +4481,7 @@ class Fit_Weibull_DSZI:
                 plot_points,
             )
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             Weibull_probability_plot(
                 failures=failures_no_zeros,
                 right_censored=rc,
@@ -4566,10 +4533,9 @@ class Fit_Weibull_DSZI:
     @staticmethod
     def LL(params, T_0, T_f, T_rc):
         # log likelihood function (Weibull DSZI)
-        if params[3] > 0:
-            LL_0 = anp.log(params[3]) * len(T_0)  # deals with t=0
-        else:
-            LL_0 = 0  # enables fitting when ZI = 0 to avoid log(0) error
+        LL_0 = (anp.log(params[3]) * len(T_0)) if params[3] > 0 else 0
+        # deals with t=0
+        # enables fitting when ZI = 0 to avoid log(0) error
         LL_f = Fit_Weibull_DSZI.logf(T_f, params[0], params[1], params[2], params[3]).sum()
         LL_rc = Fit_Weibull_DSZI.logR(T_rc, params[0], params[1], params[2], params[3]).sum()
         return -(LL_0 + LL_f + LL_rc)
@@ -4832,10 +4798,7 @@ class Fit_Weibull_DS:
         if show_probability_plot is True:
             from reliability.Probability_plotting import Weibull_probability_plot
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             Weibull_probability_plot(
                 failures=failures,
                 right_censored=rc,
@@ -5147,10 +5110,7 @@ class Fit_Weibull_ZI:
                 plot_points,
             )
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             Weibull_probability_plot(
                 failures=failures_no_zeros,
                 right_censored=rc,
@@ -5198,10 +5158,9 @@ class Fit_Weibull_ZI:
     @staticmethod
     def LL(params, T_0, T_f, T_rc):
         # log likelihood function (Weibull ZI)
-        if params[2] > 0:
-            LL_0 = anp.log(params[2]) * len(T_0)  # deals with t=0
-        else:
-            LL_0 = 0  # enables fitting when ZI = 0 to avoid log(0) error
+        LL_0 = (anp.log(params[2]) * len(T_0)) if params[2] > 0 else 0
+        # deals with t=0
+        # enables fitting when ZI = 0 to avoid log(0) error
         LL_f = Fit_Weibull_ZI.logf(T_f, params[0], params[1], params[2]).sum()
         LL_rc = Fit_Weibull_ZI.logR(T_rc, params[0], params[1], params[2]).sum()
         return -(LL_0 + LL_f + LL_rc)
@@ -5349,10 +5308,7 @@ class Fit_Exponential_1P:
         self.gamma = 0
 
         # Obtain least squares estimates
-        if method == "MLE":
-            LS_method = "LS"
-        else:
-            LS_method = method
+        LS_method = "LS" if method == "MLE" else method
         LS_results = LS_optimization(
             func_name="Exponential_1P",
             LL_func=Fit_Exponential_1P.LL,
@@ -5514,10 +5470,7 @@ class Fit_Exponential_1P:
                 Exponential_probability_plot_Weibull_Scale,
             )
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             Exponential_probability_plot_Weibull_Scale(
                 failures=failures,
                 right_censored=rc,
@@ -5700,10 +5653,7 @@ class Fit_Exponential_2P:
         optimizer = inputs.optimizer
 
         # Obtain least squares estimates
-        if method == "MLE":
-            LS_method = "LS"
-        else:
-            LS_method = method
+        LS_method = "LS" if method == "MLE" else method
         LS_results = LS_optimization(
             func_name="Exponential_2P",
             LL_func=Fit_Exponential_2P.LL,
@@ -5890,10 +5840,7 @@ class Fit_Exponential_2P:
                 Exponential_probability_plot_Weibull_Scale,
             )
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             Exponential_probability_plot_Weibull_Scale(
                 failures=failures,
                 right_censored=rc,
@@ -6084,10 +6031,7 @@ class Fit_Normal_2P:
         CI_type = inputs.CI_type
 
         # Obtain least squares estimates
-        if method == "MLE":
-            LS_method = "LS"
-        else:
-            LS_method = method
+        LS_method = "LS" if method == "MLE" else method
         LS_results = LS_optimization(
             func_name="Normal_2P",
             LL_func=Fit_Normal_2P.LL,
@@ -6302,10 +6246,7 @@ class Fit_Normal_2P:
         if show_probability_plot is True:
             from reliability.Probability_plotting import Normal_probability_plot
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             Normal_probability_plot(
                 failures=failures,
                 right_censored=rc,
@@ -6319,7 +6260,7 @@ class Fit_Normal_2P:
 
     @staticmethod
     def logf(t, mu, sigma):  # Log PDF (Normal)
-        return anp.log(anp.exp(-0.5 * (((t - mu) / sigma) ** 2))) - anp.log((sigma * (2 * anp.pi) ** 0.5))
+        return anp.log(anp.exp(-0.5 * (((t - mu) / sigma) ** 2))) - anp.log(sigma * (2 * anp.pi) ** 0.5)
 
     @staticmethod
     def logR(t, mu, sigma):  # Log SF (Normal)
@@ -6490,10 +6431,7 @@ class Fit_Gumbel_2P:
         CI_type = inputs.CI_type
 
         # Obtain least squares estimates
-        if method == "MLE":
-            LS_method = "LS"
-        else:
-            LS_method = method
+        LS_method = "LS" if method == "MLE" else method
         LS_results = LS_optimization(
             func_name="Gumbel_2P",
             LL_func=Fit_Gumbel_2P.LL,
@@ -6663,10 +6601,7 @@ class Fit_Gumbel_2P:
         if show_probability_plot is True:
             from reliability.Probability_plotting import Gumbel_probability_plot
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             Gumbel_probability_plot(
                 failures=failures,
                 right_censored=rc,
@@ -6848,10 +6783,7 @@ class Fit_Lognormal_2P:
         self.gamma = 0
 
         # Obtain least squares estimates
-        if method == "MLE":
-            LS_method = "LS"
-        else:
-            LS_method = method
+        LS_method = "LS" if method == "MLE" else method
         LS_results = LS_optimization(
             func_name="Lognormal_2P",
             LL_func=Fit_Lognormal_2P.LL,
@@ -7065,10 +6997,7 @@ class Fit_Lognormal_2P:
         if show_probability_plot is True:
             from reliability.Probability_plotting import Lognormal_probability_plot
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             Lognormal_probability_plot(
                 failures=failures,
                 right_censored=rc,
@@ -7260,10 +7189,7 @@ class Fit_Lognormal_3P:
         CI_type = inputs.CI_type
 
         # Obtain least squares estimates
-        if method == "MLE":
-            LS_method = "LS"
-        else:
-            LS_method = method
+        LS_method = "LS" if method == "MLE" else method
         LS_results = LS_optimization(
             func_name="Lognormal_3P",
             LL_func=Fit_Lognormal_3P.LL,
@@ -7483,10 +7409,7 @@ class Fit_Lognormal_3P:
         if show_probability_plot is True:
             from reliability.Probability_plotting import Lognormal_probability_plot
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             fig = Lognormal_probability_plot(
                 failures=failures,
                 right_censored=rc,
@@ -7889,10 +7812,7 @@ class Fit_Gamma_2P:
         if show_probability_plot is True:
             from reliability.Probability_plotting import Gamma_probability_plot
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             Gamma_probability_plot(
                 failures=failures,
                 right_censored=rc,
@@ -8115,10 +8035,7 @@ class Fit_Gamma_3P:
         CI_type = inputs.CI_type
 
         # Obtain least squares estimates
-        if method == "MLE":
-            LS_method = "LS"
-        else:
-            LS_method = method
+        LS_method = "LS" if method == "MLE" else method
         LS_results = LS_optimization(
             func_name="Gamma_3P",
             LL_func=Fit_Gamma_3P.LL_abg,
@@ -8362,10 +8279,7 @@ class Fit_Gamma_3P:
         if show_probability_plot is True:
             from reliability.Probability_plotting import Gamma_probability_plot
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             fig = Gamma_probability_plot(
                 failures=failures,
                 right_censored=rc,
@@ -8560,10 +8474,7 @@ class Fit_Beta_2P:
         quantiles = inputs.quantiles
 
         # Obtain least squares estimates
-        if method == "MLE":
-            LS_method = "LS"
-        else:
-            LS_method = method
+        LS_method = "LS" if method == "MLE" else method
         LS_results = LS_optimization(
             func_name="Beta_2P",
             LL_func=Fit_Beta_2P.LL,
@@ -8718,10 +8629,7 @@ class Fit_Beta_2P:
         if show_probability_plot is True:
             from reliability.Probability_plotting import Beta_probability_plot
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             Beta_probability_plot(
                 failures=failures,
                 right_censored=rc,
@@ -8733,7 +8641,7 @@ class Fit_Beta_2P:
 
     @staticmethod
     def logf(t, a, b):  # Log PDF (2 parameter Beta)
-        return anp.log(((t ** (a - 1)) * ((1 - t) ** (b - 1)))) - anp.log(abeta(a, b))
+        return anp.log((t ** (a - 1)) * ((1 - t) ** (b - 1))) - anp.log(abeta(a, b))
 
     @staticmethod
     def logR(t, a, b):  # Log SF (2 parameter Beta)
@@ -8894,10 +8802,7 @@ class Fit_Loglogistic_2P:
         self.gamma = 0
 
         # Obtain least squares estimates
-        if method == "MLE":
-            LS_method = "LS"
-        else:
-            LS_method = method
+        LS_method = "LS" if method == "MLE" else method
         LS_results = LS_optimization(
             func_name="Loglogistic_2P",
             LL_func=Fit_Loglogistic_2P.LL,
@@ -9067,10 +8972,7 @@ class Fit_Loglogistic_2P:
         if show_probability_plot is True:
             from reliability.Probability_plotting import Loglogistic_probability_plot
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             Loglogistic_probability_plot(
                 failures=failures,
                 right_censored=rc,
@@ -9088,7 +8990,7 @@ class Fit_Loglogistic_2P:
 
     @staticmethod
     def logR(t, a, b):  # Log SF (2 parameter Loglogistic)
-        return -anp.log((1 + (t / a) ** b))
+        return -anp.log(1 + (t / a) ** b)
 
     @staticmethod
     def LL(params, T_f, T_rc):
@@ -9255,10 +9157,7 @@ class Fit_Loglogistic_3P:
         CI_type = inputs.CI_type
 
         # Obtain least squares estimates
-        if method == "MLE":
-            LS_method = "LS"
-        else:
-            LS_method = method
+        LS_method = "LS" if method == "MLE" else method
         LS_results = LS_optimization(
             func_name="Loglogistic_3P",
             LL_func=Fit_Lognormal_3P.LL,
@@ -9477,10 +9376,7 @@ class Fit_Loglogistic_3P:
         if show_probability_plot is True:
             from reliability.Probability_plotting import Loglogistic_probability_plot
 
-            if len(right_censored) == 0:
-                rc = None
-            else:
-                rc = right_censored
+            rc = None if len(right_censored) == 0 else right_censored
             fig = Loglogistic_probability_plot(
                 failures=failures,
                 right_censored=rc,
@@ -9511,7 +9407,7 @@ class Fit_Loglogistic_3P:
 
     @staticmethod
     def logR(t, a, b, g):  # Log SF (3 parameter Loglogistic)
-        return -anp.log((1 + ((t - g) / a) ** b))
+        return -anp.log(1 + ((t - g) / a) ** b)
 
     @staticmethod
     def LL(params, T_f, T_rc):

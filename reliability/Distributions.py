@@ -172,7 +172,7 @@ class Weibull_Distribution:
             self.CI_type = kwargs.pop("CI_type")
         else:
             self.CI_type = "time"
-        for item in kwargs.keys():
+        for item in kwargs:
             colorprint(
                 str(
                     "WARNING: "
@@ -1082,7 +1082,7 @@ class Normal_Distribution:
             self.CI_type = kwargs.pop("CI_type")
         else:
             self.CI_type = "time"
-        for item in kwargs.keys():
+        for item in kwargs:
             colorprint(
                 str(
                     "WARNING: "
@@ -1987,7 +1987,7 @@ class Lognormal_Distribution:
             self.CI_type = kwargs.pop("CI_type")
         else:
             self.CI_type = "time"
-        for item in kwargs.keys():
+        for item in kwargs:
             colorprint(
                 str(
                     "WARNING: "
@@ -2883,7 +2883,7 @@ class Exponential_Distribution:
             self.Z = -ss.norm.ppf((1 - CI) / 2)
         else:
             self.Z = None
-        for item in kwargs.keys():
+        for item in kwargs:
             colorprint(
                 str(
                     "WARNING: "
@@ -3789,7 +3789,7 @@ class Gamma_Distribution:
             self.CI_type = kwargs.pop("CI_type")
         else:
             self.CI_type = "time"
-        for item in kwargs.keys():
+        for item in kwargs:
             colorprint(
                 str(
                     "WARNING: "
@@ -5407,7 +5407,7 @@ class Loglogistic_Distribution:
             self.CI_type = kwargs.pop("CI_type")
         else:
             self.CI_type = "time"
-        for item in kwargs.keys():
+        for item in kwargs:
             colorprint(
                 str(
                     "WARNING:"
@@ -6339,7 +6339,7 @@ class Gumbel_Distribution:
             self.CI_type = kwargs.pop("CI_type")
         else:
             self.CI_type = "time"
-        for item in kwargs.keys():
+        for item in kwargs:
             colorprint(
                 str(
                     "WARNING: "
@@ -7225,10 +7225,7 @@ class Competing_Risks_Model:
         xmax_inf = -1e100
         number_of_params = 0
         for dist in distributions:
-            if dist.parameters[-1] == 0:
-                params_in_dist = len(dist.parameters) - 1
-            else:
-                params_in_dist = len(dist.parameters)
+            params_in_dist = len(dist.parameters) - 1 if dist.parameters[-1] == 0 else len(dist.parameters)
             number_of_params += params_in_dist
             xmax = max(xmax, dist.quantile(1 - 1e-10))
             xmin = min(xmin, dist.quantile(1e-10))
@@ -7372,7 +7369,7 @@ class Competing_Risks_Model:
         """
         Competing_Risks_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
         plt.figure(figsize=(9, 7))
-        text_title = str("Competing Risks Model")
+        text_title = "Competing Risks Model"
         plt.suptitle(text_title, fontsize=15)
 
         plt.subplot(231)
@@ -7522,10 +7519,7 @@ class Competing_Risks_Model:
                         dist.PDF(xvals=X_positive, label=dist.param_title_long)
                     else:
                         dist.PDF(xvals=self.__xvals, label=dist.param_title_long)
-            if "label" in kwargs:
-                textlabel = kwargs.pop("label")
-            else:
-                textlabel = "Competing risks model"
+            textlabel = kwargs.pop("label") if "label" in kwargs else "Competing risks model"
             limits = get_axes_limits()
             self.__pdf[self.__pdf > 1e100] = 1e100
             plt.plot(self.__xvals, self.__pdf, label=textlabel, **kwargs)
@@ -7597,10 +7591,7 @@ class Competing_Risks_Model:
                         dist.CDF(xvals=X_positive, label=dist.param_title_long)
                     else:
                         dist.CDF(xvals=self.__xvals, label=dist.param_title_long)
-            if "label" in kwargs:
-                textlabel = kwargs.pop("label")
-            else:
-                textlabel = "Competing risks model"
+            textlabel = kwargs.pop("label") if "label" in kwargs else "Competing risks model"
             limits = get_axes_limits()
             plt.plot(self.__xvals, self.__cdf, label=textlabel, **kwargs)
             plt.xlabel("x values")
@@ -7670,10 +7661,7 @@ class Competing_Risks_Model:
                         dist.SF(xvals=X_positive, label=dist.param_title_long)
                     else:
                         dist.SF(xvals=self.__xvals, label=dist.param_title_long)
-            if "label" in kwargs:
-                textlabel = kwargs.pop("label")
-            else:
-                textlabel = "Competing risks model"
+            textlabel = kwargs.pop("label") if "label" in kwargs else "Competing risks model"
             limits = get_axes_limits()
             plt.plot(self.__xvals, self.__sf, label=textlabel, **kwargs)
             plt.xlabel("x values")
@@ -7743,10 +7731,7 @@ class Competing_Risks_Model:
                         dist.HF(xvals=X_positive, label=dist.param_title_long)
                     else:
                         dist.HF(xvals=self.__xvals, label=dist.param_title_long)
-            if "label" in kwargs:
-                textlabel = kwargs.pop("label")
-            else:
-                textlabel = "Competing risks model"
+            textlabel = kwargs.pop("label") if "label" in kwargs else "Competing risks model"
             limits = get_axes_limits()
             self.__hf[self.__hf > 1e100] = 1e100
             plt.plot(self.__xvals, self.__hf, label=textlabel, **kwargs)
@@ -7817,10 +7802,7 @@ class Competing_Risks_Model:
                         dist.CHF(xvals=X_positive, label=dist.param_title_long)
                     else:
                         dist.CHF(xvals=self.__xvals, label=dist.param_title_long)
-            if "label" in kwargs:
-                textlabel = kwargs.pop("label")
-            else:
-                textlabel = "Competing risks model"
+            textlabel = kwargs.pop("label") if "label" in kwargs else "Competing risks model"
             limits = get_axes_limits()
             plt.plot(self.__xvals, self.__chf, label=textlabel, **kwargs)
             plt.xlabel("x values")
@@ -7964,12 +7946,14 @@ class Competing_Risks_Model:
             else:
                 sf = 1
                 for i in range(len(self.distributions)):
-                    if type(self.distributions[i]) in [
-                        Normal_Distribution,
-                        Gumbel_Distribution,
-                    ]:
-                        sf *= self.distributions[i].SF(X, show_plot=False)
-                    elif X > 0:
+                    if (
+                        type(self.distributions[i])
+                        in [
+                            Normal_Distribution,
+                            Gumbel_Distribution,
+                        ]
+                        or X > 0
+                    ):
                         sf *= self.distributions[i].SF(X, show_plot=False)
             return sf
 
@@ -8123,10 +8107,7 @@ class Mixture_Model:
         xmax_inf = -1e100
         number_of_params = 0
         for dist in distributions:
-            if dist.parameters[-1] == 0:
-                params_in_dist = len(dist.parameters) - 1
-            else:
-                params_in_dist = len(dist.parameters)
+            params_in_dist = len(dist.parameters) - 1 if dist.parameters[-1] == 0 else len(dist.parameters)
             number_of_params += params_in_dist + 1  # plus 1 for the proportion
             xmax = max(xmax, dist.quantile(1 - 1e-10))
             xmin = min(xmin, dist.quantile(1e-10))
@@ -8283,7 +8264,7 @@ class Mixture_Model:
         Mixture_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
         plt.figure(figsize=(9, 7))
-        text_title = str("Mixture Model")
+        text_title = "Mixture Model"
         plt.suptitle(text_title, fontsize=15)
 
         plt.subplot(231)
@@ -8433,10 +8414,7 @@ class Mixture_Model:
                         dist.PDF(xvals=X_positive, label=dist.param_title_long)
                     else:
                         dist.PDF(xvals=self.__xvals, label=dist.param_title_long)
-            if "label" in kwargs:
-                textlabel = kwargs.pop("label")
-            else:
-                textlabel = "Mixture model"
+            textlabel = kwargs.pop("label") if "label" in kwargs else "Mixture model"
 
             limits = get_axes_limits()
             self.__pdf[self.__pdf > 1e100] = 1e100
@@ -8508,10 +8486,7 @@ class Mixture_Model:
                         dist.CDF(xvals=X_positive, label=dist.param_title_long)
                     else:
                         dist.CDF(xvals=self.__xvals, label=dist.param_title_long)
-            if "label" in kwargs:
-                textlabel = kwargs.pop("label")
-            else:
-                textlabel = "Mixture model"
+            textlabel = kwargs.pop("label") if "label" in kwargs else "Mixture model"
             limits = get_axes_limits()
             plt.plot(self.__xvals, self.__cdf, label=textlabel, **kwargs)
             plt.xlabel("x values")
@@ -8581,10 +8556,7 @@ class Mixture_Model:
                         dist.SF(xvals=X_positive, label=dist.param_title_long)
                     else:
                         dist.SF(xvals=self.__xvals, label=dist.param_title_long)
-            if "label" in kwargs:
-                textlabel = kwargs.pop("label")
-            else:
-                textlabel = "Mixture model"
+            textlabel = kwargs.pop("label") if "label" in kwargs else "Mixture model"
             limits = get_axes_limits()
             plt.plot(self.__xvals, self.__sf, label=textlabel, **kwargs)
             plt.xlabel("x values")
@@ -8655,10 +8627,7 @@ class Mixture_Model:
                         dist.HF(xvals=X_positive, label=dist.param_title_long)
                     else:
                         dist.HF(xvals=self.__xvals, label=dist.param_title_long)
-            if "label" in kwargs:
-                textlabel = kwargs.pop("label")
-            else:
-                textlabel = "Mixture model"
+            textlabel = kwargs.pop("label") if "label" in kwargs else "Mixture model"
             self.__hf[self.__hf > 1e100] = 1e100
             plt.plot(self.__xvals, self.__hf, label=textlabel, **kwargs)
             plt.xlabel("x values")
@@ -8730,10 +8699,7 @@ class Mixture_Model:
                     else:
                         dist.CHF(xvals=self.__xvals, label=dist.param_title_long)
                         print("here")
-            if "label" in kwargs:
-                textlabel = kwargs.pop("label")
-            else:
-                textlabel = "Mixture model"
+            textlabel = kwargs.pop("label") if "label" in kwargs else "Mixture model"
             plt.plot(self.__xvals, self.__chf, label=textlabel, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Cumulative Hazard")
@@ -8872,12 +8838,14 @@ class Mixture_Model:
             else:
                 cdf = 0
                 for i in range(len(self.distributions)):
-                    if type(self.distributions[i]) in [
-                        Normal_Distribution,
-                        Gumbel_Distribution,
-                    ]:
-                        cdf += self.distributions[i].CDF(X, show_plot=False) * self.proportions[i]
-                    elif X > 0:
+                    if (
+                        type(self.distributions[i])
+                        in [
+                            Normal_Distribution,
+                            Gumbel_Distribution,
+                        ]
+                        or X > 0
+                    ):
                         cdf += self.distributions[i].CDF(X, show_plot=False) * self.proportions[i]
             return 1 - cdf
 
@@ -9600,12 +9568,9 @@ class DSZI_Model:
         If DS < 1 the MRL will return np.inf
         """
 
-        if self.DS < 1:
-            # infinite life if the CDF never reaches 1
-            MRL = np.inf
-        else:
-            # the MRL of the scaled distribution is the same as that of the base distribution
-            MRL = self.__base_distribution.mean_residual_life(t=t)
+        MRL = np.inf if self.DS < 1 else self.__base_distribution.mean_residual_life(t=t)
+        # infinite life if the CDF never reaches 1
+        # the MRL of the scaled distribution is the same as that of the base distribution
         return MRL
 
     def stats(self):

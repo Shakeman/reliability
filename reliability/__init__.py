@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # pylint: skip-file
 
 from datetime import date
@@ -10,4 +9,4 @@ __url__ = 'https://reliability.readthedocs.io/en/latest/index.html'
 __author__ = 'Matthew Reid'
 __author_email__ = 'alpha.reliability@gmail.com'
 __license__ = 'LGPLv3'
-__copyright__ = "Copyright 2019-{}, Matthew Reid".format(date.today().year)
+__copyright__ = f"Copyright 2019-{date.today().year}, Matthew Reid"

@@ -2,7 +2,7 @@
 
 import setuptools
 
-with open("README.md", "r") as file:
+with open("README.md") as file:
     long_description = file.read()
 
 setuptools.setup(
@@ -16,7 +16,7 @@ setuptools.setup(
     project_urls={
         'Documentation': 'https://reliability.readthedocs.io/en/latest/',
         'Source Code': 'https://github.com/MatthewReid854/reliability',
-        'Donate': 'https://reliability.readthedocs.io/en/latest/How%20to%20donate%20to%20the%20project.html'
+        'Donate': 'https://reliability.readthedocs.io/en/latest/How%20to%20donate%20to%20the%20project.html',
     },
     keywords=[
         "reliability",
@@ -79,10 +79,8 @@ setuptools.setup(
         "matplotlib>=3.7.1",
         "pandas>=2.0.1",
         "autograd-gamma>=0.5.0",
-        "mplcursors>=0.5.2"
+        "mplcursors>=0.5.2",
     ],
     python_requires=">=3.8",
-    packages=setuptools.find_packages(
-        exclude=["*.tests", "*.tests.*"]
-    ),
+    packages=setuptools.find_packages(exclude=["*.tests", "*.tests.*"]),
 )

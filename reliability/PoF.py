@@ -155,12 +155,10 @@ def SN_diagram(
     if xscale not in ["log", "linear"]:
         raise ValueError("xscale must be " "log" " or " "linear" ". Default is " "log" "")
 
-    if stress_trace is not None:
-        if type(stress_trace) not in [np.ndarray, list]:
-            raise ValueError("stress_trace must be an array or list. Default is None")
-    if cycles_trace is not None:
-        if type(cycles_trace) not in [np.ndarray, list]:
-            raise ValueError("cycles_trace must be an array or list. Default is None")
+    if stress_trace is not None and type(stress_trace) not in [np.ndarray, list]:
+        raise ValueError("stress_trace must be an array or list. Default is None")
+    if cycles_trace is not None and type(cycles_trace) not in [np.ndarray, list]:
+        raise ValueError("cycles_trace must be an array or list. Default is None")
 
     # fit the log-linear model
     log10_cycles = np.log10(cycles)
@@ -182,10 +180,7 @@ def SN_diagram(
         label = kwargs.pop("label")
     else:
         label = str(r"$σ_a = " + str(round(c, 3)) + " - " + str(round(m * -1, 3)) + r"\times log_{10}(N_f)$")
-    if "color" in kwargs:
-        color = kwargs.pop("color")
-    else:
-        color = "steelblue"
+    color = kwargs.pop("color") if "color" in kwargs else "steelblue"
 
     if show_endurance_limit is True:
         endurance_limit = np.average(stress_runout)  # endurance limit is predicted as the average of the runout values
@@ -1769,10 +1764,7 @@ class fracture_mechanics_crack_growth:
             raise ValueError("m can not be 2")
         if crack_type not in ["center", "edge", "centre"]:
             raise ValueError("crack_type must be either edge or center. default is center")
-        if D is None:
-            d = 0
-        else:
-            d = D
+        d = 0 if D is None else D
         if W - 2 * d < 0:
             error_str = str(
                 "The specified geometry is invalid. A doubly notched specimen with specified values of the d = "
@@ -1929,24 +1921,22 @@ class fracture_mechanics_crack_growth:
                 self.Nf_stage_1_iterative = N - 1
             if a_effective > a_crit * 1000:
                 growth_finished = True
-            if a_final is not None:
-                if a_effective > a_final + d:
-                    growth_finished = True
+            if a_final is not None and a_effective > a_final + d:
+                growth_finished = True
         self.Nf_total_iterative = N
         self.final_crack_length_iterative = a_crit * 1000 - d
         self.Nf_stage_2_iterative = N - self.Nf_stage_1_iterative
-        if a_final is not None:
-            if a_final > a_crit * 1000 - d:
-                colorprint(
-                    str(
-                        "WARNING: During the iterative method, the specified a_final ("
-                        + str(a_final)
-                        + " mm) was found to be greater than the critical crack length to cause failure ("
-                        + str(round(self.final_crack_length_iterative, 2))
-                        + " mm)."
-                    ),
-                    text_color="red",
-                )
+        if a_final is not None and a_final > a_crit * 1000 - d:
+            colorprint(
+                str(
+                    "WARNING: During the iterative method, the specified a_final ("
+                    + str(a_final)
+                    + " mm) was found to be greater than the critical crack length to cause failure ("
+                    + str(round(self.final_crack_length_iterative, 2))
+                    + " mm)."
+                ),
+                text_color="red",
+            )
         if print_results is True:
             print("ITERATIVE METHOD (recalculating f(g), S_max, and a_crit for each cycle):")
             if a_initial > lt2:
@@ -2105,13 +2095,12 @@ def creep_rupture_curves(temp_array, stress_array, TTF_array, stress_trace=None,
         m = fit[0]
         c = fit[1]
         plt.plot(xvals, m * np.log10(xvals) + c, alpha=0.8)
-        if stress_trace is not None and temp_trace is not None:
-            if T == temp_trace:
-                y = stress_trace
-                x = 10 ** ((y - c) / m)
-                plt.plot([xmin, x, x], [y, y, ymin], linestyle="--", color="k", linewidth=1)
-                plt.text(xmin, y, str(" Stress = " + str(y)), va="bottom")
-                plt.text(x, ymin, str(" Time to failure = " + str(round(x, 3))), va="bottom")
+        if stress_trace is not None and temp_trace is not None and temp_trace == T:
+            y = stress_trace
+            x = 10 ** ((y - c) / m)
+            plt.plot([xmin, x, x], [y, y, ymin], linestyle="--", color="k", linewidth=1)
+            plt.text(xmin, y, str(" Stress = " + str(y)), va="bottom")
+            plt.text(x, ymin, str(" Time to failure = " + str(round(x, 3))), va="bottom")
     plt.xscale("log")
     plt.xlabel("Time to failure")
     plt.ylabel("Stress")

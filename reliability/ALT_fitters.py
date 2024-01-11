@@ -30,8 +30,7 @@ shape_change_threshold = 0.5
 
 
 class Fit_Everything_ALT:
-    """
-    This function will fit all available ALT models for the data you enter,
+    """This function will fit all available ALT models for the data you enter,
     which may include right censored data.
 
     ALT models are either single stress (Exponential, Eyring, Power) or dual
@@ -305,7 +304,7 @@ class Fit_Everything_ALT:
                 colorprint(
                     str(
                         "WARNING: The following items were not recognised ALT models to exclude: "
-                        + str(unknown_exclusions)
+                        + str(unknown_exclusions),
                     ),
                     text_color="red",
                 )
@@ -337,7 +336,7 @@ class Fit_Everything_ALT:
                     "AICc",
                     "BIC",
                     "optimizer",
-                ]
+                ],
             )
         else:  # same df but without column m
             df = pd.DataFrame(
@@ -353,7 +352,7 @@ class Fit_Everything_ALT:
                     "AICc",
                     "BIC",
                     "optimizer",
-                ]
+                ],
             )
 
         # Fit the parametric models and extract the fitted parameters
@@ -394,9 +393,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Weibull_Exponential_AICc],
                             "BIC": [self.Weibull_Exponential_BIC],
                             "optimizer": [self.Weibull_Exponential_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Weibull_Eyring" not in self.excluded_models:
@@ -436,9 +435,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Weibull_Eyring_AICc],
                             "BIC": [self.Weibull_Eyring_BIC],
                             "optimizer": [self.Weibull_Eyring_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Weibull_Power" not in self.excluded_models:
@@ -478,9 +477,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Weibull_Power_AICc],
                             "BIC": [self.Weibull_Power_BIC],
                             "optimizer": [self.Weibull_Power_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Lognormal_Exponential" not in self.excluded_models:
@@ -520,9 +519,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Lognormal_Exponential_AICc],
                             "BIC": [self.Lognormal_Exponential_BIC],
                             "optimizer": [self.Lognormal_Exponential_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Lognormal_Eyring" not in self.excluded_models:
@@ -562,9 +561,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Lognormal_Eyring_AICc],
                             "BIC": [self.Lognormal_Eyring_BIC],
                             "optimizer": [self.Lognormal_Eyring_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Lognormal_Power" not in self.excluded_models:
@@ -604,9 +603,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Lognormal_Power_AICc],
                             "BIC": [self.Lognormal_Power_BIC],
                             "optimizer": [self.Lognormal_Power_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Normal_Exponential" not in self.excluded_models:
@@ -646,9 +645,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Normal_Exponential_AICc],
                             "BIC": [self.Normal_Exponential_BIC],
                             "optimizer": [self.Normal_Exponential_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Normal_Eyring" not in self.excluded_models:
@@ -688,9 +687,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Normal_Eyring_AICc],
                             "BIC": [self.Normal_Eyring_BIC],
                             "optimizer": [self.Normal_Eyring_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Normal_Power" not in self.excluded_models:
@@ -730,9 +729,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Normal_Power_AICc],
                             "BIC": [self.Normal_Power_BIC],
                             "optimizer": [self.Normal_Power_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Exponential_Exponential" not in self.excluded_models:
@@ -771,9 +770,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Exponential_Exponential_AICc],
                             "BIC": [self.Exponential_Exponential_BIC],
                             "optimizer": [self.Exponential_Exponential_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Exponential_Eyring" not in self.excluded_models:
@@ -812,9 +811,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Exponential_Eyring_AICc],
                             "BIC": [self.Exponential_Eyring_BIC],
                             "optimizer": [self.Exponential_Eyring_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Exponential_Power" not in self.excluded_models:
@@ -853,9 +852,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Exponential_Power_AICc],
                             "BIC": [self.Exponential_Power_BIC],
                             "optimizer": [self.Exponential_Power_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Weibull_Dual_Exponential" not in self.excluded_models:
@@ -899,9 +898,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Weibull_Dual_Exponential_AICc],
                             "BIC": [self.Weibull_Dual_Exponential_BIC],
                             "optimizer": [self.Weibull_Dual_Exponential_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Weibull_Power_Exponential" not in self.excluded_models:
@@ -945,9 +944,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Weibull_Power_Exponential_AICc],
                             "BIC": [self.Weibull_Power_Exponential_BIC],
                             "optimizer": [self.Weibull_Power_Exponential_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Weibull_Dual_Power" not in self.excluded_models:
@@ -991,9 +990,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Weibull_Dual_Power_AICc],
                             "BIC": [self.Weibull_Dual_Power_BIC],
                             "optimizer": [self.Weibull_Dual_Power_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Lognormal_Dual_Exponential" not in self.excluded_models:
@@ -1037,9 +1036,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Lognormal_Dual_Exponential_AICc],
                             "BIC": [self.Lognormal_Dual_Exponential_BIC],
                             "optimizer": [self.Lognormal_Dual_Exponential_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Lognormal_Power_Exponential" not in self.excluded_models:
@@ -1083,9 +1082,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Lognormal_Power_Exponential_AICc],
                             "BIC": [self.Lognormal_Power_Exponential_BIC],
                             "optimizer": [self.Lognormal_Power_Exponential_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Lognormal_Dual_Power" not in self.excluded_models:
@@ -1129,9 +1128,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Lognormal_Dual_Power_AICc],
                             "BIC": [self.Lognormal_Dual_Power_BIC],
                             "optimizer": [self.Lognormal_Dual_Power_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Normal_Dual_Exponential" not in self.excluded_models:
@@ -1175,9 +1174,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Normal_Dual_Exponential_AICc],
                             "BIC": [self.Normal_Dual_Exponential_BIC],
                             "optimizer": [self.Normal_Dual_Exponential_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Normal_Power_Exponential" not in self.excluded_models:
@@ -1221,9 +1220,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Normal_Power_Exponential_AICc],
                             "BIC": [self.Normal_Power_Exponential_BIC],
                             "optimizer": [self.Normal_Power_Exponential_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Normal_Dual_Power" not in self.excluded_models:
@@ -1267,9 +1266,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Normal_Dual_Power_AICc],
                             "BIC": [self.Normal_Dual_Power_BIC],
                             "optimizer": [self.Normal_Dual_Power_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Exponential_Dual_Exponential" not in self.excluded_models:
@@ -1312,9 +1311,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Exponential_Dual_Exponential_AICc],
                             "BIC": [self.Exponential_Dual_Exponential_BIC],
                             "optimizer": [self.Exponential_Dual_Exponential_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Exponential_Power_Exponential" not in self.excluded_models:
@@ -1357,9 +1356,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Exponential_Power_Exponential_AICc],
                             "BIC": [self.Exponential_Power_Exponential_BIC],
                             "optimizer": [self.Exponential_Power_Exponential_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Exponential_Dual_Power" not in self.excluded_models:
@@ -1402,9 +1401,9 @@ class Fit_Everything_ALT:
                             "AICc": [self.Exponential_Dual_Power_AICc],
                             "BIC": [self.Exponential_Dual_Power_BIC],
                             "optimizer": [self.Exponential_Dual_Power_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         # change to sorting by BIC if there is insufficient data to get the AICc for everything that was fitted
@@ -1413,7 +1412,7 @@ class Fit_Everything_ALT:
         # sort the dataframe by BIC, AICc, or log-likelihood. Smallest AICc, BIC, log-likelihood is better fit
         if not isinstance(sort_by, str):
             raise ValueError(
-                "Invalid input to sort_by. Options are 'BIC', 'AICc', or 'Log-likelihood'. Default is 'BIC'."
+                "Invalid input to sort_by. Options are 'BIC', 'AICc', or 'Log-likelihood'. Default is 'BIC'.",
             )
         if sort_by.upper() == "BIC":
             df2 = df.sort_values(by="BIC")
@@ -1432,7 +1431,7 @@ class Fit_Everything_ALT:
             df2.drop("LLabs", axis=1, inplace=True)  # remove the column created just for sorting
         else:
             raise ValueError(
-                "Invalid input to sort_by. Options are 'BIC', 'AICc', or 'Log-likelihood'. Default is 'BIC'."
+                "Invalid input to sort_by. Options are 'BIC', 'AICc', or 'Log-likelihood'. Default is 'BIC'.",
             )
         if len(df2.index.values) == 0:
             raise ValueError("You have excluded all available ALT models")
@@ -1467,7 +1466,7 @@ class Fit_Everything_ALT:
                 self.best_model_at_use_stress = Lognormal_Distribution(
                     mu=np.log(
                         (1 / use_level_stress)
-                        * np.exp(-(self.Lognormal_Eyring_c - self.Lognormal_Eyring_a / use_level_stress))
+                        * np.exp(-(self.Lognormal_Eyring_c - self.Lognormal_Eyring_a / use_level_stress)),
                     ),
                     sigma=self.Lognormal_Eyring_sigma,
                 )
@@ -1495,7 +1494,7 @@ class Fit_Everything_ALT:
             elif best_model == "Exponential_Exponential":
                 self.best_model_at_use_stress = Exponential_Distribution(
                     Lambda=1
-                    / (self.Exponential_Exponential_b * np.exp(self.Exponential_Exponential_a / use_level_stress))
+                    / (self.Exponential_Exponential_b * np.exp(self.Exponential_Exponential_a / use_level_stress)),
                 )
             elif best_model == "Exponential_Eyring":
                 self.best_model_at_use_stress = Exponential_Distribution(
@@ -1503,18 +1502,18 @@ class Fit_Everything_ALT:
                     / (
                         (1 / use_level_stress)
                         * np.exp(-(self.Exponential_Eyring_c - self.Exponential_Eyring_a / use_level_stress))
-                    )
+                    ),
                 )
             elif best_model == "Exponential_Power":
                 self.best_model_at_use_stress = Exponential_Distribution(
-                    Lambda=1 / (self.Exponential_Power_a * use_level_stress**self.Exponential_Power_n)
+                    Lambda=1 / (self.Exponential_Power_a * use_level_stress**self.Exponential_Power_n),
                 )
             elif best_model == "Weibull_Dual_Exponential":
                 self.best_model_at_use_stress = Weibull_Distribution(
                     alpha=self.Weibull_Dual_Exponential_c
                     * np.exp(
                         self.Weibull_Dual_Exponential_a / use_level_stress[0]
-                        + self.Weibull_Dual_Exponential_b / use_level_stress[1]
+                        + self.Weibull_Dual_Exponential_b / use_level_stress[1],
                     ),
                     beta=self.Weibull_Dual_Exponential_beta,
                 )
@@ -1539,7 +1538,7 @@ class Fit_Everything_ALT:
                         self.Lognormal_Dual_Exponential_c
                         * np.exp(
                             self.Lognormal_Dual_Exponential_a / use_level_stress[0]
-                            + self.Lognormal_Dual_Exponential_b / use_level_stress[1]
+                            + self.Lognormal_Dual_Exponential_b / use_level_stress[1],
                         )
                     ),
                     sigma=self.Lognormal_Dual_Exponential_sigma,
@@ -1569,7 +1568,7 @@ class Fit_Everything_ALT:
                     mu=self.Normal_Dual_Exponential_c
                     * np.exp(
                         self.Normal_Dual_Exponential_a / use_level_stress[0]
-                        + self.Normal_Dual_Exponential_b / use_level_stress[1]
+                        + self.Normal_Dual_Exponential_b / use_level_stress[1],
                     ),
                     sigma=self.Normal_Dual_Exponential_sigma,
                 )
@@ -1592,20 +1591,20 @@ class Fit_Everything_ALT:
                     Lambda=self.Exponential_Dual_Exponential_c
                     * np.exp(
                         self.Exponential_Dual_Exponential_a / use_level_stress[0]
-                        + self.Exponential_Dual_Exponential_b / use_level_stress[1]
-                    )
+                        + self.Exponential_Dual_Exponential_b / use_level_stress[1],
+                    ),
                 )
             elif best_model == "Exponential_Power_Exponential":
                 self.best_model_at_use_stress = Exponential_Distribution(
                     Lambda=self.Exponential_Power_Exponential_c
                     * use_level_stress[1] ** self.Exponential_Power_Exponential_n
-                    * np.exp(self.Exponential_Power_Exponential_a / use_level_stress[0])
+                    * np.exp(self.Exponential_Power_Exponential_a / use_level_stress[0]),
                 )
             elif best_model == "Exponential_Dual_Power":
                 self.best_model_at_use_stress = Exponential_Distribution(
                     Lambda=self.Exponential_Dual_Power_c
                     * use_level_stress[0] ** self.Exponential_Dual_Power_m
-                    * use_level_stress[1] ** self.Exponential_Dual_Power_n
+                    * use_level_stress[1] ** self.Exponential_Dual_Power_n,
                 )
 
         # print the results
@@ -1631,7 +1630,7 @@ class Fit_Everything_ALT:
                     use_level_stress_str = round_and_string(use_level_stress)
                 else:
                     use_level_stress_str = str(
-                        round_and_string(use_level_stress[0]) + ", " + round_and_string(use_level_stress[1])
+                        round_and_string(use_level_stress[0]) + ", " + round_and_string(use_level_stress[1]),
                     )
                 print(
                     str(
@@ -1640,8 +1639,8 @@ class Fit_Everything_ALT:
                         + ", the "
                         + self.best_model_name
                         + " model has a mean life of "
-                        + round_and_string(self.best_model_at_use_stress.mean)
-                    )
+                        + round_and_string(self.best_model_at_use_stress.mean),
+                    ),
                 )
 
         if show_probability_plot is True:
@@ -2078,7 +2077,7 @@ class Fit_Everything_ALT:
 
                 def life_func(S1, S2):
                     return self.Weibull_Dual_Exponential_c * np.exp(
-                        self.Weibull_Dual_Exponential_a / S1 + self.Weibull_Dual_Exponential_b / S2
+                        self.Weibull_Dual_Exponential_a / S1 + self.Weibull_Dual_Exponential_b / S2,
                     )
 
                 stresses_for_groups = (
@@ -2190,7 +2189,7 @@ class Fit_Everything_ALT:
 
                 def life_func(S1, S2):
                     return self.Lognormal_Dual_Exponential_c * np.exp(
-                        self.Lognormal_Dual_Exponential_a / S1 + self.Lognormal_Dual_Exponential_b / S2
+                        self.Lognormal_Dual_Exponential_a / S1 + self.Lognormal_Dual_Exponential_b / S2,
                     )
 
                 stresses_for_groups = (
@@ -2302,7 +2301,7 @@ class Fit_Everything_ALT:
 
                 def life_func(S1, S2):
                     return self.Normal_Dual_Exponential_c * np.exp(
-                        self.Normal_Dual_Exponential_a / S1 + self.Normal_Dual_Exponential_b / S2
+                        self.Normal_Dual_Exponential_a / S1 + self.Normal_Dual_Exponential_b / S2,
                     )
 
                 stresses_for_groups = (
@@ -2412,7 +2411,7 @@ class Fit_Everything_ALT:
 
                 def life_func(S1, S2):
                     return self.Exponential_Dual_Exponential_c * np.exp(
-                        self.Exponential_Dual_Exponential_a / S1 + self.Exponential_Dual_Exponential_b / S2
+                        self.Exponential_Dual_Exponential_a / S1 + self.Exponential_Dual_Exponential_b / S2,
                     )
 
                 stresses_for_groups = (
@@ -2542,8 +2541,7 @@ class Fit_Everything_ALT:
 
 
 class Fit_Weibull_Exponential:
-    """
-    This function will fit the Weibull-Exponential life-stress model to the data
+    """This function will fit the Weibull-Exponential life-stress model to the data
     provided. Please see the online documentation for the equations of this
     model.
 
@@ -2703,10 +2701,7 @@ class Fit_Weibull_Exponential:
         alphas_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Weibull_2P(
@@ -2722,10 +2717,7 @@ class Fit_Weibull_Exponential:
                 betas_for_change_df.append(0)
                 alphas_for_change_df.append("")
 
-        if len(betas) > 0:
-            common_beta = float(np.average(betas))
-        else:
-            common_beta = 1  # guess in the absence of enough points
+        common_beta = float(np.average(betas)) if len(betas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [life_stress_guess[0], life_stress_guess[1], common_beta]  # a, b, beta
 
@@ -2779,7 +2771,7 @@ class Fit_Weibull_Exponential:
                     + self.optimizer
                     + " optimizer is non-invertable for the Weibull_Exponential model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -2916,8 +2908,8 @@ class Fit_Weibull_Exponential:
                     str(
                         "The beta parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Weibull distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Weibull distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
             print(
@@ -2933,8 +2925,8 @@ class Fit_Weibull_Exponential:
                         + round_and_string(use_level_stress)
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -2981,8 +2973,7 @@ class Fit_Weibull_Exponential:
 
 
 class Fit_Weibull_Eyring:
-    """
-    This function will Fit the Weibull-Eyring life-stress model to the data
+    """This function will Fit the Weibull-Eyring life-stress model to the data
     provided. Please see the online documentation for the equations of this
     model.
 
@@ -3139,10 +3130,7 @@ class Fit_Weibull_Eyring:
         alphas_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Weibull_2P(
@@ -3158,10 +3146,7 @@ class Fit_Weibull_Eyring:
                 betas_for_change_df.append(0)
                 alphas_for_change_df.append("")
 
-        if len(betas) > 0:
-            common_beta = float(np.average(betas))
-        else:
-            common_beta = 1  # guess in the absence of enough points
+        common_beta = float(np.average(betas)) if len(betas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [life_stress_guess[0], life_stress_guess[1], common_beta]  # a, c, beta
 
@@ -3215,7 +3200,7 @@ class Fit_Weibull_Eyring:
                     + self.optimizer
                     + " optimizer is non-invertable for the Weibull_Eyring model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -3352,8 +3337,8 @@ class Fit_Weibull_Eyring:
                     str(
                         "The beta parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Weibull distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Weibull distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -3364,8 +3349,8 @@ class Fit_Weibull_Eyring:
                         + round_and_string(use_level_stress)
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -3412,8 +3397,7 @@ class Fit_Weibull_Eyring:
 
 
 class Fit_Weibull_Power:
-    """
-    This function will Fit the Weibull-Power life-stress model to the data
+    """This function will Fit the Weibull-Power life-stress model to the data
     provided. Please see the online documentation for the equations of this
     model.
 
@@ -3569,10 +3553,7 @@ class Fit_Weibull_Power:
         alphas_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Weibull_2P(
@@ -3588,10 +3569,7 @@ class Fit_Weibull_Power:
                 betas_for_change_df.append(0)
                 alphas_for_change_df.append("")
 
-        if len(betas) > 0:
-            common_beta = float(np.average(betas))
-        else:
-            common_beta = 1  # guess in the absence of enough points
+        common_beta = float(np.average(betas)) if len(betas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [life_stress_guess[0], life_stress_guess[1], common_beta]  # a, n, beta
 
@@ -3645,7 +3623,7 @@ class Fit_Weibull_Power:
                     + self.optimizer
                     + " optimizer is non-invertable for the Weibull_Power model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -3782,8 +3760,8 @@ class Fit_Weibull_Power:
                     str(
                         "The beta parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Weibull distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Weibull distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -3794,8 +3772,8 @@ class Fit_Weibull_Power:
                         + round_and_string(use_level_stress)
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -3842,8 +3820,7 @@ class Fit_Weibull_Power:
 
 
 class Fit_Weibull_Dual_Exponential:
-    """
-    This function will Fit the Weibull_Dual_Exponential life-stress model to the
+    """This function will Fit the Weibull_Dual_Exponential life-stress model to the
     data provided. Please see the online documentation for the equations of this
     model.
 
@@ -4031,10 +4008,7 @@ class Fit_Weibull_Dual_Exponential:
         alphas_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Weibull_2P(
@@ -4050,10 +4024,7 @@ class Fit_Weibull_Dual_Exponential:
                 betas_for_change_df.append(0)
                 alphas_for_change_df.append("")
 
-        if len(betas) > 0:
-            common_beta = float(np.average(betas))
-        else:
-            common_beta = 1  # guess in the absence of enough points
+        common_beta = float(np.average(betas)) if len(betas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [
             life_stress_guess[0],
@@ -4121,7 +4092,7 @@ class Fit_Weibull_Dual_Exponential:
                     + self.optimizer
                     + " optimizer is non-invertable for the Weibull_Dual_Exponential model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -4200,7 +4171,7 @@ class Fit_Weibull_Dual_Exponential:
             stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1]),
                 )
         common_betas = np.ones(len(stresses_for_groups)) * self.beta
         beta_differences = []
@@ -4273,8 +4244,8 @@ class Fit_Weibull_Dual_Exponential:
                     str(
                         "The beta parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Weibull distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Weibull distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -4287,8 +4258,8 @@ class Fit_Weibull_Dual_Exponential:
                         + round_and_string(use_level_stress[1])
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -4335,8 +4306,7 @@ class Fit_Weibull_Dual_Exponential:
 
 
 class Fit_Weibull_Power_Exponential:
-    """
-    This function will Fit the Weibull_Power_Exponential life-stress model to
+    """This function will Fit the Weibull_Power_Exponential life-stress model to
     the data provided. Please see the online documentation for the equations of
     this model.
 
@@ -4525,10 +4495,7 @@ class Fit_Weibull_Power_Exponential:
         alphas_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Weibull_2P(
@@ -4544,10 +4511,7 @@ class Fit_Weibull_Power_Exponential:
                 betas_for_change_df.append(0)
                 alphas_for_change_df.append("")
 
-        if len(betas) > 0:
-            common_beta = float(np.average(betas))
-        else:
-            common_beta = 1  # guess in the absence of enough points
+        common_beta = float(np.average(betas)) if len(betas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [
             life_stress_guess[0],
@@ -4615,7 +4579,7 @@ class Fit_Weibull_Power_Exponential:
                     + self.optimizer
                     + " optimizer is non-invertable for the Weibull_Power_Exponential model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -4694,7 +4658,7 @@ class Fit_Weibull_Power_Exponential:
             stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1]),
                 )
         common_betas = np.ones(len(stresses_for_groups)) * self.beta
         beta_differences = []
@@ -4767,8 +4731,8 @@ class Fit_Weibull_Power_Exponential:
                     str(
                         "The beta parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Weibull distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Weibull distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -4781,8 +4745,8 @@ class Fit_Weibull_Power_Exponential:
                         + round_and_string(use_level_stress[1])
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -4822,17 +4786,28 @@ class Fit_Weibull_Power_Exponential:
     @staticmethod
     def LL(params, t_f, t_rc, S1_f, S2_f, S1_rc, S2_rc):  # log likelihood function
         LL_f = Fit_Weibull_Power_Exponential.logf(
-            t_f, S1_f, S2_f, params[0], params[1], params[2], params[3]
+            t_f,
+            S1_f,
+            S2_f,
+            params[0],
+            params[1],
+            params[2],
+            params[3],
         ).sum()  # failure times
         LL_rc = Fit_Weibull_Power_Exponential.logR(
-            t_rc, S1_rc, S2_rc, params[0], params[1], params[2], params[3]
+            t_rc,
+            S1_rc,
+            S2_rc,
+            params[0],
+            params[1],
+            params[2],
+            params[3],
         ).sum()  # right censored times
         return -(LL_f + LL_rc)
 
 
 class Fit_Weibull_Dual_Power:
-    """
-    Fit_Weibull_Dual_Power
+    """Fit_Weibull_Dual_Power
 
     This function will Fit the Weibull_Dual_Power life-stress model to the data
     provided. Please see the online documentation for the equations of this
@@ -5020,10 +4995,7 @@ class Fit_Weibull_Dual_Power:
         alphas_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Weibull_2P(
@@ -5039,10 +5011,7 @@ class Fit_Weibull_Dual_Power:
                 betas_for_change_df.append(0)
                 alphas_for_change_df.append("")
 
-        if len(betas) > 0:
-            common_beta = float(np.average(betas))
-        else:
-            common_beta = 1  # guess in the absence of enough points
+        common_beta = float(np.average(betas)) if len(betas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [
             life_stress_guess[0],
@@ -5110,7 +5079,7 @@ class Fit_Weibull_Dual_Power:
                     + self.optimizer
                     + " optimizer is non-invertable for the Weibull_Dual_Power model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -5189,7 +5158,7 @@ class Fit_Weibull_Dual_Power:
             stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1]),
                 )
         common_betas = np.ones(len(stresses_for_groups)) * self.beta
         beta_differences = []
@@ -5262,8 +5231,8 @@ class Fit_Weibull_Dual_Power:
                     str(
                         "The beta parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Weibull distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Weibull distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -5276,8 +5245,8 @@ class Fit_Weibull_Dual_Power:
                         + round_and_string(use_level_stress[1])
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -5324,8 +5293,7 @@ class Fit_Weibull_Dual_Power:
 
 
 class Fit_Lognormal_Exponential:
-    """
-    This function will Fit the Lognormal-Exponential life-stress model to the
+    """This function will Fit the Lognormal-Exponential life-stress model to the
     data provided. Please see the online documentation for the equations of this
     model.
 
@@ -5485,10 +5453,7 @@ class Fit_Lognormal_Exponential:
         mus_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Lognormal_2P(
@@ -5504,10 +5469,8 @@ class Fit_Lognormal_Exponential:
                 sigmas_for_change_df.append(0)
                 mus_for_change_df.append("")
 
-        if len(sigmas) > 0:
-            common_sigma = float(np.average(sigmas))
-        else:
-            common_sigma = 1  # guess in the absence of enough points
+        common_sigma = float(np.average(sigmas)) if len(sigmas) > 0 else 1  # guess in the absence of enough points
+
         # compile the guess for the MLE method
         guess = [
             life_stress_guess[0],
@@ -5565,7 +5528,7 @@ class Fit_Lognormal_Exponential:
                     + self.optimizer
                     + " optimizer is non-invertable for the Lognormal_Exponential model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -5702,8 +5665,8 @@ class Fit_Lognormal_Exponential:
                     str(
                         "The sigma parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Lognormal distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Lognormal distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
             print(
@@ -5719,8 +5682,8 @@ class Fit_Lognormal_Exponential:
                         + round_and_string(use_level_stress)
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -5751,7 +5714,7 @@ class Fit_Lognormal_Exponential:
     def logf(t, T, a, b, sigma):  # Log PDF
         life = b * anp.exp(a / T)
         return anp.log(
-            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5)
+            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5),
         )
 
     @staticmethod
@@ -5769,8 +5732,7 @@ class Fit_Lognormal_Exponential:
 
 
 class Fit_Lognormal_Eyring:
-    """
-    This function will Fit the Lognormal-Eyring life-stress model to the data
+    """This function will Fit the Lognormal-Eyring life-stress model to the data
     provided. Please see the online documentation for the equations of this
     model.
 
@@ -5927,10 +5889,7 @@ class Fit_Lognormal_Eyring:
         mus_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Lognormal_2P(
@@ -5946,10 +5905,7 @@ class Fit_Lognormal_Eyring:
                 sigmas_for_change_df.append(0)
                 mus_for_change_df.append("")
 
-        if len(sigmas) > 0:
-            common_sigma = float(np.average(sigmas))
-        else:
-            common_sigma = 1  # guess in the absence of enough points
+        common_sigma = float(np.average(sigmas)) if len(sigmas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [
             life_stress_guess[0],
@@ -6007,7 +5963,7 @@ class Fit_Lognormal_Eyring:
                     + self.optimizer
                     + " optimizer is non-invertable for the Lognormal_Eyring model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -6144,8 +6100,8 @@ class Fit_Lognormal_Eyring:
                     str(
                         "The sigma parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Lognormal distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Lognormal distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -6156,8 +6112,8 @@ class Fit_Lognormal_Eyring:
                         + round_and_string(use_level_stress)
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -6188,7 +6144,7 @@ class Fit_Lognormal_Eyring:
     def logf(t, T, a, c, sigma):  # Log PDF
         life = 1 / T * anp.exp(-(c - a / T))
         return anp.log(
-            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5)
+            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5),
         )
 
     @staticmethod
@@ -6206,8 +6162,7 @@ class Fit_Lognormal_Eyring:
 
 
 class Fit_Lognormal_Power:
-    """
-    This function will Fit the Lognormal-Power life-stress model to the data
+    """This function will Fit the Lognormal-Power life-stress model to the data
     provided. Please see the online documentation for the equations of this
     model.
 
@@ -6363,10 +6318,7 @@ class Fit_Lognormal_Power:
         mus_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Lognormal_2P(
@@ -6382,10 +6334,7 @@ class Fit_Lognormal_Power:
                 sigmas_for_change_df.append(0)
                 mus_for_change_df.append("")
 
-        if len(sigmas) > 0:
-            common_sigma = float(np.average(sigmas))
-        else:
-            common_sigma = 1  # guess in the absence of enough points
+        common_sigma = float(np.average(sigmas)) if len(sigmas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [
             life_stress_guess[0],
@@ -6443,7 +6392,7 @@ class Fit_Lognormal_Power:
                     + self.optimizer
                     + " optimizer is non-invertable for the Lognormal_Power model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -6580,8 +6529,8 @@ class Fit_Lognormal_Power:
                     str(
                         "The sigma parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Lognormal distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Lognormal distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -6592,8 +6541,8 @@ class Fit_Lognormal_Power:
                         + round_and_string(use_level_stress)
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -6624,7 +6573,7 @@ class Fit_Lognormal_Power:
     def logf(t, T, a, n, sigma):  # Log PDF
         life = a * T**n
         return anp.log(
-            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5)
+            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5),
         )
 
     @staticmethod
@@ -6642,8 +6591,7 @@ class Fit_Lognormal_Power:
 
 
 class Fit_Lognormal_Dual_Exponential:
-    """
-    This function will Fit the Lognormal_Dual_Exponential life-stress model to
+    """This function will Fit the Lognormal_Dual_Exponential life-stress model to
     the data provided. Please see the online documentation for the equations of
     this model.
 
@@ -6831,10 +6779,7 @@ class Fit_Lognormal_Dual_Exponential:
         mus_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Lognormal_2P(
@@ -6850,10 +6795,7 @@ class Fit_Lognormal_Dual_Exponential:
                 sigmas_for_change_df.append(0)
                 mus_for_change_df.append("")
 
-        if len(sigmas) > 0:
-            common_sigma = float(np.average(sigmas))
-        else:
-            common_sigma = 1  # guess in the absence of enough points
+        common_sigma = float(np.average(sigmas)) if len(sigmas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [
             life_stress_guess[0],
@@ -6921,7 +6863,7 @@ class Fit_Lognormal_Dual_Exponential:
                     + self.optimizer
                     + " optimizer is non-invertable for the Lognormal_Dual_Exponential model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -7000,7 +6942,7 @@ class Fit_Lognormal_Dual_Exponential:
             stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1]),
                 )
         common_sigmas = np.ones(len(stresses_for_groups)) * self.sigma
         sigma_differences = []
@@ -7073,8 +7015,8 @@ class Fit_Lognormal_Dual_Exponential:
                     str(
                         "The sigma parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Lognormal distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Lognormal distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -7087,8 +7029,8 @@ class Fit_Lognormal_Dual_Exponential:
                         + round_and_string(use_level_stress[1])
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -7119,7 +7061,7 @@ class Fit_Lognormal_Dual_Exponential:
     def logf(t, S1, S2, a, b, c, sigma):  # Log PDF
         life = c * anp.exp(a / S1 + b / S2)
         return anp.log(
-            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5)
+            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5),
         )
 
     @staticmethod
@@ -7130,17 +7072,28 @@ class Fit_Lognormal_Dual_Exponential:
     @staticmethod
     def LL(params, t_f, t_rc, S1_f, S2_f, S1_rc, S2_rc):  # log likelihood function
         LL_f = Fit_Lognormal_Dual_Exponential.logf(
-            t_f, S1_f, S2_f, params[0], params[1], params[2], params[3]
+            t_f,
+            S1_f,
+            S2_f,
+            params[0],
+            params[1],
+            params[2],
+            params[3],
         ).sum()  # failure times
         LL_rc = Fit_Lognormal_Dual_Exponential.logR(
-            t_rc, S1_rc, S2_rc, params[0], params[1], params[2], params[3]
+            t_rc,
+            S1_rc,
+            S2_rc,
+            params[0],
+            params[1],
+            params[2],
+            params[3],
         ).sum()  # right censored times
         return -(LL_f + LL_rc)
 
 
 class Fit_Lognormal_Power_Exponential:
-    """
-    This function will Fit the Lognormal_Power_Exponential life-stress model to
+    """This function will Fit the Lognormal_Power_Exponential life-stress model to
     the data provided. Please see the online documentation for the equations of
     this model.
 
@@ -7329,10 +7282,7 @@ class Fit_Lognormal_Power_Exponential:
         mus_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Lognormal_2P(
@@ -7348,10 +7298,7 @@ class Fit_Lognormal_Power_Exponential:
                 sigmas_for_change_df.append(0)
                 mus_for_change_df.append("")
 
-        if len(sigmas) > 0:
-            common_sigma = float(np.average(sigmas))
-        else:
-            common_sigma = 1  # guess in the absence of enough points
+        common_sigma = float(np.average(sigmas)) if len(sigmas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [
             life_stress_guess[0],
@@ -7419,7 +7366,7 @@ class Fit_Lognormal_Power_Exponential:
                     + self.optimizer
                     + " optimizer is non-invertable for the Lognormal_Power_Exponential model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -7498,7 +7445,7 @@ class Fit_Lognormal_Power_Exponential:
             stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1]),
                 )
         common_sigmas = np.ones(len(stresses_for_groups)) * self.sigma
         sigma_differences = []
@@ -7571,8 +7518,8 @@ class Fit_Lognormal_Power_Exponential:
                     str(
                         "The sigma parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Lognormal distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Lognormal distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -7585,8 +7532,8 @@ class Fit_Lognormal_Power_Exponential:
                         + round_and_string(use_level_stress[1])
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -7617,7 +7564,7 @@ class Fit_Lognormal_Power_Exponential:
     def logf(t, S1, S2, a, c, n, sigma):  # Log PDF
         life = c * S2**n * anp.exp(a / S1)
         return anp.log(
-            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5)
+            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5),
         )
 
     @staticmethod
@@ -7628,17 +7575,28 @@ class Fit_Lognormal_Power_Exponential:
     @staticmethod
     def LL(params, t_f, t_rc, S1_f, S2_f, S1_rc, S2_rc):  # log likelihood function
         LL_f = Fit_Lognormal_Power_Exponential.logf(
-            t_f, S1_f, S2_f, params[0], params[1], params[2], params[3]
+            t_f,
+            S1_f,
+            S2_f,
+            params[0],
+            params[1],
+            params[2],
+            params[3],
         ).sum()  # failure times
         LL_rc = Fit_Lognormal_Power_Exponential.logR(
-            t_rc, S1_rc, S2_rc, params[0], params[1], params[2], params[3]
+            t_rc,
+            S1_rc,
+            S2_rc,
+            params[0],
+            params[1],
+            params[2],
+            params[3],
         ).sum()  # right censored times
         return -(LL_f + LL_rc)
 
 
 class Fit_Lognormal_Dual_Power:
-    """
-    This function will Fit the Lognormal_Dual_Power life-stress model to the
+    """This function will Fit the Lognormal_Dual_Power life-stress model to the
     data provided. Please see the online documentation for the equations of this
     model.
 
@@ -7824,10 +7782,7 @@ class Fit_Lognormal_Dual_Power:
         mus_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Lognormal_2P(
@@ -7843,10 +7798,7 @@ class Fit_Lognormal_Dual_Power:
                 sigmas_for_change_df.append(0)
                 mus_for_change_df.append("")
 
-        if len(sigmas) > 0:
-            common_sigma = float(np.average(sigmas))
-        else:
-            common_sigma = 1  # guess in the absence of enough points
+        common_sigma = float(np.average(sigmas)) if len(sigmas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [
             life_stress_guess[0],
@@ -7914,7 +7866,7 @@ class Fit_Lognormal_Dual_Power:
                     + self.optimizer
                     + " optimizer is non-invertable for the Lognormal_Dual_Power model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -7993,7 +7945,7 @@ class Fit_Lognormal_Dual_Power:
             stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1]),
                 )
         common_sigmas = np.ones(len(stresses_for_groups)) * self.sigma
         sigma_differences = []
@@ -8066,8 +8018,8 @@ class Fit_Lognormal_Dual_Power:
                     str(
                         "The sigma parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Lognormal distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Lognormal distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -8080,8 +8032,8 @@ class Fit_Lognormal_Dual_Power:
                         + round_and_string(use_level_stress[1])
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -8112,7 +8064,7 @@ class Fit_Lognormal_Dual_Power:
     def logf(t, S1, S2, c, m, n, sigma):  # Log PDF
         life = c * (S1**m) * (S2**n)
         return anp.log(
-            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5)
+            anp.exp(-0.5 * (((anp.log(t) - anp.log(life)) / sigma) ** 2)) / (t * sigma * (2 * anp.pi) ** 0.5),
         )
 
     @staticmethod
@@ -8130,8 +8082,7 @@ class Fit_Lognormal_Dual_Power:
 
 
 class Fit_Normal_Exponential:
-    """
-    This function will Fit the Normal-Exponential life-stress model to the data
+    """This function will Fit the Normal-Exponential life-stress model to the data
     provided. Please see the online documentation for the equations of this
     model.
 
@@ -8291,10 +8242,7 @@ class Fit_Normal_Exponential:
         mus_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Normal_2P(
@@ -8310,10 +8258,7 @@ class Fit_Normal_Exponential:
                 sigmas_for_change_df.append(0)
                 mus_for_change_df.append("")
 
-        if len(sigmas) > 0:
-            common_sigma = float(np.average(sigmas))
-        else:
-            common_sigma = 1  # guess in the absence of enough points
+        common_sigma = float(np.average(sigmas)) if len(sigmas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [
             life_stress_guess[0],
@@ -8371,7 +8316,7 @@ class Fit_Normal_Exponential:
                     + self.optimizer
                     + " optimizer is non-invertable for the Normal_Exponential model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -8508,8 +8453,8 @@ class Fit_Normal_Exponential:
                     str(
                         "The sigma parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
             print(
@@ -8525,8 +8470,8 @@ class Fit_Normal_Exponential:
                         + round_and_string(use_level_stress)
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -8556,7 +8501,7 @@ class Fit_Normal_Exponential:
     @staticmethod
     def logf(t, T, a, b, sigma):  # Log PDF
         life = b * anp.exp(a / T)
-        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log((sigma * (2 * anp.pi) ** 0.5))
+        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log(sigma * (2 * anp.pi) ** 0.5)
 
     @staticmethod
     def logR(t, T, a, b, sigma):  # Log SF
@@ -8573,8 +8518,7 @@ class Fit_Normal_Exponential:
 
 
 class Fit_Normal_Eyring:
-    """
-    This function will Fit the Normal-Eyring life-stress model to the data
+    """This function will Fit the Normal-Eyring life-stress model to the data
     provided. Please see the online documentation for the equations of this
     model.
 
@@ -8731,10 +8675,7 @@ class Fit_Normal_Eyring:
         mus_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Normal_2P(
@@ -8750,10 +8691,7 @@ class Fit_Normal_Eyring:
                 sigmas_for_change_df.append(0)
                 mus_for_change_df.append("")
 
-        if len(sigmas) > 0:
-            common_sigma = float(np.average(sigmas))
-        else:
-            common_sigma = 1  # guess in the absence of enough points
+        common_sigma = float(np.average(sigmas)) if len(sigmas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [
             life_stress_guess[0],
@@ -8811,7 +8749,7 @@ class Fit_Normal_Eyring:
                     + self.optimizer
                     + " optimizer is non-invertable for the Normal_Eyring model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -8948,8 +8886,8 @@ class Fit_Normal_Eyring:
                     str(
                         "The sigma parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -8960,8 +8898,8 @@ class Fit_Normal_Eyring:
                         + round_and_string(use_level_stress)
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -8991,7 +8929,7 @@ class Fit_Normal_Eyring:
     @staticmethod
     def logf(t, T, a, c, sigma):  # Log PDF
         life = 1 / T * anp.exp(-(c - a / T))
-        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log((sigma * (2 * anp.pi) ** 0.5))
+        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log(sigma * (2 * anp.pi) ** 0.5)
 
     @staticmethod
     def logR(t, T, a, c, sigma):  # Log SF
@@ -9008,8 +8946,7 @@ class Fit_Normal_Eyring:
 
 
 class Fit_Normal_Power:
-    """
-    This function will Fit the Normal-Power life-stress model to the data
+    """This function will Fit the Normal-Power life-stress model to the data
     provided. Please see the online documentation for the equations of this
     model.
 
@@ -9165,10 +9102,7 @@ class Fit_Normal_Power:
         mus_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Normal_2P(
@@ -9184,10 +9118,7 @@ class Fit_Normal_Power:
                 sigmas_for_change_df.append(0)
                 mus_for_change_df.append("")
 
-        if len(sigmas) > 0:
-            common_sigma = float(np.average(sigmas))
-        else:
-            common_sigma = 1  # guess in the absence of enough points
+        common_sigma = float(np.average(sigmas)) if len(sigmas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [
             life_stress_guess[0],
@@ -9245,7 +9176,7 @@ class Fit_Normal_Power:
                     + self.optimizer
                     + " optimizer is non-invertable for the Normal_Power model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -9382,8 +9313,8 @@ class Fit_Normal_Power:
                     str(
                         "The sigma parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -9394,8 +9325,8 @@ class Fit_Normal_Power:
                         + round_and_string(use_level_stress)
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -9425,7 +9356,7 @@ class Fit_Normal_Power:
     @staticmethod
     def logf(t, T, a, n, sigma):  # Log PDF
         life = a * T**n
-        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log((sigma * (2 * anp.pi) ** 0.5))
+        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log(sigma * (2 * anp.pi) ** 0.5)
 
     @staticmethod
     def logR(t, T, a, n, sigma):  # Log SF
@@ -9442,8 +9373,7 @@ class Fit_Normal_Power:
 
 
 class Fit_Normal_Dual_Exponential:
-    """
-    This function will Fit the Normal_Dual_Exponential life-stress model to the
+    """This function will Fit the Normal_Dual_Exponential life-stress model to the
     data provided. Please see the online documentation for the equations of
     this model.
 
@@ -9631,10 +9561,7 @@ class Fit_Normal_Dual_Exponential:
         mus_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Normal_2P(
@@ -9650,10 +9577,7 @@ class Fit_Normal_Dual_Exponential:
                 sigmas_for_change_df.append(0)
                 mus_for_change_df.append("")
 
-        if len(sigmas) > 0:
-            common_sigma = float(np.average(sigmas))
-        else:
-            common_sigma = 1  # guess in the absence of enough points
+        common_sigma = float(np.average(sigmas)) if len(sigmas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [
             life_stress_guess[0],
@@ -9721,7 +9645,7 @@ class Fit_Normal_Dual_Exponential:
                     + self.optimizer
                     + " optimizer is non-invertable for the Normal_Dual_Exponential model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -9800,7 +9724,7 @@ class Fit_Normal_Dual_Exponential:
             stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1]),
                 )
         common_sigmas = np.ones(len(stresses_for_groups)) * self.sigma
         sigma_differences = []
@@ -9873,8 +9797,8 @@ class Fit_Normal_Dual_Exponential:
                     str(
                         "The sigma parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -9887,8 +9811,8 @@ class Fit_Normal_Dual_Exponential:
                         + round_and_string(use_level_stress[1])
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -9918,7 +9842,7 @@ class Fit_Normal_Dual_Exponential:
     @staticmethod
     def logf(t, S1, S2, a, b, c, sigma):  # Log PDF
         life = c * anp.exp(a / S1 + b / S2)
-        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log((sigma * (2 * anp.pi) ** 0.5))
+        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log(sigma * (2 * anp.pi) ** 0.5)
 
     @staticmethod
     def logR(t, S1, S2, a, b, c, sigma):  # Log SF
@@ -9935,8 +9859,7 @@ class Fit_Normal_Dual_Exponential:
 
 
 class Fit_Normal_Power_Exponential:
-    """
-    This function will Fit the Normal_Power_Exponential life-stress model to
+    """This function will Fit the Normal_Power_Exponential life-stress model to
     the data provided. Please see the online documentation for the equations of
     this model.
 
@@ -10125,10 +10048,7 @@ class Fit_Normal_Power_Exponential:
         mus_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Normal_2P(
@@ -10144,10 +10064,7 @@ class Fit_Normal_Power_Exponential:
                 sigmas_for_change_df.append(0)
                 mus_for_change_df.append("")
 
-        if len(sigmas) > 0:
-            common_sigma = float(np.average(sigmas))
-        else:
-            common_sigma = 1  # guess in the absence of enough points
+        common_sigma = float(np.average(sigmas)) if len(sigmas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [
             life_stress_guess[0],
@@ -10215,7 +10132,7 @@ class Fit_Normal_Power_Exponential:
                     + self.optimizer
                     + " optimizer is non-invertable for the Normal_Power_Exponential model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -10294,7 +10211,7 @@ class Fit_Normal_Power_Exponential:
             stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1]),
                 )
         common_sigmas = np.ones(len(stresses_for_groups)) * self.sigma
         sigma_differences = []
@@ -10367,8 +10284,8 @@ class Fit_Normal_Power_Exponential:
                     str(
                         "The sigma parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -10381,8 +10298,8 @@ class Fit_Normal_Power_Exponential:
                         + round_and_string(use_level_stress[1])
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -10412,7 +10329,7 @@ class Fit_Normal_Power_Exponential:
     @staticmethod
     def logf(t, S1, S2, a, c, n, sigma):  # Log PDF
         life = c * S2**n * anp.exp(a / S1)
-        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log((sigma * (2 * anp.pi) ** 0.5))
+        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log(sigma * (2 * anp.pi) ** 0.5)
 
     @staticmethod
     def logR(t, S1, S2, a, c, n, sigma):  # Log SF
@@ -10429,8 +10346,7 @@ class Fit_Normal_Power_Exponential:
 
 
 class Fit_Normal_Dual_Power:
-    """
-    This function will Fit the Normal_Dual_Power life-stress model to the data
+    """This function will Fit the Normal_Dual_Power life-stress model to the data
     provided. Please see the online documentation for the equations of this
     model.
 
@@ -10616,10 +10532,7 @@ class Fit_Normal_Dual_Power:
         mus_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Normal_2P(
@@ -10634,11 +10547,7 @@ class Fit_Normal_Dual_Power:
             else:  # 1 failure at this stress
                 sigmas_for_change_df.append(0)
                 mus_for_change_df.append("")
-
-        if len(sigmas) > 0:
-            common_sigma = float(np.average(sigmas))
-        else:
-            common_sigma = 1  # guess in the absence of enough points
+        common_sigma = float(np.average(sigmas)) if (len(sigmas) > 0) else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [
             life_stress_guess[0],
@@ -10706,7 +10615,7 @@ class Fit_Normal_Dual_Power:
                     + self.optimizer
                     + " optimizer is non-invertable for the Normal_Dual_Power model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -10785,7 +10694,7 @@ class Fit_Normal_Dual_Power:
             stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1]),
                 )
         common_sigmas = np.ones(len(stresses_for_groups)) * self.sigma
         sigma_differences = []
@@ -10858,8 +10767,8 @@ class Fit_Normal_Dual_Power:
                     str(
                         "The sigma parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -10872,8 +10781,8 @@ class Fit_Normal_Dual_Power:
                         + round_and_string(use_level_stress[1])
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -10903,7 +10812,7 @@ class Fit_Normal_Dual_Power:
     @staticmethod
     def logf(t, S1, S2, c, m, n, sigma):  # Log PDF
         life = c * (S1**m) * (S2**n)
-        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log((sigma * (2 * anp.pi) ** 0.5))
+        return anp.log(anp.exp(-0.5 * (((t - life) / sigma) ** 2))) - anp.log(sigma * (2 * anp.pi) ** 0.5)
 
     @staticmethod
     def logR(t, S1, S2, c, m, n, sigma):  # Log SF
@@ -10913,17 +10822,28 @@ class Fit_Normal_Dual_Power:
     @staticmethod
     def LL(params, t_f, t_rc, S1_f, S2_f, S1_rc, S2_rc):  # log likelihood function
         LL_f = Fit_Normal_Dual_Power.logf(
-            t_f, S1_f, S2_f, params[0], params[1], params[2], params[3]
+            t_f,
+            S1_f,
+            S2_f,
+            params[0],
+            params[1],
+            params[2],
+            params[3],
         ).sum()  # failure times
         LL_rc = Fit_Normal_Dual_Power.logR(
-            t_rc, S1_rc, S2_rc, params[0], params[1], params[2], params[3]
+            t_rc,
+            S1_rc,
+            S2_rc,
+            params[0],
+            params[1],
+            params[2],
+            params[3],
         ).sum()  # right censored times
         return -(LL_f + LL_rc)
 
 
 class Fit_Exponential_Exponential:
-    """
-    This function will fit the Exponential-Exponential life-stress model to the
+    """This function will fit the Exponential-Exponential life-stress model to the
     data provided. Please see the online documentation for the equations of this
     model.
 
@@ -11075,10 +10995,7 @@ class Fit_Exponential_Exponential:
         alphas_for_change_df = []  # weibull alphas
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Weibull_2P(
@@ -11142,7 +11059,7 @@ class Fit_Exponential_Exponential:
                     + self.optimizer
                     + " optimizer is non-invertable for the Exponential_Exponential model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -11276,8 +11193,8 @@ class Fit_Exponential_Exponential:
                     str(
                         "The shape parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Exponential distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Exponential distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
             print(
@@ -11293,8 +11210,8 @@ class Fit_Exponential_Exponential:
                         + round_and_string(use_level_stress)
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -11341,8 +11258,7 @@ class Fit_Exponential_Exponential:
 
 
 class Fit_Exponential_Eyring:
-    """
-    This function will fit the Exponential-Eyring life-stress model to the
+    """This function will fit the Exponential-Eyring life-stress model to the
     data provided. Please see the online documentation for the equations of this
     model.
 
@@ -11491,10 +11407,7 @@ class Fit_Exponential_Eyring:
         alphas_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Weibull_2P(
@@ -11558,7 +11471,7 @@ class Fit_Exponential_Eyring:
                     + self.optimizer
                     + " optimizer is non-invertable for the Exponential_Eyring model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -11692,8 +11605,8 @@ class Fit_Exponential_Eyring:
                     str(
                         "The beta parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Exponential distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Exponential distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -11704,8 +11617,8 @@ class Fit_Exponential_Eyring:
                         + round_and_string(use_level_stress)
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -11752,8 +11665,7 @@ class Fit_Exponential_Eyring:
 
 
 class Fit_Exponential_Power:
-    """
-    This function will Fit the Exponential-Power life-stress model to the data
+    """This function will Fit the Exponential-Power life-stress model to the data
     provided. Please see the online documentation for the equations of this
     model.
 
@@ -11901,10 +11813,7 @@ class Fit_Exponential_Power:
         alphas_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Weibull_2P(
@@ -11968,7 +11877,7 @@ class Fit_Exponential_Power:
                     + self.optimizer
                     + " optimizer is non-invertable for the Exponential_Power model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -12102,8 +12011,8 @@ class Fit_Exponential_Power:
                     str(
                         "The shape parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Exponential distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Exponential distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -12114,8 +12023,8 @@ class Fit_Exponential_Power:
                         + round_and_string(use_level_stress)
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -12162,8 +12071,7 @@ class Fit_Exponential_Power:
 
 
 class Fit_Exponential_Dual_Exponential:
-    """
-    This function will Fit the Exponential_Dual_Exponential life-stress model to
+    """This function will Fit the Exponential_Dual_Exponential life-stress model to
     the data provided. Please see the online documentation for the equations of
     this model.
 
@@ -12343,10 +12251,7 @@ class Fit_Exponential_Dual_Exponential:
         alphas_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Weibull_2P(
@@ -12423,7 +12328,7 @@ class Fit_Exponential_Dual_Exponential:
                     + self.optimizer
                     + " optimizer is non-invertable for the Exponential_Dual_Exponential model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -12499,7 +12404,7 @@ class Fit_Exponential_Dual_Exponential:
             stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1]),
                 )
         common_betas = np.ones(len(stresses_for_groups))
         beta_differences = []
@@ -12572,8 +12477,8 @@ class Fit_Exponential_Dual_Exponential:
                     str(
                         "The shape parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Exponential distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Exponential distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -12586,8 +12491,8 @@ class Fit_Exponential_Dual_Exponential:
                         + round_and_string(use_level_stress[1])
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -12634,8 +12539,7 @@ class Fit_Exponential_Dual_Exponential:
 
 
 class Fit_Exponential_Power_Exponential:
-    """
-    This function will Fit the Exponential_Power_Exponential life-stress model
+    """This function will Fit the Exponential_Power_Exponential life-stress model
     to the data provided. Please see the online documentation for the equations
     of this model.
 
@@ -12816,10 +12720,7 @@ class Fit_Exponential_Power_Exponential:
         alphas_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Weibull_2P(
@@ -12896,7 +12797,7 @@ class Fit_Exponential_Power_Exponential:
                     + self.optimizer
                     + " optimizer is non-invertable for the Exponential_Power_Exponential model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -12972,7 +12873,7 @@ class Fit_Exponential_Power_Exponential:
             stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1]),
                 )
         common_betas = np.ones(len(stresses_for_groups))
         beta_differences = []
@@ -13045,8 +12946,8 @@ class Fit_Exponential_Power_Exponential:
                     str(
                         "The shape parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Exponential distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Exponential distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -13059,8 +12960,8 @@ class Fit_Exponential_Power_Exponential:
                         + round_and_string(use_level_stress[1])
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(
@@ -13107,8 +13008,7 @@ class Fit_Exponential_Power_Exponential:
 
 
 class Fit_Exponential_Dual_Power:
-    """
-    This function will Fit the Exponential_Dual_Power life-stress model to the
+    """This function will Fit the Exponential_Dual_Power life-stress model to the
     data provided. Please see the online documentation for the equations of
     this model.
 
@@ -13286,10 +13186,7 @@ class Fit_Exponential_Dual_Power:
         alphas_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f = failure_groups[i]
-            if right_censored_groups is None:
-                rc = None
-            else:
-                rc = right_censored_groups[i]
+            rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Weibull_2P(
@@ -13366,7 +13263,7 @@ class Fit_Exponential_Dual_Power:
                     + self.optimizer
                     + " optimizer is non-invertable for the Exponential_Dual_Power model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -13442,7 +13339,7 @@ class Fit_Exponential_Dual_Power:
             stresses_for_groups_str.append(str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])))
             if use_level_stress is not None:
                 AF.append(
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1])
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]) / life_func(S1=stress[0], S2=stress[1]),
                 )
         common_betas = np.ones(len(stresses_for_groups))
         beta_differences = []
@@ -13515,8 +13412,8 @@ class Fit_Exponential_Dual_Power:
                     str(
                         "The shape parameter has been found to change significantly (>"
                         + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Exponential distribution may not be appropriate."
-                    )
+                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Exponential distribution may not be appropriate.",
+                    ),
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
@@ -13529,8 +13426,8 @@ class Fit_Exponential_Dual_Power:
                         + round_and_string(use_level_stress[1])
                         + ", the mean life is "
                         + str(round(self.mean_life, 5))
-                        + "\n"
-                    )
+                        + "\n",
+                    ),
                 )
 
         self.probability_plot = ALT_prob_plot(

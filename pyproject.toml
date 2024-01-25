@@ -27,6 +27,7 @@ docformatter = "^1.7.5"
 pytest-cov = "^4.1.0"
 pytest-profiling = "^1.7.0"
 snakeviz = "^2.2.0"
+pytest-mpl = "^0.16.1"
 
 [tool.black]
 skip-string-normalization = true

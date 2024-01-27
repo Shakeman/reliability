@@ -6699,8 +6699,10 @@ def distributions_input_checking(
         raise ValueError("func must be either 'PDF','CDF', 'SF', 'HF', 'CHF', 'ALL'")
 
     # type checking
-    if type(xvals) not in [type(None), list, np.ndarray, int, float]:
-        raise ValueError("xvals must be an int, float, list, or array. Default is None")
+    if type(xvals) not in [type(None), list, np.ndarray, int, float, np.float64]:
+        raise ValueError(
+            "xvals must be an int, float, list, or array. Default is None. Value of xvals is:" + print(xvals)
+        )
     if type(xmin) not in [type(None), int, float]:
         raise ValueError("xmin must be an int or float. Default is None")
     if type(xmax) not in [type(None), int, float]:

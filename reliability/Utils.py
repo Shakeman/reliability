@@ -44,6 +44,7 @@ Included functions are:
 
 import os
 import warnings
+from typing import Optional
 
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
@@ -71,7 +72,11 @@ warnings.filterwarnings(
 
 
 def round_and_string(
-    number, decimals=5, integer_floats_to_ints=True, large_scientific_limit=1e9, small_scientific_limit=1e-4
+    number: float,
+    decimals: int = 5,
+    integer_floats_to_ints: bool = True,
+    large_scientific_limit: float = 1e9,
+    small_scientific_limit: float = 1e-4,
 ):
     """
     This function is used to round a number to a specified number of decimals and convert to string.
@@ -148,12 +153,12 @@ def round_and_string(
 
 
 def transform_spaced(
-    transform,
-    y_lower=1e-8,
-    y_upper=1 - 1e-8,
-    num=1000,
-    alpha=None,
-    beta=None,
+    transform: str,
+    y_lower: float = 1e-8,
+    y_upper: float = 1 - 1e-8,
+    num: int = 1000,
+    alpha: Optional[float] = None,
+    beta: Optional[float] = None,
 ):
     """
     Creates linearly spaced array based on a specified transform.
@@ -1496,7 +1501,7 @@ class fitters_input_checking:
 
     def __init__(
         self,
-        dist,
+        dist: str,
         failures,
         right_censored=None,
         method=None,

@@ -1,14 +1,15 @@
-import matplotlib.pyplot as plt
-import pytest
 from numpy.testing import assert_allclose
 
-from reliability.PoF import SN_diagram, stress_strain_diagram, stress_strain_life_parameters_from_data
+from reliability.PoF import (
+    SN_diagram,
+    stress_strain_diagram,
+    stress_strain_life_parameters_from_data,
+)
 
 atol = 1e-8
 rtol = 1e-7
 
 
-@pytest.mark.mpl_image_compare
 def test_SN_diagram():
     stress = [340, 300, 290, 275, 260, 255, 250, 235, 230, 220, 215, 210]
     cycles = [15000, 24000, 36000, 80000, 177000, 162000, 301000, 290000, 361000, 881000, 1300000, 2500000]
@@ -23,10 +24,8 @@ def test_SN_diagram():
         cycles_trace=[5 * 10**5],
         stress_trace=[260],
     )
-    return plt
 
 
-@pytest.mark.mpl_image_compare
 def test_stress_strain_diagram():
     strain_data = [0.02, 0.015, 0.01, 0.006, 0.0035, 0.002]
     stress_data = [650, 625, 555, 480, 395, 330]
@@ -39,4 +38,3 @@ def test_stress_strain_diagram():
     assert_allclose(stress_strain.min_strain, -0.006, rtol=rtol, atol=atol)
     assert_allclose(stress_strain.max_stress, 483.8581623940639, rtol=rtol, atol=atol)
     assert_allclose(stress_strain.min_stress, -483.8581623940639, rtol=rtol, atol=atol)
-    return plt

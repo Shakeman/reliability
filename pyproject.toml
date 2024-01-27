@@ -18,20 +18,14 @@ mplcursors = ">=0.5.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"
-black = "^23.12.1"
 ruff = "^0.1.11"
-flake8 = "^7.0.0"
 bandit = "^1.7.6"
 pre-commit = "^3.6.0"
 docformatter = "^1.7.5"
 pytest-cov = "^4.1.0"
 pytest-profiling = "^1.7.0"
 snakeviz = "^2.2.0"
-pytest-mpl = "^0.16.1"
 
-[tool.black]
-skip-string-normalization = true
-line-length = 120
 
 [tool.ruff]
 # Same as Black.

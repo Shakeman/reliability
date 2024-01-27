@@ -308,14 +308,14 @@ class optimal_replacement_time:
 
     def __init__(
         self,
-        cost_PM,
-        cost_CM,
-        weibull_alpha,
-        weibull_beta,
-        show_time_plot=True,
-        show_ratio_plot=True,
-        print_results=True,
-        q=0,
+        cost_PM: float,
+        cost_CM: float,
+        weibull_alpha: float,
+        weibull_beta: float,
+        show_time_plot: bool | SubplotBase = True,
+        show_ratio_plot: bool | SubplotBase = True,
+        print_results: bool = True,
+        q: int = 0,
         **kwargs,
     ):
         c = kwargs.pop("color") if "color" in kwargs else "steelblue"

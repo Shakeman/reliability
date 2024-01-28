@@ -1374,7 +1374,7 @@ class Fit_Everything:
         # this is the order to plot things so that the legend matches the results dataframe
         plotting_order = self.results["Distribution"].values
         iqr = np.subtract(*np.percentile(X, [75, 25]))  # interquartile range
-        # Freedman–Diaconis rule ==> https://en.wikipedia.org/wiki/Freedman%E2%80%93Diaconis_rule
+        # Freedman-Diaconis rule ==> https://en.wikipedia.org/wiki/Freedman%E2%80%93Diaconis_rule
         bin_width = 2 * iqr * len(X) ** -(1 / 3)
         num_bins = int(np.ceil((max(X) - min(X)) / bin_width))
         # we need to make the histogram manually (can't use plt.hist) due to need to scale the heights when there's censored data
@@ -3118,8 +3118,8 @@ class Fit_Weibull_3P:
                 self.alpha_lower = self.alpha * (np.exp(-Z * (self.alpha_SE / self.alpha)))
                 self.beta_upper = self.beta * (np.exp(Z * (self.beta_SE / self.beta)))
                 self.beta_lower = self.beta * (np.exp(-Z * (self.beta_SE / self.beta)))
-                self.gamma_upper = self.gamma * (
-                    np.exp(Z * (self.gamma_SE / self.gamma))
+                self.gamma_upper = (
+                    self.gamma * (np.exp(Z * (self.gamma_SE / self.gamma)))
                 )  # here we assume gamma can only be positive as there are bounds placed on it in the optimizer. Minitab assumes positive or negative so bounds are different
                 self.gamma_lower = self.gamma * (np.exp(-Z * (self.gamma_SE / self.gamma)))
             except LinAlgError:
@@ -7278,8 +7278,8 @@ class Fit_Lognormal_3P:
                 self.mu_lower = self.mu + (-Z * self.mu_SE)
                 self.sigma_upper = self.sigma * (np.exp(Z * (self.sigma_SE / self.sigma)))  # sigma is strictly positive
                 self.sigma_lower = self.sigma * (np.exp(-Z * (self.sigma_SE / self.sigma)))
-                self.gamma_upper = self.gamma * (
-                    np.exp(Z * (self.gamma_SE / self.gamma))
+                self.gamma_upper = (
+                    self.gamma * (np.exp(Z * (self.gamma_SE / self.gamma)))
                 )  # here we assume gamma can only be positive as there are bounds placed on it in the optimizer. Minitab assumes positive or negative so bounds are different
                 self.gamma_lower = self.gamma * (np.exp(-Z * (self.gamma_SE / self.gamma)))
             except LinAlgError:
@@ -9245,8 +9245,8 @@ class Fit_Loglogistic_3P:
                 self.alpha_lower = self.alpha * (np.exp(-Z * (self.alpha_SE / self.alpha)))
                 self.beta_upper = self.beta * (np.exp(Z * (self.beta_SE / self.beta)))
                 self.beta_lower = self.beta * (np.exp(-Z * (self.beta_SE / self.beta)))
-                self.gamma_upper = self.gamma * (
-                    np.exp(Z * (self.gamma_SE / self.gamma))
+                self.gamma_upper = (
+                    self.gamma * (np.exp(Z * (self.gamma_SE / self.gamma)))
                 )  # here we assume gamma can only be positive as there are bounds placed on it in the optimizer. Minitab assumes positive or negative so bounds are different
                 self.gamma_lower = self.gamma * (np.exp(-Z * (self.gamma_SE / self.gamma)))
             except LinAlgError:

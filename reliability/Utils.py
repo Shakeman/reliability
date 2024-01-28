@@ -1077,9 +1077,7 @@ def probability_plot_xyticks(yticks=None):
             raise ValueError('major_or_minor must be "major" or "minor"')
         if in_lims is True:
             locations = []
-            for item in all_locations:
-                if item >= L and item <= U:
-                    locations.append(item)
+            locations = [item for item in all_locations if item >= L and item <= U]
         else:
             locations = all_locations
         return locations
@@ -1186,6 +1184,8 @@ def probability_plot_xyticks(yticks=None):
         loc_x = MaxNLocator
     else:  # it is really big (>1000) and spread out
         loc_x = ticker.LogLocator()
+    if xupper < xlower:
+        raise ValueError("xupper must be greater than xlower")
     ax.xaxis.set_major_locator(loc_x)  # apply the tick locator
     # do not apply a minor locator. It is never as good as the default
 

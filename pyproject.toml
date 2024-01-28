@@ -25,13 +25,14 @@ docformatter = "^1.7.5"
 pytest-cov = "^4.1.0"
 pytest-profiling = "^1.7.0"
 snakeviz = "^2.2.0"
+pytest-xdist = "^3.5.0"
 
 
 [tool.ruff]
 # Same as Black.
 line-length = 120
 
-exclude = ["jupyter_notebook_config.py"]
+exclude = ["tests/*.py"]
 select = [
     "E",  # pycodestyle errors (settings from FastAPI, thanks, @tiangolo!)
     "W",  # pycodestyle warnings
@@ -40,11 +41,15 @@ select = [
     "C",  # flake8-comprehensions
     "B",  # flake8-bugbear
     "UP", # pyupgrade
+    "S",  # flake8-bandit
     "SIM", # flake8-simplify
+    "RUF", # RUF-specific rules
 ]
 ignore = [
     "E501",  # line too long, handled by black
     "C901",  # too complex
+    "RUF001",  # ambiguous unicode string
+    "RUF002",  # ambiguous unicode string
 ]
 
 [tool.ruff.isort]

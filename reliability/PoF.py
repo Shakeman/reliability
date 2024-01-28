@@ -646,8 +646,8 @@ class stress_strain_diagram:
                     delta_sigma=x,
                     E=E,
                     K=self.K,
-                    n=self.n,  # noqa: B023
-                )  # noqa: B023
+                    n=self.n,
+                )
 
             result2 = fsolve(fun_delta, np.array(delta_sigma))
             delta_sigma = result2[0]
@@ -674,8 +674,8 @@ class stress_strain_diagram:
                     delta_sigma=x,
                     E=E,
                     K=self.K,
-                    n=self.n,  # noqa: B023
-                )  # noqa: B023
+                    n=self.n,
+                )
 
             result3 = fsolve(fun_delta, np.array(delta_sigma))
             delta_sigma = result3[0]

@@ -1261,6 +1261,7 @@ class strain_life_diagram:
 
 
 def palmgren_miner_linear_damage(rated_life, time_at_stress, stress):
+    # TODO Update docstring
     """
     Uses the Palmgren-Miner linear damage hypothesis to calculate the outputs.
 
@@ -1329,6 +1330,7 @@ def palmgren_miner_linear_damage(rated_life, time_at_stress, stress):
     print("The amount of damage caused at each stress level is:")
     for i, x in enumerate(stress):
         print("Stress = ", x, ", Damage fraction =", round(damage_frac[i] * 100, 5), "%.")
+    return (life_consumed_per_load_cycle, service_life, stress)
 
 
 class fracture_mechanics_crack_initiation:

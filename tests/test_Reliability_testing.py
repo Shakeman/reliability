@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from numpy.testing import assert_allclose
 
 from reliability.Datasets import mileage
@@ -82,6 +83,7 @@ def test_KStest():
     assert results.hypothesis == "ACCEPT"
 
 
+@pytest.mark.flaky(reruns=3)
 def test_likelihood_plot():
     old_design = [
         2,

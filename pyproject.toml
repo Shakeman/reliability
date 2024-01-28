@@ -19,20 +19,20 @@ mplcursors = ">=0.5.2"
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"
 ruff = "^0.1.11"
-bandit = "^1.7.6"
 pre-commit = "^3.6.0"
 docformatter = "^1.7.5"
 pytest-cov = "^4.1.0"
 pytest-profiling = "^1.7.0"
 snakeviz = "^2.2.0"
 pytest-xdist = "^3.5.0"
+pytest-mock = "^3.12.0"
 
 
 [tool.ruff]
 # Same as Black.
 line-length = 120
 
-exclude = ["tests/*.py"]
+#exclude = ["tests/*.py"]
 select = [
     "E",  # pycodestyle errors (settings from FastAPI, thanks, @tiangolo!)
     "W",  # pycodestyle warnings
@@ -50,6 +50,7 @@ ignore = [
     "C901",  # too complex
     "RUF001",  # ambiguous unicode string
     "RUF002",  # ambiguous unicode string
+    "S101",    # Use of `assert` detected
 ]
 
 [tool.ruff.isort]

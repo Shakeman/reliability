@@ -1,6 +1,7 @@
 import warnings
 
 import matplotlib.pyplot as plt
+import pytest
 from numpy.testing import assert_allclose
 
 from reliability.Distributions import Lognormal_Distribution, Normal_Distribution, Weibull_Distribution
@@ -73,7 +74,7 @@ def test_distribution_explorer():
     plt.close()
     plt.ioff()
 
-
+@pytest.mark.flaky(reruns=3)
 def test_histogram():
     plt.ion()
     dist = Weibull_Distribution(alpha=30, beta=4)

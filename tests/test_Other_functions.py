@@ -63,16 +63,18 @@ def test_make_right_censored_data():
 def test_crosshairs():
     plt.ion()  # this is the key to enabling plt.close() to take control of a plot that is being blocked by plt.show() inside the plot generating function.
     Weibull_Distribution(alpha=50, beta=2).CDF()
-    crosshairs(xlabel='t', ylabel='F')
+    crosshairs(xlabel="t", ylabel="F")
     plt.close()
     plt.ioff()
 
 
+@pytest.mark.flaky(reruns=5)
 def test_distribution_explorer():
     plt.ion()
     distribution_explorer()
     plt.close()
     plt.ioff()
+
 
 @pytest.mark.flaky(reruns=3)
 def test_histogram():

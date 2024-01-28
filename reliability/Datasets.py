@@ -14020,7 +14020,7 @@ class mixture:
 
         from reliability.Datasets import mixture
         from reliability.Fitters import Fit_Weibull_Mixture
-        Fit_Weibull_Mixture(failures=automotive().failures, right_censored=automotive().right_censored)
+        Fit_Weibull_Mixture(failures=mixture().failures, right_censored=mixture().right_censored)
     """
 
     def __init__(self):
@@ -17471,7 +17471,7 @@ class electronics:
     def __init__(self):
         time = [220, 179, 123, 146, 199, 181, 191, 216, 1, 73, 44798, 62715, 81474, 80632, 62716]
         quantity = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 817, 823, 815, 813, 804]
-        category = ['F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'C', 'C', 'C', 'C', 'C']
+        category = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "C", "C", "C", "C", "C"]
         data = {"time": time, "quantity": quantity, "category": category}
         self.dataframe = pd.DataFrame(data, columns=["time", "quantity", "category"])
         self.failures = [220, 179, 123, 146, 199, 181, 191, 216, 1, 73]

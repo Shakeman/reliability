@@ -1,11 +1,4 @@
-from reliability.PoF import acceleration_factor
+from reliability.Datasets import mixture
+from reliability.Fitters import Fit_Weibull_Mixture
 
-results = acceleration_factor(T_use=60, T_acc=100, Ea=1.2)
-
-"""
-Results from acceleration_factor:
-Acceleration Factor: 88.29574588463338
-Use Temperature: 60 °C
-Accelerated Temperature: 100 °C
-Activation Energy: 1.2 eV
-"""
+Fit_Weibull_Mixture(failures=mixture().failures, right_censored=mixture().right_censored)

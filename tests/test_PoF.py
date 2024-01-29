@@ -40,7 +40,7 @@ def test_stress_strain_diagram():
     stress_data = [650, 625, 555, 480, 395, 330]
     cycles_data = [200, 350, 1100, 4600, 26000, 560000]
     params = stress_strain_life_parameters_from_data(
-        stress=stress_data, strain=strain_data, cycles=cycles_data, E=216000, show_plot=False, print_results=False
+        stress=stress_data, strain=strain_data, cycles=cycles_data, E=216000, show_plot=False, print_results=False,
     )
     stress_strain = stress_strain_diagram(E=216000, n=params.n, K=params.K, max_strain=0.006)
     assert_allclose(stress_strain.max_strain, 0.006, rtol=rtol, atol=atol)
@@ -51,7 +51,7 @@ def test_stress_strain_diagram():
 
 def test_strain_life_diagram():
     results = strain_life_diagram(
-        E=210000, sigma_f=1000, epsilon_f=1.1, b=-0.1, c=-0.6, K=1200, n=0.2, max_strain=0.0049, min_strain=-0.0029
+        E=210000, sigma_f=1000, epsilon_f=1.1, b=-0.1, c=-0.6, K=1200, n=0.2, max_strain=0.0049, min_strain=-0.0029,
     )
     assert_allclose(results.cycles_to_failure, 13771.39230726717, rtol=rtol, atol=atol)
     assert_allclose(results.max_strain, 0.0049, rtol=rtol, atol=atol)
@@ -164,7 +164,7 @@ def test_creep_failure_time():
 def test_palmgren_miner_linear_damage():
     stress = [1, 2, 4]
     results = palmgren_miner_linear_damage(
-        rated_life=[50000, 6500, 1000], time_at_stress=[40 / 60, 15 / 60, 5 / 60], stress=stress
+        rated_life=[50000, 6500, 1000], time_at_stress=[40 / 60, 15 / 60, 5 / 60], stress=stress,
     )
     assert_allclose(results[0], 0.00013512820512820512, rtol=rtol, atol=atol)
     assert_allclose(results[1], 7400.379506641367, rtol=rtol, atol=atol)

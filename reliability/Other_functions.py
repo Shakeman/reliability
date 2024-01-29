@@ -115,7 +115,7 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
         Competing_Risks_Model,
     ]:
         raise ValueError(
-            "Stress and Strength must both be probability distributions. First define the distribution using reliability.Distributions.___"
+            "Stress and Strength must both be probability distributions. First define the distribution using reliability.Distributions.___",
         )
     if (
         type(stress) == Normal_Distribution and type(strength) == Normal_Distribution and warn is True
@@ -276,11 +276,11 @@ def stress_strength_normal(stress, strength, show_plot=True, print_results=True,
     """
     if type(stress) is not Normal_Distribution:
         raise ValueError(
-            "Both stress and strength must be a Normal_Distribution. If you need another distribution then use stress_strength rather than stress_strength_normal"
+            "Both stress and strength must be a Normal_Distribution. If you need another distribution then use stress_strength rather than stress_strength_normal",
         )
     if type(strength) is not Normal_Distribution:
         raise ValueError(
-            "Both stress and strength must be a Normal_Distribution. If you need another distribution then use stress_strength rather than stress_strength_normal"
+            "Both stress and strength must be a Normal_Distribution. If you need another distribution then use stress_strength rather than stress_strength_normal",
         )
     if stress.mean > strength.mean and warn is True:
         colorprint(
@@ -431,7 +431,7 @@ class similar_distributions:
             Gumbel_Distribution,
         ]:
             raise ValueError(
-                "distribution must be a probability distribution object from the reliability.Distributions module. First define the distribution using Reliability.Distributions.___"
+                "distribution must be a probability distribution object from the reliability.Distributions module. First define the distribution using Reliability.Distributions.___",
             )
 
         if not isinstance(number_of_distributions_to_show, int) or number_of_distributions_to_show < 2:
@@ -452,7 +452,7 @@ class similar_distributions:
 
         if len(RVS_filtered) < 175:
             raise ValueError(
-                "The input distribution has more than 75% of its area in the negative domain (x<0). Comparison with distributions bounded by the positive domain (x>0) is not possible."
+                "The input distribution has more than 75% of its area in the negative domain (x<0). Comparison with distributions bounded by the positive domain (x>0) is not possible.",
             )
 
         if negative_values_error is True:
@@ -503,7 +503,7 @@ class similar_distributions:
                     Weibull_Distribution(
                         alpha=fitted_results.Weibull_2P_alpha,
                         beta=fitted_results.Weibull_2P_beta,
-                    )
+                    ),
                 )
                 ranked_distributions_labels.append(
                     str(
@@ -511,15 +511,15 @@ class similar_distributions:
                         + str(round(fitted_results.Weibull_2P_alpha, sigfig))
                         + ",β="
                         + str(round(fitted_results.Weibull_2P_beta, sigfig))
-                        + ")"
-                    )
+                        + ")",
+                    ),
                 )
             elif dist_name == "Gamma_2P":
                 ranked_distributions_objects.append(
                     Gamma_Distribution(
                         alpha=fitted_results.Gamma_2P_alpha,
                         beta=fitted_results.Gamma_2P_beta,
-                    )
+                    ),
                 )
                 ranked_distributions_labels.append(
                     str(
@@ -527,15 +527,15 @@ class similar_distributions:
                         + str(round(fitted_results.Gamma_2P_alpha, sigfig))
                         + ",β="
                         + str(round(fitted_results.Gamma_2P_beta, sigfig))
-                        + ")"
-                    )
+                        + ")",
+                    ),
                 )
             elif dist_name == "Normal_2P":
                 ranked_distributions_objects.append(
                     Normal_Distribution(
                         mu=fitted_results.Normal_2P_mu,
                         sigma=fitted_results.Normal_2P_sigma,
-                    )
+                    ),
                 )
                 ranked_distributions_labels.append(
                     str(
@@ -543,15 +543,15 @@ class similar_distributions:
                         + str(round(fitted_results.Normal_2P_mu, sigfig))
                         + ",σ="
                         + str(round(fitted_results.Normal_2P_sigma, sigfig))
-                        + ")"
-                    )
+                        + ")",
+                    ),
                 )
             elif dist_name == "Lognormal_2P":
                 ranked_distributions_objects.append(
                     Lognormal_Distribution(
                         mu=fitted_results.Lognormal_2P_mu,
                         sigma=fitted_results.Lognormal_2P_sigma,
-                    )
+                    ),
                 )
                 ranked_distributions_labels.append(
                     str(
@@ -559,22 +559,22 @@ class similar_distributions:
                         + str(round(fitted_results.Lognormal_2P_mu, sigfig))
                         + ",σ="
                         + str(round(fitted_results.Lognormal_2P_sigma, sigfig))
-                        + ")"
-                    )
+                        + ")",
+                    ),
                 )
             elif dist_name == "Exponential_1P":
                 ranked_distributions_objects.append(
-                    Exponential_Distribution(Lambda=fitted_results.Exponential_1P_lambda)
+                    Exponential_Distribution(Lambda=fitted_results.Exponential_1P_lambda),
                 )
                 ranked_distributions_labels.append(
-                    str("Exponential_1P (lambda=" + str(round(fitted_results.Exponential_1P_lambda, sigfig)) + ")")
+                    str("Exponential_1P (lambda=" + str(round(fitted_results.Exponential_1P_lambda, sigfig)) + ")"),
                 )
             elif dist_name == "Beta_2P":
                 ranked_distributions_objects.append(
                     Beta_Distribution(
                         alpha=fitted_results.Beta_2P_alpha,
                         beta=fitted_results.Beta_2P_beta,
-                    )
+                    ),
                 )
                 ranked_distributions_labels.append(
                     str(
@@ -582,15 +582,15 @@ class similar_distributions:
                         + str(round(fitted_results.Beta_2P_alpha, sigfig))
                         + ",β="
                         + str(round(fitted_results.Beta_2P_beta, sigfig))
-                        + ")"
-                    )
+                        + ")",
+                    ),
                 )
             elif dist_name == "Loglogistic_2P":
                 ranked_distributions_objects.append(
                     Loglogistic_Distribution(
                         alpha=fitted_results.Loglogistic_2P_alpha,
                         beta=fitted_results.Loglogistic_2P_beta,
-                    )
+                    ),
                 )
                 ranked_distributions_labels.append(
                     str(
@@ -598,15 +598,15 @@ class similar_distributions:
                         + str(round(fitted_results.Loglogistic_2P_alpha, sigfig))
                         + ",β="
                         + str(round(fitted_results.Loglogistic_2P_beta, sigfig))
-                        + ")"
-                    )
+                        + ")",
+                    ),
                 )
             elif dist_name == "Gumbel_2P":
                 ranked_distributions_objects.append(
                     Gumbel_Distribution(
                         mu=fitted_results.Gumbel_2P_mu,
                         sigma=fitted_results.Gumbel_2P_sigma,
-                    )
+                    ),
                 )
                 ranked_distributions_labels.append(
                     str(
@@ -614,8 +614,8 @@ class similar_distributions:
                         + str(round(fitted_results.Gumbel_2P_mu, sigfig))
                         + ",σ="
                         + str(round(fitted_results.Gumbel_2P_sigma, sigfig))
-                        + ")"
-                    )
+                        + ")",
+                    ),
                 )
 
             if include_location_shifted is True:
@@ -626,7 +626,7 @@ class similar_distributions:
                                 alpha=fitted_results.Weibull_3P_alpha,
                                 beta=fitted_results.Weibull_3P_beta,
                                 gamma=fitted_results.Weibull_3P_gamma,
-                            )
+                            ),
                         )
                         ranked_distributions_labels.append(
                             str(
@@ -636,8 +636,8 @@ class similar_distributions:
                                 + str(round(fitted_results.Weibull_3P_beta, sigfig))
                                 + ",γ="
                                 + str(round(fitted_results.Weibull_3P_gamma, sigfig))
-                                + ")"
-                            )
+                                + ")",
+                            ),
                         )
                 elif dist_name == "Gamma_3P":
                     if fitted_results.Gamma_3P_gamma != 0:
@@ -646,7 +646,7 @@ class similar_distributions:
                                 alpha=fitted_results.Gamma_3P_alpha,
                                 beta=fitted_results.Gamma_3P_beta,
                                 gamma=fitted_results.Gamma_3P_gamma,
-                            )
+                            ),
                         )
                         ranked_distributions_labels.append(
                             str(
@@ -656,8 +656,8 @@ class similar_distributions:
                                 + str(round(fitted_results.Gamma_3P_beta, sigfig))
                                 + ",γ="
                                 + str(round(fitted_results.Gamma_3P_gamma, sigfig))
-                                + ")"
-                            )
+                                + ")",
+                            ),
                         )
                 elif dist_name == "Lognormal_3P":
                     if fitted_results.Lognormal_3P_gamma != 0:
@@ -666,7 +666,7 @@ class similar_distributions:
                                 mu=fitted_results.Lognormal_3P_mu,
                                 sigma=fitted_results.Lognormal_3P_sigma,
                                 gamma=fitted_results.Lognormal_3P_gamma,
-                            )
+                            ),
                         )
                         ranked_distributions_labels.append(
                             str(
@@ -676,8 +676,8 @@ class similar_distributions:
                                 + str(round(fitted_results.Lognormal_3P_sigma, sigfig))
                                 + ",γ="
                                 + str(round(fitted_results.Lognormal_3P_gamma, sigfig))
-                                + ")"
-                            )
+                                + ")",
+                            ),
                         )
                 elif dist_name == "Exponential_2P":
                     if fitted_results.Exponential_2P_gamma != 0:
@@ -685,7 +685,7 @@ class similar_distributions:
                             Exponential_Distribution(
                                 Lambda=fitted_results.Exponential_1P_lambda,
                                 gamma=fitted_results.Exponential_2P_gamma,
-                            )
+                            ),
                         )
                         ranked_distributions_labels.append(
                             str(
@@ -693,8 +693,8 @@ class similar_distributions:
                                 + str(round(fitted_results.Exponential_1P_lambda, sigfig))
                                 + ",γ="
                                 + str(round(fitted_results.Exponential_2P_gamma, sigfig))
-                                + ")"
-                            )
+                                + ")",
+                            ),
                         )
                 elif dist_name == "Loglogistic_3P" and fitted_results.Loglogistic_3P_gamma != 0:
                     ranked_distributions_objects.append(
@@ -702,7 +702,7 @@ class similar_distributions:
                             alpha=fitted_results.Loglogistic_3P_alpha,
                             beta=fitted_results.Loglogistic_3P_beta,
                             gamma=fitted_results.Loglogistic_3P_gamma,
-                        )
+                        ),
                     )
                     ranked_distributions_labels.append(
                         str(
@@ -712,8 +712,8 @@ class similar_distributions:
                             + str(round(fitted_results.Loglogistic_3P_beta, sigfig))
                             + ",γ="
                             + str(round(fitted_results.Loglogistic_3P_gamma, sigfig))
-                            + ")"
-                        )
+                            + ")",
+                        ),
                     )
 
         number_of_distributions_fitted = len(ranked_distributions_objects)
@@ -899,7 +899,7 @@ class make_right_censored_data:
 
         if threshold is not None and fraction_censored is not None:
             raise ValueError(
-                "threshold is used to control censoring above a set limit. fraction_censored is used to control the fraction of the values that will be censored. These cannot both be specified as they are conflicting methods of censoring"
+                "threshold is used to control censoring above a set limit. fraction_censored is used to control the fraction of the values that will be censored. These cannot both be specified as they are conflicting methods of censoring",
             )
         if threshold is None and fraction_censored is None:
             fraction_censored = 0.5  # default to 50% multiply censored
@@ -917,7 +917,7 @@ class make_right_censored_data:
                 or type(fraction_censored) not in [int, float, np.float_, np.int_]
             ):
                 raise ValueError(
-                    "fraction_censored must be >= 0 and < 1. The default is 0.5 which will right censor half the data"
+                    "fraction_censored must be >= 0 and < 1. The default is 0.5 which will right censor half the data",
                 )
             number_of_items_to_censor = int(np.floor(len(data) * fraction_censored))
             self.right_censored = data[0:number_of_items_to_censor] * np.random.rand(number_of_items_to_censor)
@@ -1037,7 +1037,7 @@ class make_ALT_data:
             dual_stress = True
         else:
             raise ValueError(
-                "life_stress_model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power"
+                "life_stress_model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power",
             )
 
         if type(stress_1) not in [list, np.ndarray]:
@@ -1058,7 +1058,7 @@ class make_ALT_data:
             if use_level_stress is not None:
                 if len(use_level_stress) != 2:
                     raise ValueError(
-                        "use_level_stress must be a list or array with 2 elements if using a dual-stress model"
+                        "use_level_stress must be a list or array with 2 elements if using a dual-stress model",
                     )
                 stress_2 = np.append(stress_2, use_level_stress[1])
 
@@ -1113,7 +1113,9 @@ class make_ALT_data:
         right_censored_stresses_2 = []
         np.random.seed(seed)
         seeds = np.random.randint(
-            low=0, high=1000000, size=num_stresses
+            low=0,
+            high=1000000,
+            size=num_stresses,
         )  # need a seed for each stress or the points will be the same just shifted horizontally
 
         def __make_dist(life):
@@ -1142,7 +1144,7 @@ class make_ALT_data:
                 raise ValueError(
                     "The values entered for the ALT model will result in negative failure times.\n"
                     "While this is acceptable for a pure Normal Distribution, it is not acceptable for an ALT model utilising the Normal Distribution.\n"
-                    "Please modify your input parameters to create a model that does not result in the generation of negative failure times."
+                    "Please modify your input parameters to create a model that does not result in the generation of negative failure times.",
                 )
 
             if fraction_censored == 0:
@@ -1214,7 +1216,7 @@ class crosshairs:
     def __init__(self, xlabel=None, ylabel=None, decimals=2, dateformat=None, **kwargs):
         if type(dateformat) not in [str, type(None)]:
             raise ValueError(
-                "dateformat type must be str or None. For acceptable strings see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes"
+                "dateformat type must be str or None. For acceptable strings see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes",
             )
         if not isinstance(decimals, int):
             raise ValueError("decimals must be int")
@@ -1224,18 +1226,22 @@ class crosshairs:
             raise ValueError("ylabel must be string or None")
 
         warnings.simplefilter(
-            "ignore"
+            "ignore",
         )  # required when using fill_between due to warning in mplcursors: "UserWarning: Pick support for PolyCollection is missing."
         ch = cursor(hover=True)
 
         def add_lines_and_text_with_kwargs(_):
             return crosshairs.__add_lines_and_text_to_crosshairs(
-                _, decimals, dateformat, **kwargs
+                _,
+                decimals,
+                dateformat,
+                **kwargs,
             )  # adds the line's kwargs before connecting it to cursor
 
         ch.connect("add", add_lines_and_text_with_kwargs)
         plt.gcf().canvas.mpl_connect(
-            "axes_leave_event", crosshairs.__hide_crosshairs
+            "axes_leave_event",
+            crosshairs.__hide_crosshairs,
         )  # hide the crosshairs and text when the mouse leaves the axes
 
         # this does the annotation part
@@ -1244,13 +1250,16 @@ class crosshairs:
         if ylabel is None:
             ylabel = "y"
         warnings.simplefilter(
-            "ignore"
+            "ignore",
         )  # required when using fill_between due to warning in mplcursors: "UserWarning: Pick support for PolyCollection is missing."
         annot = cursor(multiple=True, bindings={"toggle_visible": "h"})
 
         def format_annotation_labeled(_):
             return crosshairs.__format_annotation(
-                _, decimals, dateformat, [xlabel, ylabel]
+                _,
+                decimals,
+                dateformat,
+                [xlabel, ylabel],
             )  # adds the labels to the 'format_annotation' function before connecting it to cursor
 
         annot.connect("add", format_annotation_labeled)

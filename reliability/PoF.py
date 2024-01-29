@@ -138,7 +138,7 @@ def SN_diagram(
 
     if CI <= 0 or CI >= 1:
         raise ValueError(
-            "CI must be between 0 and 1. Default is 0.95 for 95% Confidence intervals on statistical bounds"
+            "CI must be between 0 and 1. Default is 0.95 for 95% Confidence intervals on statistical bounds",
         )
 
     if stress_runout is None and show_endurance_limit is None:
@@ -389,7 +389,7 @@ class stress_strain_life_parameters_from_data:
                     + str(round(self.K, 4))
                     + r"})^{\frac{1}{"
                     + str(round(self.n, 4))
-                    + "}}$"
+                    + "}}$",
                 ),
             )
             plt.scatter(strain, stress, marker=".", color="k", label="Stress-Strain data")
@@ -445,7 +445,7 @@ class stress_strain_life_parameters_from_data:
                         + str(round(self.epsilon_f, 4))
                         + "(2N_f)^{"
                         + str(round(self.c, 4))
-                        + "}$"
+                        + "}$",
                     ),
                 )
                 plt.plot(
@@ -564,11 +564,11 @@ class stress_strain_diagram:
     ):
         if max_stress is not None and max_strain is not None:
             raise ValueError(
-                "Do not specify both max_stress and max_strain as the corresponding value will be automatically calculated"
+                "Do not specify both max_stress and max_strain as the corresponding value will be automatically calculated",
             )
         if min_stress is not None and min_strain is not None:
             raise ValueError(
-                "Do not specify both min_stress and min_strain as the corresponding value will be automatically calculated"
+                "Do not specify both min_stress and min_strain as the corresponding value will be automatically calculated",
             )
         if max_stress is None and max_strain is None:
             raise ValueError("You must specify either max_stress OR max_strain for the cyclic loading")
@@ -579,7 +579,7 @@ class stress_strain_diagram:
         self.n = n
 
         warnings.filterwarnings(
-            "ignore"
+            "ignore",
         )  # sometimes fsolve has issues when delta_sigma crosses zero. It almost always resolves itself so the warning is just an annoyance
 
         # these functions are used for solving the equation for sigma_max as it can not be rearranged
@@ -836,15 +836,15 @@ class strain_life_diagram:
     ):
         if max_stress is not None and max_strain is not None:
             raise ValueError(
-                "Do not specify both max_stress and max_strain as the corresponding value will be automatically calculated"
+                "Do not specify both max_stress and max_strain as the corresponding value will be automatically calculated",
             )
         if min_stress is not None and min_strain is not None:
             raise ValueError(
-                "Do not specify both min_stress and min_strain as the corresponding value will be automatically calculated"
+                "Do not specify both min_stress and min_strain as the corresponding value will be automatically calculated",
             )
         if (max_stress is not None or max_strain is not None) and (K is None or n is None):
             raise ValueError(
-                "K and n must be specified if you specify max_stress or max_strain. These values are required to calculate the corresponding stress or strain"
+                "K and n must be specified if you specify max_stress or max_strain. These values are required to calculate the corresponding stress or strain",
             )
         if mean_stress_correction_method not in [
             "morrow",
@@ -896,7 +896,13 @@ class strain_life_diagram:
 
                 def fun_cm(x):
                     return coffin_manson(
-                        eps_tot=self.max_strain, sigma_f=sigma_f, E=E, cycles_2Nf=x, epsilon_f=epsilon_f, b=b, c=c
+                        eps_tot=self.max_strain,
+                        sigma_f=sigma_f,
+                        E=E,
+                        cycles_2Nf=x,
+                        epsilon_f=epsilon_f,
+                        b=b,
+                        c=c,
                     )
 
                 use_cycles_2Nf = fsolve(fun_cm, np.array(10))
@@ -914,7 +920,7 @@ class strain_life_diagram:
                     + str(round(epsilon_f, 4))
                     + "(2N_f)^{"
                     + str(round(c, 4))
-                    + "}$"
+                    + "}$",
                 )
                 plastic_strain_line = epsilon_f * cycles_2Nf_array**c
                 elastic_strain_line = sigma_f / E * cycles_2Nf_array**b
@@ -957,7 +963,7 @@ class strain_life_diagram:
                         + str(round(epsilon_f, 4))
                         + "(2N_f)^{"
                         + str(round(c, 4))
-                        + "}$"
+                        + "}$",
                     )
                     plastic_strain_line = epsilon_f * cycles_2Nf_array**c
                     elastic_strain_line = ((sigma_f - mean_stress) / E) * cycles_2Nf_array**b
@@ -1021,7 +1027,7 @@ class strain_life_diagram:
                         + "}"
                         + "(2N_f)^{"
                         + str(round(c, 4))
-                        + "}$"
+                        + "}$",
                     )
                     plastic_strain_line = (
                         epsilon_f * ((sigma_f - mean_stress) / sigma_f) ** (c / b) * cycles_2Nf_array**c
@@ -1073,7 +1079,7 @@ class strain_life_diagram:
                         + str(round(b, 4))
                         + "+"
                         + str(round(c, 4))
-                        + ")})$"
+                        + ")})$",
                     )
                     plastic_strain_line = (sigma_f * epsilon_f * cycles_2Nf_array ** (b + c)) / self.max_stress
                     elastic_strain_line = ((sigma_f**2 / E) * cycles_2Nf_array ** (2 * b)) / self.max_stress
@@ -1212,7 +1218,7 @@ class strain_life_diagram:
                         + str(round(epsilon_f, 4))
                         + "(2N_f)^{"
                         + str(round(c, 4))
-                        + "}$"
+                        + "}$",
                     ),
                 )
                 plt.plot(
@@ -1441,7 +1447,7 @@ class fracture_mechanics_crack_initiation:
     ):
         if mean_stress_correction_method not in ["morrow", "modified_morrow", "SWT"]:
             raise ValueError(
-                "mean_stress_correction_method must be either morrow,modified_morrow, or SWT. Default is modified_morrow."
+                "mean_stress_correction_method must be either morrow,modified_morrow, or SWT. Default is modified_morrow.",
             )
         S_net = 10**6 * P / A
         Kf = 1 + q * (Kt - 1)
@@ -1473,7 +1479,7 @@ class fracture_mechanics_crack_initiation:
 
             if delta_epsilon > 1:  # this checks that the delta_epsilon that was found is realistic
                 raise ValueError(
-                    "As a results of the inputs, delta_epsilon has been calculated to be greater than 1. This will result in immediate failure of the component. You should check your inputs to ensure they are in the correct units, especially for P (units of MPa) and A (units of mm^2)."
+                    "As a results of the inputs, delta_epsilon has been calculated to be greater than 1. This will result in immediate failure of the component. You should check your inputs to ensure they are in the correct units, especially for P (units of MPa) and A (units of mm^2).",
                 )
 
             self.sigma_min = sigma - delta_sigma
@@ -1773,7 +1779,7 @@ class fracture_mechanics_crack_growth:
                 + str(d)
                 + "mm will have notches deeper than the width of the plate W = "
                 + str(W)
-                + "mm. This would result in a negative cross sectional area."
+                + "mm. This would result in a negative cross sectional area.",
             )
             raise ValueError(error_str)
         # Simplified method (assuming fg, S_max, af to be constant)
@@ -1795,7 +1801,7 @@ class fracture_mechanics_crack_growth:
                     + str(a_final)
                     + " mm) is greater than the critical crack length to cause failure ("
                     + str(round(a_crit * 1000 - d, 5))
-                    + " mm)."
+                    + " mm).",
                 ),
                 text_color="red",
             )
@@ -1935,7 +1941,7 @@ class fracture_mechanics_crack_growth:
                     + str(a_final)
                     + " mm) was found to be greater than the critical crack length to cause failure ("
                     + str(round(self.final_crack_length_iterative, 2))
-                    + " mm)."
+                    + " mm).",
                 ),
                 text_color="red",
             )
@@ -2058,11 +2064,11 @@ def creep_rupture_curves(temp_array, stress_array, TTF_array, stress_trace=None,
 
     if (stress_trace is not None and temp_trace is None) or (stress_trace is None and temp_trace is not None):
         raise ValueError(
-            "You must enter both stress_trace and temp_trace to obtain the time to failure at a given stress and temperature."
+            "You must enter both stress_trace and temp_trace to obtain the time to failure at a given stress and temperature.",
         )
     if len(temp_array) < 2 or len(stress_array) < 2 or len(TTF_array) < 2:
         raise ValueError(
-            "temp_array, stress_array, and TTF_array must each have at least 2 data points for a line to be fitted."
+            "temp_array, stress_array, and TTF_array must each have at least 2 data points for a line to be fitted.",
         )
     if len(temp_array) != len(stress_array) or len(temp_array) != len(TTF_array):
         raise ValueError("The length of temp_array, stress_array, and TTF_array must all be equal")
@@ -2209,7 +2215,7 @@ class acceleration_factor:
                 nonecounter += 1
         if nonecounter > 1:
             raise ValueError(
-                "You must specify two out of three of the optional inputs (T_acc, AF, Ea) and the third one will be found."
+                "You must specify two out of three of the optional inputs (T_acc, AF, Ea) and the third one will be found.",
             )
 
         if AF is None:

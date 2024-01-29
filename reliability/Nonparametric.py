@@ -126,8 +126,8 @@ class KaplanMeier:
                 str(
                     "failures has a length of "
                     + str(len(failures))
-                    + ". The minimum acceptable number of failures is 2"
-                )
+                    + ". The minimum acceptable number of failures is 2",
+                ),
             )
 
         # turn the failures and right censored times into a two lists of times and censoring codes
@@ -299,7 +299,7 @@ class KaplanMeier:
                 plt.ylim([0, 1.1])
             elif plot_type in ["CHF", "chf"]:
                 ylims = plt.ylim(
-                    auto=None
+                    auto=None,
                 )  # get the existing ylims so other plots are considered when setting the limits
                 p = plt.plot(self.xvals, self.CHF, **kwargs)
                 CHF_upper = np.nan_to_num(self.CHF_upper, posinf=1e10)
@@ -320,7 +320,7 @@ class KaplanMeier:
                 plt.title(title_text)
                 plt.xlim([0, max(xmax, xlim_upper)])
                 plt.ylim(
-                    [0, max(ylims[1], self.CHF[-2] * 1.2)]
+                    [0, max(ylims[1], self.CHF[-2] * 1.2)],
                 )  # set the limits for y. Need to do this because the upper CI bound is inf.
             else:
                 raise ValueError("plot_type must be CDF, SF, CHF")
@@ -429,8 +429,8 @@ class NelsonAalen:
                 str(
                     "failures has a length of "
                     + str(len(failures))
-                    + ". The minimum acceptable number of failures is 2"
-                )
+                    + ". The minimum acceptable number of failures is 2",
+                ),
             )
 
         # turn the failures and right censored times into a two lists of times and censoring codes
@@ -604,7 +604,7 @@ class NelsonAalen:
                 plt.ylim([0, 1.1])
             elif plot_type in ["CHF", "chf"]:
                 ylims = plt.ylim(
-                    auto=None
+                    auto=None,
                 )  # get the existing ylims so other plots are considered when setting the limits
                 p = plt.plot(self.xvals, self.CHF, **kwargs)
                 CHF_upper = np.nan_to_num(self.CHF_upper, posinf=1e10)
@@ -625,7 +625,7 @@ class NelsonAalen:
                 plt.title(title_text)
                 plt.xlim([0, max(xmax, xlim_upper)])
                 plt.ylim(
-                    [0, max(ylims[1], self.CHF[-2] * 1.2)]
+                    [0, max(ylims[1], self.CHF[-2] * 1.2)],
                 )  # set the limits for y. Need to do this because the upper CI bound is inf.
             else:
                 raise ValueError("plot_type must be CDF, SF, CHF")
@@ -742,8 +742,8 @@ class RankAdjustment:
                 str(
                     "failures has a length of "
                     + str(len(failures))
-                    + ". The minimum acceptable number of failures is 2"
-                )
+                    + ". The minimum acceptable number of failures is 2",
+                ),
             )
 
         # turn the failures and right censored times into a two lists of times and censoring codes
@@ -794,7 +794,7 @@ class RankAdjustment:
             if cens == 1:  # censored values = 0. failures = 1
                 failure_counter += 1
             RA.append(
-                1 - y_extended[failure_counter]
+                1 - y_extended[failure_counter],
             )  # RA is equivalent to the Survival function but not the stepwise version of the data. Just 1 point for each failure or right censored datapoint
 
             # greenwood confidence interval calculations. Uses Normal approximation (same method as Minitab uses for Kaplan-Meier)
@@ -921,7 +921,7 @@ class RankAdjustment:
                 plt.ylim([0, 1.1])
             elif plot_type in ["CHF", "chf"]:
                 ylims = plt.ylim(
-                    auto=None
+                    auto=None,
                 )  # get the existing ylims so other plots are considered when setting the limits
                 p = plt.plot(self.xvals, self.CHF, **kwargs)
                 CHF_upper = np.nan_to_num(self.CHF_upper, posinf=1e10)
@@ -942,7 +942,7 @@ class RankAdjustment:
                 plt.title(title_text)
                 plt.xlim([0, max(xmax, xlim_upper)])
                 plt.ylim(
-                    [0, max(ylims[1], self.CHF[-2] * 1.2)]
+                    [0, max(ylims[1], self.CHF[-2] * 1.2)],
                 )  # set the limits for y. Need to do this because the upper CI bound is inf.
             else:
                 raise ValueError("plot_type must be CDF, SF, CHF")

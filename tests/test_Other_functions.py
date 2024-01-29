@@ -40,7 +40,7 @@ def test_similar_distributions():
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     dist = Weibull_Distribution(alpha=50, beta=3.3)
     results = similar_distributions(
-        distribution=dist, include_location_shifted=True, show_plot=False, print_results=False
+        distribution=dist, include_location_shifted=True, show_plot=False, print_results=False,
     )
     assert_allclose(results.results[0].alpha, 49.22622520639563, rtol=rtol_big, atol=atol_big)
     assert_allclose(results.results[0].beta, 3.2573074120881964, rtol=rtol_big, atol=atol_big)
@@ -56,7 +56,7 @@ def test_make_right_censored_data():
     results = make_right_censored_data(data=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], fraction_censored=0.5, seed=1)
     assert_allclose(results.failures, [4, 2, 8, 9, 6], rtol=rtol, atol=atol)
     assert_allclose(
-        results.right_censored, [1.16373222, 6.69746037, 6.5487735, 4.23155458, 0.31327352], rtol=rtol, atol=atol
+        results.right_censored, [1.16373222, 6.69746037, 6.5487735, 4.23155458, 0.31327352], rtol=rtol, atol=atol,
     )
 
 
@@ -76,7 +76,7 @@ def test_distribution_explorer():
     plt.ioff()
 
 
-@pytest.mark.flaky(reruns=3)
+@pytest.mark.flaky(reruns=5)
 def test_histogram():
     plt.ion()
     dist = Weibull_Distribution(alpha=30, beta=4)

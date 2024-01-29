@@ -262,7 +262,7 @@ class Fit_Everything:
             exclude = list(exclude)
         if type(exclude) not in [list, np.ndarray]:
             raise ValueError(
-                'exclude must be a list or array or strings that match the names of the distributions to be excluded. eg "Weibull_2P".'
+                'exclude must be a list or array or strings that match the names of the distributions to be excluded. eg "Weibull_2P".',
             )
         if len(failures) < 3:
             exclude.extend(
@@ -273,7 +273,7 @@ class Fit_Everything:
                     "Lognormal_3P",
                     "Weibull_Mixture",
                     "Weibull_CR",
-                ]
+                ],
             )  # do not fit the 3P distributions if there are only 2 failures
         # flexible name checking for excluded distributions
         excluded_distributions = []
@@ -282,7 +282,7 @@ class Fit_Everything:
             if type(item) not in [str, np.str_]:
                 raise ValueError(
                     "exclude must be a list or array of strings that specified the distributions to be excluded from fitting. Available strings are:"
-                    "\nWeibull_2P\nWeibull_3P\nNormal_2P\nGamma_2P\nLoglogistic_2P\nGamma_3P\nLognormal_2P\nLognormal_3P\nLoglogistic_3P\nGumbel_2P\nExponential_2P\nExponential_1P\nBeta_2P\nWeibull_Mixture\nWeibull_CR\nWeibull_DS"
+                    "\nWeibull_2P\nWeibull_3P\nNormal_2P\nGamma_2P\nLoglogistic_2P\nGamma_3P\nLognormal_2P\nLognormal_3P\nLoglogistic_3P\nGumbel_2P\nExponential_2P\nExponential_1P\nBeta_2P\nWeibull_Mixture\nWeibull_CR\nWeibull_DS",
                 )
             if item.upper() in ["WEIBULL_2P", "WEIBULL2P", "WEIBULL2"]:
                 excluded_distributions.append("Weibull_2P")
@@ -367,7 +367,7 @@ class Fit_Everything:
             colorprint(
                 str(
                     "WARNING: The following items were not recognised distributions to exclude: "
-                    + str(unknown_exclusions)
+                    + str(unknown_exclusions),
                 ),
                 text_color="red",
             )
@@ -402,7 +402,7 @@ class Fit_Everything:
                 "BIC",
                 "AD",
                 "optimizer",
-            ]
+            ],
         )
         # Fit the parametric models and extract the fitted parameters
         if "Weibull_3P" not in self.excluded_distributions:
@@ -446,9 +446,9 @@ class Fit_Everything:
                             "BIC": [self.Weibull_3P_BIC],
                             "AD": [self.Weibull_3P_AD],
                             "optimizer": [self.Weibull_3P_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Gamma_3P" not in self.excluded_distributions:
@@ -493,9 +493,9 @@ class Fit_Everything:
                             "BIC": [self.Gamma_3P_BIC],
                             "AD": [self.Gamma_3P_AD],
                             "optimizer": [self.Gamma_3P_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Exponential_2P" not in self.excluded_distributions:
@@ -515,7 +515,8 @@ class Fit_Everything:
             self.Exponential_2P_AD = self.__Exponential_2P_params.AD
             self.Exponential_2P_optimizer = self.__Exponential_2P_params.optimizer
             self._parametric_CDF_Exponential_2P = self.__Exponential_2P_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -540,9 +541,9 @@ class Fit_Everything:
                             "BIC": [self.Exponential_2P_BIC],
                             "AD": [self.Exponential_2P_AD],
                             "optimizer": [self.Exponential_2P_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Lognormal_3P" not in self.excluded_distributions:
@@ -586,9 +587,9 @@ class Fit_Everything:
                             "BIC": [self.Lognormal_3P_BIC],
                             "AD": [self.Lognormal_3P_AD],
                             "optimizer": [self.Lognormal_3P_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Normal_2P" not in self.excluded_distributions:
@@ -631,9 +632,9 @@ class Fit_Everything:
                             "BIC": [self.Normal_2P_BIC],
                             "AD": [self.Normal_2P_AD],
                             "optimizer": [self.Normal_2P_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Lognormal_2P" not in self.excluded_distributions:
@@ -677,9 +678,9 @@ class Fit_Everything:
                             "BIC": [self.Lognormal_2P_BIC],
                             "AD": [self.Lognormal_2P_AD],
                             "optimizer": [self.Lognormal_2P_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Gumbel_2P" not in self.excluded_distributions:
@@ -722,9 +723,9 @@ class Fit_Everything:
                             "BIC": [self.Gumbel_2P_BIC],
                             "AD": [self.Gumbel_2P_AD],
                             "optimizer": [self.Gumbel_2P_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Weibull_2P" not in self.excluded_distributions:
@@ -768,9 +769,9 @@ class Fit_Everything:
                             "BIC": [self.Weibull_2P_BIC],
                             "AD": [self.Weibull_2P_AD],
                             "optimizer": [self.Weibull_2P_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Weibull_Mixture" not in self.excluded_distributions:
@@ -793,7 +794,8 @@ class Fit_Everything:
             self.Weibull_Mixture_AD = self.__Weibull_Mixture_params.AD
             self.Weibull_Mixture_optimizer = self.__Weibull_Mixture_params.optimizer
             self._parametric_CDF_Weibull_Mixture = self.__Weibull_Mixture_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -818,9 +820,9 @@ class Fit_Everything:
                             "BIC": [self.Weibull_Mixture_BIC],
                             "AD": [self.Weibull_Mixture_AD],
                             "optimizer": [self.Weibull_Mixture_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Weibull_CR" not in self.excluded_distributions:
@@ -865,9 +867,9 @@ class Fit_Everything:
                             "BIC": [self.Weibull_CR_BIC],
                             "AD": [self.Weibull_CR_AD],
                             "optimizer": [self.Weibull_CR_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Weibull_DS" not in self.excluded_distributions:
@@ -911,9 +913,9 @@ class Fit_Everything:
                             "BIC": [self.Weibull_DS_BIC],
                             "AD": [self.Weibull_DS_AD],
                             "optimizer": [self.Weibull_DS_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Gamma_2P" not in self.excluded_distributions:
@@ -958,9 +960,9 @@ class Fit_Everything:
                             "BIC": [self.Gamma_2P_BIC],
                             "AD": [self.Gamma_2P_AD],
                             "optimizer": [self.Gamma_2P_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Exponential_1P" not in self.excluded_distributions:
@@ -980,7 +982,8 @@ class Fit_Everything:
             self.Exponential_1P_AD = self.__Exponential_1P_params.AD
             self.Exponential_1P_optimizer = self.__Exponential_1P_params.optimizer
             self._parametric_CDF_Exponential_1P = self.__Exponential_1P_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -1005,9 +1008,9 @@ class Fit_Everything:
                             "BIC": [self.Exponential_1P_BIC],
                             "AD": [self.Exponential_1P_AD],
                             "optimizer": [self.Exponential_1P_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Loglogistic_2P" not in self.excluded_distributions:
@@ -1028,7 +1031,8 @@ class Fit_Everything:
             self.Loglogistic_2P_AD = self.__Loglogistic_2P_params.AD
             self.Loglogistic_2P_optimizer = self.__Loglogistic_2P_params.optimizer
             self._parametric_CDF_Loglogistic_2P = self.__Loglogistic_2P_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -1053,9 +1057,9 @@ class Fit_Everything:
                             "BIC": [self.Loglogistic_2P_BIC],
                             "AD": [self.Loglogistic_2P_AD],
                             "optimizer": [self.Loglogistic_2P_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Loglogistic_3P" not in self.excluded_distributions:
@@ -1076,7 +1080,8 @@ class Fit_Everything:
             self.Loglogistic_3P_AD = self.__Loglogistic_3P_params.AD
             self.Loglogistic_3P_optimizer = self.__Loglogistic_3P_params.optimizer
             self._parametric_CDF_Loglogistic_3P = self.__Loglogistic_3P_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -1101,9 +1106,9 @@ class Fit_Everything:
                             "BIC": [self.Loglogistic_3P_BIC],
                             "AD": [self.Loglogistic_3P_AD],
                             "optimizer": [self.Loglogistic_3P_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         if "Beta_2P" not in self.excluded_distributions:
@@ -1146,9 +1151,9 @@ class Fit_Everything:
                             "BIC": [self.Beta_2P_BIC],
                             "AD": [self.Beta_2P_AD],
                             "optimizer": [self.Beta_2P_optimizer],
-                        }
+                        },
                     ),
-                ]
+                ],
             )
 
         # change to sorting by BIC if there is insufficient data to get the AICc for everything that was fitted
@@ -1157,7 +1162,7 @@ class Fit_Everything:
         # sort the dataframe by BIC, AICc, or AD. Smallest AICc, BIC, AD is better fit
         if not isinstance(sort_by, str):
             raise ValueError(
-                "Invalid input to sort_by. Options are 'BIC', 'AICc', 'AD', or 'Log-likelihood'. Default is 'BIC'."
+                "Invalid input to sort_by. Options are 'BIC', 'AICc', 'AD', or 'Log-likelihood'. Default is 'BIC'.",
             )
         if sort_by.upper() == "BIC":
             df2 = df.sort_values(by="BIC")
@@ -1178,7 +1183,7 @@ class Fit_Everything:
             df2.drop("LLabs", axis=1, inplace=True)  # remove the column created just for sorting
         else:
             raise ValueError(
-                "Invalid input to sort_by. Options are 'BIC', 'AICc', 'AD', or 'Log-likelihood'. Default is 'BIC'."
+                "Invalid input to sort_by. Options are 'BIC', 'AICc', 'AD', or 'Log-likelihood'. Default is 'BIC'.",
             )
         if len(df2.index.values) == 0:
             raise ValueError("You have excluded all available distributions")
@@ -1232,7 +1237,8 @@ class Fit_Everything:
             self.best_distribution = Exponential_Distribution(Lambda=self.Exponential_1P_lambda)
         elif best_dist == "Exponential_2P":
             self.best_distribution = Exponential_Distribution(
-                Lambda=self.Exponential_2P_lambda, gamma=self.Exponential_2P_gamma
+                Lambda=self.Exponential_2P_lambda,
+                gamma=self.Exponential_2P_gamma,
             )
         elif best_dist == "Normal_2P":
             self.best_distribution = Normal_Distribution(mu=self.Normal_2P_mu, sigma=self.Normal_2P_sigma)
@@ -1240,7 +1246,8 @@ class Fit_Everything:
             self.best_distribution = Beta_Distribution(alpha=self.Beta_2P_alpha, beta=self.Beta_2P_beta)
         elif best_dist == "Loglogistic_2P":
             self.best_distribution = Loglogistic_Distribution(
-                alpha=self.Loglogistic_2P_alpha, beta=self.Loglogistic_2P_beta
+                alpha=self.Loglogistic_2P_alpha,
+                beta=self.Loglogistic_2P_beta,
             )
         elif best_dist == "Loglogistic_3P":
             self.best_distribution = Loglogistic_Distribution(
@@ -1430,13 +1437,15 @@ class Fit_Everything:
                 self.__Exponential_1P_params.distribution.PDF(label=r"Exponential_1P ($\lambda$)", linestyle=ls)
             elif item == "Exponential_2P":
                 self.__Exponential_2P_params.distribution.PDF(
-                    label=r"Exponential_2P ($\lambda , \gamma$)", linestyle=ls
+                    label=r"Exponential_2P ($\lambda , \gamma$)",
+                    linestyle=ls,
                 )
             elif item == "Lognormal_2P":
                 self.__Lognormal_2P_params.distribution.PDF(label=r"Lognormal_2P ($\mu , \sigma$)", linestyle=ls)
             elif item == "Lognormal_3P":
                 self.__Lognormal_3P_params.distribution.PDF(
-                    label=r"Lognormal_3P ($\mu , \sigma , \gamma$)", linestyle=ls
+                    label=r"Lognormal_3P ($\mu , \sigma , \gamma$)",
+                    linestyle=ls,
                 )
             elif item == "Normal_2P":
                 self.__Normal_2P_params.distribution.PDF(label=r"Normal_2P ($\mu , \sigma$)", linestyle=ls)
@@ -1446,7 +1455,8 @@ class Fit_Everything:
                 self.__Loglogistic_2P_params.distribution.PDF(label=r"Loglogistic_2P ($\alpha , \beta$)", linestyle=ls)
             elif item == "Loglogistic_3P":
                 self.__Loglogistic_3P_params.distribution.PDF(
-                    label=r"Loglogistic_3P ($\alpha , \beta , \gamma$)", linestyle=ls
+                    label=r"Loglogistic_3P ($\alpha , \beta , \gamma$)",
+                    linestyle=ls,
                 )
             elif item == "Beta_2P":
                 self.__Beta_2P_params.distribution.PDF(label=r"Beta_2P ($\alpha , \beta$)", linestyle=ls)
@@ -1545,7 +1555,7 @@ class Fit_Everything:
         plotting_order = self.results["Distribution"].values
         plt.figure(figsize=figsizePP)
         plt.suptitle(
-            "Semi-parametric Probability-Probability plots of each fitted distribution\nParametric (x-axis) vs Non-Parametric (y-axis)\n"
+            "Semi-parametric Probability-Probability plots of each fitted distribution\nParametric (x-axis) vs Non-Parametric (y-axis)\n",
         )
         subplot_counter = 1
         for item in plotting_order:
@@ -2041,7 +2051,7 @@ class Fit_Weibull_2P:
                         + self.optimizer
                         + " optimizer is non-invertable for the Weibull_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
-                        "You may want to try fitting the model using a different optimizer."
+                        "You may want to try fitting the model using a different optimizer.",
                     ),
                     text_color="red",
                 )
@@ -2077,7 +2087,7 @@ class Fit_Weibull_2P:
                         + self.optimizer
                         + " optimizer is non-invertable for the Weibull_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
-                        "You may want to try fitting the model using a different optimizer."
+                        "You may want to try fitting the model using a different optimizer.",
                     ),
                     text_color="red",
                 )
@@ -2403,18 +2413,18 @@ class Fit_Weibull_2P_grouped:
     ):
         if dataframe is None or type(dataframe) is not pd.core.frame.DataFrame:
             raise ValueError(
-                'dataframe must be a pandas dataframe with the columns "category" (F for failure or C for censored), "time" (the failure times), and "quantity" (the number of events at each time)'
+                'dataframe must be a pandas dataframe with the columns "category" (F for failure or C for censored), "time" (the failure times), and "quantity" (the number of events at each time)',
             )
         for item in dataframe.columns.values:
             if item not in ["category", "time", "quantity"]:
                 raise ValueError(
-                    'The titles of the dataframe columns must be: "category" (F for failure or C for censored), "time" (the failure times), and "quantity" (the number of events at each time)'
+                    'The titles of the dataframe columns must be: "category" (F for failure or C for censored), "time" (the failure times), and "quantity" (the number of events at each time)',
                 )
         categories = dataframe.category.unique()
         for item in categories:
             if item not in ["F", "C"]:
                 raise ValueError(
-                    'The category column must have values "F" or "C" for failure or censored (right censored) respectively. Other values were detected.'
+                    'The category column must have values "F" or "C" for failure or censored (right censored) respectively. Other values were detected.',
                 )
 
         # automatically filter out rows with zeros and print warning if zeros have been removed
@@ -2667,7 +2677,7 @@ class Fit_Weibull_2P_grouped:
                         + self.optimizer
                         + " optimizer is non-invertable for the Weibull_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
-                        "You may want to try fitting the model using a different optimizer."
+                        "You may want to try fitting the model using a different optimizer.",
                     ),
                     text_color="red",
                 )
@@ -2705,7 +2715,7 @@ class Fit_Weibull_2P_grouped:
                         + self.optimizer
                         + " optimizer is non-invertable for the Weibull_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
-                        "You may want to try fitting the model using a different optimizer."
+                        "You may want to try fitting the model using a different optimizer.",
                     ),
                     text_color="red",
                 )
@@ -3130,7 +3140,7 @@ class Fit_Weibull_3P:
                         + self.optimizer
                         + " optimizer is non-invertable for the Weibull_3P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
-                        "You may want to try fitting the model using a different optimizer."
+                        "You may want to try fitting the model using a different optimizer.",
                     ),
                     text_color="red",
                 )
@@ -3269,8 +3279,8 @@ class Fit_Weibull_3P:
                         + round_and_string(self.beta, dec)
                         + ", γ="
                         + round_and_string(self.gamma, dec)
-                        + ")"
-                    )
+                        + ")",
+                    ),
                 )
             self.probability_plot = plt.gca()
 
@@ -3610,7 +3620,7 @@ class Fit_Weibull_Mixture:
                     + self.optimizer
                     + " optimizer is non-invertable for the Weibull_Mixture model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -3741,7 +3751,7 @@ class Fit_Weibull_Mixture:
                     + round_and_string(self.alpha_2, dec)
                     + r", $\beta_2=$"
                     + round_and_string(self.beta_2, dec)
-                    + ")"
+                    + ")",
                 )
             xvals = np.logspace(np.log10(min(failures)) - 3, np.log10(max(failures)) + 1, 1000)
             self.distribution.CDF(xvals=xvals, label=label_str, **kwargs)
@@ -3753,7 +3763,7 @@ class Fit_Weibull_Mixture:
     def logf(t, a1, b1, a2, b2, p):  # Log Mixture PDF (2 parameter Weibull)
         return anp.log(
             p * ((b1 * t ** (b1 - 1)) / (a1**b1)) * anp.exp(-((t / a1) ** b1))
-            + (1 - p) * ((b2 * t ** (b2 - 1)) / (a2**b2)) * anp.exp(-((t / a2) ** b2))
+            + (1 - p) * ((b2 * t ** (b2 - 1)) / (a2**b2)) * anp.exp(-((t / a2) ** b2)),
         )
 
     @staticmethod
@@ -4050,7 +4060,7 @@ class Fit_Weibull_CR:
                     + self.optimizer
                     + " optimizer is non-invertable for the Weibull_CR model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -4158,7 +4168,7 @@ class Fit_Weibull_CR:
                     + round_and_string(self.alpha_2, dec)
                     + r", $\beta_2=$"
                     + round_and_string(self.beta_2, dec)
-                    + ")"
+                    + ")",
                 )
             xvals = np.logspace(np.log10(min(failures)) - 3, np.log10(max(failures)) + 1, 1000)
             self.distribution.CDF(xvals=xvals, label=label_str, **kwargs)
@@ -4168,7 +4178,7 @@ class Fit_Weibull_CR:
     @staticmethod
     def logf(t, a1, b1, a2, b2):  # Log PDF (Competing Risks)
         return anp.log(
-            -(-(b2 * (t / a2) ** b2) / t - (b1 * (t / a1) ** b1) / t) * anp.exp(-((t / a2) ** b2) - (t / a1) ** b1)
+            -(-(b2 * (t / a2) ** b2) / t - (b1 * (t / a1) ** b1) / t) * anp.exp(-((t / a2) ** b2) - (t / a1) ** b1),
         )
 
     @staticmethod
@@ -4370,7 +4380,7 @@ class Fit_Weibull_DSZI:
                     + self.optimizer
                     + " optimizer is non-invertable for the Weibull_DSZI Model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -4503,7 +4513,7 @@ class Fit_Weibull_DSZI:
                     + round_and_string(self.DS, dec)
                     + r", $ZI=$"
                     + round_and_string(self.ZI, dec)
-                    + ")"
+                    + ")",
                 )
             plot_points(
                 failures=failures,
@@ -4710,7 +4720,7 @@ class Fit_Weibull_DS:
                     + self.optimizer
                     + " optimizer is non-invertable for the Weibull_DS Model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -4817,7 +4827,7 @@ class Fit_Weibull_DS:
                     + round_and_string(self.beta, dec)
                     + r", $DS=$"
                     + round_and_string(self.DS, dec)
-                    + ")"
+                    + ")",
                 )
             xvals = np.logspace(np.log10(min(failures)) - 3, np.log10(max(failures)) + 1, 1000)
             self.distribution.CDF(xvals=xvals, label=label_str, **kwargs)
@@ -5017,7 +5027,7 @@ class Fit_Weibull_ZI:
                     + self.optimizer
                     + " optimizer is non-invertable for the Weibull_ZI Model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -5129,7 +5139,7 @@ class Fit_Weibull_ZI:
                     + round_and_string(self.beta, dec)
                     + r", $ZI=$"
                     + round_and_string(self.ZI, dec)
-                    + ")"
+                    + ")",
                 )
             plot_points(
                 failures=failures,
@@ -5361,7 +5371,7 @@ class Fit_Exponential_1P:
                     + self.optimizer
                     + " optimizer is non-invertable for the Exponential_1P model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -5725,7 +5735,7 @@ class Fit_Exponential_2P:
                     + self.optimizer
                     + " optimizer is non-invertable for the Exponential_2P model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -5759,7 +5769,10 @@ class Fit_Exponential_2P:
             ],
         )
         self.distribution = Exponential_Distribution(
-            Lambda=self.Lambda, gamma=self.gamma, Lambda_SE=self.Lambda_SE, CI=CI
+            Lambda=self.Lambda,
+            gamma=self.gamma,
+            Lambda_SE=self.Lambda_SE,
+            CI=CI,
         )
 
         if quantiles is not None:
@@ -6091,7 +6104,7 @@ class Fit_Normal_2P:
                         + self.optimizer
                         + " optimizer is non-invertable for the Normal_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
-                        "You may want to try fitting the model using a different optimizer."
+                        "You may want to try fitting the model using a different optimizer.",
                     ),
                     text_color="red",
                 )
@@ -6127,7 +6140,7 @@ class Fit_Normal_2P:
                         + self.optimizer
                         + " optimizer is non-invertable for the Normal_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
-                        "You may want to try fitting the model using a different optimizer."
+                        "You may want to try fitting the model using a different optimizer.",
                     ),
                     text_color="red",
                 )
@@ -6486,7 +6499,7 @@ class Fit_Gumbel_2P:
                     + self.optimizer
                     + " optimizer is non-invertable for the Gumbel_2P model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -6843,7 +6856,7 @@ class Fit_Lognormal_2P:
                         + self.optimizer
                         + " optimizer is non-invertable for the Lognormal_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
-                        "You may want to try fitting the model using a different optimizer."
+                        "You may want to try fitting the model using a different optimizer.",
                     ),
                     text_color="red",
                 )
@@ -6878,7 +6891,7 @@ class Fit_Lognormal_2P:
                         + self.optimizer
                         + " optimizer is non-invertable for the Lognormal_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
-                        "You may want to try fitting the model using a different optimizer."
+                        "You may want to try fitting the model using a different optimizer.",
                     ),
                     text_color="red",
                 )
@@ -7290,7 +7303,7 @@ class Fit_Lognormal_3P:
                         + self.optimizer
                         + " optimizer is non-invertable for the Lognormal_3P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
-                        "You may want to try fitting the model using a different optimizer."
+                        "You may want to try fitting the model using a different optimizer.",
                     ),
                     text_color="red",
                 )
@@ -7429,15 +7442,15 @@ class Fit_Lognormal_3P:
                         + round_and_string(self.sigma, dec)
                         + ", γ="
                         + round_and_string(self.gamma, dec)
-                        + ")"
-                    )
+                        + ")",
+                    ),
                 )
             self.probability_plot = plt.gca()
 
     @staticmethod
     def logf(t, mu, sigma, gamma):  # Log PDF (3 parameter Lognormal)
         return anp.log(
-            anp.exp(-0.5 * (((anp.log(t - gamma) - mu) / sigma) ** 2)) / ((t - gamma) * sigma * (2 * anp.pi) ** 0.5)
+            anp.exp(-0.5 * (((anp.log(t - gamma) - mu) / sigma) ** 2)) / ((t - gamma) * sigma * (2 * anp.pi) ** 0.5),
         )
 
     @staticmethod
@@ -7690,7 +7703,7 @@ class Fit_Gamma_2P:
                     + self.optimizer
                     + " optimizer is non-invertable for the Gamma_2P model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -8153,7 +8166,7 @@ class Fit_Gamma_3P:
                         + self.optimizer
                         + " optimizer is non-invertable for the Gamma_3P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
-                        "You may want to try fitting the model using a different optimizer."
+                        "You may want to try fitting the model using a different optimizer.",
                     ),
                     text_color="red",
                 )
@@ -8299,8 +8312,8 @@ class Fit_Gamma_3P:
                         + round_and_string(self.beta, dec)
                         + ", γ="
                         + round_and_string(self.gamma, dec)
-                        + ")"
-                    )
+                        + ")",
+                    ),
                 )
             self.probability_plot = plt.gca()
 
@@ -8530,7 +8543,7 @@ class Fit_Beta_2P:
                     + self.optimizer
                     + " optimizer is non-invertable for the Beta_2P model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -8857,7 +8870,7 @@ class Fit_Loglogistic_2P:
                     + self.optimizer
                     + " optimizer is non-invertable for the Loglogistic_2P model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer."
+                    "You may want to try fitting the model using a different optimizer.",
                 ),
                 text_color="red",
             )
@@ -9257,7 +9270,7 @@ class Fit_Loglogistic_3P:
                         + self.optimizer
                         + " optimizer is non-invertable for the Loglogistic_3P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
-                        "You may want to try fitting the model using a different optimizer."
+                        "You may want to try fitting the model using a different optimizer.",
                     ),
                     text_color="red",
                 )
@@ -9396,8 +9409,8 @@ class Fit_Loglogistic_3P:
                         + round_and_string(self.beta, dec)
                         + ", γ="
                         + round_and_string(self.gamma, dec)
-                        + ")"
-                    )
+                        + ")",
+                    ),
                 )
             self.probability_plot = plt.gca()
 

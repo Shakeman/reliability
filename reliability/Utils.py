@@ -64,10 +64,12 @@ from scipy.optimize import OptimizeWarning, curve_fit, minimize
 from scipy.special import betainc, erf, gammainc
 
 warnings.filterwarnings(
-    action="ignore", category=OptimizeWarning
+    action="ignore",
+    category=OptimizeWarning,
 )  # ignores the optimize warning that curve_fit sometimes outputs when there are 3 data points to fit a 3P curve
 warnings.filterwarnings(
-    action="ignore", category=RuntimeWarning
+    action="ignore",
+    category=RuntimeWarning,
 )  # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
 
 
@@ -564,7 +566,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                 raise ValueError("the value given for xvals is less than 0")
             if X > 1 and dist.name == "Beta":
                 raise ValueError(
-                    "the value given for xvals is greater than 1. The beta distribution is bounded between 0 and 1."
+                    "the value given for xvals is greater than 1. The beta distribution is bounded between 0 and 1.",
                 )
             X = np.array([X])
         elif isinstance(X, list):
@@ -577,7 +579,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
             raise ValueError("xvals was found to contain values below 0")
         if type(X) is np.ndarray and max(X) > 1 and dist.name == "Beta":
             raise ValueError(
-                "xvals was found to contain values above 1. The beta distribution is bounded between 0 and 1."
+                "xvals was found to contain values above 1. The beta distribution is bounded between 0 and 1.",
             )
     else:
         if dist.name in ["Weibull", "Lognormal", "Loglogistic", "Exponential", "Gamma"]:
@@ -585,7 +587,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                 xmin = 0
             if xmin < 0:
                 raise ValueError(
-                    "xmin must be greater than or equal to 0 for all distributions except the Normal and Gumbel distributions"
+                    "xmin must be greater than or equal to 0 for all distributions except the Normal and Gumbel distributions",
                 )
             if xmax is None:
                 xmax = dist.quantile(0.9999)
@@ -614,7 +616,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                         [
                             np.linspace(xmin, QU, points - points_right),
                             np.linspace(QU, xmax, points_right),
-                        ]
+                        ],
                     )
                 else:  # pdf is asymptotic to inf at x=0
                     try:
@@ -639,7 +641,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                                 xmin,
                                 np.linspace(QL, QU, points - (points_right + 1)),
                                 np.geomspace(QU, xmax, points_right),
-                            ]
+                            ],
                         )
                     else:  # pdf is asymptotic to inf at x=0
                         try:
@@ -648,7 +650,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                                     xmin,
                                     np.geomspace(QL, QU, points - (points_right + 1)),
                                     np.geomspace(QU, xmax, points_right),
-                                ]
+                                ],
                             )
                         except ValueError:  # occurs for very low shape params causing QL to be zero
                             X = np.hstack(
@@ -656,7 +658,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                                     xmin,
                                     np.linspace(QL, QU, points - (points_right + 1)),
                                     np.geomspace(QU, xmax, points_right),
-                                ]
+                                ],
                             )
                 else:  # gamma > 0
                     if dist._pdf0 == 0:
@@ -666,7 +668,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                                 dist.gamma - 1e-8,
                                 np.linspace(QL, QU, points - (points_right + 2)),
                                 np.geomspace(QU - dist.gamma, xmax - dist.gamma, points_right) + dist.gamma,
-                            ]
+                            ],
                         )
                     else:  # pdf is asymptotic to inf at x=0
                         try:
@@ -697,7 +699,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                 X = np.linspace(xmin, xmax, points)
             else:
                 X = np.hstack(
-                    [0, np.linspace(xmin, xmax, points - 1)]
+                    [0, np.linspace(xmin, xmax, points - 1)],
                 )  # this ensures that the distribution is at least plotted from 0 if its xmin is above 0
         elif dist.name == "Beta":
             if xmin is None:
@@ -847,11 +849,11 @@ def xy_transform(value, direction="forward", axis="x"):
             for item in value:
                 if axis == "x":
                     transformed_values.append(
-                        ax.transData.inverted().transform((ax.transAxes.transform((item, 0.5))[0], 0.5))[0]
+                        ax.transData.inverted().transform((ax.transAxes.transform((item, 0.5))[0], 0.5))[0],
                     )  # x transform
                 else:
                     transformed_values.append(
-                        ax.transData.inverted().transform((1, ax.transAxes.transform((1, item))[1]))[1]
+                        ax.transData.inverted().transform((1, ax.transAxes.transform((1, item))[1]))[1],
                     )  # y transform
         else:
             raise ValueError("type of value is not recognized")
@@ -870,11 +872,11 @@ def xy_transform(value, direction="forward", axis="x"):
             for item in value:
                 if axis == "x":
                     transformed_values.append(
-                        ax.transAxes.inverted().transform(ax.transData.transform((item, 0.5)))[0]
+                        ax.transAxes.inverted().transform(ax.transData.transform((item, 0.5)))[0],
                     )  # x transform
                 else:
                     transformed_values.append(
-                        ax.transAxes.inverted().transform(ax.transData.transform((1, value)))[1]
+                        ax.transAxes.inverted().transform(ax.transData.transform((1, value)))[1],
                     )  # y transform
         else:
             raise ValueError("type of value is not recognized")
@@ -1137,7 +1139,8 @@ def probability_plot_xyticks(yticks=None):
         """
         value100 = value * 100
         value100dec = round(
-            value100 % 1, 8
+            value100 % 1,
+            8,
         )  # this breaks down after 8 decimal places due to python's auto rounding. Not likely to be an issue as we're rarely dealing with this many decimals
         if value100dec == 0:
             value100dec = int(value100dec)
@@ -1162,10 +1165,14 @@ def probability_plot_xyticks(yticks=None):
         """
         xtick_locations = get_tick_locations("major", axis="x")
         left_tick_distance = xy_transform(xtick_locations[0], direction="forward", axis="x") - xy_transform(
-            xlower, direction="forward", axis="x"
+            xlower,
+            direction="forward",
+            axis="x",
         )
         right_tick_distance = xy_transform(xupper, direction="forward", axis="x") - xy_transform(
-            xtick_locations[-1], direction="forward", axis="x"
+            xtick_locations[-1],
+            direction="forward",
+            axis="x",
         )
         return left_tick_distance + right_tick_distance
 
@@ -1202,7 +1209,7 @@ def probability_plot_xyticks(yticks=None):
         else:
             ax.xaxis.set_major_locator(MaxNLocator)  # apply a new locator
     ax.xaxis.set_major_formatter(
-        ticker.FuncFormatter(customFormatter)
+        ticker.FuncFormatter(customFormatter),
     )  # the custom formatter is always applied to the major ticks
 
     num_major_x_ticks_shown = len(get_tick_locations("major", axis="x"))
@@ -1210,7 +1217,7 @@ def probability_plot_xyticks(yticks=None):
     max_minor_ticks = 15 if max(abs(xlower), abs(xupper)) < 1000 and min(abs(xlower), abs(xupper)) > 0.001 else 10
     if num_major_x_ticks_shown < 2 and num_minor_x_xticks_shown <= max_minor_ticks:
         ax.xaxis.set_minor_formatter(
-            ticker.FuncFormatter(customFormatter)
+            ticker.FuncFormatter(customFormatter),
         )  # if there are less than 2 major ticks within the plotting limits then the minor ticks should be labeled. Only do this if there aren't too many minor ticks
 
     ################# yticks
@@ -1417,7 +1424,7 @@ def colorprint(
         raise ValueError("Unknown text_color. Options are grey, red, green, yellow, blue, pink, turquoise.")
 
     print(
-        BOLD + ITALIC + UNDERLINE + background_colors[background_color] + text_colors[text_color] + string + "\033[0m"
+        BOLD + ITALIC + UNDERLINE + background_colors[background_color] + text_colors[text_color] + string + "\033[0m",
     )
 
 
@@ -1571,7 +1578,7 @@ class fitters_input_checking:
                         str(
                             "WARNING: failures contained zeros. These have been removed to enable fitting of the "
                             + dist
-                            + " distribution. Consider using Fit_Weibull_ZI or Fit_Weibull_DSZI if you need to include the zero inflation in the model."
+                            + " distribution. Consider using Fit_Weibull_ZI or Fit_Weibull_DSZI if you need to include the zero inflation in the model.",
                         ),
                         text_color="red",
                     )
@@ -1587,7 +1594,7 @@ class fitters_input_checking:
                         str(
                             "WARNING: right_censored contained zeros. These have been removed to enable fitting of the "
                             + dist
-                            + " distribution."
+                            + " distribution.",
                         ),
                         text_color="red",
                     )
@@ -1617,7 +1624,7 @@ class fitters_input_checking:
         if optimizer is not None:
             if not isinstance(optimizer, str):
                 raise ValueError(
-                    'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html'
+                    'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html',
                 )
             if optimizer.upper() == "TNC":
                 optimizer = "TNC"
@@ -1631,14 +1638,14 @@ class fitters_input_checking:
                 optimizer = "best"
             else:
                 raise ValueError(
-                    'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html'
+                    'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html',
                 )
 
         # error checking for method
         if method is not None:
             if not isinstance(method, str):
                 raise ValueError(
-                    'method must be either "MLE" (maximum likelihood estimation), "LS" (least squares), "RRX" (rank regression on X), or "RRY" (rank regression on Y).'
+                    'method must be either "MLE" (maximum likelihood estimation), "LS" (least squares), "RRX" (rank regression on X), or "RRY" (rank regression on Y).',
                 )
             if method.upper() == "RRX":
                 method = "RRX"
@@ -1656,7 +1663,7 @@ class fitters_input_checking:
                 method = "MLE"
             else:
                 raise ValueError(
-                    'method must be either "MLE" (maximum likelihood estimation), "LS" (least squares), "RRX" (rank regression on X), or "RRY" (rank regression on Y).'
+                    'method must be either "MLE" (maximum likelihood estimation), "LS" (least squares), "RRX" (rank regression on X), or "RRY" (rank regression on Y).',
                 )
 
         # quantiles error checking
@@ -1707,7 +1714,7 @@ class fitters_input_checking:
             min_failures = 4
 
         number_of_unique_failures = len(
-            np.unique(failures)
+            np.unique(failures),
         )  # failures need to be unique. ie. [4,4] counts as 1 distinct failure
         if number_of_unique_failures < min_failures:
             if force_beta is not None:
@@ -1717,8 +1724,8 @@ class fitters_input_checking:
                         + dist
                         + " distribution with force_beta specified is "
                         + str(min_failures)
-                        + "."
-                    )
+                        + ".",
+                    ),
                 )
             elif force_sigma is not None:
                 raise ValueError(
@@ -1727,12 +1734,12 @@ class fitters_input_checking:
                         + dist
                         + " distribution with force_sigma specified is "
                         + str(min_failures)
-                        + "."
-                    )
+                        + ".",
+                    ),
                 )
             elif dist == "Everything":
                 raise ValueError(
-                    "The minimum number of distinct failures required to fit everything is " + str(min_failures) + "."
+                    "The minimum number of distinct failures required to fit everything is " + str(min_failures) + ".",
                 )
             else:
                 raise ValueError(
@@ -1741,8 +1748,8 @@ class fitters_input_checking:
                         + dist
                         + " distribution is "
                         + str(min_failures)
-                        + "."
-                    )
+                        + ".",
+                    ),
                 )
 
         # error checking for CI_type
@@ -1880,7 +1887,7 @@ class ALT_fitters_input_checking:
             "Everything",
         ]:
             raise ValueError(
-                "life_stess_model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power, Everything."
+                "life_stess_model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power, Everything.",
             )
 
         if life_stress_model == "Everything":
@@ -1912,7 +1919,7 @@ class ALT_fitters_input_checking:
                     str(
                         "WARNING: failure_stress_2 is not being used as "
                         + life_stress_model
-                        + " is a single stress model."
+                        + " is a single stress model.",
                     ),
                     text_color="red",
                 )
@@ -1936,7 +1943,7 @@ class ALT_fitters_input_checking:
         else:
             if is_dual_stress is True and (right_censored_stress_1 is None or right_censored_stress_2 is None):
                 raise ValueError(
-                    "right_censored_stress_1 and right_censored_stress_2 must be provided for dual stress models."
+                    "right_censored_stress_1 and right_censored_stress_2 must be provided for dual stress models.",
                 )
             if is_dual_stress is False:
                 if right_censored_stress_1 is None:
@@ -1946,7 +1953,7 @@ class ALT_fitters_input_checking:
                         str(
                             "WARNING: right_censored_stress_2 is not being used as "
                             + life_stress_model
-                            + " is a single stress model."
+                            + " is a single stress model.",
                         ),
                         text_color="red",
                     )
@@ -1983,13 +1990,13 @@ class ALT_fitters_input_checking:
         else:
             if len(failures) != len(failure_stress_1) or len(failures) != len(failure_stress_2):
                 raise ValueError(
-                    "failures must have the same number of elements as failure_stress_1 and failure_stress_2"
+                    "failures must have the same number of elements as failure_stress_1 and failure_stress_2",
                 )
             if len(right_censored) != len(right_censored_stress_1) or len(right_censored) != len(
-                right_censored_stress_2
+                right_censored_stress_2,
             ):
                 raise ValueError(
-                    "right_censored must have the same number of elements as right_censored_stress_1 and right_censored_stress_2"
+                    "right_censored must have the same number of elements as right_censored_stress_1 and right_censored_stress_2",
                 )
 
         # raise an error for values <= 0. Not even the Normal Distribution is allowed to have failures at negative life.
@@ -2006,7 +2013,7 @@ class ALT_fitters_input_checking:
         if optimizer is not None:
             if not isinstance(optimizer, str):
                 raise ValueError(
-                    'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html'
+                    'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html',
                 )
             if optimizer.upper() == "TNC":
                 optimizer = "TNC"
@@ -2020,7 +2027,7 @@ class ALT_fitters_input_checking:
                 optimizer = "best"
             else:
                 raise ValueError(
-                    'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html'
+                    'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html',
                 )
 
         # check the number of unique stresses
@@ -2031,7 +2038,7 @@ class ALT_fitters_input_checking:
             unique_stresses_2 = np.unique(failure_stress_2)
             if len(unique_stresses_2) < 2:
                 raise ValueError(
-                    "failure_stress_2 must have at least 2 unique stresses when using a dual stress model."
+                    "failure_stress_2 must have at least 2 unique stresses when using a dual stress model.",
                 )
 
         # group the failures into their failure_stresses and then check there are enough to fit the model
@@ -2059,8 +2066,8 @@ class ALT_fitters_input_checking:
                         str(
                             "There must be at least "
                             + str(min_failures_reqd)
-                            + " unique failures for all ALT models to be fitted."
-                        )
+                            + " unique failures for all ALT models to be fitted.",
+                        ),
                     )
                 else:
                     raise ValueError(
@@ -2071,8 +2078,8 @@ class ALT_fitters_input_checking:
                             + dist
                             + "-"
                             + life_stress_model
-                            + " model to be fitted."
-                        )
+                            + " model to be fitted.",
+                        ),
                     )
 
             if len(right_censored) > 0:
@@ -2092,7 +2099,7 @@ class ALT_fitters_input_checking:
                     unique_right_censored_stresses.append(key)
                     if key not in unique_failure_stresses:
                         raise ValueError(
-                            str("The right censored stress " + str(key) + " does not appear in failure stresses.")
+                            str("The right censored stress " + str(key) + " does not appear in failure stresses."),
                         )
 
                 # add in empty lists for stresses which appear in failure_stress_1 but not in right_censored_stress_1
@@ -2134,8 +2141,8 @@ class ALT_fitters_input_checking:
                         str(
                             "There must be at least "
                             + str(min_failures_reqd)
-                            + " unique failures for all ALT models to be fitted."
-                        )
+                            + " unique failures for all ALT models to be fitted.",
+                        ),
                     )
                 else:
                     raise ValueError(
@@ -2146,8 +2153,8 @@ class ALT_fitters_input_checking:
                             + dist
                             + "-"
                             + life_stress_model
-                            + "model to be fitted."
-                        )
+                            + "model to be fitted.",
+                        ),
                     )
 
             # unpack the concatenated string for dual stresses ==> ['10.0_1000.0','20.0_2000.0','5.0_500.0'] should be [[10.0,1000.0],[20.0,2000.0],[5.0,500.0]]
@@ -2161,7 +2168,7 @@ class ALT_fitters_input_checking:
                 right_censored_stress_pairs = []
                 for i in range(len(right_censored_stress_1)):
                     right_censored_stress_pairs.append(
-                        str(right_censored_stress_1[i]) + "_" + str(right_censored_stress_2[i])
+                        str(right_censored_stress_1[i]) + "_" + str(right_censored_stress_2[i]),
                     )
 
                 right_censored_df_ungrouped = pd.DataFrame(
@@ -2183,8 +2190,8 @@ class ALT_fitters_input_checking:
                             str(
                                 "The right censored stress pair "
                                 + str([float(x) for x in list(key.split("_"))])
-                                + " does not appear in failure stresses."
-                            )
+                                + " does not appear in failure stresses.",
+                            ),
                         )
 
                 # add in empty lists for stresses which appear in failure_stress but not in right_censored_stress
@@ -2202,11 +2209,11 @@ class ALT_fitters_input_checking:
         if is_dual_stress is True and use_level_stress is not None:
             if type(use_level_stress) not in [list, np.ndarray]:
                 raise ValueError(
-                    "use_level_stress must be an array or list of the use level stresses. eg. use_level_stress = [stress_1, stress_2]."
+                    "use_level_stress must be an array or list of the use level stresses. eg. use_level_stress = [stress_1, stress_2].",
                 )
             if len(use_level_stress) != 2:
                 raise ValueError(
-                    "use_level_stress must be an array or list of length 2 with the use level stresses. eg. use_level_stress = [stress_1, stress_2]."
+                    "use_level_stress must be an array or list of length 2 with the use level stresses. eg. use_level_stress = [stress_1, stress_2].",
                 )
             use_level_stress = np.asarray(use_level_stress)
 
@@ -2347,11 +2354,11 @@ def clean_CI_arrays(xlower, xupper, ylower, yupper, plot_type="CDF", x=None, q=N
     # checks whether CI_x or CI_y was specified and resulted in values being deleted due to being illegal values. Raises a more detailed error for the user.
     if len(xlower_out3) != len(xlower) and x is not None:
         raise ValueError(
-            "The confidence intervals for CI_x cannot be returned because they are NaN. This may occur when the SF=0. Try specifying CI_x values closer to the mean of the distribution."
+            "The confidence intervals for CI_x cannot be returned because they are NaN. This may occur when the SF=0. Try specifying CI_x values closer to the mean of the distribution.",
         )
     if len(ylower_out3) != len(ylower) and q is not None:
         raise ValueError(
-            "The confidence intervals for CI_y cannot be returned because they are NaN. This may occur when the CI_y is near 0 or 1. Try specifying CI_y values closer to 0.5."
+            "The confidence intervals for CI_y cannot be returned because they are NaN. This may occur when the CI_y is near 0 or 1. Try specifying CI_y values closer to 0.5.",
         )
 
     # final error check for lengths matching and there still being at least 2 elements remaining
@@ -2597,10 +2604,16 @@ class distribution_confidence_intervals:
                     linewidth=0,
                 )
                 line_no_autoscale(
-                    x=t + self.gamma, y=yy_lower, color=color, linewidth=0
+                    x=t + self.gamma,
+                    y=yy_lower,
+                    color=color,
+                    linewidth=0,
                 )  # these are invisible but need to be added to the plot for crosshairs() to find them
                 line_no_autoscale(
-                    x=t + self.gamma, y=yy_upper, color=color, linewidth=0
+                    x=t + self.gamma,
+                    y=yy_upper,
+                    color=color,
+                    linewidth=0,
                 )  # still need to specify color otherwise the invisible CI lines will consume default colors
                 # plt.scatter(t + self.gamma, yy_lower,color='blue',marker='.')
                 # plt.scatter(t + self.gamma, yy_upper, color='red', marker='.')
@@ -2799,10 +2812,16 @@ class distribution_confidence_intervals:
                     )
 
                     line_no_autoscale(
-                        x=t_lower, y=yy, color=color, linewidth=0
+                        x=t_lower,
+                        y=yy,
+                        color=color,
+                        linewidth=0,
                     )  # these are invisible but need to be added to the plot for crosshairs() to find them
                     line_no_autoscale(
-                        x=t_upper, y=yy, color=color, linewidth=0
+                        x=t_upper,
+                        y=yy,
+                        color=color,
+                        linewidth=0,
                     )  # still need to specify color otherwise the invisible CI lines will consume default colors
                     # plt.scatter(t_lower, yy, linewidth=1, color='blue')
                     # plt.scatter(t_upper, yy, linewidth=1, color='red')
@@ -2868,10 +2887,16 @@ class distribution_confidence_intervals:
                         linewidth=0,
                     )
                     line_no_autoscale(
-                        x=t + self.gamma, y=yy_lower, color=color, linewidth=0
+                        x=t + self.gamma,
+                        y=yy_lower,
+                        color=color,
+                        linewidth=0,
                     )  # these are invisible but need to be added to the plot for crosshairs() to find them
                     line_no_autoscale(
-                        x=t + self.gamma, y=yy_upper, color=color, linewidth=0
+                        x=t + self.gamma,
+                        y=yy_upper,
+                        color=color,
+                        linewidth=0,
                     )  # still need to specify color otherwise the invisible CI lines will consume default colors
                     # plt.scatter(t + self.gamma, yy_upper, color='red')
                     # plt.scatter(t + self.gamma, yy_lower, color='blue')
@@ -3073,10 +3098,16 @@ class distribution_confidence_intervals:
                         linewidth=0,
                     )
                     line_no_autoscale(
-                        x=t_lower, y=yy, color=color, linewidth=0
+                        x=t_lower,
+                        y=yy,
+                        color=color,
+                        linewidth=0,
                     )  # these are invisible but need to be added to the plot for crosshairs() to find them
                     line_no_autoscale(
-                        x=t_upper, y=yy, color=color, linewidth=0
+                        x=t_upper,
+                        y=yy,
+                        color=color,
+                        linewidth=0,
                     )  # still need to specify color otherwise the invisible CI lines will consume default colors
                     # plt.scatter(t_lower, yy, linewidth=1, color='blue')
                     # plt.scatter(t_upper, yy, linewidth=1, color='red')
@@ -3143,10 +3174,16 @@ class distribution_confidence_intervals:
                     )
 
                     line_no_autoscale(
-                        x=t + self.gamma, y=yy_lower, color=color, linewidth=0
+                        x=t + self.gamma,
+                        y=yy_lower,
+                        color=color,
+                        linewidth=0,
                     )  # these are invisible but need to be added to the plot for crosshairs() to find them
                     line_no_autoscale(
-                        x=t + self.gamma, y=yy_upper, color=color, linewidth=0
+                        x=t + self.gamma,
+                        y=yy_upper,
+                        color=color,
+                        linewidth=0,
                     )  # still need to specify color otherwise the invisible CI lines will consume default colors
                     # plt.scatter(t + self.gamma, yy_upper, color='red')
                     # plt.scatter(t + self.gamma, yy_lower, color='blue')
@@ -3332,10 +3369,16 @@ class distribution_confidence_intervals:
                         linewidth=0,
                     )
                     line_no_autoscale(
-                        x=t_lower, y=yy, color=color, linewidth=0
+                        x=t_lower,
+                        y=yy,
+                        color=color,
+                        linewidth=0,
                     )  # these are invisible but need to be added to the plot for crosshairs() to find them
                     line_no_autoscale(
-                        x=t_upper, y=yy, color=color, linewidth=0
+                        x=t_upper,
+                        y=yy,
+                        color=color,
+                        linewidth=0,
                     )  # still need to specify color otherwise the invisible CI lines will consume default colors
                     # plt.scatter(t_lower, yy, linewidth=1, color='blue')
                     # plt.scatter(t_upper, yy, linewidth=1, color='red')
@@ -3389,10 +3432,16 @@ class distribution_confidence_intervals:
                         linewidth=0,
                     )
                     line_no_autoscale(
-                        x=t, y=yy_lower, color=color, linewidth=0
+                        x=t,
+                        y=yy_lower,
+                        color=color,
+                        linewidth=0,
                     )  # these are invisible but need to be added to the plot for crosshairs() to find them
                     line_no_autoscale(
-                        x=t, y=yy_upper, color=color, linewidth=0
+                        x=t,
+                        y=yy_upper,
+                        color=color,
+                        linewidth=0,
                     )  # still need to specify color otherwise the invisible CI lines will consume default colors
                     # plt.scatter(t, yy_upper, color='red')
                     # plt.scatter(t, yy_lower, color='blue')
@@ -3583,10 +3632,16 @@ class distribution_confidence_intervals:
                         linewidth=0,
                     )
                     line_no_autoscale(
-                        x=t_lower, y=yy, color=color, linewidth=0
+                        x=t_lower,
+                        y=yy,
+                        color=color,
+                        linewidth=0,
                     )  # these are invisible but need to be added to the plot for crosshairs() to find them
                     line_no_autoscale(
-                        x=t_upper, y=yy, color=color, linewidth=0
+                        x=t_upper,
+                        y=yy,
+                        color=color,
+                        linewidth=0,
                     )  # still need to specify color otherwise the invisible CI lines will consume default colors
                     # plt.scatter(t_lower, yy, linewidth=1, color='blue')
                     # plt.scatter(t_upper, yy, linewidth=1, color='red')
@@ -3650,10 +3705,16 @@ class distribution_confidence_intervals:
                         linewidth=0,
                     )
                     line_no_autoscale(
-                        x=t + self.gamma, y=yy_lower, color=color, linewidth=0
+                        x=t + self.gamma,
+                        y=yy_lower,
+                        color=color,
+                        linewidth=0,
                     )  # these are invisible but need to be added to the plot for crosshairs() to find them
                     line_no_autoscale(
-                        x=t + self.gamma, y=yy_upper, color=color, linewidth=0
+                        x=t + self.gamma,
+                        y=yy_upper,
+                        color=color,
+                        linewidth=0,
                     )  # still need to specify color otherwise the invisible CI lines will consume default colors
                     # plt.scatter(t+ self.gamma, yy_upper, color='red')
                     # plt.scatter(t+ self.gamma, yy_lower, color='blue')
@@ -3844,10 +3905,16 @@ class distribution_confidence_intervals:
                         linewidth=0,
                     )
                     line_no_autoscale(
-                        x=t_lower, y=yy, color=color, linewidth=0
+                        x=t_lower,
+                        y=yy,
+                        color=color,
+                        linewidth=0,
                     )  # these are invisible but need to be added to the plot for crosshairs() to find them
                     line_no_autoscale(
-                        x=t_upper, y=yy, color=color, linewidth=0
+                        x=t_upper,
+                        y=yy,
+                        color=color,
+                        linewidth=0,
                     )  # still need to specify color otherwise the invisible CI lines will consume default colors
                     # plt.scatter(t_lower, yy, linewidth=1, color='blue')
                     # plt.scatter(t_upper, yy, linewidth=1, color='red')
@@ -3912,10 +3979,16 @@ class distribution_confidence_intervals:
                         linewidth=0,
                     )
                     line_no_autoscale(
-                        x=t + self.gamma, y=yy_lower, color=color, linewidth=0
+                        x=t + self.gamma,
+                        y=yy_lower,
+                        color=color,
+                        linewidth=0,
                     )  # these are invisible but need to be added to the plot for crosshairs() to find them
                     line_no_autoscale(
-                        x=t + self.gamma, y=yy_upper, color=color, linewidth=0
+                        x=t + self.gamma,
+                        y=yy_upper,
+                        color=color,
+                        linewidth=0,
                     )  # still need to specify color otherwise the invisible CI lines will consume default colors
                     # plt.scatter(t + self.gamma, yy_upper, color='red')
                     # plt.scatter(t + self.gamma, yy_lower, color='blue')
@@ -4100,10 +4173,16 @@ class distribution_confidence_intervals:
                         linewidth=0,
                     )
                     line_no_autoscale(
-                        x=t_lower, y=yy, color=color, linewidth=0
+                        x=t_lower,
+                        y=yy,
+                        color=color,
+                        linewidth=0,
                     )  # these are invisible but need to be added to the plot for crosshairs() to find them
                     line_no_autoscale(
-                        x=t_upper, y=yy, color=color, linewidth=0
+                        x=t_upper,
+                        y=yy,
+                        color=color,
+                        linewidth=0,
                     )  # still need to specify color otherwise the invisible CI lines will consume default colors
                     # plt.scatter(t_lower, yy, linewidth=1, color='blue')
                     # plt.scatter(t_upper, yy, linewidth=1, color='red')
@@ -4156,10 +4235,16 @@ class distribution_confidence_intervals:
                         linewidth=0,
                     )
                     line_no_autoscale(
-                        x=t, y=yy_lower, color=color, linewidth=0
+                        x=t,
+                        y=yy_lower,
+                        color=color,
+                        linewidth=0,
                     )  # these are invisible but need to be added to the plot for crosshairs() to find them
                     line_no_autoscale(
-                        x=t, y=yy_upper, color=color, linewidth=0
+                        x=t,
+                        y=yy_upper,
+                        color=color,
+                        linewidth=0,
                     )  # still need to specify color otherwise the invisible CI lines will consume default colors
                     # plt.scatter(t, yy_upper, color='red')
                     # plt.scatter(t, yy_lower, color='blue')
@@ -4168,7 +4253,14 @@ class distribution_confidence_intervals:
 
 
 def linear_regression(
-    x, y, slope=None, x_intercept=None, y_intercept=None, RRX_or_RRY="RRX", show_plot=False, **kwargs
+    x,
+    y,
+    slope=None,
+    x_intercept=None,
+    y_intercept=None,
+    RRX_or_RRY="RRX",
+    show_plot=False,
+    **kwargs,
 ):
     """
     This function provides the linear algebra solution to find line of best fit
@@ -4268,7 +4360,7 @@ def linear_regression(
             solution = np.linalg.inv(xx.T.dot(xx)).dot(xx.T).dot(yy)  # linear regression formula for RRY
         except LinAlgError:
             raise RuntimeError(
-                "An error has occurred when attempting to find the initial guess using least squares estimation.\nThis error is caused by a non-invertable matrix.\nThis can occur when there are only two very similar failure times like 10 and 10.000001.\nThere is no solution to this error, other than to use failure times that are more unique."
+                "An error has occurred when attempting to find the initial guess using least squares estimation.\nThis error is caused by a non-invertable matrix.\nThis can occur when there are only two very similar failure times like 10 and 10.000001.\nThere is no solution to this error, other than to use failure times that are more unique.",
             ) from None
         if y_intercept is not None:
             m = solution[0]
@@ -4284,7 +4376,7 @@ def linear_regression(
             solution = np.linalg.inv(yy.T.dot(yy)).dot(yy.T).dot(xx)  # linear regression formula for RRX
         except LinAlgError:
             raise RuntimeError(
-                "An error has occurred when attempting to find the initial guess using least squares estimation.\nThis error is caused by a non-invertable matrix.\nThis can occur when there are only two very similar failure times like 10 and 10.000001.\nThere is no solution to this error, other than to use failure times that are more unique."
+                "An error has occurred when attempting to find the initial guess using least squares estimation.\nThis error is caused by a non-invertable matrix.\nThis can occur when there are only two very similar failure times like 10 and 10.000001.\nThere is no solution to this error, other than to use failure times that are more unique.",
             ) from None
         if x_intercept is not None:
             m_x = solution[0]
@@ -4363,11 +4455,11 @@ def least_squares(dist, failures, right_censored, method="RRX", force_shape=None
 
     if min(failures) <= 0 and dist not in ["Normal_2P", "Gumbel_2P"]:
         raise ValueError(
-            "failures contains zeros or negative values which are only suitable when dist is Normal_2P or Gumbel_2P"
+            "failures contains zeros or negative values which are only suitable when dist is Normal_2P or Gumbel_2P",
         )
     if max(failures) >= 1 and dist == "Beta_2P":
         raise ValueError(
-            "failures contains values greater than or equal to one which is not allowed when dist is Beta_2P"
+            "failures contains values greater than or equal to one which is not allowed when dist is Beta_2P",
         )
     if force_shape is not None and dist not in [
         "Weibull_2P",
@@ -4449,7 +4541,11 @@ def least_squares(dist, failures, right_censored, method="RRX", force_shape=None
 
         ylin = -np.log(1 - y)
         slope, _ = linear_regression(
-            x, ylin, x_intercept=x_intercept, y_intercept=y_intercept, RRX_or_RRY=method
+            x,
+            ylin,
+            x_intercept=x_intercept,
+            y_intercept=y_intercept,
+            RRX_or_RRY=method,
         )  # equivalent to y = m.x
         LS_Lambda = slope
         guess = [LS_Lambda]
@@ -4530,7 +4626,11 @@ def least_squares(dist, failures, right_censored, method="RRX", force_shape=None
             return (1 + erf(((t - mu) / sigma) / 2**0.5)) / 2
 
         res = minimize(
-            __gamma_optimizer, gamma0, args=(x, y), method="TNC", bounds=[([0, gamma0])]
+            __gamma_optimizer,
+            gamma0,
+            args=(x, y),
+            method="TNC",
+            bounds=[([0, gamma0])],
         )  # this obtains gamma
         gamma = res.x[0]
 
@@ -4919,7 +5019,7 @@ def ALT_least_squares(model, failures, stress_1_array, stress_2_array=None):
         output = [np.exp(solution[0]), solution[1], solution[2]]  # c,m,n
     else:
         raise ValueError(
-            "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power."
+            "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power.",
         )
     return output
 
@@ -5292,8 +5392,8 @@ class MLE_optimization:
                 raise ValueError(
                     str(
                         str(optimizer)
-                        + ' is not a valid optimizer. Please specify either "TNC", "L-BFGS-B", "nelder-mead", "powell" or "best".'
-                    )
+                        + ' is not a valid optimizer. Please specify either "TNC", "L-BFGS-B", "nelder-mead", "powell" or "best".',
+                    ),
                 )
 
         # use each of the optimizers specified
@@ -5383,7 +5483,7 @@ class MLE_optimization:
                         "WARNING: MLE estimates failed for "
                         + func_name
                         + ". The least squares estimates have been returned. These results may not be as accurate as MLE. "
-                        + optimizers_tried_str
+                        + optimizers_tried_str,
                     ),
                     text_color="red",
                 )
@@ -5713,7 +5813,7 @@ class ALT_MLE_optimization:
             dual_stress = True
         else:
             raise ValueError(
-                "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power"
+                "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power",
             )
 
         if dist not in ["Weibull", "Exponential", "Lognormal", "Normal"]:
@@ -5753,8 +5853,8 @@ class ALT_MLE_optimization:
                 raise ValueError(
                     str(
                         str(optimizer)
-                        + ' is not a valid optimizer. Please specify either "TNC", "L-BFGS-B", "nelder-mead", "powell" or "best".'
-                    )
+                        + ' is not a valid optimizer. Please specify either "TNC", "L-BFGS-B", "nelder-mead", "powell" or "best".',
+                    ),
                 )
 
         # use each of the optimizers specified
@@ -5798,7 +5898,7 @@ class ALT_MLE_optimization:
                     + "_"
                     + model
                     + ". The least squares estimates have been returned. These results may not be as accurate as MLE. "
-                    + optimizers_tried_str
+                    + optimizers_tried_str,
                 ),
                 text_color="red",
             )
@@ -5928,7 +6028,7 @@ def write_df_to_xlsx(df, path, **kwargs):
                 X = os.path.split(path)
                 Y = X[1].split(".")
                 Z = str(
-                    Y[0] + "(new)" + "." + Y[1]
+                    Y[0] + "(new)" + "." + Y[1],
                 )  # auto renaming will keep adding (new) to the filename if it already exists
                 path = str(X[0] + "\\" + Z)
                 path_changed = True
@@ -6154,7 +6254,7 @@ def ALT_prob_plot(
             dual_stress = False
         else:
             raise ValueError(
-                "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power"
+                "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power",
             )
 
         color_cycle = plt.rcParams["axes.prop_cycle"].by_key()["color"]  # gets the default color cycle
@@ -6170,7 +6270,8 @@ def ALT_prob_plot(
                 y_array.extend(y)
                 # generate the probability plot and the line from the life-stress model
                 fitted_dist_params = make_fitted_dist_params_for_ALT_probplots(
-                    dist=dist, params=[life_func(S1=stress[0], S2=stress[1]), shape]
+                    dist=dist,
+                    params=[life_func(S1=stress[0], S2=stress[1]), shape],
                 )
                 probplot(
                     failures=f,
@@ -6186,13 +6287,16 @@ def ALT_prob_plot(
                 else:
                     if scale_for_change_df[i] != "":
                         Distribution(scale_for_change_df[i], shape_for_change_df[i]).CDF(
-                            linestyle="--", alpha=0.5, color=color_cycle[i]
+                            linestyle="--",
+                            alpha=0.5,
+                            color=color_cycle[i],
                         )
 
             if use_level_stress is not None:
                 if dist in ["Weibull", "Normal"]:
                     distribution_at_use_stress = Distribution(
-                        life_func(S1=use_level_stress[0], S2=use_level_stress[1]), shape
+                        life_func(S1=use_level_stress[0], S2=use_level_stress[1]),
+                        shape,
                     )
                 elif dist == "Lognormal":
                     distribution_at_use_stress = Distribution(
@@ -6201,7 +6305,7 @@ def ALT_prob_plot(
                     )
                 elif dist == "Exponential":
                     distribution_at_use_stress = Distribution(
-                        1 / life_func(S1=use_level_stress[0], S2=use_level_stress[1])
+                        1 / life_func(S1=use_level_stress[0], S2=use_level_stress[1]),
                     )
                 distribution_at_use_stress.CDF(
                     color=color_cycle[i + 1],
@@ -6209,14 +6313,14 @@ def ALT_prob_plot(
                         round_and_string(use_level_stress[0])
                         + ", "
                         + round_and_string(use_level_stress[1])
-                        + " (use stress)"
+                        + " (use stress)",
                     ),
                 )
                 x_array.extend(
                     [
                         distribution_at_use_stress.quantile(min(y_array)),
                         distribution_at_use_stress.quantile(max(y_array)),
-                    ]
+                    ],
                 )  # this ensures the plot limits include the use stress distribution
 
             plt.legend(title="     Stress 1, Stress 2")
@@ -6231,7 +6335,8 @@ def ALT_prob_plot(
                 y_array.extend(y)
                 # generate the probability plot and the line from the life-stress model
                 fitted_dist_params = make_fitted_dist_params_for_ALT_probplots(
-                    dist=dist, params=[life_func(S1=stress), shape]
+                    dist=dist,
+                    params=[life_func(S1=stress), shape],
                 )
                 probplot(
                     failures=f,
@@ -6247,7 +6352,9 @@ def ALT_prob_plot(
                 else:
                     if scale_for_change_df[i] != "":
                         Distribution(scale_for_change_df[i], shape_for_change_df[i]).CDF(
-                            linestyle="--", alpha=0.5, color=color_cycle[i]
+                            linestyle="--",
+                            alpha=0.5,
+                            color=color_cycle[i],
                         )
 
             if use_level_stress is not None:
@@ -6265,7 +6372,7 @@ def ALT_prob_plot(
                     [
                         distribution_at_use_stress.quantile(min(y_array)),
                         distribution_at_use_stress.quantile(max(y_array)),
-                    ]
+                    ],
                 )  # this ensures the plot limits include the use stress distribution
 
             plt.legend(title="Stress")
@@ -6348,7 +6455,7 @@ def life_stress_plot(
             dual_stress = False
         else:
             raise ValueError(
-                "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power"
+                "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power",
             )
 
         if type(ax) == _axes.Axes:
@@ -6436,7 +6543,7 @@ def life_stress_plot(
                     color=color_cycle[i],
                     s=30,
                     label=str(
-                        "Failures at stress of " + round_and_string(stress[0]) + ", " + round_and_string(stress[1])
+                        "Failures at stress of " + round_and_string(stress[0]) + ", " + round_and_string(stress[1]),
                     ),
                     zorder=1,
                 )
@@ -6452,7 +6559,7 @@ def life_stress_plot(
                         "Use stress of "
                         + round_and_string(use_level_stress[0])
                         + ", "
-                        + round_and_string(use_level_stress[1])
+                        + round_and_string(use_level_stress[1]),
                     ),
                     marker="^",
                     zorder=2,
@@ -6701,7 +6808,7 @@ def distributions_input_checking(
     # type checking
     if type(xvals) not in [type(None), list, np.ndarray, int, float, np.float64]:
         raise ValueError(
-            "xvals must be an int, float, list, or array. Default is None. Value of xvals is:" + print(xvals)
+            "xvals must be an int, float, list, or array. Default is None. Value of xvals is:" + print(xvals),
         )
     if type(xmin) not in [type(None), int, float]:
         raise ValueError("xmin must be an int or float. Default is None")
@@ -6711,11 +6818,11 @@ def distributions_input_checking(
         raise ValueError("show_plot must be True or False. Default is True")
     if type(plot_CI) not in [type(None), bool]:
         raise ValueError(
-            "plot_CI must be True or False. Default is True. Only used if the distribution object was created by Fitters."
+            "plot_CI must be True or False. Default is True. Only used if the distribution object was created by Fitters.",
         )
     if type(CI_type) not in [type(None), str]:
         raise ValueError(
-            'CI_type must be "time" or "reliability". Default is "time". Only used if the distribution object was created by Fitters.'
+            'CI_type must be "time" or "reliability". Default is "time". Only used if the distribution object was created by Fitters.',
         )
     if CI is True:
         CI = 0.95
@@ -6724,15 +6831,15 @@ def distributions_input_checking(
         plot_CI = False
     if type(CI) not in [type(None), float]:
         raise ValueError(
-            "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval. Only used if the distribution object was created by Fitters."
+            "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval. Only used if the distribution object was created by Fitters.",
         )
     if type(CI_y) not in [type(None), list, np.ndarray, float, int]:
         raise ValueError(
-            'CI_y must be a list, array, float, or int. Default is None. Only used if the distribution object was created by Fitters anc CI_type="time".'
+            'CI_y must be a list, array, float, or int. Default is None. Only used if the distribution object was created by Fitters anc CI_type="time".',
         )
     if type(CI_x) not in [type(None), list, np.ndarray, float, int]:
         raise ValueError(
-            'CI_x must be a list, array, float, or int. Default is None. Only used if the distribution object was created by Fitters anc CI_type="reliability".'
+            'CI_x must be a list, array, float, or int. Default is None. Only used if the distribution object was created by Fitters anc CI_type="reliability".',
         )
 
     # default values
@@ -6932,7 +7039,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.weibull_CI(
-                        self=dist, CI_type="reliability", CI=CI, x=CI_x
+                        self=dist,
+                        CI_type="reliability",
+                        CI=CI,
+                        x=CI_x,
                     )
                     if func == "SF":
                         lower, upper = SF_rel[0], SF_rel[1]
@@ -6946,7 +7056,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.normal_CI(
-                        self=dist, CI_type="reliability", CI=CI, x=CI_x
+                        self=dist,
+                        CI_type="reliability",
+                        CI=CI,
+                        x=CI_x,
                     )
                     if func == "SF":
                         lower, upper = SF_rel[1], SF_rel[0]
@@ -6960,7 +7073,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.lognormal_CI(
-                        self=dist, CI_type="reliability", CI=CI, x=CI_x
+                        self=dist,
+                        CI_type="reliability",
+                        CI=CI,
+                        x=CI_x,
                     )
                     if func == "SF":
                         lower, upper = SF_rel[1], SF_rel[0]
@@ -6986,7 +7102,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.gumbel_CI(
-                        self=dist, CI_type="reliability", CI=CI, x=CI_x
+                        self=dist,
+                        CI_type="reliability",
+                        CI=CI,
+                        x=CI_x,
                     )
                     if func == "SF":
                         lower, upper = SF_rel[0], SF_rel[1]
@@ -7000,7 +7119,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.loglogistic_CI(
-                        self=dist, CI_type="reliability", CI=CI, x=CI_x
+                        self=dist,
+                        CI_type="reliability",
+                        CI=CI,
+                        x=CI_x,
                     )
                     if func == "SF":
                         lower, upper = SF_rel[0], SF_rel[1]

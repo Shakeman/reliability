@@ -46,10 +46,10 @@ def test_Loglogistic():
 @pytest.mark.flaky(reruns=3)
 def test_Exponential():
     data1 = Exponential_Distribution(Lambda=1 / 10).random_samples(
-        50, seed=42
+        50, seed=42,
     )  # should give Exponential Lambda = 0.01 OR Weibull alpha = 10
     data2 = Exponential_Distribution(Lambda=1 / 100).random_samples(
-        50, seed=42
+        50, seed=42,
     )  # should give Exponential Lambda = 0.001 OR Weibull alpha = 100
     Exponential_probability_plot(failures=data1)
     Exponential_probability_plot(failures=data2)
@@ -63,10 +63,10 @@ def test_PP_plot_parametric():
 
 def test_Exponential_probability_plot_Weibull_Scale():
     data1 = Exponential_Distribution(Lambda=1 / 10).random_samples(
-        50, seed=42
+        50, seed=42,
     )  # should give Exponential Lambda = 0.01 OR Weibull alpha = 10
     data2 = Exponential_Distribution(Lambda=1 / 100).random_samples(
-        50, seed=42
+        50, seed=42,
     )  # should give Exponential Lambda = 0.001 OR Weibull alpha = 100
     Exponential_probability_plot_Weibull_Scale(failures=data1)
     Exponential_probability_plot_Weibull_Scale(failures=data2)

@@ -17482,7 +17482,7 @@ class electronics:
                 np.ones(815) * 81474,
                 np.ones(813) * 80632,
                 np.ones(804) * 62716,
-            ]
+            ],
         )
         rc = len(self.right_censored)
         f = len(self.failures)

@@ -9,9 +9,9 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-import os
+import os  # noqa: I001
 import sys
-from datetime import date
+import datetime
 
 # The full version, including alpha/beta/rc tags
 import reliability
@@ -25,7 +25,7 @@ master_doc = "index"
 # -- Project information -----------------------------------------------------
 
 project = "reliability"
-copyright = f"2019-{date.today().year},  Matthew Reid"
+copyright = f"2019-{datetime.datetime.now(tz=datetime.timezone.utc).date().year},  Matthew Reid"
 author = "Matthew Reid"
 
 

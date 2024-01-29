@@ -114,7 +114,7 @@ def plotting_positions(failures=None, right_censored=None, a=None, sort=False):
         a = 0.3
     elif a < 0 or a > 1:
         raise ValueError(
-            "a must be in the range 0 to 1. Default is 0.3 which gives the median rank. For more information see https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot#Heuristics"
+            "a must be in the range 0 to 1. Default is 0.3 which gives the median rank. For more information see https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot#Heuristics",
         )
 
     if sort not in [True, False]:
@@ -301,7 +301,7 @@ def Weibull_probability_plot(
                 label = kwargs.pop("label")
             else:
                 label = str(
-                    "Fitted Weibull_2P (α=" + round_and_string(alpha, dec) + ", β=" + round_and_string(beta, dec) + ")"
+                    "Fitted Weibull_2P (α=" + round_and_string(alpha, dec) + ", β=" + round_and_string(beta, dec) + ")",
                 )
         elif fit_gamma is True:
             if __fitted_dist_params is not None:
@@ -338,7 +338,7 @@ def Weibull_probability_plot(
                     + round_and_string(beta, dec)
                     + ", γ="
                     + round_and_string(gamma, dec)
-                    + ")"
+                    + ")",
                 )
 
             xlabel = "Time - gamma"
@@ -516,7 +516,7 @@ def Loglogistic_probability_plot(
                     + round_and_string(alpha, dec)
                     + ", β="
                     + round_and_string(beta, dec)
-                    + ")"
+                    + ")",
                 )
         elif fit_gamma is True:
             if __fitted_dist_params is not None:
@@ -553,7 +553,7 @@ def Loglogistic_probability_plot(
                     + round_and_string(beta, dec)
                     + ", γ="
                     + round_and_string(gamma, dec)
-                    + ")"
+                    + ")",
                 )
             xlabel = "Time - gamma"
             failures = failures - gamma
@@ -585,7 +585,8 @@ def Loglogistic_probability_plot(
     plt.grid(visible=True, which="major", color="k", alpha=0.3, linestyle="-")
     plt.grid(visible=True, which="minor", color="k", alpha=0.08, linestyle="-")
     plt.gcf().set_size_inches(
-        9, 9
+        9,
+        9,
     )  # adjust the figsize. This is done outside of figure creation so that layering of multiple plots is possible
     if show_fitted_distribution is True:
         llf.CDF(label=label, **kwargs)
@@ -756,7 +757,7 @@ def Exponential_probability_plot_Weibull_Scale(
                     + round_and_string(Lambda, dec)
                     + ", γ="
                     + round_and_string(gamma, dec)
-                    + ")"
+                    + ")",
                 )
             xlabel = "Time - gamma"
             failures = (
@@ -782,7 +783,8 @@ def Exponential_probability_plot_Weibull_Scale(
     plt.grid(visible=True, which="major", color="k", alpha=0.3, linestyle="-")
     plt.grid(visible=True, which="minor", color="k", alpha=0.08, linestyle="-")
     plt.gcf().set_size_inches(
-        9, 9
+        9,
+        9,
     )  # adjust the figsize. This is done outside of figure creation so that layering of multiple plots is possible
     if show_fitted_distribution is True:
         ef.CDF(label=label, **kwargs)
@@ -910,7 +912,7 @@ def Gumbel_probability_plot(
             label = kwargs.pop("label")
         else:
             label = str(
-                "Fitted Gumbel_2P (μ=" + round_and_string(mu, dec) + ", σ=" + round_and_string(sigma, dec) + ")"
+                "Fitted Gumbel_2P (μ=" + round_and_string(mu, dec) + ", σ=" + round_and_string(sigma, dec) + ")",
             )
         gbf = Gumbel_Distribution(
             mu=mu,
@@ -933,7 +935,8 @@ def Gumbel_probability_plot(
     plt.grid(visible=True, which="major", color="k", alpha=0.3, linestyle="-")
     plt.grid(visible=True, which="minor", color="k", alpha=0.08, linestyle="-")
     plt.gcf().set_size_inches(
-        9, 9
+        9,
+        9,
     )  # adjust the figsize. This is done outside of figure creation so that layering of multiple plots is possible
     if show_fitted_distribution is True:
         gbf.CDF(label=label, **kwargs)
@@ -1060,7 +1063,7 @@ def Normal_probability_plot(
             label = kwargs.pop("label")
         else:
             label = str(
-                "Fitted Normal_2P (μ=" + round_and_string(mu, dec) + ", σ=" + round_and_string(sigma, dec) + ")"
+                "Fitted Normal_2P (μ=" + round_and_string(mu, dec) + ", σ=" + round_and_string(sigma, dec) + ")",
             )
         nf = Normal_Distribution(
             mu=mu,
@@ -1084,7 +1087,8 @@ def Normal_probability_plot(
     plt.grid(visible=True, which="major", color="k", alpha=0.3, linestyle="-")
     plt.grid(visible=True, which="minor", color="k", alpha=0.08, linestyle="-")
     plt.gcf().set_size_inches(
-        9, 9
+        9,
+        9,
     )  # adjust the figsize. This is done outside of figure creation so that layering of multiple plots is possible
     if show_fitted_distribution is True:
         nf.CDF(label=label, **kwargs)
@@ -1228,7 +1232,7 @@ def Lognormal_probability_plot(
                 label = kwargs.pop("label")
             else:
                 label = str(
-                    "Fitted Lognormal_2P (μ=" + round_and_string(mu, dec) + ", σ=" + round_and_string(sigma, dec) + ")"
+                    "Fitted Lognormal_2P (μ=" + round_and_string(mu, dec) + ", σ=" + round_and_string(sigma, dec) + ")",
                 )
         elif fit_gamma is True:
             if __fitted_dist_params is not None:
@@ -1263,7 +1267,7 @@ def Lognormal_probability_plot(
                     + round_and_string(sigma, dec)
                     + ", γ="
                     + round_and_string(gamma, dec)
-                    + ")"
+                    + ")",
                 )
             xlabel = "Time - gamma"
             failures = failures - gamma
@@ -1292,7 +1296,8 @@ def Lognormal_probability_plot(
     plt.grid(visible=True, which="major", color="k", alpha=0.3, linestyle="-")
     plt.grid(visible=True, which="minor", color="k", alpha=0.08, linestyle="-")
     plt.gcf().set_size_inches(
-        9, 9
+        9,
+        9,
     )  # adjust the figsize. This is done outside of figure creation so that layering of multiple plots is possible
     if show_fitted_distribution is True:
         lnf.CDF(label=label, **kwargs)
@@ -1440,7 +1445,8 @@ def Beta_probability_plot(
     plt.xlabel("Time")
     plt.ylabel("Fraction failing")
     plt.gcf().set_size_inches(
-        9, 9
+        9,
+        9,
     )  # adjust the figsize. This is done outside of figure creation so that layering of multiple plots is possible
     probability_plot_xylims(x=x, y=y, dist="beta", spacing=0.1, beta_alpha=alpha, beta_beta=beta)
     probability_plot_xyticks(yticks=[0.1, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99, 0.999, 0.9999, 0.99999])
@@ -1588,7 +1594,7 @@ def Gamma_probability_plot(
             label = kwargs.pop("label")
         else:
             label = str(
-                "Fitted Gamma_2P (α=" + round_and_string(alpha, dec) + ", β=" + round_and_string(beta, dec) + ")"
+                "Fitted Gamma_2P (α=" + round_and_string(alpha, dec) + ", β=" + round_and_string(beta, dec) + ")",
             )
     elif fit_gamma is True:
         if __fitted_dist_params is not None:
@@ -1628,7 +1634,7 @@ def Gamma_probability_plot(
                 + round_and_string(beta, dec)
                 + ", γ="
                 + round_and_string(gamma, dec)
-                + ")"
+                + ")",
             )
         xlabel = "Time - gamma"
         failures = failures - gamma
@@ -1662,7 +1668,8 @@ def Gamma_probability_plot(
     plt.grid(visible=True, which="major", color="k", alpha=0.3, linestyle="-")
     plt.grid(visible=True, which="minor", color="k", alpha=0.08, linestyle="-")
     plt.gcf().set_size_inches(
-        9, 9
+        9,
+        9,
     )  # adjust the figsize. This is done outside of figure creation so that layering of multiple plots is possible
     if show_fitted_distribution is True:
         gf.CDF(label=label, **kwargs)
@@ -1828,7 +1835,7 @@ def Exponential_probability_plot(
                     + round_and_string(Lambda, dec)
                     + ", γ="
                     + round_and_string(gamma, dec)
-                    + ")"
+                    + ")",
                 )
             xlabel = "Time - gamma"
             failures = failures - gamma
@@ -1850,7 +1857,8 @@ def Exponential_probability_plot(
     plt.grid(visible=True, which="major", color="k", alpha=0.3, linestyle="-")
     plt.grid(visible=True, which="minor", color="k", alpha=0.08, linestyle="-")
     plt.gcf().set_size_inches(
-        9, 9
+        9,
+        9,
     )  # adjust the figsize. This is done outside of figure creation so that layering of multiple plots is possible
     if show_fitted_distribution is True:
         ef.CDF(label=label, **kwargs)
@@ -1923,7 +1931,7 @@ def PP_plot_parametric(
 
     if X_dist is None or Y_dist is None:
         raise ValueError(
-            "X_dist and Y_dist must both be specified as probability distributions generated using the Distributions module"
+            "X_dist and Y_dist must both be specified as probability distributions generated using the Distributions module",
         )
     if type(X_dist) not in [
         Weibull_Distribution,
@@ -1945,7 +1953,7 @@ def PP_plot_parametric(
         Gumbel_Distribution,
     ]:
         raise ValueError(
-            "Invalid probability distribution. X_dist and Y_dist must both be specified as probability distributions generated using the Distributions module"
+            "Invalid probability distribution. X_dist and Y_dist must both be specified as probability distributions generated using the Distributions module",
         )
 
     # extract certain keyword arguments or specify them if they are not set
@@ -2013,7 +2021,12 @@ def PP_plot_parametric(
 
 
 def QQ_plot_parametric(
-    X_dist=None, Y_dist=None, show_fitted_lines=True, show_diagonal_line=False, downsample_scatterplot=False, **kwargs
+    X_dist=None,
+    Y_dist=None,
+    show_fitted_lines=True,
+    show_diagonal_line=False,
+    downsample_scatterplot=False,
+    **kwargs,
 ):
     """
     A QQ plot (quantile-quantile plot) consists of plotting failure units vs
@@ -2068,7 +2081,7 @@ def QQ_plot_parametric(
 
     if X_dist is None or Y_dist is None:
         raise ValueError(
-            "dist_X and dist_Y must both be specified as probability distributions generated using the Distributions module"
+            "dist_X and dist_Y must both be specified as probability distributions generated using the Distributions module",
         )
     if type(X_dist) not in [
         Weibull_Distribution,
@@ -2090,7 +2103,7 @@ def QQ_plot_parametric(
         Gumbel_Distribution,
     ]:
         raise ValueError(
-            "dist_X and dist_Y must both be specified as probability distributions generated using the Distributions module"
+            "dist_X and dist_Y must both be specified as probability distributions generated using the Distributions module",
         )
     xvals = np.linspace(0.01, 0.99, 100)
 
@@ -2223,7 +2236,7 @@ def PP_plot_semiparametric(
 
     if X_data_failures is None or Y_dist is None:
         raise ValueError(
-            "X_data_failures and Y_dist must both be specified. X_data_failures can be an array or list of failure times. Y_dist must be a probability distribution generated using the Distributions module"
+            "X_data_failures and Y_dist must both be specified. X_data_failures can be an array or list of failure times. Y_dist must be a probability distribution generated using the Distributions module",
         )
     if type(Y_dist) not in [
         Weibull_Distribution,
@@ -2245,7 +2258,7 @@ def PP_plot_semiparametric(
         Gumbel_Distribution,
     ]:
         raise ValueError(
-            "Y_dist must be specified as a probability distribution generated using the Distributions module"
+            "Y_dist must be specified as a probability distribution generated using the Distributions module",
         )
     if isinstance(X_data_failures, list):
         X_data_failures = np.sort(np.array(X_data_failures))
@@ -2301,7 +2314,7 @@ def PP_plot_semiparametric(
         xlabel = "Empirical CDF (Rank Adjustment estimate)"
     else:
         raise ValueError(
-            'method must be "KM" for Kaplan-meier, "NA" for Nelson-Aalen, or "RA" for Rank Adjustment. Default is KM'
+            'method must be "KM" for Kaplan-meier, "NA" for Nelson-Aalen, or "RA" for Rank Adjustment. Default is KM',
         )
 
     if show_diagonal_line is True:
@@ -2396,7 +2409,7 @@ def QQ_plot_semiparametric(
 
     if X_data_failures is None or Y_dist is None:
         raise ValueError(
-            "X_data_failures and Y_dist must both be specified. X_data_failures can be an array or list of failure times. Y_dist must be a probability distribution generated using the Distributions module"
+            "X_data_failures and Y_dist must both be specified. X_data_failures can be an array or list of failure times. Y_dist must be a probability distribution generated using the Distributions module",
         )
     if type(Y_dist) not in [
         Weibull_Distribution,
@@ -2418,7 +2431,7 @@ def QQ_plot_semiparametric(
         Gumbel_Distribution,
     ]:
         raise ValueError(
-            "Y_dist must be specified as a probability distribution generated using the Distributions module"
+            "Y_dist must be specified as a probability distribution generated using the Distributions module",
         )
     if isinstance(X_data_failures, list):
         X_data_failures = np.sort(np.array(X_data_failures))
@@ -2475,7 +2488,7 @@ def QQ_plot_semiparametric(
         method_str = "Rank Adjustment"
     else:
         raise ValueError(
-            'method must be "KM" for Kaplan-meier, "NA" for Nelson-Aalen, or "RA" for Rank Adjustment. Default is KM'
+            'method must be "KM" for Kaplan-meier, "NA" for Nelson-Aalen, or "RA" for Rank Adjustment. Default is KM',
         )
 
     # calculate the failure times at the given quantiles

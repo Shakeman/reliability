@@ -32,17 +32,27 @@ pytest-mock = "^3.12.0"
 # Same as Black.
 line-length = 120
 
-#exclude = ["tests/*.py"]
+fix = true
+fixable = ["COM", "E", "F"]
+exclude = ["tests", "docs/conf.py"]
+
 select = [
+    "F",  # pyflakes
     "E",  # pycodestyle errors (settings from FastAPI, thanks, @tiangolo!)
     "W",  # pycodestyle warnings
-    "F",  # pyflakes
     "I",  # isort
+    #"N",  # pep8-naming
+    "UP", # pyupgrade
     "C",  # flake8-comprehensions
     "B",  # flake8-bugbear
-    "UP", # pyupgrade
+    #"A",  # flake8-builtins
+    "COM",# flake8-commas
+    "C4", # flake8-comprehensions
+    "DTZ",# flake8-datetimez
     "S",  # flake8-bandit
-    "SIM", # flake8-simplify
+    "SIM",# flake8-simplify
+    #"FURB", # refurb
+    #"LOG",# flake8-logging
     "RUF", # RUF-specific rules
 ]
 ignore = [

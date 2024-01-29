@@ -554,7 +554,7 @@ def test_Fit_Weibull_Mixture():
     data = make_right_censored_data(data=raw_data, threshold=dist.mean)
 
     MLE = Fit_Weibull_Mixture(
-        failures=data.failures, right_censored=data.right_censored, show_probability_plot=False, print_results=False
+        failures=data.failures, right_censored=data.right_censored, show_probability_plot=False, print_results=False,
     )
     assert_allclose(MLE.alpha_1, 11.06604639424718, rtol=rtol, atol=atol)
     assert_allclose(MLE.beta_1, 2.735078296796997, rtol=rtol, atol=atol)
@@ -577,7 +577,7 @@ def test_Fit_Weibull_CR():
     raw_data = CR_model.random_samples(100, seed=2)
     data = make_right_censored_data(data=raw_data, threshold=40)
     MLE = Fit_Weibull_CR(
-        failures=data.failures, right_censored=data.right_censored, show_probability_plot=False, print_results=False
+        failures=data.failures, right_censored=data.right_censored, show_probability_plot=False, print_results=False,
     )
     assert_allclose(MLE.alpha_1, 53.05674752263902, rtol=rtol, atol=atol)
     assert_allclose(MLE.beta_1, 1.9411091317375062, rtol=rtol, atol=atol)
@@ -617,7 +617,7 @@ def test_Fit_Everything():
     )
 
     assert_allclose(
-        MLE.best_distribution.alpha, 0.5796887225805948, rtol=rtol, atol=atol
+        MLE.best_distribution.alpha, 0.5796887225805948, rtol=rtol, atol=atol,
     )  # best fit here is a Beta distribution
     assert_allclose(MLE.best_distribution.beta, 4.205258710807067, rtol=rtol, atol=atol)
 
@@ -721,7 +721,7 @@ def test_Fit_Everything():
     assert_allclose(MLE.Exponential_1P_AD, 551.326873807673, rtol=rtol, atol=atol)
 
     assert_allclose(
-        LS.best_distribution.mu, 0.5350756091376212, rtol=rtol, atol=atol
+        LS.best_distribution.mu, 0.5350756091376212, rtol=rtol, atol=atol,
     )  # best fit here is a Normal distribution
     assert_allclose(LS.best_distribution.sigma, 0.15352298167936318, rtol=rtol, atol=atol)
 

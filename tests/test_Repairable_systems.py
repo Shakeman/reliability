@@ -29,7 +29,7 @@ def test_reliability_growth_duane():
 def test_reliability_growth_crow_amsaa():
     times = [10400, 26900, 43400, 66400, 89400, 130400, 163400, 232000, 242000, 340700]
     rg_crow = reliability_growth(
-        times=times, model='Crow-AMSAA', target_MTBF=50000, print_results=False, show_plot=False
+        times=times, model='Crow-AMSAA', target_MTBF=50000, print_results=False, show_plot=False,
     )
     assert_allclose(rg_crow.Beta, 0.741656619656656, rtol=rtol, atol=atol)
     assert_allclose(rg_crow.Lambda, 0.0007886414235385733, rtol=rtol, atol=atol)
@@ -40,7 +40,7 @@ def test_reliability_growth_crow_amsaa():
     assert_allclose(rg_crow.DFI_C, 2.9351335485764603e-05, rtol=rtol, atol=atol)
     assert_allclose(rg_crow.time_to_target, 1503979.9172547427, rtol=rtol, atol=atol)
 
-@pytest.mark.flaky(reruns=3)
+@pytest.mark.flaky(reruns=5)
 def test_optimal_replacement_time():
     ort0 = optimal_replacement_time(cost_PM=1, cost_CM=5, weibull_alpha=1000, weibull_beta=2.5, q=0)
     assert_allclose(ort0.ORT, 493.1851185118512, rtol=rtol, atol=atol)

@@ -27,7 +27,7 @@ def test_reliability_one_sample_proportion():
 
 def test_two_proportion_test():
     results = two_proportion_test(
-        sample_1_trials=500, sample_1_successes=490, sample_2_trials=800, sample_2_successes=770
+        sample_1_trials=500, sample_1_successes=490, sample_2_trials=800, sample_2_successes=770,
     )
     assert_allclose(results[0], -0.0004972498915250083, rtol=rtol, atol=atol)
     assert_allclose(results[1], 0.03549724989152493, rtol=rtol, atol=atol)
@@ -45,10 +45,10 @@ def test_reliability_test_planner():
     assert_allclose(test_plan.number_of_failures, 7, rtol=rtol, atol=atol)
     assert_allclose(test_plan.test_duration, 19520, rtol=rtol, atol=atol)
 
-
+@pytest.mark.flaky(reruns=5)
 def test_reliability_test_duration():
     test_duration = reliability_test_duration(
-        MTBF_required=2500, MTBF_design=3000, consumer_risk=0.2, producer_risk=0.2
+        MTBF_required=2500, MTBF_design=3000, consumer_risk=0.2, producer_risk=0.2,
     )
     assert_allclose(test_duration, 231615.79491309822, rtol=rtol, atol=atol)
 

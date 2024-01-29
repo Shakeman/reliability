@@ -111,7 +111,7 @@ class xlsx_to_XCN:
                 "xlsx_to_XCN assumes the second column is C (censoring code). A maximum of 2 unique censoring codes are allowed. Within this column there were "
                 + str(len(C_unique))
                 + " unique values: "
-                + str(C_unique)
+                + str(C_unique),
             )
             raise ValueError(error_str)
         C_out = []
@@ -152,7 +152,7 @@ class xlsx_to_XCN:
                 C_out.append(censor_code_in_XCN)
             else:
                 raise ValueError(
-                    "Unrecognised value in the second column of the xlsx file. xlsx_to_XCN assumes the second column is C (censoring code). Common values are used as defaults but the xlsx file contained unrecognised values. You can fix this by specifying the arguments censor_code_in_xlsx  and failure_code_in_xlsx."
+                    "Unrecognised value in the second column of the xlsx file. xlsx_to_XCN assumes the second column is C (censoring code). Common values are used as defaults but the xlsx file contained unrecognised values. You can fix this by specifying the arguments censor_code_in_xlsx  and failure_code_in_xlsx.",
                 )
         C = np.array(C_out)
 
@@ -168,11 +168,13 @@ class xlsx_to_XCN:
             )
         if len(X) != len(C) or len(X) != len(N):
             raise ValueError(
-                "The lengths of the first 3 columns in the xlsx file do not match. This may be because some data is missing."
+                "The lengths of the first 3 columns in the xlsx file do not match. This may be because some data is missing.",
             )
 
         FR = XCN_to_FR(
-            X=X, C=C, N=N
+            X=X,
+            C=C,
+            N=N,
         )  # we do this seeming redundant conversion to combine any duplicates from FNRN which were not correctly summarized in the input data
         XCN = FR_to_XCN(
             failures=FR.failures,
@@ -329,7 +331,7 @@ class xlsx_to_FNRN:
         num_failures = removeNaNs(num_failures)
         if len(failures) != len(num_failures):
             raise ValueError(
-                "xlsx_to_FNRN assumes the first and second columns in the excel file are 'failures' and 'number of failures'. These must be the same length."
+                "xlsx_to_FNRN assumes the first and second columns in the excel file are 'failures' and 'number of failures'. These must be the same length.",
             )
         if len(cols) == 2:
             right_censored = None
@@ -341,7 +343,7 @@ class xlsx_to_FNRN:
             num_right_censored = removeNaNs(num_right_censored)
             if len(right_censored) != len(num_right_censored):
                 raise ValueError(
-                    "xlsx_to_FNRN assumes the third and fourth columns in the excel file are 'right censored' and 'number of right censored'. These must be the same length."
+                    "xlsx_to_FNRN assumes the third and fourth columns in the excel file are 'right censored' and 'number of right censored'. These must be the same length.",
                 )
         if len(cols) > 4:
             colorprint(
@@ -356,7 +358,8 @@ class xlsx_to_FNRN:
             num_right_censored=num_right_censored,
         )
         FNRN = FR_to_FNRN(
-            failures=FR.failures, right_censored=FR.right_censored
+            failures=FR.failures,
+            right_censored=FR.right_censored,
         )  # we do this seeming redundant conversion to combine any duplicates from FNRN which were not correctly summarized in the input data
         self.failures = FNRN.failures
         self.num_failures = FNRN.num_failures
@@ -623,7 +626,7 @@ class XCN_to_FR:
                 "A maximum of 2 unique censoring codes are allowed. Within C there were "
                 + str(len(C_unique))
                 + " unique values: "
-                + str(C_unique)
+                + str(C_unique),
             )
             raise ValueError(error_str)
 
@@ -668,7 +671,7 @@ class XCN_to_FR:
                 right_censored = np.append(right_censored, np.ones(int(N[i])) * X[i])
             else:
                 raise ValueError(
-                    "Unrecognised value in C. Common values are used as defaults but C contained an unrecognised values. You can fix this by specifying the arguments censor_code and failure_code."
+                    "Unrecognised value in C. Common values are used as defaults but C contained an unrecognised values. You can fix this by specifying the arguments censor_code and failure_code.",
                 )
         if len(right_censored) == 0:
             right_censored = None
@@ -889,7 +892,8 @@ class FNRN_to_XCN:
                 num_right_censored=num_right_censored,
             )
             FNRN = FR_to_FNRN(
-                failures=FR.failures, right_censored=FR.right_censored
+                failures=FR.failures,
+                right_censored=FR.right_censored,
             )  # we do this seeming redundant conversion to combine any duplicates from FNRN which were not correctly summarized in the input data
             self.X = np.hstack([FNRN.failures, FNRN.right_censored])
             self.N = np.hstack([FNRN.num_failures, FNRN.num_right_censored])
@@ -903,7 +907,7 @@ class FNRN_to_XCN:
         else:
             FR = FNRN_to_FR(failures=failures, num_failures=num_failures)
             FNRN = FR_to_FNRN(
-                failures=FR.failures
+                failures=FR.failures,
             )  # we do this seeming redundant conversion to combine any duplicates from FNRN which were not correctly summarized in the input data
             self.X = FNRN.failures
             self.N = FNRN.num_failures

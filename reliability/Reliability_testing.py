@@ -89,7 +89,7 @@ def one_sample_proportion(trials=None, successes=None, CI=0.95, print_results=Tr
         raise ValueError("successes must be an integer")
     if successes > trials:
         raise ValueError("successes cannot be greater than trials")
-    n = 1 if (successes == 0 or successes == trials) else 2  # calculate 1 sided CI in these cases
+    n = 1 if (successes in (0, trials)) else 2  # calculate 1 sided CI in these cases
 
     V1_lower = 2 * successes
     V2_lower = 2 * (trials - successes + 1)
@@ -265,14 +265,14 @@ def sample_size_no_failures(reliability, CI=0.95, lifetimes=1, weibull_shape=1, 
         raise ValueError("Reliability must be between 0 and 1")
     if weibull_shape < 0:
         raise ValueError(
-            "Weibull shape must be greater than 0. Default (exponential distribution) is 1. If unknown then use 1."
+            "Weibull shape must be greater than 0. Default (exponential distribution) is 1. If unknown then use 1.",
         )
     if lifetimes > 5:
         print("Testing for greater than 5 lifetimes is highly unlikely to result in zero failures.")
     if lifetimes <= 0:
         raise ValueError("lifetimes must be >0. Default is 1. No more than 5 is recommended due to test feasibility.")
     n = int(
-        np.ceil((np.log(1 - CI)) / (lifetimes**weibull_shape * np.log(reliability)))
+        np.ceil((np.log(1 - CI)) / (lifetimes**weibull_shape * np.log(reliability))),
     )  # rounds up to nearest integer
 
     CI_rounded = CI * 100
@@ -299,10 +299,10 @@ def sample_size_no_failures(reliability, CI=0.95, lifetimes=1, weibull_shape=1, 
             lifetime_string,
         )
         print(
-            "If there are any failures during this test, then the desired lower confidence bound will not be achieved."
+            "If there are any failures during this test, then the desired lower confidence bound will not be achieved.",
         )
         print(
-            "If this occurs, use the function Reliability_testing.one_sample_proportion to determine the lower and upper bounds on reliability."
+            "If this occurs, use the function Reliability_testing.one_sample_proportion to determine the lower and upper bounds on reliability.",
         )
 
     return n
@@ -384,7 +384,7 @@ def sequential_sampling_chart(
         F = None
     else:
         raise ValueError(
-            "test_results must be a binary array or list with 1 as failures and 0 as successes. eg. [0 0 0 1] represents 3 successes and 1 failure."
+            "test_results must be a binary array or list with 1 as failures and 0 as successes. eg. [0 0 0 1] represents 3 successes and 1 failure.",
         )
 
     if alpha <= 0 or alpha >= 1:
@@ -454,7 +454,7 @@ def sequential_sampling_chart(
                     ny.append(failure_count)
                 else:
                     raise ValueError(
-                        "test_results must be an array or list with 0 as failures and 1 as successes. eg. [0 0 0 1] represents 3 successes and 1 failure."
+                        "test_results must be an array or list with 0 as failures and 1 as successes. eg. [0 0 0 1] represents 3 successes and 1 failure.",
                     )
             plt.plot(nx, ny, label="test results")
 
@@ -581,7 +581,7 @@ class reliability_test_planner:
         if CI is not None:
             if CI < 0.5 or CI >= 1:
                 raise ValueError(
-                    "CI must be between 0.5 and 1. For example, specify CI=0.95 for 95% confidence interval"
+                    "CI must be between 0.5 and 1. For example, specify CI=0.95 for 95% confidence interval",
                 )
             CI_adj = CI if one_sided is True else 1 - (1 - CI) / 2
 
@@ -591,7 +591,7 @@ class reliability_test_planner:
             p = 0
         else:
             raise ValueError(
-                "time_terminated must be True or False. Default is True for the time terminated test (a test stopped after a set time rather than after a set number of failures)."
+                "time_terminated must be True or False. Default is True for the time terminated test (a test stopped after a set time rather than after a set number of failures).",
             )
 
         if one_sided is True:
@@ -626,11 +626,12 @@ class reliability_test_planner:
             )
 
             MTBF_check = (2 * test_duration) / ss.chi2.ppf(
-                CI_adj, 2 * 0 + p
+                CI_adj,
+                2 * 0 + p,
             )  # checks that the maximum possible MTBF (when there are 0 failures) is within the test_duration
             if MTBF_check < MTBF:
                 raise ValueError(
-                    "The specified MTBF is not possible given the specified test_duration. You must increase your test_duration or decrease your MTBF."
+                    "The specified MTBF is not possible given the specified test_duration. You must increase your test_duration or decrease your MTBF.",
                 )
 
         elif MTBF is not None and number_of_failures is not None and CI is None and test_duration is not None:
@@ -650,7 +651,7 @@ class reliability_test_planner:
 
         else:
             raise ValueError(
-                "More than one input was not specified. You must specify any 3 out of the 4 inputs (not including one_sided or print_results) and the remaining input will be calculated."
+                "More than one input was not specified. You must specify any 3 out of the 4 inputs (not including one_sided or print_results) and the remaining input will be calculated.",
             )
 
         self.test_duration = test_duration
@@ -794,7 +795,7 @@ def reliability_test_duration(
                 str(
                     "WARNING: The algorithm is taking a long time to find the solution. This is probably because MTBF_required is too close to MTBF_design so the item struggles to pass the test. --- Current runtime: "
                     + str(int(round(time.time() - time_start, 0)))
-                    + " seconds"
+                    + " seconds",
                 ),
                 text_color="red",
             )
@@ -922,7 +923,7 @@ class chi2test:
 
         if type(distribution) not in standard_distributions and type(distribution) not in special_distributions:
             raise ValueError(
-                "distribution must be a probability distribution object from the reliability.Distributions module. First define the distribution using reliability.Distributions.___"
+                "distribution must be a probability distribution object from the reliability.Distributions module. First define the distribution using reliability.Distributions.___",
             )
 
         # ensure data is a list or array
@@ -933,7 +934,7 @@ class chi2test:
             Gumbel_Distribution,
         ]:
             raise ValueError(
-                "data contains values below 0 which is not appropriate when the distribution is not a Normal or Gumbel Distribution"
+                "data contains values below 0 which is not appropriate when the distribution is not a Normal or Gumbel Distribution",
             )
 
         if significance <= 0 or significance > 0.5:
@@ -943,11 +944,13 @@ class chi2test:
             bins = "auto"
         if type(bins) not in [str, list, np.ndarray]:
             raise ValueError(
-                "bins must be a list or array of the bin edges OR a string for the bin edge method from numpy. String options are auto, fd, doane, scott, stone, rice, sturges, or sqrt. For more information see the numpy documentation on numpy.histogram_bin_edges"
+                "bins must be a list or array of the bin edges OR a string for the bin edge method from numpy. String options are auto, fd, doane, scott, stone, rice, sturges, or sqrt. For more information see the numpy documentation on numpy.histogram_bin_edges",
             )
 
         observed, bin_edges = np.histogram(
-            data, bins=bins, density=False
+            data,
+            bins=bins,
+            density=False,
         )  # get a histogram of the data to find the observed values
 
         if sum(observed) != len(data):
@@ -969,10 +972,12 @@ class chi2test:
             Gumbel_Distribution,
         ]:
             observed, bin_edges = np.histogram(
-                data, bins="auto", density=False
+                data,
+                bins="auto",
+                density=False,
             )  # error will result if bins contains values below 0 for anything but the Normal or Gumbel Distributions
             colorprint(
-                'WARNING: The specified bins contained values below 0. This is not appropriate when the distribution is not a Normal or Gumbel Distribution. bins has been reset to "auto".'
+                'WARNING: The specified bins contained values below 0. This is not appropriate when the distribution is not a Normal or Gumbel Distribution. bins has been reset to "auto".',
             )
             colorprint(str("The new bins are: " + bin_edges), text_color="red")
 
@@ -999,8 +1004,8 @@ class chi2test:
                     "The length of bins is insufficient. Using a "
                     + str(distribution.name2)
                     + " distribution, the minimum acceptable length of bins is "
-                    + str(k + 2)
-                )
+                    + str(k + 2),
+                ),
             )
 
         self.bin_edges = bin_edges
@@ -1115,7 +1120,7 @@ class KStest:
 
         if type(distribution) not in standard_distributions and type(distribution) not in special_distributions:
             raise ValueError(
-                "distribution must be a probability distribution object from the reliability.Distributions module. First define the distribution using reliability.Distributions.___"
+                "distribution must be a probability distribution object from the reliability.Distributions module. First define the distribution using reliability.Distributions.___",
             )
 
         if min(data) < 0 and type(distribution) not in [
@@ -1123,7 +1128,7 @@ class KStest:
             Gumbel_Distribution,
         ]:
             raise ValueError(
-                "data contains values below 0 which is not appropriate when the distribution is not a Normal or Gumbel Distribution"
+                "data contains values below 0 which is not appropriate when the distribution is not a Normal or Gumbel Distribution",
             )
 
         if significance <= 0 or significance > 0.5:
@@ -1144,7 +1149,7 @@ class KStest:
         Sn = i_array / n  # empirical cdf 1
         Sn_1 = (i_array - 1) / n  # empirical cdf 2
         self.KS_statistic = max(
-            np.hstack([abs(fitted_cdf - Sn), abs(fitted_cdf - Sn_1)])
+            np.hstack([abs(fitted_cdf - Sn), abs(fitted_cdf - Sn_1)]),
         )  # Kolmogorov-Smirnov test statistic
         self.KS_critical_value = ss.kstwo.ppf(q=1 - significance, n=n)
 
@@ -1274,10 +1279,14 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
             print_results=False,
         )
         X_array = np.linspace(
-            fit.alpha_lower * grid_lower_multiplier, fit.alpha_upper * grid_upper_multiplier, grid_resolution
+            fit.alpha_lower * grid_lower_multiplier,
+            fit.alpha_upper * grid_upper_multiplier,
+            grid_resolution,
         )
         Y_array = np.linspace(
-            fit.beta_lower * grid_lower_multiplier, fit.beta_upper * grid_upper_multiplier, grid_resolution
+            fit.beta_lower * grid_lower_multiplier,
+            fit.beta_upper * grid_upper_multiplier,
+            grid_resolution,
         )
         params = [fit.alpha, fit.beta]
         logf = Fit_Weibull_2P.logf
@@ -1293,10 +1302,14 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
             print_results=False,
         )
         X_array = np.linspace(
-            fit.alpha_lower * grid_lower_multiplier, fit.alpha_upper * grid_upper_multiplier, grid_resolution
+            fit.alpha_lower * grid_lower_multiplier,
+            fit.alpha_upper * grid_upper_multiplier,
+            grid_resolution,
         )
         Y_array = np.linspace(
-            fit.beta_lower * grid_lower_multiplier, fit.beta_upper * grid_upper_multiplier, grid_resolution
+            fit.beta_lower * grid_lower_multiplier,
+            fit.beta_upper * grid_upper_multiplier,
+            grid_resolution,
         )
         params = [fit.alpha, fit.beta]
         logf = Fit_Gamma_2P.logf_ab
@@ -1312,10 +1325,14 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
             print_results=False,
         )
         X_array = np.linspace(
-            fit.alpha_lower * grid_lower_multiplier, fit.alpha_upper * grid_upper_multiplier, grid_resolution
+            fit.alpha_lower * grid_lower_multiplier,
+            fit.alpha_upper * grid_upper_multiplier,
+            grid_resolution,
         )
         Y_array = np.linspace(
-            fit.beta_lower * grid_lower_multiplier, fit.beta_upper * grid_upper_multiplier, grid_resolution
+            fit.beta_lower * grid_lower_multiplier,
+            fit.beta_upper * grid_upper_multiplier,
+            grid_resolution,
         )
         params = [fit.alpha, fit.beta]
         logf = Fit_Loglogistic_2P.logf
@@ -1331,10 +1348,14 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
             print_results=False,
         )
         X_array = np.linspace(
-            fit.alpha_lower * grid_lower_multiplier, fit.alpha_upper * grid_upper_multiplier, grid_resolution
+            fit.alpha_lower * grid_lower_multiplier,
+            fit.alpha_upper * grid_upper_multiplier,
+            grid_resolution,
         )
         Y_array = np.linspace(
-            fit.beta_lower * grid_lower_multiplier, fit.beta_upper * grid_upper_multiplier, grid_resolution
+            fit.beta_lower * grid_lower_multiplier,
+            fit.beta_upper * grid_upper_multiplier,
+            grid_resolution,
         )
         params = [fit.alpha, fit.beta]
         logf = Fit_Beta_2P.logf
@@ -1350,10 +1371,14 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
             print_results=False,
         )
         X_array = np.linspace(
-            fit.mu_lower * grid_lower_multiplier, fit.mu_upper * grid_upper_multiplier, grid_resolution
+            fit.mu_lower * grid_lower_multiplier,
+            fit.mu_upper * grid_upper_multiplier,
+            grid_resolution,
         )
         Y_array = np.linspace(
-            fit.sigma_lower * grid_lower_multiplier, fit.sigma_upper * grid_upper_multiplier, grid_resolution
+            fit.sigma_lower * grid_lower_multiplier,
+            fit.sigma_upper * grid_upper_multiplier,
+            grid_resolution,
         )
         params = [fit.mu, fit.sigma]
         logf = Fit_Normal_2P.logf
@@ -1369,10 +1394,14 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
             print_results=False,
         )
         X_array = np.linspace(
-            fit.mu_lower * grid_lower_multiplier, fit.mu_upper * grid_upper_multiplier, grid_resolution
+            fit.mu_lower * grid_lower_multiplier,
+            fit.mu_upper * grid_upper_multiplier,
+            grid_resolution,
         )
         Y_array = np.linspace(
-            fit.sigma_lower * grid_lower_multiplier, fit.sigma_upper * grid_upper_multiplier, grid_resolution
+            fit.sigma_lower * grid_lower_multiplier,
+            fit.sigma_upper * grid_upper_multiplier,
+            grid_resolution,
         )
         params = [fit.mu, fit.sigma]
         logf = Fit_Lognormal_2P.logf
@@ -1389,10 +1418,14 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
             print_results=False,
         )
         X_array = np.linspace(
-            fit.mu_lower * grid_lower_multiplier, fit.mu_upper * grid_upper_multiplier, grid_resolution
+            fit.mu_lower * grid_lower_multiplier,
+            fit.mu_upper * grid_upper_multiplier,
+            grid_resolution,
         )
         Y_array = np.linspace(
-            fit.sigma_lower * grid_lower_multiplier, fit.sigma_upper * grid_upper_multiplier, grid_resolution
+            fit.sigma_lower * grid_lower_multiplier,
+            fit.sigma_upper * grid_upper_multiplier,
+            grid_resolution,
         )
         params = [fit.mu, fit.sigma]
         logf = Fit_Gumbel_2P.logf

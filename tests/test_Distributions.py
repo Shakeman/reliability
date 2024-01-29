@@ -52,10 +52,10 @@ def test_Weibull_Distribution():
         atol=atol,
     )
     assert_allclose(
-        dist.CDF(xvals=xvals, show_plot=False), [0.0, 0.001, 0.01, 0.1, 0.9, 0.99, 0.999], rtol=rtol, atol=atol
+        dist.CDF(xvals=xvals, show_plot=False), [0.0, 0.001, 0.01, 0.1, 0.9, 0.99, 0.999], rtol=rtol, atol=atol,
     )
     assert_allclose(
-        dist.SF(xvals=xvals, show_plot=False), [1.0, 0.999, 0.99, 0.9, 0.1, 0.01, 0.001], rtol=rtol, atol=atol
+        dist.SF(xvals=xvals, show_plot=False), [1.0, 0.999, 0.99, 0.9, 0.1, 0.01, 0.001], rtol=rtol, atol=atol,
     )
     assert_allclose(
         dist.HF(xvals=xvals, show_plot=False),
@@ -198,10 +198,10 @@ def test_Lognormal_Distribution():
         atol=atol,
     )
     assert_allclose(
-        dist.CDF(xvals=xvals, show_plot=False), [0.0, 0.001, 0.01, 0.1, 0.9, 0.99, 0.999], rtol=rtol, atol=atol
+        dist.CDF(xvals=xvals, show_plot=False), [0.0, 0.001, 0.01, 0.1, 0.9, 0.99, 0.999], rtol=rtol, atol=atol,
     )
     assert_allclose(
-        dist.SF(xvals=xvals, show_plot=False), [1.0, 0.999, 0.99, 0.9, 0.1, 0.01, 0.001], rtol=rtol, atol=atol
+        dist.SF(xvals=xvals, show_plot=False), [1.0, 0.999, 0.99, 0.9, 0.1, 0.01, 0.001], rtol=rtol, atol=atol,
     )
     assert_allclose(
         dist.HF(xvals=xvals, show_plot=False),
@@ -260,10 +260,10 @@ def test_Exponential_Distribution():
         atol=atol,
     )
     assert_allclose(
-        dist.CDF(xvals=xvals, show_plot=False), [0.0, 0.001, 0.01, 0.1, 0.9, 0.99, 0.999], rtol=rtol, atol=atol
+        dist.CDF(xvals=xvals, show_plot=False), [0.0, 0.001, 0.01, 0.1, 0.9, 0.99, 0.999], rtol=rtol, atol=atol,
     )
     assert_allclose(
-        dist.SF(xvals=xvals, show_plot=False), [1.0, 0.999, 0.99, 0.9, 0.1, 0.01, 0.001], rtol=rtol, atol=atol
+        dist.SF(xvals=xvals, show_plot=False), [1.0, 0.999, 0.99, 0.9, 0.1, 0.01, 0.001], rtol=rtol, atol=atol,
     )
     assert_allclose(dist.HF(xvals=xvals, show_plot=False), [0.0, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2], rtol=rtol, atol=atol)
     assert_allclose(
@@ -317,10 +317,10 @@ def test_Gamma_Distribution():
         atol=atol,
     )
     assert_allclose(
-        dist.CDF(xvals=xvals, show_plot=False), [0.0, 0.001, 0.01, 0.1, 0.9, 0.99, 0.999], rtol=rtol, atol=atol
+        dist.CDF(xvals=xvals, show_plot=False), [0.0, 0.001, 0.01, 0.1, 0.9, 0.99, 0.999], rtol=rtol, atol=atol,
     )
     assert_allclose(
-        dist.SF(xvals=xvals, show_plot=False), [1.0, 0.999, 0.99, 0.9, 0.1, 0.01, 0.001], rtol=rtol, atol=atol
+        dist.SF(xvals=xvals, show_plot=False), [1.0, 0.999, 0.99, 0.9, 0.1, 0.01, 0.001], rtol=rtol, atol=atol,
     )
     assert_allclose(
         dist.HF(xvals=xvals, show_plot=False),
@@ -387,10 +387,10 @@ def test_Beta_Distribution():
         atol=atol,
     )
     assert_allclose(
-        dist.CDF(xvals=xvals, show_plot=False), [0.0, 0.001, 0.01, 0.1, 0.9, 0.99, 0.999], rtol=rtol, atol=atol
+        dist.CDF(xvals=xvals, show_plot=False), [0.0, 0.001, 0.01, 0.1, 0.9, 0.99, 0.999], rtol=rtol, atol=atol,
     )
     assert_allclose(
-        dist.SF(xvals=xvals, show_plot=False), [1.0, 0.999, 0.99, 0.9, 0.1, 0.01, 0.001], rtol=rtol, atol=atol
+        dist.SF(xvals=xvals, show_plot=False), [1.0, 0.999, 0.99, 0.9, 0.1, 0.01, 0.001], rtol=rtol, atol=atol,
     )
     assert_allclose(
         dist.HF(xvals=xvals, show_plot=False),
@@ -457,10 +457,10 @@ def test_Loglogistic_Distribution():
         atol=atol,
     )
     assert_allclose(
-        dist.CDF(xvals=xvals, show_plot=False), [0.0, 0.001, 0.01, 0.1, 0.9, 0.99, 0.999], rtol=rtol, atol=atol
+        dist.CDF(xvals=xvals, show_plot=False), [0.0, 0.001, 0.01, 0.1, 0.9, 0.99, 0.999], rtol=rtol, atol=atol,
     )
     assert_allclose(
-        dist.SF(xvals=xvals, show_plot=False), [1.0, 0.999, 0.99, 0.9, 0.1, 0.01, 0.001], rtol=rtol, atol=atol
+        dist.SF(xvals=xvals, show_plot=False), [1.0, 0.999, 0.99, 0.9, 0.1, 0.01, 0.001], rtol=rtol, atol=atol,
     )
     assert_allclose(
         dist.HF(xvals=xvals, show_plot=False),

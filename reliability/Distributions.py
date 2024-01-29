@@ -125,7 +125,7 @@ class Weibull_Distribution:
                 + ",β="
                 + round_and_string(self.beta, dec)
                 + ",γ="
-                + round_and_string(self.gamma, dec)
+                + round_and_string(self.gamma, dec),
             )
             self.param_title_long = str(
                 "Weibull Distribution (α="
@@ -134,7 +134,7 @@ class Weibull_Distribution:
                 + round_and_string(self.beta, dec)
                 + ",γ="
                 + round_and_string(self.gamma, dec)
-                + ")"
+                + ")",
             )
             self.name2 = "Weibull_3P"
         else:
@@ -144,7 +144,7 @@ class Weibull_Distribution:
                 + round_and_string(self.alpha, dec)
                 + ",β="
                 + round_and_string(self.beta, dec)
-                + ")"
+                + ")",
             )
             self.name2 = "Weibull_2P"
         self.b5 = ss.weibull_min.ppf(0.05, self.beta, scale=self.alpha, loc=self.gamma)
@@ -177,15 +177,21 @@ class Weibull_Distribution:
                 str(
                     "WARNING: "
                     + item
-                    + " is not recognised as an appropriate entry in kwargs. Appropriate entries are alpha_SE, beta_SE, Cov_alpha_beta, CI, and CI_type."
+                    + " is not recognised as an appropriate entry in kwargs. Appropriate entries are alpha_SE, beta_SE, Cov_alpha_beta, CI, and CI_type.",
                 ),
                 text_color="red",
             )
         self._pdf0 = ss.weibull_min.pdf(
-            0, self.beta, scale=self.alpha, loc=0
+            0,
+            self.beta,
+            scale=self.alpha,
+            loc=0,
         )  # the pdf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
         self._hf0 = ss.weibull_min.pdf(0, self.beta, scale=self.alpha, loc=0) / ss.weibull_min.sf(
-            0, self.beta, scale=self.alpha, loc=0
+            0,
+            self.beta,
+            scale=self.alpha,
+            loc=0,
         )  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
     def plot(self, xvals=None, xmin=None, xmax=None):
@@ -366,7 +372,12 @@ class Weibull_Distribution:
         be based on the distribution's parameters.
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "PDF", xvals, xmin, xmax, show_plot
+            self,
+            "PDF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         pdf = ss.weibull_min.pdf(X, self.beta, scale=self.alpha, loc=self.gamma)
@@ -681,7 +692,12 @@ class Weibull_Distribution:
         """
 
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "HF", xvals, xmin, xmax, show_plot
+            self,
+            "HF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         hf = (self.beta / self.alpha) * ((X - self.gamma) / self.alpha) ** (self.beta - 1)
@@ -940,7 +956,7 @@ class Weibull_Distribution:
                     "Descriptive statistics for Weibull distribution with alpha = "
                     + str(self.alpha)
                     + " and beta = "
-                    + str(self.beta)
+                    + str(self.beta),
                 ),
                 bold=True,
                 underline=True,
@@ -953,7 +969,7 @@ class Weibull_Distribution:
                     + ", beta = "
                     + str(self.beta)
                     + ", and gamma = "
-                    + str(self.gamma)
+                    + str(self.gamma),
                 ),
                 bold=True,
                 underline=True,
@@ -1055,7 +1071,11 @@ class Normal_Distribution:
         self.mode = mu
         self.param_title = str("μ=" + round_and_string(self.mu, dec) + ",σ=" + round_and_string(self.sigma, dec))
         self.param_title_long = str(
-            "Normal Distribution (μ=" + round_and_string(self.mu, dec) + ",σ=" + round_and_string(self.sigma, dec) + ")"
+            "Normal Distribution (μ="
+            + round_and_string(self.mu, dec)
+            + ",σ="
+            + round_and_string(self.sigma, dec)
+            + ")",
         )
         self.b5 = ss.norm.ppf(0.05, loc=self.mu, scale=self.sigma)
         self.b95 = ss.norm.ppf(0.95, loc=self.mu, scale=self.sigma)
@@ -1087,7 +1107,7 @@ class Normal_Distribution:
                 str(
                     "WARNING: "
                     + item
-                    + "is not recognised as an appropriate entry in kwargs. Appropriate entries are mu_SE, sigma_SE, Cov_mu_sigma, CI, and CI_type."
+                    + "is not recognised as an appropriate entry in kwargs. Appropriate entries are mu_SE, sigma_SE, Cov_mu_sigma, CI, and CI_type.",
                 ),
                 text_color="red",
             )
@@ -1265,7 +1285,12 @@ class Normal_Distribution:
         be based on the distribution's parameters.
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "PDF", xvals, xmin, xmax, show_plot
+            self,
+            "PDF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         pdf = ss.norm.pdf(X, self.mu, self.sigma)
@@ -1577,7 +1602,12 @@ class Normal_Distribution:
         be based on the distribution's parameters.
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "HF", xvals, xmin, xmax, show_plot
+            self,
+            "HF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         hf = ss.norm.pdf(X, self.mu, self.sigma) / ss.norm.sf(X, self.mu, self.sigma)
@@ -1826,7 +1856,7 @@ class Normal_Distribution:
                 "Descriptive statistics for Normal distribution with mu = "
                 + str(self.mu)
                 + " and sigma = "
-                + str(self.sigma)
+                + str(self.sigma),
             ),
             bold=True,
             underline=True,
@@ -1938,7 +1968,7 @@ class Lognormal_Distribution:
                 + ",σ="
                 + round_and_string(self.sigma, dec)
                 + ",γ="
-                + round_and_string(self.gamma, dec)
+                + round_and_string(self.gamma, dec),
             )
             self.param_title_long = str(
                 "Lognormal Distribution (μ="
@@ -1947,7 +1977,7 @@ class Lognormal_Distribution:
                 + round_and_string(self.sigma, dec)
                 + ",γ="
                 + round_and_string(self.gamma, dec)
-                + ")"
+                + ")",
             )
             self.name2 = "Lognormal_3P"
         else:
@@ -1957,11 +1987,14 @@ class Lognormal_Distribution:
                 + round_and_string(self.mu, dec)
                 + ",σ="
                 + round_and_string(self.sigma, dec)
-                + ")"
+                + ")",
             )
             self.name2 = "Lognormal_2P"
         self.b5 = ss.lognorm.ppf(
-            0.05, self.sigma, self.gamma, np.exp(self.mu)
+            0.05,
+            self.sigma,
+            self.gamma,
+            np.exp(self.mu),
         )  # note that scipy uses mu in a log way compared to most other software, so we must take the exp of the input
         self.b95 = ss.lognorm.ppf(0.95, self.sigma, self.gamma, np.exp(self.mu))
 
@@ -1992,16 +2025,22 @@ class Lognormal_Distribution:
                 str(
                     "WARNING: "
                     + item
-                    + "is not recognised as an appropriate entry in kwargs. Appropriate entries are mu_SE, sigma_SE, Cov_mu_sigma, CI, and CI_type."
+                    + "is not recognised as an appropriate entry in kwargs. Appropriate entries are mu_SE, sigma_SE, Cov_mu_sigma, CI, and CI_type.",
                 ),
                 text_color="red",
             )
 
         self._pdf0 = ss.lognorm.pdf(
-            0, self.sigma, 0, np.exp(self.mu)
+            0,
+            self.sigma,
+            0,
+            np.exp(self.mu),
         )  # the pdf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
         self._hf0 = ss.lognorm.pdf(0, self.sigma, 0, np.exp(self.mu)) / ss.lognorm.sf(
-            0, self.sigma, 0, np.exp(self.mu)
+            0,
+            self.sigma,
+            0,
+            np.exp(self.mu),
         )  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
     def plot(self, xvals=None, xmin=None, xmax=None):
@@ -2173,7 +2212,12 @@ class Lognormal_Distribution:
         be based on the distribution's parameters.
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "PDF", xvals, xmin, xmax, show_plot
+            self,
+            "PDF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         pdf = ss.lognorm.pdf(X, self.sigma, self.gamma, np.exp(self.mu))
@@ -2293,7 +2337,7 @@ class Lognormal_Distribution:
             plt.xlabel("x values")
             plt.ylabel("Fraction failing")
             text_title = str(
-                "Lognormal Distribution\n" + " Cumulative Distribution Function " + "\n" + self.param_title
+                "Lognormal Distribution\n" + " Cumulative Distribution Function " + "\n" + self.param_title,
             )
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
@@ -2487,11 +2531,19 @@ class Lognormal_Distribution:
         be based on the distribution's parameters.
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "HF", xvals, xmin, xmax, show_plot
+            self,
+            "HF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         hf = ss.lognorm.pdf(X, self.sigma, self.gamma, np.exp(self.mu)) / ss.lognorm.sf(
-            X, self.sigma, self.gamma, np.exp(self.mu)
+            X,
+            self.sigma,
+            self.gamma,
+            np.exp(self.mu),
         )
         hf = unpack_single_arrays(hf)
 
@@ -2739,7 +2791,7 @@ class Lognormal_Distribution:
                     "Descriptive statistics for Lognormal distribution with mu = "
                     + str(self.mu)
                     + " and sigma = "
-                    + str(self.sigma)
+                    + str(self.sigma),
                 ),
                 bold=True,
                 underline=True,
@@ -2752,7 +2804,7 @@ class Lognormal_Distribution:
                     + ", sigma = "
                     + str(self.sigma)
                     + ", and gamma = "
-                    + str(self.gamma)
+                    + str(self.gamma),
                 ),
                 bold=True,
                 underline=True,
@@ -2856,14 +2908,14 @@ class Exponential_Distribution:
         self.mode = self.gamma
         if self.gamma != 0:
             self.param_title = str(
-                "λ=" + round_and_string(self.Lambda, dec) + ",γ=" + round_and_string(self.gamma, dec)
+                "λ=" + round_and_string(self.Lambda, dec) + ",γ=" + round_and_string(self.gamma, dec),
             )
             self.param_title_long = str(
                 "Exponential Distribution (λ="
                 + round_and_string(self.Lambda, dec)
                 + ",γ="
                 + round_and_string(gamma, dec)
-                + ")"
+                + ")",
             )
             self.name2 = "Exponential_2P"
         else:
@@ -2888,12 +2940,14 @@ class Exponential_Distribution:
                 str(
                     "WARNING: "
                     + item
-                    + " is not recognised as an appropriate entry in kwargs. Appropriate entries are Lambda_SE and CI."
+                    + " is not recognised as an appropriate entry in kwargs. Appropriate entries are Lambda_SE and CI.",
                 ),
                 text_color="red",
             )
         self._pdf0 = ss.expon.pdf(
-            0, scale=1 / self.Lambda, loc=0
+            0,
+            scale=1 / self.Lambda,
+            loc=0,
         )  # the pdf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array.
         self._hf0 = self.Lambda  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
@@ -3069,7 +3123,12 @@ class Exponential_Distribution:
         be based on the distribution's parameters.
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "PDF", xvals, xmin, xmax, show_plot
+            self,
+            "PDF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         pdf = ss.expon.pdf(X, scale=1 / self.Lambda, loc=self.gamma)
@@ -3099,7 +3158,16 @@ class Exponential_Distribution:
         return pdf
 
     def CDF(
-        self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_CI=True, CI=None, CI_y=None, CI_x=None, **kwargs
+        self,
+        xvals=None,
+        xmin=None,
+        xmax=None,
+        show_plot=True,
+        plot_CI=True,
+        CI=None,
+        CI_y=None,
+        CI_x=None,
+        **kwargs,
     ):
         """
         Plots the CDF (cumulative distribution function)
@@ -3182,7 +3250,7 @@ class Exponential_Distribution:
             plt.xlabel("x values")
             plt.ylabel("Fraction failing")
             text_title = str(
-                "Exponential Distribution\n" + " Cumulative Distribution Function " + "\n" + self.param_title
+                "Exponential Distribution\n" + " Cumulative Distribution Function " + "\n" + self.param_title,
             )
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
@@ -3218,7 +3286,16 @@ class Exponential_Distribution:
             return cdf
 
     def SF(
-        self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_CI=True, CI=None, CI_y=None, CI_x=None, **kwargs
+        self,
+        xvals=None,
+        xmin=None,
+        xmax=None,
+        show_plot=True,
+        plot_CI=True,
+        CI=None,
+        CI_y=None,
+        CI_x=None,
+        **kwargs,
     ):
         """
         Plots the SF (survival function)
@@ -3367,7 +3444,12 @@ class Exponential_Distribution:
         be based on the distribution's parameters.
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "HF", xvals, xmin, xmax, show_plot
+            self,
+            "HF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         hf = np.ones_like(X) * self.Lambda
@@ -3398,7 +3480,16 @@ class Exponential_Distribution:
         return hf
 
     def CHF(
-        self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_CI=True, CI=None, CI_y=None, CI_x=None, **kwargs
+        self,
+        xvals=None,
+        xmin=None,
+        xmax=None,
+        show_plot=True,
+        plot_CI=True,
+        CI=None,
+        CI_y=None,
+        CI_x=None,
+        **kwargs,
     ):
         """
         Plots the CHF (cumulative hazard function)
@@ -3615,7 +3706,7 @@ class Exponential_Distribution:
                     "Descriptive statistics for Exponential distribution with lambda = "
                     + str(self.Lambda)
                     + ", and gamma = "
-                    + str(self.gamma)
+                    + str(self.gamma),
                 ),
                 bold=True,
                 underline=True,
@@ -3730,7 +3821,7 @@ class Gamma_Distribution:
                 + ",β="
                 + round_and_string(self.beta, dec)
                 + ",γ="
-                + round_and_string(self.gamma, dec)
+                + round_and_string(self.gamma, dec),
             )
             self.param_title_long = str(
                 "Gamma Distribution (α="
@@ -3739,7 +3830,7 @@ class Gamma_Distribution:
                 + round_and_string(self.beta, dec)
                 + ",γ="
                 + round_and_string(self.gamma, dec)
-                + ")"
+                + ")",
             )
             self.name2 = "Gamma_3P"
         else:
@@ -3749,7 +3840,7 @@ class Gamma_Distribution:
                 + round_and_string(self.alpha, dec)
                 + ",β="
                 + round_and_string(self.beta, dec)
-                + ")"
+                + ")",
             )
             self.name2 = "Gamma_2P"
         self.b5 = ss.gamma.ppf(0.05, self.beta, scale=self.alpha, loc=self.gamma)
@@ -3794,16 +3885,22 @@ class Gamma_Distribution:
                 str(
                     "WARNING: "
                     + item
-                    + " is not recognised as an appropriate entry in kwargs. Appropriate entries are alpha_SE, beta_SE, Cov_alpha_beta, CI, and CI_type"
+                    + " is not recognised as an appropriate entry in kwargs. Appropriate entries are alpha_SE, beta_SE, Cov_alpha_beta, CI, and CI_type",
                 ),
                 text_color="red",
             )
 
         self._pdf0 = ss.gamma.pdf(
-            0, self.beta, scale=self.alpha, loc=0
+            0,
+            self.beta,
+            scale=self.alpha,
+            loc=0,
         )  # the pdf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
         self._hf0 = ss.gamma.pdf(0, self.beta, scale=self.alpha, loc=0) / ss.gamma.sf(
-            0, self.beta, scale=self.alpha, loc=0
+            0,
+            self.beta,
+            scale=self.alpha,
+            loc=0,
         )  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
     def plot(self, xvals=None, xmin=None, xmax=None):
@@ -3975,7 +4072,12 @@ class Gamma_Distribution:
         be based on the distribution's parameters.
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "PDF", xvals, xmin, xmax, show_plot
+            self,
+            "PDF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         pdf = ss.gamma.pdf(X, self.beta, scale=self.alpha, loc=self.gamma)
@@ -4287,11 +4389,19 @@ class Gamma_Distribution:
         be based on the distribution's parameters.
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "HF", xvals, xmin, xmax, show_plot
+            self,
+            "HF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         hf = ss.gamma.pdf(X, self.beta, scale=self.alpha, loc=self.gamma) / ss.gamma.sf(
-            X, self.beta, scale=self.alpha, loc=self.gamma
+            X,
+            self.beta,
+            scale=self.alpha,
+            loc=self.gamma,
         )
         hf = unpack_single_arrays(hf)
 
@@ -4539,7 +4649,7 @@ class Gamma_Distribution:
                     "Descriptive statistics for Gamma distribution with alpha = "
                     + str(self.alpha)
                     + " and beta = "
-                    + str(self.beta)
+                    + str(self.beta),
                 ),
                 bold=True,
                 underline=True,
@@ -4552,7 +4662,7 @@ class Gamma_Distribution:
                     + ", beta = "
                     + str(self.beta)
                     + ", and gamma = "
-                    + str(self.gamma)
+                    + str(self.gamma),
                 ),
                 bold=True,
                 underline=True,
@@ -4659,7 +4769,11 @@ class Beta_Distribution:
             self.mode = r"No mode exists unless $\alpha$ > 1 and $\beta$ > 1"
         self.param_title = str("α=" + round_and_string(self.alpha, dec) + ",β=" + round_and_string(self.beta, dec))
         self.param_title_long = str(
-            "Beta Distribution (α=" + round_and_string(self.alpha, dec) + ",β=" + round_and_string(self.beta, dec) + ")"
+            "Beta Distribution (α="
+            + round_and_string(self.alpha, dec)
+            + ",β="
+            + round_and_string(self.beta, dec)
+            + ")",
         )
         self.b5 = ss.beta.ppf(0.05, self.alpha, self.beta, 0, 1)
         self.b95 = ss.beta.ppf(0.95, self.alpha, self.beta, 0, 1)
@@ -4842,7 +4956,12 @@ class Beta_Distribution:
         be based on the distribution's parameters.
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "PDF", xvals, xmin, xmax, show_plot
+            self,
+            "PDF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         pdf = ss.beta.pdf(X, self.alpha, self.beta, 0, 1)
@@ -4964,7 +5083,12 @@ class Beta_Distribution:
         be based on the distribution's parameters.
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "SF", xvals, xmin, xmax, show_plot
+            self,
+            "SF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         sf = ss.beta.sf(X, self.alpha, self.beta, 0, 1)
@@ -5026,7 +5150,12 @@ class Beta_Distribution:
         be based on the distribution's parameters.
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "HF", xvals, xmin, xmax, show_plot
+            self,
+            "HF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         hf = ss.beta.pdf(X, self.alpha, self.beta, 0, 1) / ss.beta.sf(X, self.alpha, self.beta, 0, 1)
@@ -5088,7 +5217,12 @@ class Beta_Distribution:
         be based on the distribution's parameters.
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "CHF", xvals, xmin, xmax, show_plot
+            self,
+            "CHF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         chf = -np.log(ss.beta.sf(X, self.alpha, self.beta, 0, 1))
@@ -5212,7 +5346,7 @@ class Beta_Distribution:
                 "Descriptive statistics for Beta distribution with alpha = "
                 + str(self.alpha)
                 + " and beta = "
-                + str(self.beta)
+                + str(self.beta),
             ),
             bold=True,
             underline=True,
@@ -5320,7 +5454,7 @@ class Loglogistic_Distribution:
         self.name = "Loglogistic"
         if alpha is None or beta is None:
             raise ValueError(
-                "Parameters alpha and beta must be specified. Eg. Loglogistic_Distribution(alpha=5,beta=2)"
+                "Parameters alpha and beta must be specified. Eg. Loglogistic_Distribution(alpha=5,beta=2)",
             )
         self.alpha = float(alpha)
         self.beta = float(beta)
@@ -5360,7 +5494,7 @@ class Loglogistic_Distribution:
                 + ",β="
                 + round_and_string(self.beta, dec)
                 + ",γ="
-                + round_and_string(self.gamma, dec)
+                + round_and_string(self.gamma, dec),
             )
             self.param_title_long = str(
                 "Loglogistic Distribution (α="
@@ -5369,7 +5503,7 @@ class Loglogistic_Distribution:
                 + round_and_string(self.beta, dec)
                 + ",γ="
                 + round_and_string(self.gamma, dec)
-                + ")"
+                + ")",
             )
             self.name2 = "Loglogistic_3P"
         else:
@@ -5379,7 +5513,7 @@ class Loglogistic_Distribution:
                 + round_and_string(self.alpha, dec)
                 + ",β="
                 + round_and_string(self.beta, dec)
-                + ")"
+                + ")",
             )
             self.name2 = "Loglogistic_2P"
         self.b5 = ss.fisk.ppf(0.05, self.beta, scale=self.alpha, loc=self.gamma)
@@ -5412,15 +5546,21 @@ class Loglogistic_Distribution:
                 str(
                     "WARNING:"
                     + item
-                    + " is not recognised as an appropriate entry in kwargs. Appropriate entries are alpha_SE, beta_SE, Cov_alpha_beta, CI, and CI_type."
+                    + " is not recognised as an appropriate entry in kwargs. Appropriate entries are alpha_SE, beta_SE, Cov_alpha_beta, CI, and CI_type.",
                 ),
                 text_color="red",
             )
         self._pdf0 = ss.fisk.pdf(
-            0, self.beta, scale=self.alpha, loc=0
+            0,
+            self.beta,
+            scale=self.alpha,
+            loc=0,
         )  # the pdf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
         self._hf0 = ss.fisk.pdf(0, self.beta, scale=self.alpha, loc=0) / ss.fisk.sf(
-            0, self.beta, scale=self.alpha, loc=0
+            0,
+            self.beta,
+            scale=self.alpha,
+            loc=0,
         )  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
     def plot(self, xvals=None, xmin=None, xmax=None):
@@ -5554,7 +5694,7 @@ class Loglogistic_Distribution:
 
         if isinstance(self.standard_deviation, str):
             text_std = str(
-                "Standard deviation = " + str(self.standard_deviation)
+                "Standard deviation = " + str(self.standard_deviation),
             )  # required when standard deviation is str
         else:
             text_std = str("Standard deviation = " + round_and_string(self.standard_deviation, dec))
@@ -5621,7 +5761,12 @@ class Loglogistic_Distribution:
         """
 
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "PDF", xvals, xmin, xmax, show_plot
+            self,
+            "PDF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         pdf = ss.fisk.pdf(X, self.beta, scale=self.alpha, loc=self.gamma)
@@ -5741,7 +5886,7 @@ class Loglogistic_Distribution:
             plt.xlabel("x values")
             plt.ylabel("Fraction failing")
             text_title = str(
-                "Loglogistic Distribution\n" + " Cumulative Distribution Function " + "\n" + self.param_title
+                "Loglogistic Distribution\n" + " Cumulative Distribution Function " + "\n" + self.param_title,
             )
             plt.title(text_title)
             plt.subplots_adjust(top=0.81)
@@ -5937,7 +6082,12 @@ class Loglogistic_Distribution:
         """
 
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "HF", xvals, xmin, xmax, show_plot
+            self,
+            "HF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         hf = ((self.beta / self.alpha) * ((X - self.gamma) / self.alpha) ** (self.beta - 1)) / (
@@ -6196,7 +6346,7 @@ class Loglogistic_Distribution:
                     "Descriptive statistics for Loglogistic distribution with alpha = "
                     + str(self.alpha)
                     + " and beta = "
-                    + str(self.beta)
+                    + str(self.beta),
                 ),
                 bold=True,
                 underline=True,
@@ -6209,7 +6359,7 @@ class Loglogistic_Distribution:
                     + ", beta = "
                     + str(self.beta)
                     + ", and gamma = "
-                    + str(self.gamma)
+                    + str(self.gamma),
                 ),
                 bold=True,
                 underline=True,
@@ -6312,7 +6462,11 @@ class Gumbel_Distribution:
         self.mode = mu
         self.param_title = str("μ=" + round_and_string(self.mu, dec) + ",σ=" + round_and_string(self.sigma, dec))
         self.param_title_long = str(
-            "Gumbel Distribution (μ=" + round_and_string(self.mu, dec) + ",σ=" + round_and_string(self.sigma, dec) + ")"
+            "Gumbel Distribution (μ="
+            + round_and_string(self.mu, dec)
+            + ",σ="
+            + round_and_string(self.sigma, dec)
+            + ")",
         )
         self.b5 = ss.gumbel_l.ppf(0.05, loc=self.mu, scale=self.sigma)
         self.b95 = ss.gumbel_l.ppf(0.95, loc=self.mu, scale=self.sigma)
@@ -6344,7 +6498,7 @@ class Gumbel_Distribution:
                 str(
                     "WARNING: "
                     + item
-                    + "is not recognised as an appropriate entry in kwargs. Appropriate entries are mu_SE, sigma_SE, Cov_mu_sigma, CI, and CI_type."
+                    + "is not recognised as an appropriate entry in kwargs. Appropriate entries are mu_SE, sigma_SE, Cov_mu_sigma, CI, and CI_type.",
                 ),
                 text_color="red",
             )
@@ -6521,7 +6675,12 @@ class Gumbel_Distribution:
         be based on the distribution's parameters.
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "PDF", xvals, xmin, xmax, show_plot
+            self,
+            "PDF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         pdf = ss.gumbel_l.pdf(X, self.mu, self.sigma)
@@ -6833,7 +6992,12 @@ class Gumbel_Distribution:
         be based on the distribution's parameters.
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
-            self, "HF", xvals, xmin, xmax, show_plot
+            self,
+            "HF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
         hf = np.exp((X - self.mu) / self.sigma) / self.sigma
@@ -7082,7 +7246,7 @@ class Gumbel_Distribution:
                 "Descriptive statistics for Gumbel distribution with mu = "
                 + str(self.mu)
                 + " and sigma = "
-                + str(self.sigma)
+                + str(self.sigma),
             ),
             bold=True,
             underline=True,
@@ -7205,7 +7369,7 @@ class Competing_Risks_Model:
                 Gumbel_Distribution,
             ]:
                 raise ValueError(
-                    "distributions must be an array or list of probability distributions. Each distribution must be created using the reliability.Distributions module."
+                    "distributions must be an array or list of probability distributions. Each distribution must be created using the reliability.Distributions module.",
                 )
             if type(dist) in [Normal_Distribution, Gumbel_Distribution]:
                 contains_normal_or_gumbel = (
@@ -7255,7 +7419,11 @@ class Competing_Risks_Model:
                 hf += np.hstack([Y_negative_zeros, distributions[i].HF(X_positive, show_plot=False)])
         pdf = hf * sf
         np.nan_to_num(
-            pdf, copy=False, nan=0.0, posinf=None, neginf=None
+            pdf,
+            copy=False,
+            nan=0.0,
+            posinf=None,
+            neginf=None,
         )  # because the hf is nan (which is expected due to being pdf/sf=0/0)
 
         self.__xvals_init = X  # used by random_samples
@@ -7295,7 +7463,9 @@ class Competing_Risks_Model:
             if xmin > xmax:
                 xmin, xmax = xmax, xmin
             X = np.linspace(
-                xmin, xmax, 1000
+                xmin,
+                xmax,
+                1000,
             )  # this is a big array because everything is numerical rather than empirical. Small array sizes will lead to blocky (inaccurate) results.
 
         # convert to numpy array if given list. raise error for other types. check for values below 0.
@@ -7308,7 +7478,7 @@ class Competing_Risks_Model:
 
         if min(X) < 0 and self.__contains_normal_or_gumbel is False:
             raise ValueError(
-                "xvals was found to contain values below 0. This is only allowed if some of the mixture components are Normal or Gumbel distributions."
+                "xvals was found to contain values below 0. This is only allowed if some of the mixture components are Normal or Gumbel distributions.",
             )
 
         X_positive = X[X >= 0]
@@ -7327,7 +7497,11 @@ class Competing_Risks_Model:
                 hf += np.hstack([Y_negative_zeros, distributions[i].HF(X_positive, show_plot=False)])
         pdf = sf * hf
         np.nan_to_num(
-            pdf, copy=False, nan=0.0, posinf=None, neginf=None
+            pdf,
+            copy=False,
+            nan=0.0,
+            posinf=None,
+            neginf=None,
         )  # because the hf may contain nan (which is expected due to being pdf/sf=0/0 for high xvals)
 
         # these are all hidden to the user but can be accessed by the other functions in this module
@@ -7941,7 +8115,7 @@ class Competing_Risks_Model:
                             [
                                 Y_negative,
                                 self.distributions[i].SF(X_positive, show_plot=False),
-                            ]
+                            ],
                         )
             else:
                 sf = 1
@@ -8075,7 +8249,7 @@ class Mixture_Model:
                 Gumbel_Distribution,
             ]:
                 raise ValueError(
-                    "distributions must be an array or list of probability distributions. Each distribution must be created using the reliability.Distributions module."
+                    "distributions must be an array or list of probability distributions. Each distribution must be created using the reliability.Distributions module.",
                 )
             if type(dist) in [Normal_Distribution, Gumbel_Distribution]:
                 contains_normal_or_gumbel = (
@@ -8090,7 +8264,7 @@ class Mixture_Model:
                 raise ValueError("the length of the proportions array must match the length of the distributions array")
         else:
             proportions = np.ones_like(distributions) / len(
-                distributions
+                distributions,
             )  # if proportions are not specified they are assumed to all be the same proportion
 
         self.proportions = proportions  # this just passes the proportions to the __combiner which is used by the other functions along with the xvals. No combining can occur without xvals.
@@ -8136,13 +8310,13 @@ class Mixture_Model:
                     [
                         Y_negative,
                         distributions[i].CDF(X_positive, show_plot=False) * proportions[i],
-                    ]
+                    ],
                 )
                 pdf += np.hstack(
                     [
                         Y_negative,
                         distributions[i].PDF(X_positive, show_plot=False) * proportions[i],
-                    ]
+                    ],
                 )
         self.__pdf_init = pdf
         self.__cdf_init = cdf
@@ -8182,7 +8356,9 @@ class Mixture_Model:
             if xmin > xmax:
                 xmin, xmax = xmax, xmin
             X = np.linspace(
-                xmin, xmax, 1000
+                xmin,
+                xmax,
+                1000,
             )  # this is a big array because everything is numerical rather than empirical. Small array sizes will lead to blocky (inaccurate) results.
 
         # convert to numpy array if given list. raise error for other types. check for values below 0.
@@ -8194,7 +8370,7 @@ class Mixture_Model:
             raise ValueError("unexpected type in xvals. Must be  list, or array")
         if min(X) < 0 and self.__contains_normal_or_gumbel is False:
             raise ValueError(
-                "xvals was found to contain values below 0. This is only allowed if some of the mixture components are Normal or Gumbel distributions."
+                "xvals was found to contain values below 0. This is only allowed if some of the mixture components are Normal or Gumbel distributions.",
             )
 
         X_positive = X[X >= 0]
@@ -8213,13 +8389,13 @@ class Mixture_Model:
                     [
                         Y_negative,
                         distributions[i].CDF(X_positive, show_plot=False) * proportions[i],
-                    ]
+                    ],
                 )
                 pdf += np.hstack(
                     [
                         Y_negative,
                         distributions[i].PDF(X_positive, show_plot=False) * proportions[i],
-                    ]
+                    ],
                 )
 
         # these are all hidden to the user but can be accessed by the other functions in this module
@@ -8833,7 +9009,7 @@ class Mixture_Model:
                             [
                                 Y_negative,
                                 self.distributions[i].CDF(X_positive, show_plot=False) * self.proportions[i],
-                            ]
+                            ],
                         )
             else:
                 cdf = 0
@@ -8944,7 +9120,7 @@ class DSZI_Model:
     def __init__(self, distribution, DS=None, ZI=None):
         if DS is None and ZI is None:
             raise ValueError(
-                "DS and ZI cannot both be unspecified. Please specify one or both of these parameters to create a DS, ZI, or DSZI model."
+                "DS and ZI cannot both be unspecified. Please specify one or both of these parameters to create a DS, ZI, or DSZI model.",
             )
         if DS is None:
             DS = float(1)
@@ -8957,7 +9133,7 @@ class DSZI_Model:
             )
         if ZI > DS:
             raise ValueError(
-                "DS can not be greater than ZI. DS is the maximum of the CDF. ZI is the minimum of the CDF."
+                "DS can not be greater than ZI. DS is the maximum of the CDF. ZI is the minimum of the CDF.",
             )
         if ZI >= 1 or ZI < 0:
             raise ValueError("ZI must be >= 0 and < 1. ZI is the minimum of the CDF.")
@@ -8975,7 +9151,7 @@ class DSZI_Model:
             Gumbel_Distribution,
         ]:
             raise ValueError(
-                "distribution must be an array or list of probability distributions. Each distribution must be created using the reliability.Distributions module."
+                "distribution must be an array or list of probability distributions. Each distribution must be created using the reliability.Distributions module.",
             )
 
         self.__base_distribution = distribution
@@ -9512,12 +9688,12 @@ class DSZI_Model:
         if type(q) in [int, float, np.float64]:
             if q < self.ZI or q > self.DS:
                 raise ValueError(
-                    "Quantile must be between ZI and DS. ZI = " + str(self.ZI) + ", DS = " + str(self.DS) + "."
+                    "Quantile must be between ZI and DS. ZI = " + str(self.ZI) + ", DS = " + str(self.DS) + ".",
                 )
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
                 raise ValueError(
-                    "Quantile must be between ZI and DS. ZI = " + str(self.ZI) + ", DS = " + str(self.DS) + "."
+                    "Quantile must be between ZI and DS. ZI = " + str(self.ZI) + ", DS = " + str(self.DS) + ".",
                 )
         else:
             raise ValueError("Quantile must be of type float, list, array")

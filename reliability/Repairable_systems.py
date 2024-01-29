@@ -89,7 +89,14 @@ class reliability_growth:
     """
 
     def __init__(
-        self, times=None, target_MTBF=None, show_plot=True, print_results=True, log_scale=False, model="Duane", **kwargs
+        self,
+        times=None,
+        target_MTBF=None,
+        show_plot=True,
+        print_results=True,
+        log_scale=False,
+        model="Duane",
+        **kwargs,
     ):
         if type(times) in [list, np.ndarray]:
             times = np.sort(np.asarray(times))
@@ -321,7 +328,7 @@ class optimal_replacement_time:
         c = kwargs.pop("color") if "color" in kwargs else "steelblue"
         if cost_PM > cost_CM:
             raise ValueError(
-                "Cost_PM must be less than Cost_CM otherwise preventative maintenance should not be conducted."
+                "Cost_PM must be less than Cost_CM otherwise preventative maintenance should not be conducted.",
             )
         if weibull_beta < 1:
             colorprint(
@@ -360,7 +367,7 @@ class optimal_replacement_time:
             ORT = t[idx]  # optimal replacement time
         else:
             raise ValueError(
-                'q must be 0 or 1. Default is 0. Use 0 for "as good as new" and use 1 for "as good as old".'
+                'q must be 0 or 1. Default is 0. Use 0 for "as good as new" and use 1 for "as good as old".',
             )
         self.ORT = ORT
         self.min_cost = min_cost
@@ -391,7 +398,7 @@ class optimal_replacement_time:
                 "\nMinimum cost per unit time is "
                 + str(min_cost_rounded)
                 + "\nOptimal replacement time is "
-                + str(ORT_rounded)
+                + str(ORT_rounded),
             )
             plt.text(ORT, min_cost, text_str, va="top")
             plt.xlabel("Replacement time")
@@ -442,7 +449,7 @@ class optimal_replacement_time:
                     + "\n$cost_{PM} = $"
                     + str(cost_PM)
                     + "\nInterval = "
-                    + round_and_string(self.ORT, 2)
+                    + round_and_string(self.ORT, 2),
                 ),
                 x=cost_CM / cost_PM * 1.05,
                 y=self.ORT * mult,
@@ -533,7 +540,7 @@ class ROCOF:
     ):
         if times_between_failures is not None and failure_times is not None:
             raise ValueError(
-                "You have specified both times_between_failures and failure times. You can specify one but not both. Use times_between_failures for failure interarrival times, and failure_times for the actual failure times. failure_times should be the same as np.cumsum(times_between_failures)"
+                "You have specified both times_between_failures and failure times. You can specify one but not both. Use times_between_failures for failure interarrival times, and failure_times for the actual failure times. failure_times should be the same as np.cumsum(times_between_failures)",
             )
         if times_between_failures is not None:
             if any(t <= 0 for t in times_between_failures):
@@ -557,7 +564,7 @@ class ROCOF:
             ti = list(failure_times)
         if test_end is not None and type(test_end) not in [float, int]:
             raise ValueError(
-                "test_end should be a float or int. Use test_end to specify the end time of a test which was not failure terminated."
+                "test_end should be a float or int. Use test_end to specify the end time of a test which was not failure terminated.",
             )
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence interval.")
@@ -586,7 +593,7 @@ class ROCOF:
             + str(round(z_crit, 2))
             + ",+"
             + str(round(-z_crit, 2))
-            + ")"
+            + ")",
         )
 
         x = np.arange(1, len(ti) + 1)
@@ -659,7 +666,7 @@ class ROCOF:
                 "Failure interarrival times vs failure number\nAt "
                 + str(CI_rounded)
                 + "% confidence level the ROCOF is "
-                + self.trend.upper()
+                + self.trend.upper(),
             )
             plt.title(title_str)
             plt.legend()
@@ -791,7 +798,7 @@ class MCF_nonparametric:
             pass
         else:
             raise ValueError(
-                "Mixed data types found in the data. Each item in the data must be a list or numpy array. eg. data = [[1,3,5],[3,6,8]]."
+                "Mixed data types found in the data. Each item in the data must be a list or numpy array. eg. data = [[1,3,5],[3,6,8]].",
             )
 
         end_times = []
@@ -821,7 +828,8 @@ class MCF_nonparametric:
         data = {"times": times, "states": states}
         df = pd.DataFrame(data, columns=["times", "states"])
         df_sorted = df.sort_values(
-            by=["times", "states"], ascending=[True, False]
+            by=["times", "states"],
+            ascending=[True, False],
         )  # sorts the df by times and then by states, ensuring that states are F then C where the same time occurs. This ensures a failure is counted then the item is retired.
         times_sorted = df_sorted.times.values
         states_sorted = df_sorted.states.values
@@ -865,7 +873,7 @@ class MCF_nonparametric:
                     else:  # this the normal case where there was previous data
                         MCF_array.append(r_inv + MCF_array[i_adj - 1])
                         Var_array.append(
-                            (r_inv**2) * ((1 - r_inv) ** 2 + (r - 1) * (0 - r_inv) ** 2) + Var_array[i_adj - 1]
+                            (r_inv**2) * ((1 - r_inv) ** 2 + (r - 1) * (0 - r_inv) ** 2) + Var_array[i_adj - 1],
                         )
                         MCF_lower_array.append(MCF_array[i] / np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
                         MCF_upper_array.append(MCF_array[i] * np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
@@ -1067,7 +1075,9 @@ class MCF_parametric:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
         MCF_NP = MCF_nonparametric(
-            data=data, print_results=False, show_plot=False
+            data=data,
+            print_results=False,
+            show_plot=False,
         )  # all the MCF calculations to get the plot points are done in MCF_nonparametric
         self.times = MCF_NP.time
         self.MCF = MCF_NP.MCF
@@ -1182,7 +1192,7 @@ class MCF_parametric:
                 + r"$MCF = (\frac{t}{\alpha})^\beta$ with α="
                 + str(round(alpha, 4))
                 + ", β="
-                + str(round(beta, 4))
+                + str(round(beta, 4)),
             )
             plt.xlim(0, max(self.times) * 1.2)
             plt.ylim(0, max(self.MCF) * 1.4)

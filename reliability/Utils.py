@@ -156,9 +156,9 @@ def round_and_string(
 
 def transform_spaced(
     transform: str,
-    y_lower: float = 1e-8,
-    y_upper: float = 1 - 1e-8,
-    num: int = 1000,
+    y_lower: Optional[float] = 1e-8,
+    y_upper: Optional[float] = 1 - 1e-8,
+    num: Optional[int] = 1000,
     alpha: Optional[float] = None,
     beta: Optional[float] = None,
 ):

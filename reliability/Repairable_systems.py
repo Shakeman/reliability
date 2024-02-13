@@ -14,9 +14,11 @@ MCF_nonparametric - Mean CUmulative Function Non-parametric. Used to determine
 MCF_parametric - Mean Cumulative Function Parametric. Fits a parametric model to
     the data obtained from MCF_nonparametric
 """
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import scipy.stats as ss
 from matplotlib.axes import SubplotBase
@@ -29,7 +31,7 @@ from reliability.Utils import colorprint, round_and_string
 
 class reliability_growth:
     """
-    Fits a reliability growth model to failure data using either the Duane
+    Fits a reliability growth model tos failure data using either the Duane
     model or the Crow-AMSAA model.
 
     Parameters
@@ -99,7 +101,7 @@ class reliability_growth:
         **kwargs,
     ):
         if type(times) in [list, np.ndarray]:
-            times = np.sort(np.asarray(times))
+            times: npt.NDArray[Any] = np.sort(np.asarray(times))
         else:
             raise ValueError("times must be an array or list of failure times")
 
@@ -122,10 +124,10 @@ class reliability_growth:
         else:
             raise ValueError('method must be either "Duane" or "Crow-AMSAA".')
 
-        n = len(times)
-        max_time = max(times)
-        failure_numbers = np.array(range(1, n + 1))
-        MTBF_c = times / failure_numbers
+        n: int = len(times)
+        max_time: np.int32 = max(times)
+        failure_numbers: npt.NDArray[np.int32] = np.array(range(1, n + 1))
+        MTBF_c: npt.NDArray[np.float64] = times / failure_numbers
 
         if model == "Crow-AMSAA":
             self.Beta = n / (n * np.log(max_time) - np.log(times).sum())
@@ -140,29 +142,30 @@ class reliability_growth:
             )  # Demonstrated failure intensity (cumulative)
             self.DFI_C = 1 / self.DMTBF_C  # Demonstrated MTBF (cumulative)
         else:  # Duane
-            x = np.log(times)
-            y = np.log(MTBF_c)
+            x: npt.NDArray[np.float64] = np.log(times)
+            y: npt.NDArray[np.float64] = np.log(MTBF_c)
             # fit a straight line to the data to get the model parameters
-            z = np.polyfit(x, y, 1)
-            self.Alpha = z[0]
-            b = np.exp(z[1])
-            self.DMTBF_C = b * (max_time**self.Alpha)  # Demonstrated MTBF (cumulative)
-            self.DFI_C = 1 / self.DMTBF_C  # Demonstrated failure intensity (cumulative)
-            self.DFI_I = (
+            z: npt.NDArray[np.float64] = np.polyfit(x, y, 1)
+            self.Alpha: np.float64 = z[0]
+            b: np.float64 = np.exp(z[1])
+            self.DMTBF_C: np.float64 = b * (max_time**self.Alpha)  # Demonstrated MTBF (cumulative)
+            self.DFI_C: np.float64 = 1 / self.DMTBF_C  # Demonstrated failure intensity (cumulative)
+            self.DFI_I: np.float64 = (
                 1 - self.Alpha
             ) * self.DFI_C  # Demonstrated failure intensity (instantaneous). Reported by reliasoft
-            self.DMTBF_I = 1 / self.DFI_I  # Demonstrated MTBF (instantaneous). Reported by reliasoft
-            self.A = 1 / b
+            self.DMTBF_I: np.float64 = 1 / self.DFI_I  # Demonstrated MTBF (instantaneous). Reported by reliasoft
+            self.A: np.float64 = 1 / b
 
         if target_MTBF is not None:
             if model == "Crow-AMSAA":
-                t_target = (1 / (self.Lambda * target_MTBF)) ** (1 / (self.Beta - 1))
+                t_target: np.float64 = (1 / (self.Lambda * target_MTBF)) ** (1 / (self.Beta - 1))
             else:  # Duane
-                t_target = (target_MTBF / b) ** (1 / self.Alpha)
-            self.time_to_target = t_target
+                t_target: np.float64 = (target_MTBF / b) ** (1 / self.Alpha)
+            self.time_to_target: np.float64 = t_target
         else:
-            t_target = 0
-            self.time_to_target = "specify target_MTBF to obtain the time_to_target"
+            t_target = np.float64(0)
+            self.time_to_target: np.float64 = np.float64(0)
+            print("Specify target_MTBF to obtain the time_to_target")
 
         if print_results is True:
             if model == "Crow-AMSAA":

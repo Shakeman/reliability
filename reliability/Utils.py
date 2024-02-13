@@ -49,10 +49,11 @@ from typing import Optional
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import scipy.stats as ss
-from autograd import jacobian as jac
-from autograd import value_and_grad
+from autograd import jacobian as jac  # type: ignore
+from autograd import value_and_grad  # type: ignore
 from autograd_gamma import gammaincc as agammaincc
 from autograd_gamma import gammainccinv as agammainccinv
 from matplotlib import colors, ticker
@@ -60,8 +61,8 @@ from matplotlib.axes import _axes
 from matplotlib.collections import LineCollection, PolyCollection
 from matplotlib.figure import Figure
 from numpy.linalg import LinAlgError
-from scipy.optimize import OptimizeWarning, curve_fit, minimize
-from scipy.special import betainc, erf, gammainc
+from scipy.optimize import OptimizeWarning, curve_fit, minimize  # type: ignore
+from scipy.special import betainc, erf, gammainc  # type: ignore
 
 warnings.filterwarnings(
     action="ignore",
@@ -74,7 +75,7 @@ warnings.filterwarnings(
 
 
 def round_and_string(
-    number: float,
+    number: np.float64 | float,
     decimals: int = 5,
     integer_floats_to_ints: bool = True,
     large_scientific_limit: float = 1e9,
@@ -156,9 +157,9 @@ def round_and_string(
 
 def transform_spaced(
     transform: str,
-    y_lower: Optional[float] = 1e-8,
-    y_upper: Optional[float] = 1 - 1e-8,
-    num: Optional[int] = 1000,
+    y_lower: float = 1e-8,
+    y_upper: float = 1 - 1e-8,
+    num: int = 1000,
     alpha: Optional[float] = None,
     beta: Optional[float] = None,
 ):
@@ -211,42 +212,42 @@ def transform_spaced(
         raise ValueError("num must be greater than 2")
     if transform in ["normal", "Normal", "norm", "Norm"]:
 
-        def fwd(x):
+        def fwd(x: float):
             return ss.norm.ppf(x)
 
-        def inv(x):
+        def inv(x: npt.NDArray[np.float64]):
             return ss.norm.cdf(x)
 
     elif transform in ["gumbel", "Gumbel", "gbl", "gum", "Gum", "Gbl"]:
 
-        def fwd(x):
+        def fwd(x: float):
             return ss.gumbel_l.ppf(x)
 
-        def inv(x):
+        def inv(x: npt.NDArray[np.float64]):
             return ss.gumbel_l.cdf(x)
 
     elif transform in ["weibull", "Weibull", "weib", "Weib", "wbl"]:
 
-        def fwd(x):
+        def fwd(x: float):
             return np.log(-np.log(1 - x))
 
-        def inv(x):
+        def inv(x: npt.NDArray[np.float64]):
             return 1 - np.exp(-np.exp(x))
 
     elif transform in ["loglogistic", "Loglogistic", "LL", "ll", "loglog"]:
 
-        def fwd(x):
+        def fwd(x: float):
             return np.log(1 / x - 1)
 
-        def inv(x):
+        def inv(x: npt.NDArray[np.float64]):
             return 1 / (np.exp(x) + 1)
 
     elif transform in ["exponential", "Exponential", "expon", "Expon", "exp", "Exp"]:
 
-        def fwd(x):
+        def fwd(x: float):
             return ss.expon.ppf(x)
 
-        def inv(x):
+        def inv(x: npt.NDArray[np.float64]):
             return ss.expon.cdf(x)
 
     elif transform in ["gamma", "Gamma", "gam", "Gam"]:
@@ -254,10 +255,10 @@ def transform_spaced(
             raise ValueError("beta must be specified to use the gamma transform")
         else:
 
-            def fwd(x):
+            def fwd(x: float):
                 return ss.gamma.ppf(x, a=beta)
 
-            def inv(x):
+            def inv(x: npt.NDArray[np.float64]):
                 return ss.gamma.cdf(x, a=beta)
 
     elif transform in ["beta", "Beta"]:
@@ -265,10 +266,10 @@ def transform_spaced(
             raise ValueError("alpha and beta must be specified to use the beta transform")
         else:
 
-            def fwd(x):
+            def fwd(x: float):
                 return ss.beta.ppf(x, a=beta, b=alpha)
 
-            def inv(x):
+            def inv(x: npt.NDArray[np.float64]):
                 return ss.beta.cdf(x, a=beta, b=alpha)
 
     elif transform in [
@@ -287,7 +288,7 @@ def transform_spaced(
     upper = fwd(y_upper)
     lower = fwd(y_lower)
     # generate the array in transform space
-    arr = np.linspace(lower, upper, num)
+    arr: npt.NDArray[np.float64] = np.linspace(lower, upper, num, dtype=np.float64)
     # convert the array back from transform space
     transform_array = inv(arr)
     return transform_array
@@ -303,59 +304,59 @@ class axes_transforms:
     """
 
     @staticmethod
-    def weibull_forward(F):
+    def weibull_forward(F: np.float64):
         return np.log(-np.log(1 - F))
 
     @staticmethod
-    def weibull_inverse(R):
+    def weibull_inverse(R: np.float64):
         return 1 - np.exp(-np.exp(R))
 
     @staticmethod
-    def loglogistic_forward(F):
+    def loglogistic_forward(F: np.float64):
         return np.log(1 / (1 - F) - 1)
 
     @staticmethod
-    def loglogistic_inverse(R):
+    def loglogistic_inverse(R: np.float64):
         return 1 - 1 / (np.exp(R) + 1)
 
     @staticmethod
-    def exponential_forward(F):
+    def exponential_forward(F: np.float64):
         return ss.expon.ppf(F)
 
     @staticmethod
-    def exponential_inverse(R):
+    def exponential_inverse(R: np.float64):
         return ss.expon.cdf(R)
 
     @staticmethod
-    def normal_forward(F):
+    def normal_forward(F: np.float64):
         return ss.norm.ppf(F)
 
     @staticmethod
-    def normal_inverse(R):
+    def normal_inverse(R: np.float64):
         return ss.norm.cdf(R)
 
     @staticmethod
-    def gumbel_forward(F):
+    def gumbel_forward(F: np.float64):
         return ss.gumbel_l.ppf(F)
 
     @staticmethod
-    def gumbel_inverse(R):
+    def gumbel_inverse(R: np.float64):
         return ss.gumbel_l.cdf(R)
 
     @staticmethod
-    def gamma_forward(F, beta):
+    def gamma_forward(F: np.float64, beta: np.float64):
         return ss.gamma.ppf(F, a=beta)
 
     @staticmethod
-    def gamma_inverse(R, beta):
+    def gamma_inverse(R: np.float64, beta: np.float64):
         return ss.gamma.cdf(R, a=beta)
 
     @staticmethod
-    def beta_forward(F, alpha, beta):
+    def beta_forward(F: np.float64, alpha: np.float64, beta: np.float64):
         return ss.beta.ppf(F, a=alpha, b=beta)
 
     @staticmethod
-    def beta_inverse(R, alpha, beta):
+    def beta_inverse(R: np.float64, alpha: np.float64, beta: np.float64):
         return ss.beta.cdf(R, a=alpha, b=beta)
 
 
@@ -381,8 +382,8 @@ def get_axes_limits():
         restore_axes_limits to determine how the axes limits need to be
         changed after plotting.
     """
-    xlims = plt.xlim(auto=None)  # get previous xlim
-    ylims = plt.ylim(auto=None)  # get previous ylim
+    xlims = plt.xlim(auto=None)  # type: ignore # get previous xlim
+    ylims = plt.ylim(auto=None)  # type: ignore # get previous ylim
     use_prev_lims = not (
         xlims == (0, 1) and ylims == (0, 1)
     )  # this checks if there was a previous plot. If the lims were 0,1 and 0,1 then there probably wasn't
@@ -390,7 +391,7 @@ def get_axes_limits():
     return out
 
 
-def restore_axes_limits(limits, dist, func, X, Y, xvals=None, xmin=None, xmax=None):
+def restore_axes_limits(limits: list[tuple[float, float] | bool], dist, func, X, Y, xvals=None, xmin=None, xmax=None):
     """
     This function works in a pair with get_axes_limits. Using the values
     producted by get_axes_limits which are [xlims, ylims, use_prev_lims], this

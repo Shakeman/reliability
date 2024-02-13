@@ -382,12 +382,12 @@ def get_axes_limits():
         restore_axes_limits to determine how the axes limits need to be
         changed after plotting.
     """
-    xlims = plt.xlim(auto=None)  # type: ignore # get previous xlim
-    ylims = plt.ylim(auto=None)  # type: ignore # get previous ylim
+    xlims: tuple[float, float] = plt.xlim(auto=None)  # type: ignore # get previous xlim
+    ylims: tuple[float, float] = plt.ylim(auto=None)  # type: ignore # get previous ylim
     use_prev_lims = not (
         xlims == (0, 1) and ylims == (0, 1)
     )  # this checks if there was a previous plot. If the lims were 0,1 and 0,1 then there probably wasn't
-    out = [xlims, ylims, use_prev_lims]
+    out: tuple[tuple[float, float], tuple[float, float], bool] = (xlims, ylims, use_prev_lims)
     return out
 
 

@@ -1250,7 +1250,7 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
         plt.show()
     """
 
-    def LLfunction(x, y, failures, right_censored):
+    def LLfunction(x, y, failures: list[int], right_censored):
         LL_f = 0
         LL_rc = 0
         for f in failures:
@@ -1260,7 +1260,7 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
                 LL_rc += logR(rc, x, y)
         return LL_f + LL_rc
 
-    limits = get_axes_limits()  # get the previous axes limits
+    limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits
     grid_lower_multiplier = 0.25
     grid_upper_multiplier = 4
     grid_resolution = 500

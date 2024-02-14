@@ -13,9 +13,11 @@ their approach. Kaplan-Meier is more popular. All three methods support failures
 and right censored data. Confidence intervals are provided using the Greenwood
 formula with Normal approximation (as implemented in Minitab).
 """
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import scipy.stats as ss
 
@@ -102,8 +104,8 @@ class KaplanMeier:
 
     def __init__(
         self,
-        failures=None,
-        right_censored=None,
+        failures: Optional[list[int]] = None,
+        right_censored: Optional[list[int]] = None,
         show_plot=True,
         print_results=True,
         plot_CI=True,
@@ -132,19 +134,19 @@ class KaplanMeier:
 
         # turn the failures and right censored times into a two lists of times and censoring codes
         times = np.hstack([failures, right_censored])
-        F = np.ones_like(failures)
-        RC = np.zeros_like(right_censored)  # censored values are given the code of 0
-        cens_code = np.hstack([F, RC])
+        F: npt.NDArray[np.int32] = np.ones_like(failures)
+        RC: npt.NDArray[np.int32] = np.zeros_like(right_censored)  # censored values are given the code of 0
+        cens_code: npt.NDArray[np.int32] = np.hstack([F, RC])
         Data = {"times": times, "cens_code": cens_code}
         df = pd.DataFrame(Data, columns=["times", "cens_code"])
-        df2 = df.sort_values(by="times")
+        df2: pd.DataFrame = df.sort_values(by="times")
         d = df2["times"].values
         c = df2["cens_code"].values
 
         self.data = d
         self.censor_codes = c
 
-        n = len(d)  # number of items
+        n: int = len(d)  # number of items
         failures_array = np.arange(1, n + 1)  # array of number of items (1 to n)
         remaining_array = failures_array[::-1]  # items remaining (n to 1)
         KM = []  # Survival function
@@ -195,40 +197,40 @@ class KaplanMeier:
             ],
         )
 
-        KM_x = [0]
-        KM_y = [1]  # adds a start point for 100% reliability at 0 time
+        KM_x: npt.NDArray[np.int32] = np.array(0)
+        KM_y: npt.NDArray[np.int32] = np.array(1)  # adds a start point for 100% reliability at 0 time
         KM_y_upper = []
         KM_y_lower = []
 
         for i in failures_array:
             if i == 1:
                 if c[i - 1] == 0:  # if the first item is censored
-                    KM_x.append(d[i - 1])
-                    KM_y.append(1)
+                    KM_x = np.append(KM_x, (d[i - 1]))
+                    KM_y = np.append(KM_y, 1)
                     KM_y_lower.append(1)
                     KM_y_upper.append(1)
                 else:  # if the first item is a failure
-                    KM_x.append(d[i - 1])
-                    KM_x.append(d[i - 1])
-                    KM_y.append(1)
-                    KM_y.append(KM[i - 1])
+                    KM_x = np.append(KM_x, (d[i - 1]))
+                    KM_x = np.append(KM_x, (d[i - 1]))
+                    KM_y = np.append(KM_y, 1)
+                    KM_y = np.append(KM_y, KM[i - 1])
                     KM_y_lower.append(1)
                     KM_y_upper.append(1)
                     KM_y_lower.append(1)
                     KM_y_upper.append(1)
             else:
                 if KM[i - 2] == KM[i - 1]:  # if the next item is censored
-                    KM_x.append(d[i - 1])
-                    KM_y.append(KM[i - 1])
+                    KM_x = np.append(KM_x, (d[i - 1]))
+                    KM_y = np.append(KM_y, KM[i - 1])
                     KM_y_lower.append(KM_lower[i - 2])
                     KM_y_upper.append(KM_upper[i - 2])
                 else:  # if the next item is a failure
-                    KM_x.append(d[i - 1])
-                    KM_y.append(KM[i - 2])
+                    KM_x = np.append(KM_x, (d[i - 1]))
+                    KM_y = np.append(KM_y, KM[i - 2])
                     KM_y_lower.append(KM_lower[i - 2])
                     KM_y_upper.append(KM_upper[i - 2])
-                    KM_x.append(d[i - 1])
-                    KM_y.append(KM[i - 1])
+                    KM_x = np.append(KM_x, (d[i - 1]))
+                    KM_y = np.append(KM_y, KM[i - 1])
                     KM_y_lower.append(KM_lower[i - 2])
                     KM_y_upper.append(KM_upper[i - 2])
         KM_y_lower.append(KM_y_lower[-1])
@@ -405,8 +407,8 @@ class NelsonAalen:
 
     def __init__(
         self,
-        failures=None,
-        right_censored=None,
+        failures: Optional[list[int]] = None,
+        right_censored: Optional[list[int]] = None,
         show_plot=True,
         print_results=True,
         plot_CI=True,
@@ -434,20 +436,20 @@ class NelsonAalen:
             )
 
         # turn the failures and right censored times into a two lists of times and censoring codes
-        times = np.hstack([failures, right_censored])
-        F = np.ones_like(failures)
-        RC = np.zeros_like(right_censored)  # censored values are given the code of 0
-        cens_code = np.hstack([F, RC])
-        Data = {"times": times, "cens_code": cens_code}
+        times: npt.NDArray[np.int32] = np.hstack([failures, right_censored])
+        F: npt.NDArray[np.int32] = np.ones_like(failures)
+        RC: npt.NDArray[np.int32] = np.zeros_like(right_censored)  # censored values are given the code of 0
+        cens_code: npt.NDArray[np.int32] = np.hstack([F, RC])
+        Data: dict[str, npt.NDArray[np.int32]] = {"times": times, "cens_code": cens_code}
         df = pd.DataFrame(Data, columns=["times", "cens_code"])
-        df2 = df.sort_values(by="times")
+        df2: pd.DataFrame = df.sort_values(by="times")
         d = df2["times"].values
         c = df2["cens_code"].values
 
         self.data = d
         self.censor_codes = c
 
-        n = len(d)  # number of items
+        n: int = len(d)  # number of items
         failures_array = np.arange(1, n + 1)  # array of number of items (1 to n)
         remaining_array = failures_array[::-1]  # items remaining (n to 1)
         h = []
@@ -500,40 +502,40 @@ class NelsonAalen:
             ],
         )
 
-        NA_x = [0]
-        NA_y = [1]  # adds a start point for 100% reliability at 0 time
+        NA_x: npt.NDArray[np.int32] = np.array(0)
+        NA_y: npt.NDArray[np.int32] = np.array(1)  # adds a start point for 100% reliability at 0 time
         NA_y_upper = []
         NA_y_lower = []
 
         for i in failures_array:
             if i == 1:
                 if c[i - 1] == 0:  # if the first item is censored
-                    NA_x.append(d[i - 1])
-                    NA_y.append(1)
+                    NA_x = np.append(NA_x, (d[i - 1]))
+                    NA_y = np.append(NA_y, 1)
                     NA_y_lower.append(1)
                     NA_y_upper.append(1)
                 else:  # if the first item is a failure
-                    NA_x.append(d[i - 1])
-                    NA_x.append(d[i - 1])
-                    NA_y.append(1)
-                    NA_y.append(NA[i - 1])
+                    NA_x = np.append(NA_x, (d[i - 1]))
+                    NA_x = np.append(NA_x, (d[i - 1]))
+                    NA_y = np.append(NA_y, 1)
+                    NA_y = np.append(NA_y, NA[i - 1])
                     NA_y_lower.append(1)
                     NA_y_upper.append(1)
                     NA_y_lower.append(1)
                     NA_y_upper.append(1)
             else:
                 if NA[i - 2] == NA[i - 1]:  # if the next item is censored
-                    NA_x.append(d[i - 1])
-                    NA_y.append(NA[i - 1])
+                    NA_x = np.append(NA_x, (d[i - 1]))
+                    NA_y = np.append(NA_y, NA[i - 1])
                     NA_y_lower.append(NA_lower[i - 2])
                     NA_y_upper.append(NA_upper[i - 2])
                 else:  # if the next item is a failure
-                    NA_x.append(d[i - 1])
-                    NA_y.append(NA[i - 2])
+                    NA_x = np.append(NA_x, (d[i - 1]))
+                    NA_y = np.append(NA_y, NA[i - 2])
                     NA_y_lower.append(NA_lower[i - 2])
                     NA_y_upper.append(NA_upper[i - 2])
-                    NA_x.append(d[i - 1])
-                    NA_y.append(NA[i - 1])
+                    NA_x = np.append(NA_x, (d[i - 1]))
+                    NA_y = np.append(NA_y, NA[i - 1])
                     NA_y_lower.append(NA_lower[i - 2])
                     NA_y_upper.append(NA_upper[i - 2])
         NA_y_lower.append(NA_y_lower[-1])

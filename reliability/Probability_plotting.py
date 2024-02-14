@@ -38,6 +38,7 @@ plot_points - plots the failure points on a scatter plot. Useful to overlay
 
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 from matplotlib.transforms import blended_transform_factory
 
@@ -99,14 +100,14 @@ def plotting_positions(failures=None, right_censored=None, a=None, sort=False):
 
     # error checking the input
     if type(failures) in [list, np.ndarray]:
-        f = np.asarray(failures)
+        f: npt.NDArray[np.float64] = np.asarray(failures)
     else:
         raise ValueError("failures must be specified as an array or list")
 
     if type(right_censored) == type(None):
-        rc = np.array([])
+        rc: npt.NDArray[np.float64] = np.array([])
     elif type(right_censored) in [np.ndarray, list]:
-        rc = np.asarray(right_censored)
+        rc: npt.NDArray[np.float64] = np.asarray(right_censored)
     else:
         raise ValueError("if specified, right_censored must be an array or list")
 
@@ -121,32 +122,32 @@ def plotting_positions(failures=None, right_censored=None, a=None, sort=False):
         raise ValueError("sort must be True or False. Default is False to keep the same order as the input.")
 
     # construct the dataframe for the rank adjustment method
-    f_codes = np.ones_like(f)
-    rc_codes = np.zeros_like(rc)
-    cens_codes = np.hstack([f_codes, rc_codes])
-    all_data = np.hstack([f, rc])
-    n = len(all_data)
-    data = {"times": all_data, "cens_codes": cens_codes}
+    f_codes: npt.NDArray[np.float64] = np.ones_like(f)
+    rc_codes: npt.NDArray[np.float64] = np.zeros_like(rc)
+    cens_codes: npt.NDArray[np.float64] = np.hstack([f_codes, rc_codes])
+    all_data: npt.NDArray[np.float64] = np.hstack([f, rc])
+    n: int = len(all_data)
+    data: dict[str, npt.NDArray[np.float64]] = {"times": all_data, "cens_codes": cens_codes}
     df = pd.DataFrame(data, columns=["times", "cens_codes"])
-    df_sorted = df.sort_values(by="times")
+    df_sorted: pd.DataFrame = df.sort_values(by="times")
     df_sorted["reverse_i"] = np.arange(1, n + 1)[::-1]
-    failure_rows = df_sorted.loc[df_sorted["cens_codes"] == 1.0]
-    reverse_i = failure_rows["reverse_i"].values
-    len_reverse_i = len(reverse_i)
-    leading_cens = np.where(df_sorted["cens_codes"].values == 1)[0][0]
+    failure_rows: pd.DataFrame = df_sorted.loc[df_sorted["cens_codes"] == 1.0]
+    reverse_i: list[int] = failure_rows["reverse_i"].values.tolist()
+    len_reverse_i: int = len(reverse_i)
+    leading_cens: int = np.where(df_sorted["cens_codes"].values == 1)[0][0].item()
 
     if leading_cens > 0:  # there are censored items before the first failure
         k = np.arange(1, len_reverse_i + 1)
-        adjusted_rank2 = [0]
+        adjusted_rank2: list[int | float] = [0]
         rank_increment = [leading_cens / (n - 1)]
         for j in k:
             rank_increment.append((n + 1 - adjusted_rank2[-1]) / (1 + reverse_i[j - 1]))
             adjusted_rank2.append(adjusted_rank2[-1] + rank_increment[-1])
         adjusted_rank = adjusted_rank2[1:]
     else:  # the first item is a failure
-        k = np.arange(1, len_reverse_i)
-        adjusted_rank = [1]
-        rank_increment = [1]
+        k: npt.NDArray[np.int32] = np.arange(1, len_reverse_i)
+        adjusted_rank: list[int | float] = [1]
+        rank_increment: list[int | float] = [1]
         for j in k:
             if j > 0:
                 rank_increment.append((n + 1 - adjusted_rank[-1]) / (1 + reverse_i[j]))

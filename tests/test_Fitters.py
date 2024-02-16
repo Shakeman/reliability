@@ -16,7 +16,6 @@ from reliability.Distributions import (
 )
 from reliability.Fitters import (
     Fit_Beta_2P,
-    Fit_Everything,
     Fit_Exponential_1P,
     Fit_Exponential_2P,
     Fit_Gamma_2P,
@@ -32,6 +31,7 @@ from reliability.Fitters import (
     Fit_Weibull_CR,
     Fit_Weibull_Mixture,
 )
+from reliability.fitting.fit_everything import Fit_Everything
 from reliability.Other_functions import make_right_censored_data
 
 # I would like to make these smaller but the slight differences in different python versions (3.6-3.9) mean that tight tolerances result in test failures

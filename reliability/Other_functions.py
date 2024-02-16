@@ -42,7 +42,7 @@ from reliability.Distributions import (
     Normal_Distribution,
     Weibull_Distribution,
 )
-from reliability.Fitters import Fit_Everything
+from reliability.fitting.fit_everything import Fit_Everything
 from reliability.Utils import colorprint, round_and_string
 
 

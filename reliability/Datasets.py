@@ -1,5 +1,4 @@
-"""
-Datasets
+"""Datasets
 
 This file contains several datasets that are useful for testing and
 experimenting.
@@ -13,8 +12,7 @@ import pandas as pd
 
 
 class automotive:
-    """
-    This dataset is relatively small and a challenging task to fit with any
+    """This dataset is relatively small and a challenging task to fit with any
     distribution due to its size and shape. It also includes mostly right
     censored data which makes fitting more difficult.
 
@@ -41,6 +39,7 @@ class automotive:
         from reliability.Datasets import automotive
         from reliability.Fitters import Fit_Weibull_2P
         Fit_Weibull_2P(failures=automotive().failures, right_censored=automotive().right_censored)
+
     """
 
     def __init__(self):
@@ -87,8 +86,7 @@ class automotive:
 
 
 class mileage:
-    """
-    This dataset is simple to fit. It contains 100 values with no right
+    """This dataset is simple to fit. It contains 100 values with no right
     censoring. The data appears to be from a Normal Distribution.
 
     Sourced from Example 2.31 (page 63) of Reliability Engineering and Risk
@@ -111,6 +109,7 @@ class mileage:
         from reliability.Datasets import mileage
         from reliability.Fitters import Fit_Weibull_2P
         Fit_Weibull_2P(failures=mileage().failures)
+
     """
 
     def __init__(self):
@@ -235,8 +234,7 @@ class mileage:
 
 
 class system_growth:
-    """
-    This dataset is contains 22 values with no right censoring.
+    """This dataset is contains 22 values with no right censoring.
     The data is from a system that has an increasing MTBF.
 
     Returns
@@ -256,6 +254,7 @@ class system_growth:
         from reliability.Datasets import system_growth
         from reliability.Fitters import Fit_Weibull_2P
         Fit_Weibull_2P(failures=system_growth().failures)
+
     """
 
     def __init__(self):
@@ -302,8 +301,7 @@ class system_growth:
 
 
 class defective_sample:
-    """
-    This dataset is heavily right censored with intermixed multiply censored
+    """This dataset is heavily right censored with intermixed multiply censored
     data (not all censored values are greater than the largest failure). It
     exhibits the behavior of a defective sample (aka. Limited fraction
     defective). Thanks to Alexander Davis for providing this dataset.
@@ -327,6 +325,7 @@ class defective_sample:
         from reliability.Datasets import defective_sample
         from reliability.Fitters import Fit_Weibull_DS
         Fit_Weibull_DS(failures=defective_sample().failures, right_censored=defective_sample().right_censored)
+
     """
 
     def __init__(self):
@@ -13998,8 +13997,7 @@ class defective_sample:
 
 
 class mixture:
-    """
-    This dataset is from a mixture model with heavy censoring (97.90622% right
+    """This dataset is from a mixture model with heavy censoring (97.90622% right
     censored). It is best modelled using a Weibull Mixture Model.
 
     Returns
@@ -14021,6 +14019,7 @@ class mixture:
         from reliability.Datasets import mixture
         from reliability.Fitters import Fit_Weibull_Mixture
         Fit_Weibull_Mixture(failures=mixture().failures, right_censored=mixture().right_censored)
+
     """
 
     def __init__(self):
@@ -17438,8 +17437,7 @@ class mixture:
 
 
 class electronics:
-    """
-    This dataset is heavily right censored without intermixed censoring (all
+    """This dataset is heavily right censored without intermixed censoring (all
     censored values are greater than the largest failure). Thanks to Jiwon Cha
     for providing this dataset.
 
@@ -17466,6 +17464,7 @@ class electronics:
         from reliability.Datasets import electronics
         from reliability.Fitters import Fit_Weibull_2P_grouped
         Fit_Weibull_2P_grouped(dataframe=electronics().dataframe)
+
     """
 
     def __init__(self):
@@ -17503,8 +17502,7 @@ class electronics:
 
 
 class MCF_1:
-    """
-    This dataset is formatted for use with the Mean Cumulative Function
+    """This dataset is formatted for use with the Mean Cumulative Function
     (MCF_parametric or MCF_nonparametric). It consists of failure times for five
     systems. It exhibits a fairly constant failure rate, appearing to be
     slightly increasing (beta > 1).
@@ -17527,6 +17525,7 @@ class MCF_1:
         from reliability.Repairable_systems import MCF_nonparametric
         from reliability.Datasets import MCF_1
         MCF_nonparametric(data=MCF_1().times)
+
     """
 
     def __init__(self):
@@ -17541,8 +17540,7 @@ class MCF_1:
 
 
 class MCF_2:
-    """
-    This dataset is formatted for use with the Mean Cumulative Function
+    """This dataset is formatted for use with the Mean Cumulative Function
     (MCF_parametric or MCF_nonparametric). It consists of failure times for 56
     systems. It exhibits an increasing failure rate at the start and a
     decreasing failure rate near the end. Due to this shape it is not fitted
@@ -17566,6 +17564,7 @@ class MCF_2:
         from reliability.Repairable_systems import MCF_nonparametric
         from reliability.Datasets import MCF_2
         MCF_nonparametric(data=MCF_2().times)
+
     """
 
     def __init__(self):
@@ -17687,8 +17686,7 @@ class MCF_2:
 
 
 class ALT_temperature:
-    """
-    This is a single stress accelerated life test (ALT) dataset conducted at 3
+    """This is a single stress accelerated life test (ALT) dataset conducted at 3
     temperatures. The dataset contains mostly censored data but is easily fitted
     by several ALT models.
 
@@ -17717,6 +17715,7 @@ class ALT_temperature:
         from reliability.ALT_fitters import Fit_Weibull_Exponential
         from reliability.Datasets import ALT_temperature
         Fit_Weibull_Exponential(failures=ALT_temperature().failures, failure_stress=ALT_temperature().failure_stresses, right_censored=ALT_temperature().right_censored, right_censored_stress=ALT_temperature().right_censored_stresses)
+
     """
 
     def __init__(self):
@@ -18028,8 +18027,7 @@ class ALT_temperature:
 
 
 class ALT_temperature2:
-    """
-    This is a single stress accelerated life test (ALT) dataset conducted at 4
+    """This is a single stress accelerated life test (ALT) dataset conducted at 4
     temperatures. This dataset contains 40 values, 20 of which are censored.
 
     Sourced from Dr. Mohammad Modarres, University of Maryland
@@ -18057,6 +18055,7 @@ class ALT_temperature2:
         from reliability.ALT_fitters import Fit_Weibull_Exponential
         from reliability.Datasets import ALT_temperature2
         Fit_Weibull_Exponential(failures=ALT_temperature2().failures, failure_stress=ALT_temperature2().failure_stresses, right_censored=ALT_temperature2().right_censored, right_censored_stress=ALT_temperature2().right_censored_stresses)
+
     """
 
     def __init__(self):
@@ -18174,8 +18173,7 @@ class ALT_temperature2:
 
 
 class ALT_temperature3:
-    """
-    This is a single stress accelerated life test (ALT) dataset conducted at 3
+    """This is a single stress accelerated life test (ALT) dataset conducted at 3
     temperatures. This dataset contains 30 values and no censoring.
 
     Returns
@@ -18197,6 +18195,7 @@ class ALT_temperature3:
         from reliability.ALT_fitters import Fit_Weibull_Exponential
         from reliability.Datasets import ALT_temperature3
         Fit_Weibull_Exponential(failures=ALT_temperature3().failures, failure_stress=ALT_temperature3().failure_stresses)
+
     """
 
     def __init__(self):
@@ -18290,8 +18289,7 @@ class ALT_temperature3:
 
 
 class ALT_temperature4:
-    """
-    This is a single stress accelerated life test (ALT) dataset conducted at 3
+    """This is a single stress accelerated life test (ALT) dataset conducted at 3
     temperatures. This dataset contains 20 values and no censoring.
 
     Returns
@@ -18313,6 +18311,7 @@ class ALT_temperature4:
         from reliability.ALT_fitters import Fit_Weibull_Exponential
         from reliability.Datasets import ALT_temperature4
         Fit_Weibull_Exponential(failures=ALT_temperature4().failures, failure_stress=ALT_temperature4().failure_stresses)
+
     """
 
     def __init__(self):
@@ -18386,8 +18385,7 @@ class ALT_temperature4:
 
 
 class ALT_load:
-    """
-    This is a single stress accelerated life test (ALT) dataset conducted at 3
+    """This is a single stress accelerated life test (ALT) dataset conducted at 3
     loads. This dataset contains 20 failure times and no censoring.
 
     Sourced from Dr. Mohammad Modarres, University of Maryland
@@ -18411,6 +18409,7 @@ class ALT_load:
         from reliability.ALT_fitters import Fit_Weibull_Power
         from reliability.Datasets import ALT_load
         Fit_Weibull_Power(failures=ALT_load().failures, failure_stress=ALT_load().failure_stresses)
+
     """
 
     def __init__(self):
@@ -18484,8 +18483,7 @@ class ALT_load:
 
 
 class ALT_load2:
-    """
-    This is a single stress accelerated life test (ALT) dataset conducted at 3
+    """This is a single stress accelerated life test (ALT) dataset conducted at 3
     loads. This dataset contains 18 values, 5 of which are censored.
 
     Sourced from Dr. Mohammad Modarres, University of Maryland
@@ -18513,6 +18511,7 @@ class ALT_load2:
         from reliability.ALT_fitters import Fit_Weibull_Power
         from reliability.Datasets import ALT_load2
         Fit_Weibull_Power(failures=ALT_load2().failures, failure_stress=ALT_load2().failure_stresses, right_censored=ALT_load2().right_censored, right_censored_stress=ALT_load2().right_censored_stresses)
+
     """
 
     def __init__(self):
@@ -18546,8 +18545,7 @@ class ALT_load2:
 
 
 class ALT_temperature_voltage:
-    """
-    This is a dual stress accelerated life test (ALT) dataset conducted at 2
+    """This is a dual stress accelerated life test (ALT) dataset conducted at 2
     different temperatures and 2 different voltages. The dataset is contains 12
     failures and no censoring.
 
@@ -18573,6 +18571,7 @@ class ALT_temperature_voltage:
         from reliability.ALT_fitters import Fit_Normal_Dual_Exponential
         data = ALT_temperature_voltage()
         Fit_Normal_Dual_Exponential(failures=data.failures, failure_stress_1=data.failure_stress_temp, failure_stress_2=data.failure_stress_voltage)
+
     """
 
     def __init__(self):
@@ -18605,8 +18604,7 @@ class ALT_temperature_voltage:
 
 
 class ALT_temperature_voltage2:
-    """
-    This is a dual stress accelerated life test (ALT) dataset conducted at 3
+    """This is a dual stress accelerated life test (ALT) dataset conducted at 3
     different temperatures and 2 different voltages. There are 18 failures and
     no censoring. Note that there is stress-pair that contains only a single
     failure.
@@ -18633,6 +18631,7 @@ class ALT_temperature_voltage2:
         from reliability.ALT_fitters import Fit_Normal_Dual_Exponential
         data = ALT_temperature_voltage2()
         Fit_Normal_Dual_Exponential(failures=data.failures, failure_stress_1=data.failure_stress_temp, failure_stress_2=data.failure_stress_voltage)
+
     """
 
     def __init__(self):
@@ -18706,8 +18705,7 @@ class ALT_temperature_voltage2:
 
 
 class ALT_temperature_humidity:
-    """
-    This is a dual stress accelerated life test (ALT) dataset conducted at 2
+    """This is a dual stress accelerated life test (ALT) dataset conducted at 2
     different temperatures and 2 different humidities. The dataset contains 12
     failures and no censoring.
 

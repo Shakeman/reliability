@@ -1,5 +1,4 @@
-"""
-Utils (utilities)
+"""Utils (utilities)
 
 This is a collection of utilities that are used throughout the python
 reliability library. Functions have been placed here as to declutter the
@@ -81,8 +80,7 @@ def round_and_string(
     large_scientific_limit: float = 1e9,
     small_scientific_limit: float = 1e-4,
 ):
-    """
-    This function is used to round a number to a specified number of decimals and convert to string.
+    """This function is used to round a number to a specified number of decimals and convert to string.
     It is used heavily in the formatting of the parameter titles within reliability.Distributions
 
     The rules applied are slightly different than rounding to a number of significant figures as it keeps more
@@ -126,6 +124,7 @@ def round_and_string(
         original: 10.0  // new: 10
         original: 100000000.0  // new: 100000000
         original: 1e+20  // new: 1e+20
+
     """
     if decimals < 1:
         decimals = 0
@@ -163,8 +162,7 @@ def transform_spaced(
     alpha: Optional[float] = None,
     beta: Optional[float] = None,
 ):
-    """
-    Creates linearly spaced array based on a specified transform.
+    """Creates linearly spaced array based on a specified transform.
 
     This is similar to np.linspace or np.logspace but is designed for weibull
     space, exponential space, normal space, gamma space, loglogistic space,
@@ -202,6 +200,7 @@ def transform_spaced(
     -----
     Note that lognormal is the same as normal, since the x-axis is what is
     transformed in lognormal, not the y-axis.
+
     """
     np.seterr("ignore")  # this is required due to an error in scipy.stats
     if y_lower > y_upper:
@@ -295,8 +294,7 @@ def transform_spaced(
 
 
 class axes_transforms:
-    """
-    Custom scale functions used in Probability_plotting
+    """Custom scale functions used in Probability_plotting
     Each of these functions is either a forward or inverse transform.
 
     There are no parameters for this class, only a collection of subfunctions
@@ -361,8 +359,7 @@ class axes_transforms:
 
 
 def get_axes_limits():
-    """
-    This function works in a pair with restore_axes_limits
+    """This function works in a pair with restore_axes_limits
     This function gets the previous xlim and ylim and also checks whether there
     was a previous plot (based on whether the default 0,1 axes had been
     changed).
@@ -381,6 +378,7 @@ def get_axes_limits():
         A list of [xlims, ylims, use_prev_lims]. These values are used by
         restore_axes_limits to determine how the axes limits need to be
         changed after plotting.
+
     """
     xlims: tuple[float, float] = plt.xlim(auto=None)  # type: ignore # get previous xlim
     ylims: tuple[float, float] = plt.ylim(auto=None)  # type: ignore # get previous ylim
@@ -392,8 +390,7 @@ def get_axes_limits():
 
 
 def restore_axes_limits(limits: list[tuple[float, float] | bool], dist, func, X, Y, xvals=None, xmin=None, xmax=None):
-    """
-    This function works in a pair with get_axes_limits. Using the values
+    """This function works in a pair with get_axes_limits. Using the values
     producted by get_axes_limits which are [xlims, ylims, use_prev_lims], this
     function will determine how to change the axes limits to meet the style
     requirements of the library.
@@ -426,6 +423,7 @@ def restore_axes_limits(limits: list[tuple[float, float] | bool], dist, func, X,
     from log and function scaled axes when a limit of 0 is used. This means that
     this function is not able to be applied to the probability plots are they
     have non-linear scaled axes.
+
     """
     xlims = limits[0]
     ylims = limits[1]
@@ -471,15 +469,12 @@ def restore_axes_limits(limits: list[tuple[float, float] | bool], dist, func, X,
         xlim_upper = max(xvals)
 
     # determine what to set the xlims based on whether to use_prev_lims
-    if use_prev_lims is False:
-        xlim_LOWER = xlim_lower
-        xlim_UPPER = xlim_upper
-    else:  # need to consider previous axes limits
-        xlim_LOWER = min(xlim_lower, xlims[0])
-        xlim_UPPER = max(xlim_upper, xlims[1])
+    if use_prev_lims is True:
+        xlim_lower = min(xlim_lower, xlims[0])
+        xlim_upper = max(xlim_upper, xlims[1])
 
     if plt.gca().get_xscale() == "linear" and len(X) > 1:
-        plt.xlim(xlim_LOWER, xlim_UPPER, auto=None)
+        plt.xlim(xlim_lower, xlim_upper, auto=None)
 
     ################## YLIMS ########################
 
@@ -529,8 +524,7 @@ def restore_axes_limits(limits: list[tuple[float, float] | bool], dist, func, X,
 
 
 def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
-    """
-    Generates the array of X values for each of the PDf, CDF, SF, HF, CHF
+    """Generates the array of X values for each of the PDf, CDF, SF, HF, CHF
     functions within reliability.Distributions
 
     This is done with a variety of cases in order to ensure that for regions of
@@ -553,8 +547,8 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
     -------
     X : array
         The X array that was generated.
-    """
 
+    """
     # obtain the xvals array
     points = 200  # the number of points to use when generating the X array
     points_right = 25  # the number of points given to the area above QU. The total points is still equal to 'points' so the area below QU receives 'points - points_right'
@@ -582,147 +576,142 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
             raise ValueError(
                 "xvals was found to contain values above 1. The beta distribution is bounded between 0 and 1.",
             )
-    else:
-        if dist.name in ["Weibull", "Lognormal", "Loglogistic", "Exponential", "Gamma"]:
-            if xmin is None:
-                xmin = 0
-            if xmin < 0:
-                raise ValueError(
-                    "xmin must be greater than or equal to 0 for all distributions except the Normal and Gumbel distributions",
-                )
-            if xmax is None:
-                xmax = dist.quantile(0.9999)
-            if xmin > xmax:
-                xmin, xmax = (
-                    xmax,
-                    xmin,
-                )  # switch them if they are given in the wrong order
-            if (xmin < QL and xmax < QL) or (xmin >= QL and xmax <= QU) or (xmin > QU and xmax > QU):
-                X = np.linspace(xmin, xmax, points)
-            elif xmin < QL and xmax > QL and xmax < QU:
-                if dist.gamma == 0:
-                    if dist._pdf0 == 0:
-                        X = np.hstack([xmin, np.linspace(QL, xmax, points - 1)])
-                    else:  # pdf is asymptotic to inf at x=0
-                        X = np.hstack([xmin, np.geomspace(QL, xmax, points - 1)])
-                else:  # gamma > 0
-                    if dist._pdf0 == 0:
-                        X = np.hstack([xmin, dist.gamma - 1e-8, np.linspace(QL, xmax, points - 2)])
-                    else:  # pdf is asymptotic to inf at x=0
-                        detail = np.geomspace(QL - dist.gamma, xmax - dist.gamma, points - 2) + dist.gamma
-                        X = np.hstack([xmin, dist.gamma - 1e-8, detail])
-            elif xmin > QL and xmin < QU and xmax > QU:
+    elif dist.name in ["Weibull", "Lognormal", "Loglogistic", "Exponential", "Gamma"]:
+        if xmin is None:
+            xmin = 0
+        if xmin < 0:
+            raise ValueError(
+                "xmin must be greater than or equal to 0 for all distributions except the Normal and Gumbel distributions",
+            )
+        if xmax is None:
+            xmax = dist.quantile(0.9999)
+        if xmin > xmax:
+            xmin, xmax = (
+                xmax,
+                xmin,
+            )  # switch them if they are given in the wrong order
+        if (xmin < QL and xmax < QL) or (xmin >= QL and xmax <= QU) or (xmin > QU and xmax > QU):
+            X = np.linspace(xmin, xmax, points)
+        elif xmin < QL and xmax > QL and xmax < QU:
+            if dist.gamma == 0:
                 if dist._pdf0 == 0:
+                    X = np.hstack([xmin, np.linspace(QL, xmax, points - 1)])
+                else:  # pdf is asymptotic to inf at x=0
+                    X = np.hstack([xmin, np.geomspace(QL, xmax, points - 1)])
+            elif dist._pdf0 == 0:
+                X = np.hstack([xmin, dist.gamma - 1e-8, np.linspace(QL, xmax, points - 2)])
+            else:  # pdf is asymptotic to inf at x=0
+                detail = np.geomspace(QL - dist.gamma, xmax - dist.gamma, points - 2) + dist.gamma
+                X = np.hstack([xmin, dist.gamma - 1e-8, detail])
+        elif xmin > QL and xmin < QU and xmax > QU:
+            if dist._pdf0 == 0:
+                X = np.hstack(
+                    [
+                        np.linspace(xmin, QU, points - points_right),
+                        np.linspace(QU, xmax, points_right),
+                    ],
+                )
+            else:  # pdf is asymptotic to inf at x=0
+                try:
+                    detail = (
+                        np.geomspace(
+                            xmin - dist.gamma,
+                            QU - dist.gamma,
+                            points - points_right,
+                        )
+                        + dist.gamma
+                    )
+                    right = np.geomspace(QU - dist.gamma, xmax - dist.gamma, points_right) + dist.gamma
+                except ValueError:  # occurs for very low shape params causing QL-gamma to be zero
+                    detail = np.linspace(xmin, QU, points - points_right)
+                    right = np.linspace(QU, xmax, points_right)
+                X = np.hstack([detail, right])
+        elif dist.gamma == 0:
+            if dist._pdf0 == 0:
+                X = np.hstack(
+                    [
+                        xmin,
+                        np.linspace(QL, QU, points - (points_right + 1)),
+                        np.geomspace(QU, xmax, points_right),
+                    ],
+                )
+            else:  # pdf is asymptotic to inf at x=0
+                try:
                     X = np.hstack(
                         [
-                            np.linspace(xmin, QU, points - points_right),
-                            np.linspace(QU, xmax, points_right),
+                            xmin,
+                            np.geomspace(QL, QU, points - (points_right + 1)),
+                            np.geomspace(QU, xmax, points_right),
                         ],
                     )
-                else:  # pdf is asymptotic to inf at x=0
-                    try:
-                        detail = (
-                            np.geomspace(
-                                xmin - dist.gamma,
-                                QU - dist.gamma,
-                                points - points_right,
-                            )
-                            + dist.gamma
-                        )
-                        right = np.geomspace(QU - dist.gamma, xmax - dist.gamma, points_right) + dist.gamma
-                    except ValueError:  # occurs for very low shape params causing QL-gamma to be zero
-                        detail = np.linspace(xmin, QU, points - points_right)
-                        right = np.linspace(QU, xmax, points_right)
-                    X = np.hstack([detail, right])
-            else:  # xmin < QL and xmax > QU
-                if dist.gamma == 0:
-                    if dist._pdf0 == 0:
-                        X = np.hstack(
-                            [
-                                xmin,
-                                np.linspace(QL, QU, points - (points_right + 1)),
-                                np.geomspace(QU, xmax, points_right),
-                            ],
-                        )
-                    else:  # pdf is asymptotic to inf at x=0
-                        try:
-                            X = np.hstack(
-                                [
-                                    xmin,
-                                    np.geomspace(QL, QU, points - (points_right + 1)),
-                                    np.geomspace(QU, xmax, points_right),
-                                ],
-                            )
-                        except ValueError:  # occurs for very low shape params causing QL to be zero
-                            X = np.hstack(
-                                [
-                                    xmin,
-                                    np.linspace(QL, QU, points - (points_right + 1)),
-                                    np.geomspace(QU, xmax, points_right),
-                                ],
-                            )
-                else:  # gamma > 0
-                    if dist._pdf0 == 0:
-                        X = np.hstack(
-                            [
-                                xmin,
-                                dist.gamma - 1e-8,
-                                np.linspace(QL, QU, points - (points_right + 2)),
-                                np.geomspace(QU - dist.gamma, xmax - dist.gamma, points_right) + dist.gamma,
-                            ],
-                        )
-                    else:  # pdf is asymptotic to inf at x=0
-                        try:
-                            detail = (
-                                np.geomspace(
-                                    QL - dist.gamma,
-                                    QU - dist.gamma,
-                                    points - (points_right + 2),
-                                )
-                                + dist.gamma
-                            )
-                            right = np.geomspace(QU - dist.gamma, xmax - dist.gamma, points_right) + dist.gamma
-                        except ValueError:  # occurs for very low shape params causing QL-gamma to be zero
-                            detail = np.linspace(QL, QU, points - (points_right + 2))
-                            right = np.linspace(QU, xmax, points_right)
-                        X = np.hstack([xmin, dist.gamma - 1e-8, detail, right])
-        elif dist.name in ["Normal", "Gumbel"]:
-            if xmin is None:
-                xmin = dist.quantile(0.0001)
-            if xmax is None:
-                xmax = dist.quantile(0.9999)
-            if xmin > xmax:
-                xmin, xmax = (
-                    xmax,
+                except ValueError:  # occurs for very low shape params causing QL to be zero
+                    X = np.hstack(
+                        [
+                            xmin,
+                            np.linspace(QL, QU, points - (points_right + 1)),
+                            np.geomspace(QU, xmax, points_right),
+                        ],
+                    )
+        elif dist._pdf0 == 0:
+            X = np.hstack(
+                [
                     xmin,
-                )  # switch them if they are given in the wrong order
-            if xmin <= 0 or xmin > dist.quantile(0.0001):
-                X = np.linspace(xmin, xmax, points)
-            else:
-                X = np.hstack(
-                    [0, np.linspace(xmin, xmax, points - 1)],
-                )  # this ensures that the distribution is at least plotted from 0 if its xmin is above 0
-        elif dist.name == "Beta":
-            if xmin is None:
-                xmin = 0
-            if xmax is None:
-                xmax = 1
-            if xmax > 1:
-                raise ValueError("xmax must be less than or equal to 1 for the beta distribution")
-            if xmin > xmax:
-                xmin, xmax = (
-                    xmax,
-                    xmin,
-                )  # switch them if they are given in the wrong order
+                    dist.gamma - 1e-8,
+                    np.linspace(QL, QU, points - (points_right + 2)),
+                    np.geomspace(QU - dist.gamma, xmax - dist.gamma, points_right) + dist.gamma,
+                ],
+            )
+        else:  # pdf is asymptotic to inf at x=0
+            try:
+                detail = (
+                    np.geomspace(
+                        QL - dist.gamma,
+                        QU - dist.gamma,
+                        points - (points_right + 2),
+                    )
+                    + dist.gamma
+                )
+                right = np.geomspace(QU - dist.gamma, xmax - dist.gamma, points_right) + dist.gamma
+            except ValueError:  # occurs for very low shape params causing QL-gamma to be zero
+                detail = np.linspace(QL, QU, points - (points_right + 2))
+                right = np.linspace(QU, xmax, points_right)
+            X = np.hstack([xmin, dist.gamma - 1e-8, detail, right])
+    elif dist.name in ["Normal", "Gumbel"]:
+        if xmin is None:
+            xmin = dist.quantile(0.0001)
+        if xmax is None:
+            xmax = dist.quantile(0.9999)
+        if xmin > xmax:
+            xmin, xmax = (
+                xmax,
+                xmin,
+            )  # switch them if they are given in the wrong order
+        if xmin <= 0 or xmin > dist.quantile(0.0001):
             X = np.linspace(xmin, xmax, points)
         else:
-            raise ValueError("Unrecognised distribution name")
+            X = np.hstack(
+                [0, np.linspace(xmin, xmax, points - 1)],
+            )  # this ensures that the distribution is at least plotted from 0 if its xmin is above 0
+    elif dist.name == "Beta":
+        if xmin is None:
+            xmin = 0
+        if xmax is None:
+            xmax = 1
+        if xmax > 1:
+            raise ValueError("xmax must be less than or equal to 1 for the beta distribution")
+        if xmin > xmax:
+            xmin, xmax = (
+                xmax,
+                xmin,
+            )  # switch them if they are given in the wrong order
+        X = np.linspace(xmin, xmax, points)
+    else:
+        raise ValueError("Unrecognised distribution name")
     return X
 
 
 def no_reverse(x, CI_type, plot_type):
-    """
-    This is used to convert an array that decreases and then increases into an
+    """This is used to convert an array that decreases and then increases into an
     array that decreases then is constant at its minimum.
 
     The always decreasing rule will apply unless CI_type = 'time' and
@@ -746,6 +735,7 @@ def no_reverse(x, CI_type, plot_type):
         A corrected form of the input x that obeys the always decreasing rule
         (or the always increasing rule in the case of CI_type = 'time' and
         plot_type = 'CHF').
+
     """
     if type(x) not in [np.ndarray, list]:
         raise ValueError("x must be a list or array")
@@ -770,8 +760,7 @@ def no_reverse(x, CI_type, plot_type):
 
 
 def zeroise_below_gamma(X, Y, gamma):
-    """
-    This will make all Y values 0 for the corresponding X values being below
+    """This will make all Y values 0 for the corresponding X values being below
     gamma (the threshold parameter for Weibull, Exponential, Gamma, Loglogistic,
     and Lognormal).
 
@@ -793,6 +782,7 @@ def zeroise_below_gamma(X, Y, gamma):
     -------
     Y : array
         The zeroized Y array
+
     """
     if gamma > 0:
         if len(np.where(gamma < X)[0]) == 0:
@@ -803,8 +793,7 @@ def zeroise_below_gamma(X, Y, gamma):
 
 
 def xy_transform(value, direction="forward", axis="x"):
-    """
-    This function converts between data values and axes coordinates (based on
+    """This function converts between data values and axes coordinates (based on
     xlim() or ylim()).
 
     If direction is forward the returned value will always be between 0 and 1
@@ -858,35 +847,33 @@ def xy_transform(value, direction="forward", axis="x"):
                     )  # y transform
         else:
             raise ValueError("type of value is not recognized")
-    else:  # direction is forward
-        if type(value) in [int, float, np.float64]:
-            if axis == "x":
-                transformed_values = ax.transAxes.inverted().transform(ax.transData.transform((value, 0.5)))[
-                    0
-                ]  # x transform
-            else:
-                transformed_values = ax.transAxes.inverted().transform(ax.transData.transform((1, value)))[
-                    1
-                ]  # y transform
-        elif type(value) in [list, np.ndarray]:
-            transformed_values = []
-            for item in value:
-                if axis == "x":
-                    transformed_values.append(
-                        ax.transAxes.inverted().transform(ax.transData.transform((item, 0.5)))[0],
-                    )  # x transform
-                else:
-                    transformed_values.append(
-                        ax.transAxes.inverted().transform(ax.transData.transform((1, value)))[1],
-                    )  # y transform
+    elif type(value) in [int, float, np.float64]:
+        if axis == "x":
+            transformed_values = ax.transAxes.inverted().transform(ax.transData.transform((value, 0.5)))[
+                0
+            ]  # x transform
         else:
-            raise ValueError("type of value is not recognized")
+            transformed_values = ax.transAxes.inverted().transform(ax.transData.transform((1, value)))[
+                1
+            ]  # y transform
+    elif type(value) in [list, np.ndarray]:
+        transformed_values = []
+        for item in value:
+            if axis == "x":
+                transformed_values.append(
+                    ax.transAxes.inverted().transform(ax.transData.transform((item, 0.5)))[0],
+                )  # x transform
+            else:
+                transformed_values.append(
+                    ax.transAxes.inverted().transform(ax.transData.transform((1, value)))[1],
+                )  # y transform
+    else:
+        raise ValueError("type of value is not recognized")
     return transformed_values
 
 
 def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha=None, beta_beta=None):
-    """
-    This function finds what the x and y limits of probability plots should be
+    """This function finds what the x and y limits of probability plots should be
     and sets these limits. This is similar to autoscaling, but the rules here
     are different to the matplotlib defaults.
     It is used extensively by the functions within the probability_plotting
@@ -919,8 +906,8 @@ def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha
     None
         There are no outputs from this function. It will set the xlim() and
         ylim() of the probability plot automatically.
-    """
 
+    """
     # remove inf
     x = np.asarray(x)
     x = x[np.isfinite(x)]
@@ -1013,8 +1000,7 @@ def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha
 
 
 def probability_plot_xyticks(yticks=None):
-    """
-    This function sets the x and y ticks for probability plots.
+    """This function sets the x and y ticks for probability plots.
 
     X ticks are selected using either MaxNLocator or LogLocator. X ticks are
     formatted using a custom formatter.
@@ -1038,11 +1024,11 @@ def probability_plot_xyticks(yticks=None):
     -------
     None
         This function will set the ticks but it does not return anything.
+
     """
 
     def get_tick_locations(major_or_minor, in_lims=True, axis="x"):
-        """
-        returns the major or minor tick locations for the current axis.
+        """Returns the major or minor tick locations for the current axis.
 
         Parameters
         ----------
@@ -1060,6 +1046,7 @@ def probability_plot_xyticks(yticks=None):
         -------
         locations : array
             The tick locations
+
         """
         if axis == "x":
             AXIS = ax.xaxis
@@ -1086,8 +1073,7 @@ def probability_plot_xyticks(yticks=None):
         return locations
 
     def customFormatter(value, _):
-        """
-        Provides custom string formatting that is used for the xticks
+        """Provides custom string formatting that is used for the xticks
 
         Parameters
         ----------
@@ -1098,6 +1084,7 @@ def probability_plot_xyticks(yticks=None):
         -------
         label : str
             The formatted string
+
         """
         if value == 0:
             label = "0"
@@ -1122,8 +1109,7 @@ def probability_plot_xyticks(yticks=None):
         return label
 
     def customPercentFormatter(value, _):
-        """
-        Provides custom percent string formatting that is used for the yticks
+        """Provides custom percent string formatting that is used for the yticks
         This function is slightly different than matplotlib's PercentFormatter
         as it does not force a particular number of decimals. ie. in this
         function 99.00 becomes 99 while 99.99 still displays as such.
@@ -1137,6 +1123,7 @@ def probability_plot_xyticks(yticks=None):
         -------
         label : str
             The formatted string
+
         """
         value100 = value * 100
         value100dec = round(
@@ -1151,8 +1138,7 @@ def probability_plot_xyticks(yticks=None):
         return label
 
     def get_edge_distances():
-        """
-        Finds the sum of the distance (in axes coords (0 to 1)) of the distances
+        """Finds the sum of the distance (in axes coords (0 to 1)) of the distances
         from the edge ticks to the edges
 
         Parameters
@@ -1163,6 +1149,7 @@ def probability_plot_xyticks(yticks=None):
         -------
         distances : float
             The edge distances
+
         """
         xtick_locations = get_tick_locations("major", axis="x")
         left_tick_distance = xy_transform(xtick_locations[0], direction="forward", axis="x") - xy_transform(
@@ -1259,8 +1246,7 @@ def probability_plot_xyticks(yticks=None):
 
 
 def anderson_darling(fitted_cdf, empirical_cdf):
-    """
-    Calculates the Anderson-Darling goodness of fit statistic.
+    """Calculates the Anderson-Darling goodness of fit statistic.
     These formulas are based on the method used in MINITAB which gives an
     adjusted form of the original AD statistic described on Wikipedia.
 
@@ -1275,6 +1261,7 @@ def anderson_darling(fitted_cdf, empirical_cdf):
     -------
     AD : float
         The anderson darling (adjusted) test statistic.
+
     """
     if type(fitted_cdf) != np.ndarray:
         fitted_cdf = [fitted_cdf]  # required when there is only 1 failure
@@ -1302,8 +1289,7 @@ def colorprint(
     underline=False,
     italic=False,
 ):
-    """
-    Provides easy access to color printing in the console.
+    """Provides easy access to color printing in the console.
 
     This function is used to print warnings in red text, but it can also do a
     lot more.
@@ -1335,6 +1321,7 @@ def colorprint(
 
     As there is only one string argument, if you have multiple strings to print,
     you must first combine them using str(string_1,string_2,...).
+
     """
     text_colors = {
         "grey": "\033[90m",
@@ -1430,8 +1417,7 @@ def colorprint(
 
 
 class fitters_input_checking:
-    """
-    This function performs error checking and some basic default operations for
+    """This function performs error checking and some basic default operations for
     all the inputs given to each of the fitters.
 
     Parameters
@@ -1505,6 +1491,7 @@ class fitters_input_checking:
     Some returns are None if the input is None. How None affects the behavior
     is governed by other functions such as the individual fitters and other
     Utils.
+
     """
 
     def __init__(
@@ -1779,8 +1766,7 @@ class fitters_input_checking:
 
 
 class ALT_fitters_input_checking:
-    """
-    This function performs error checking and some basic default operations for
+    """This function performs error checking and some basic default operations for
     all the inputs given to each of the ALT_fitters.
 
     Parameters
@@ -1860,6 +1846,7 @@ class ALT_fitters_input_checking:
     Some returns are None if the input is None. How None affects the behavior
     is governed by other functions such as the individual ALT fitters and other
     Utils.
+
     """
 
     def __init__(
@@ -2237,8 +2224,7 @@ class ALT_fitters_input_checking:
 
 
 def validate_CI_params(*args):
-    """
-    Returns False if any of the args is None or Nan, else returns True.
+    """Returns False if any of the args is None or Nan, else returns True.
     This function is different to using all() because it performs the checks
     using np.isfinite(arg).
 
@@ -2251,6 +2237,7 @@ def validate_CI_params(*args):
     -------
     is_valid : bool
         False if any of the args is None or Nan else returns True.
+
     """
     is_valid = True
     for arg in args:
@@ -2260,8 +2247,7 @@ def validate_CI_params(*args):
 
 
 def clean_CI_arrays(xlower, xupper, ylower, yupper, plot_type="CDF", x=None, q=None):
-    """
-    This function cleans the CI arrays of nans and numbers <= 0 and also removes
+    """This function cleans the CI arrays of nans and numbers <= 0 and also removes
     numbers >= 1 if plot_type is CDF or SF.
 
     Parameters
@@ -2298,6 +2284,7 @@ def clean_CI_arrays(xlower, xupper, ylower, yupper, plot_type="CDF", x=None, q=N
 
     The cleaning is done by deleting values. If the cleaned arrays are < 2 items
     in length then an error will be triggered.
+
     """
     # format the input as arrays
     xlower = np.asarray(xlower)
@@ -2378,8 +2365,7 @@ def clean_CI_arrays(xlower, xupper, ylower, yupper, plot_type="CDF", x=None, q=N
 
 
 def fill_no_autoscale(xlower, xupper, ylower, yupper, **kwargs):
-    """
-    Creates a filled region (polygon) without adding it to the global list of
+    """Creates a filled region (polygon) without adding it to the global list of
     autoscale objects. Use this function when you want to plot something but not
     have it considered when autoscale sets the range.
 
@@ -2400,6 +2386,7 @@ def fill_no_autoscale(xlower, xupper, ylower, yupper, **kwargs):
     -------
     None
         The filled polygon will be added to the plot.
+
     """
     # generate the polygon
     xstack = np.hstack([xlower, xupper[::-1]])
@@ -2417,8 +2404,7 @@ def fill_no_autoscale(xlower, xupper, ylower, yupper, **kwargs):
 
 
 def line_no_autoscale(x, y, **kwargs):
-    """
-    Creates a line without adding it to the global list of autoscale objects.
+    """Creates a line without adding it to the global list of autoscale objects.
     Use this when you want to plot something but not have it considered when
     autoscale sets the range.
 
@@ -2435,6 +2421,7 @@ def line_no_autoscale(x, y, **kwargs):
     -------
     None
         The line will be added to the plot.
+
     """
     # this is equivalent to plot as it makes a line
     line = np.column_stack([x, y])
@@ -2443,8 +2430,7 @@ def line_no_autoscale(x, y, **kwargs):
 
 
 class distribution_confidence_intervals:
-    """
-    This class contains several subfunctions that provide all the confidence
+    """This class contains several subfunctions that provide all the confidence
     intervals for CDF, SF, CHF for each distribution for which it is
     implemented.
 
@@ -2458,6 +2444,7 @@ class distribution_confidence_intervals:
     Returns
     -------
     None
+
     """
 
     @staticmethod
@@ -2471,8 +2458,7 @@ class distribution_confidence_intervals:
         q=None,
         x=None,
     ):
-        """
-        Generates the confidence intervals for CDF, SF, and CHF of the
+        """Generates the confidence intervals for CDF, SF, and CHF of the
         Exponential distribution.
 
         Parameters
@@ -2638,8 +2624,7 @@ class distribution_confidence_intervals:
         q=None,
         x=None,
     ):
-        """
-        Generates the confidence intervals for CDF, SF, and CHF of the
+        """Generates the confidence intervals for CDF, SF, and CHF of the
         Weibull distribution.
 
         Parameters
@@ -2691,6 +2676,7 @@ class distribution_confidence_intervals:
 
         For an explaination of how the confidence inervals are calculated,
         please see the `documentation <https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html>`_.
+
         """
         points = 200  # the number of data points in each confidence interval (upper and lower) line
 
@@ -2767,11 +2753,10 @@ class distribution_confidence_intervals:
                 if func == "CHF":
                     chf_array = np.geomspace(1e-8, self._chf[-1] * 1.5, points)
                     Y = np.exp(-chf_array)
-                else:  # CDF and SF
-                    if q is not None:
-                        Y = q
-                    else:
-                        Y = transform_spaced("weibull", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
+                elif q is not None:
+                    Y = q
+                else:
+                    Y = transform_spaced("weibull", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
 
                 # v is ln(t)
                 v_lower = v(Y, self.alpha, self.beta) - Z * (var_v(self, Y) ** 0.5)
@@ -2917,8 +2902,7 @@ class distribution_confidence_intervals:
         q=None,
         x=None,
     ):
-        """
-        Generates the confidence intervals for CDF, SF, and CHF of the
+        """Generates the confidence intervals for CDF, SF, and CHF of the
         Gamma distribution.
 
         Parameters
@@ -2968,6 +2952,7 @@ class distribution_confidence_intervals:
 
         For an explaination of how the confidence inervals are calculated,
         please see the `documentation <https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html>`_.
+
         """
         points = 200  # the number of data points in each confidence interval (upper and lower) line
 
@@ -3045,20 +3030,18 @@ class distribution_confidence_intervals:
                 if func == "CHF":
                     chf_array = np.geomspace(1e-8, self._chf[-1] * 1.5, points)
                     Y = np.exp(-chf_array)
-                else:  # CDF and SF
-                    if q is not None:
-                        Y = q
-                    else:
-                        if self.beta > 3:
-                            Y = transform_spaced(
-                                "gamma",
-                                y_lower=1e-8,
-                                y_upper=1 - 1e-8,
-                                beta=self.beta,
-                                num=points,
-                            )
-                        else:
-                            Y = np.linspace(1e-8, 1 - 1e-8, points)
+                elif q is not None:
+                    Y = q
+                elif self.beta > 3:
+                    Y = transform_spaced(
+                        "gamma",
+                        y_lower=1e-8,
+                        y_upper=1 - 1e-8,
+                        beta=self.beta,
+                        num=points,
+                    )
+                else:
+                    Y = np.linspace(1e-8, 1 - 1e-8, points)
 
                 # v is ln(t)
                 v_lower = v(Y, self.mu, self.beta) - Z * (var_v(self, Y) ** 0.5)
@@ -3203,8 +3186,7 @@ class distribution_confidence_intervals:
         q=None,
         x=None,
     ):
-        """
-        Generates the confidence intervals for CDF, SF, and CHF of the
+        """Generates the confidence intervals for CDF, SF, and CHF of the
         Normal distribution.
 
         Parameters
@@ -3254,6 +3236,7 @@ class distribution_confidence_intervals:
 
         For an explaination of how the confidence inervals are calculated,
         please see the `documentation <https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html>`_.
+
         """
         points = 200  # the number of data points in each confidence interval (upper and lower) line
 
@@ -3462,8 +3445,7 @@ class distribution_confidence_intervals:
         q=None,
         x=None,
     ):
-        """
-        Generates the confidence intervals for CDF, SF, and CHF of the
+        """Generates the confidence intervals for CDF, SF, and CHF of the
         Lognormal distribution.
 
         Parameters
@@ -3513,6 +3495,7 @@ class distribution_confidence_intervals:
 
         For an explaination of how the confidence inervals are calculated,
         please see the `documentation <https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html>`_.
+
         """
         points = 200  # the number of data points in each confidence interval (upper and lower) line
 
@@ -3735,8 +3718,7 @@ class distribution_confidence_intervals:
         q=None,
         x=None,
     ):
-        """
-        Generates the confidence intervals for CDF, SF, and CHF of the
+        """Generates the confidence intervals for CDF, SF, and CHF of the
         Loglogistic distribution.
 
         Parameters
@@ -3786,6 +3768,7 @@ class distribution_confidence_intervals:
 
         For an explaination of how the confidence inervals are calculated,
         please see the `documentation <https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html>`_.
+
         """
         points = 200  # the number of data points in each confidence interval (upper and lower) line
 
@@ -3861,11 +3844,10 @@ class distribution_confidence_intervals:
                 if func == "CHF":
                     chf_array = np.geomspace(1e-8, self._chf[-1] * 1.5, points)
                     Y = np.exp(-chf_array)
-                else:  # CDF and SF
-                    if q is not None:
-                        Y = q
-                    else:
-                        Y = transform_spaced("loglogistic", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
+                elif q is not None:
+                    Y = q
+                else:
+                    Y = transform_spaced("loglogistic", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
 
                 # v is ln(t)
                 v_lower = v(Y, self.alpha, self.beta) - Z * (var_v(self, Y) ** 0.5)
@@ -4008,8 +3990,7 @@ class distribution_confidence_intervals:
         q=None,
         x=None,
     ):
-        """
-        Generates the confidence intervals for CDF, SF, and CHF of the
+        """Generates the confidence intervals for CDF, SF, and CHF of the
         Gumbel distribution.
 
         Parameters
@@ -4059,6 +4040,7 @@ class distribution_confidence_intervals:
 
         For an explaination of how the confidence inervals are calculated,
         please see the `documentation <https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html>`_.
+
         """
         points = 200  # the number of data points in each confidence interval (upper and lower) line
 
@@ -4263,8 +4245,7 @@ def linear_regression(
     show_plot=False,
     **kwargs,
 ):
-    """
-    This function provides the linear algebra solution to find line of best fit
+    """This function provides the linear algebra solution to find line of best fit
     passing through points (x,y). Options to specify slope or intercept enable
     these parameters to be forced.
 
@@ -4306,6 +4287,7 @@ def linear_regression(
     RRY form. For RRX it can be rearranged to X = (Y - intercept)/slope
 
     For more information on linear regression, see the `documentation <https://reliability.readthedocs.io/en/latest/How%20does%20Least%20Squares%20Estimation%20work.html>`_.
+
     """
     x = np.asarray(x)
     y = np.asarray(y)
@@ -4333,19 +4315,18 @@ def linear_regression(
             min_pts = 2
             xx = np.array([x, np.ones_like(x)]).T
             yy = y.T
-    else:  # RRX
-        if x_intercept is not None:  # only the slope must be found
-            min_pts = 1
-            yy = np.array([y]).T
-            xx = (x - x_intercept).T
-        elif slope is not None:  # only the intercept must be found
-            min_pts = 1
-            yy = np.array([np.ones_like(y)]).T
-            xx = (x - slope * y).T
-        else:  # both slope and intercept must be found
-            min_pts = 2
-            yy = np.array([y, np.ones_like(y)]).T
-            xx = x.T
+    elif x_intercept is not None:  # only the slope must be found
+        min_pts = 1
+        yy = np.array([y]).T
+        xx = (x - x_intercept).T
+    elif slope is not None:  # only the intercept must be found
+        min_pts = 1
+        yy = np.array([np.ones_like(y)]).T
+        xx = (x - slope * y).T
+    else:  # both slope and intercept must be found
+        min_pts = 2
+        yy = np.array([y, np.ones_like(y)]).T
+        xx = x.T
 
     if len(x) < min_pts:
         if slope is not None:
@@ -4410,8 +4391,7 @@ def linear_regression(
 
 
 def least_squares(dist, failures, right_censored, method="RRX", force_shape=None):
-    """
-    Uses least squares or non-linear least squares estimation to fit the
+    """Uses least squares or non-linear least squares estimation to fit the
     parameters of the distribution to the plotting positions.
 
     Plotting positions are based on failures and right_censored so while least
@@ -4452,8 +4432,8 @@ def least_squares(dist, failures, right_censored, method="RRX", force_shape=None
     uses non-linear least squares (NLLS) which uses scipy's curve_fit to find
     the parameters. This may sometimes fail as curve_fit is an optimization
     routine that needs an initial guess provided by this function.
-    """
 
+    """
     if min(failures) <= 0 and dist not in ["Normal_2P", "Gumbel_2P"]:
         raise ValueError(
             "failures contains zeros or negative values which are only suitable when dist is Normal_2P or Gumbel_2P",
@@ -4894,8 +4874,7 @@ def least_squares(dist, failures, right_censored, method="RRX", force_shape=None
 
 
 def ALT_least_squares(model, failures, stress_1_array, stress_2_array=None):
-    """
-    Uses least squares estimation to fit the parameters of the ALT stress-life
+    """Uses least squares estimation to fit the parameters of the ALT stress-life
     model to the time to failure data.
 
     Unlike least_squares for probability distributions, this function does not
@@ -4939,11 +4918,11 @@ def ALT_least_squares(model, failures, stress_1_array, stress_2_array=None):
     For models with more than two parameters, linear algebra is equally valid,
     but in these cases it is not finding the line of best fit, it is instead
     finding the plane of best fit.
+
     """
 
     def non_invertable_handler(xx, yy, model):
-        """
-        This subfunction performs the linear algebra to find the solution.
+        """This subfunction performs the linear algebra to find the solution.
         It also handles the occasional case of a non-invertable matrix.
         This function is separated out for repeated use.
 
@@ -4961,6 +4940,7 @@ def ALT_least_squares(model, failures, stress_1_array, stress_2_array=None):
         model_parameters : list
             The model parameters in a list. These are the linearized form and
             need to be converted back to find the actual model parameters.
+
         """
         try:
             # linear regression formula for RRY
@@ -5026,8 +5006,7 @@ def ALT_least_squares(model, failures, stress_1_array, stress_2_array=None):
 
 
 class LS_optimization:
-    """
-    This function is a control function for least squares regression and it is
+    """This function is a control function for least squares regression and it is
     used by each of the Fitters. There is no actual "optimization" done here,
     with the exception of checking which method (RRX or RRY) gives the better
     solution.
@@ -5065,6 +5044,7 @@ class LS_optimization:
     -----
     If method="LS" then both "RRX" and "RRY" will be tried and the best one will
     be returned.
+
     """
 
     def __init__(
@@ -5136,8 +5116,7 @@ class LS_optimization:
 
 
 class MLE_optimization:
-    """
-    This function performs Maximum Likelihood Estimation (MLE) to find the
+    """This function performs Maximum Likelihood Estimation (MLE) to find the
     optimal parameters of the probability distribution. This functions is used
     by each of the fitters.
 
@@ -5212,6 +5191,7 @@ class MLE_optimization:
 
     If the MLE method fails then the initial guess (from least squares) will be
     returned with a printed warning.
+
     """
 
     def __init__(
@@ -5237,8 +5217,7 @@ class MLE_optimization:
             LL_func_force,
             func_name,
         ):
-            """
-            This sub-function does the actual optimization. It is called each
+            """This sub-function does the actual optimization. It is called each
             time a new optimizer is tried.
 
             Parameters
@@ -5279,6 +5258,7 @@ class MLE_optimization:
             -----
             The returns are provided in a tuple of success, log_likelihood,
             model_parameters.
+
             """
             delta_LL = 1
             LL_array = [1000000]
@@ -5373,29 +5353,28 @@ class MLE_optimization:
         if optimizer is None:  # default is to try in this order but stop after one succeeds
             optimizers_to_try = ["L-BFGS-B", "TNC", "nelder-mead", "powell"]
             stop_after_success = True
+        elif optimizer in [
+            "best",
+            "BEST",
+            "all",
+            "ALL",
+        ]:  # try all of the bounded optimizers
+            optimizers_to_try = ["TNC", "L-BFGS-B", "nelder-mead", "powell"]
+        elif optimizer.upper() == "TNC":
+            optimizers_to_try = ["TNC"]
+        elif optimizer.upper() in ["L-BFGS-B", "LBFGSB"]:
+            optimizers_to_try = ["L-BFGS-B"]
+        elif optimizer.upper() == "POWELL":
+            optimizers_to_try = ["powell"]
+        elif optimizer.upper() in ["NELDER-MEAD", "NELDERMEAD"]:
+            optimizers_to_try = ["nelder-mead"]
         else:
-            if optimizer in [
-                "best",
-                "BEST",
-                "all",
-                "ALL",
-            ]:  # try all of the bounded optimizers
-                optimizers_to_try = ["TNC", "L-BFGS-B", "nelder-mead", "powell"]
-            elif optimizer.upper() == "TNC":
-                optimizers_to_try = ["TNC"]
-            elif optimizer.upper() in ["L-BFGS-B", "LBFGSB"]:
-                optimizers_to_try = ["L-BFGS-B"]
-            elif optimizer.upper() == "POWELL":
-                optimizers_to_try = ["powell"]
-            elif optimizer.upper() in ["NELDER-MEAD", "NELDERMEAD"]:
-                optimizers_to_try = ["nelder-mead"]
-            else:
-                raise ValueError(
-                    str(
-                        str(optimizer)
-                        + ' is not a valid optimizer. Please specify either "TNC", "L-BFGS-B", "nelder-mead", "powell" or "best".',
-                    ),
-                )
+            raise ValueError(
+                str(
+                    str(optimizer)
+                    + ' is not a valid optimizer. Please specify either "TNC", "L-BFGS-B", "nelder-mead", "powell" or "best".',
+                ),
+            )
 
         # use each of the optimizers specified
         ALL_successes = []
@@ -5492,9 +5471,8 @@ class MLE_optimization:
                     self.scale = initial_guess[0]  # alpha, mu, Lambda
                     if func_name not in ["Exponential_1P", "Exponential_2P"]:
                         self.shape = initial_guess[1]  # beta, sigma
-                    else:
-                        if func_name == "Exponential_2P":
-                            self.gamma = initial_guess[1]  # gamma for Exponential_2P
+                    elif func_name == "Exponential_2P":
+                        self.gamma = initial_guess[1]  # gamma for Exponential_2P
                     if func_name in [
                         "Weibull_3P",
                         "Gamma_3P",
@@ -5547,29 +5525,26 @@ class MLE_optimization:
                 self.alpha = params[0]
                 self.beta = params[1]
                 self.ZI = params[2]
-            else:
-                if force_shape is None:
-                    self.scale = params[0]  # alpha, mu, Lambda
-                    if func_name not in ["Exponential_1P", "Exponential_2P"]:
-                        self.shape = params[1]  # beta, sigma
-                    else:
-                        if func_name == "Exponential_2P":
-                            self.gamma = params[1]  # gamma for Exponential_2P
-                    if func_name in [
-                        "Weibull_3P",
-                        "Gamma_3P",
-                        "Loglogistic_3P",
-                        "Lognormal_3P",
-                    ]:
-                        self.gamma = params[2]  # gamma for Weibull_3P, Gamma_3P, Loglogistic_3P, Lognormal_3P
-                else:  # this will only be reached for Weibull_2P, Normal_2P and Lognormal_2P so the scale and shape extraction is fine for these
-                    self.scale = params[0]
-                    self.shape = force_shape
+            elif force_shape is None:
+                self.scale = params[0]  # alpha, mu, Lambda
+                if func_name not in ["Exponential_1P", "Exponential_2P"]:
+                    self.shape = params[1]  # beta, sigma
+                elif func_name == "Exponential_2P":
+                    self.gamma = params[1]  # gamma for Exponential_2P
+                if func_name in [
+                    "Weibull_3P",
+                    "Gamma_3P",
+                    "Loglogistic_3P",
+                    "Lognormal_3P",
+                ]:
+                    self.gamma = params[2]  # gamma for Weibull_3P, Gamma_3P, Loglogistic_3P, Lognormal_3P
+            else:  # this will only be reached for Weibull_2P, Normal_2P and Lognormal_2P so the scale and shape extraction is fine for these
+                self.scale = params[0]
+                self.shape = force_shape
 
 
 class ALT_MLE_optimization:
-    """
-    This performs the MLE method to find the parameters.
+    """This performs the MLE method to find the parameters.
     If the optimizer is None then all bounded optimizers will be tried and the
     best result (lowest log-likelihood) will be returned. If the optimizer is
     specified then it will be used. If it fails then the initial guess will be
@@ -5641,6 +5616,7 @@ class ALT_MLE_optimization:
 
     If the MLE method fails then the initial guess (from least squares) will be
     returned with a printed warning.
+
     """
 
     def __init__(
@@ -5670,8 +5646,7 @@ class ALT_MLE_optimization:
             bounds,
             optimizer,
         ):
-            """
-            This sub-function does the actual optimization. It is called each
+            """This sub-function does the actual optimization. It is called each
             time a new optimizer is tried.
 
             Parameters
@@ -5719,6 +5694,7 @@ class ALT_MLE_optimization:
             -----
             The returns are provided in a tuple of success, log_likelihood,
             model_parameters.
+
             """
             delta_LL = 1
             LL_array = [1000000]
@@ -5834,29 +5810,28 @@ class ALT_MLE_optimization:
         if optimizer is None:  # default is to try in this order but stop after one succeeds
             optimizers_to_try = ["L-BFGS-B", "TNC", "nelder-mead", "powell"]
             stop_after_success = True
+        elif optimizer in [
+            "best",
+            "BEST",
+            "all",
+            "ALL",
+        ]:  # try all of the bounded optimizers
+            optimizers_to_try = ["L-BFGS-B", "TNC", "nelder-mead", "powell"]
+        elif optimizer.upper() == "TNC":
+            optimizers_to_try = ["TNC"]
+        elif optimizer.upper() in ["L-BFGS-B", "LBFGSB"]:
+            optimizers_to_try = ["L-BFGS-B"]
+        elif optimizer.upper() == "POWELL":
+            optimizers_to_try = ["powell"]
+        elif optimizer.upper() in ["NELDER-MEAD", "NELDERMEAD"]:
+            optimizers_to_try = ["nelder-mead"]
         else:
-            if optimizer in [
-                "best",
-                "BEST",
-                "all",
-                "ALL",
-            ]:  # try all of the bounded optimizers
-                optimizers_to_try = ["L-BFGS-B", "TNC", "nelder-mead", "powell"]
-            elif optimizer.upper() == "TNC":
-                optimizers_to_try = ["TNC"]
-            elif optimizer.upper() in ["L-BFGS-B", "LBFGSB"]:
-                optimizers_to_try = ["L-BFGS-B"]
-            elif optimizer.upper() == "POWELL":
-                optimizers_to_try = ["powell"]
-            elif optimizer.upper() in ["NELDER-MEAD", "NELDERMEAD"]:
-                optimizers_to_try = ["nelder-mead"]
-            else:
-                raise ValueError(
-                    str(
-                        str(optimizer)
-                        + ' is not a valid optimizer. Please specify either "TNC", "L-BFGS-B", "nelder-mead", "powell" or "best".',
-                    ),
-                )
+            raise ValueError(
+                str(
+                    str(optimizer)
+                    + ' is not a valid optimizer. Please specify either "TNC", "L-BFGS-B", "nelder-mead", "powell" or "best".',
+                ),
+            )
 
         # use each of the optimizers specified
         ALL_successes = []
@@ -5931,11 +5906,10 @@ class ALT_MLE_optimization:
                     self.beta = initial_guess[2]
                 elif dist in ["Lognormal", "Normal"]:
                     self.sigma = initial_guess[2]
-            else:
-                if dist == "Weibull":
-                    self.beta = initial_guess[3]
-                elif dist in ["Lognormal", "Normal"]:
-                    self.sigma = initial_guess[3]
+            elif dist == "Weibull":
+                self.beta = initial_guess[3]
+            elif dist in ["Lognormal", "Normal"]:
+                self.sigma = initial_guess[3]
         else:
             # at least one optimizer succeeded. Need to drop the failed ones then get the best of the successes
             items = np.arange(0, len(ALL_successes))[::-1]
@@ -5977,16 +5951,14 @@ class ALT_MLE_optimization:
                     self.beta = params[2]
                 elif dist in ["Lognormal", "Normal"]:
                     self.sigma = params[2]
-            else:
-                if dist == "Weibull":
-                    self.beta = params[3]
-                elif dist in ["Lognormal", "Normal"]:
-                    self.sigma = params[3]
+            elif dist == "Weibull":
+                self.beta = params[3]
+            elif dist in ["Lognormal", "Normal"]:
+                self.sigma = params[3]
 
 
 def write_df_to_xlsx(df, path, **kwargs):
-    """
-    Writes a dataframe to an xlsx file
+    """Writes a dataframe to an xlsx file
     For use exclusively by the Convert_data module
 
     Parameters
@@ -6006,6 +5978,7 @@ def write_df_to_xlsx(df, path, **kwargs):
     The path must include the full file path including the extension. It is also
     necessary to use r at the start to specify raw text. See the
     `documentation <https://reliability.readthedocs.io/en/latest/Converting%20data%20between%20different%20formats.html>`_ for an example.
+
     """
     # this section checks whether the file exists and reprompts the user based on their choices
     ready_to_write = False
@@ -6055,8 +6028,7 @@ def write_df_to_xlsx(df, path, **kwargs):
 
 
 def removeNaNs(X):
-    """
-    Removes NaNs from a list or array.
+    """Removes NaNs from a list or array.
 
     Parameters
     ----------
@@ -6072,6 +6044,7 @@ def removeNaNs(X):
     -----
     This is better than simply using "x = x[numpy.logical_not(numpy.isnan(x))]"
     as numpy crashes for str and bool.
+
     """
     if type(X) == np.ndarray:
         X = list(X)
@@ -6091,8 +6064,7 @@ def removeNaNs(X):
 
 
 class make_fitted_dist_params_for_ALT_probplots:
-    """
-    This function creates a class structure for the ALT probability plots to
+    """This function creates a class structure for the ALT probability plots to
     give to Probability_plotting.
 
     Parameters
@@ -6134,6 +6106,7 @@ class make_fitted_dist_params_for_ALT_probplots:
     -----
     This function only exists to convert a list or array of parameters into a
     class with the correct parameters for the probability plots to use.
+
     """
 
     def __init__(self, dist, params):
@@ -6178,8 +6151,7 @@ def ALT_prob_plot(
     use_level_stress=None,
     ax=True,
 ):
-    """
-    Generates an ALT probability plot using the inputs provided.
+    """Generates an ALT probability plot using the inputs provided.
 
     Parameters
     ----------
@@ -6214,8 +6186,8 @@ def ALT_prob_plot(
     current_axis : axis
         The axis handle of the plot. If ax is specified in the inputs then this
         will be the same handle.
-    """
 
+    """
     if ax is True or type(ax) == _axes.Axes:
         if type(ax) == _axes.Axes:
             plt.sca(ax=ax)  # use the axes passed
@@ -6285,13 +6257,12 @@ def ALT_prob_plot(
                 if dist == "Exponential":
                     if scale_for_change_df[i] != "":
                         Distribution(1 / scale_for_change_df[i]).CDF(linestyle="--", alpha=0.5, color=color_cycle[i])
-                else:
-                    if scale_for_change_df[i] != "":
-                        Distribution(scale_for_change_df[i], shape_for_change_df[i]).CDF(
-                            linestyle="--",
-                            alpha=0.5,
-                            color=color_cycle[i],
-                        )
+                elif scale_for_change_df[i] != "":
+                    Distribution(scale_for_change_df[i], shape_for_change_df[i]).CDF(
+                        linestyle="--",
+                        alpha=0.5,
+                        color=color_cycle[i],
+                    )
 
             if use_level_stress is not None:
                 if dist in ["Weibull", "Normal"]:
@@ -6350,13 +6321,12 @@ def ALT_prob_plot(
                 if dist == "Exponential":
                     if scale_for_change_df[i] != "":
                         Distribution(1 / scale_for_change_df[i]).CDF(linestyle="--", alpha=0.5, color=color_cycle[i])
-                else:
-                    if scale_for_change_df[i] != "":
-                        Distribution(scale_for_change_df[i], shape_for_change_df[i]).CDF(
-                            linestyle="--",
-                            alpha=0.5,
-                            color=color_cycle[i],
-                        )
+                elif scale_for_change_df[i] != "":
+                    Distribution(scale_for_change_df[i], shape_for_change_df[i]).CDF(
+                        linestyle="--",
+                        alpha=0.5,
+                        color=color_cycle[i],
+                    )
 
             if use_level_stress is not None:
                 if dist in ["Weibull", "Normal"]:
@@ -6398,8 +6368,7 @@ def life_stress_plot(
     use_level_stress=None,
     ax=True,
 ):
-    """
-    Generates a life stress plot using the inputs provided. The life stress plot
+    """Generates a life stress plot using the inputs provided. The life stress plot
     is an output from each of the ALT_fitters.
 
     Parameters
@@ -6429,6 +6398,7 @@ def life_stress_plot(
     current_axes : axes
         The axes handle of the plot. If ax is specified in the inputs then this
         will be the same handle.
+
     """
     if ax in [
         "swap",
@@ -6469,16 +6439,15 @@ def life_stress_plot(
                         text_color="red",
                     )
                     plt.figure(figsize=(9, 9))
-            else:  # dual stress models require 3d projection
-                if hasattr(ax, "get_zlim") is True:
-                    plt.sca(ax=ax)  # use the axes passed if 3d
-                else:
-                    colorprint(
-                        "WARNING: The axes passed to the life_stress_plot has been ignored as it does not have 3d projection. This is a requirement of life stress plots for all dual stress models.",
-                        text_color="red",
-                    )
-                    fig = plt.figure(figsize=(9, 9))
-                    ax = fig.add_subplot(111, projection="3d")
+            elif hasattr(ax, "get_zlim") is True:
+                plt.sca(ax=ax)  # use the axes passed if 3d
+            else:
+                colorprint(
+                    "WARNING: The axes passed to the life_stress_plot has been ignored as it does not have 3d projection. This is a requirement of life stress plots for all dual stress models.",
+                    text_color="red",
+                )
+                fig = plt.figure(figsize=(9, 9))
+                ax = fig.add_subplot(111, projection="3d")
         else:
             fig = plt.figure(figsize=(9, 9))  # if no axes is passed, make a new figure
             if dual_stress is True:
@@ -6663,8 +6632,7 @@ def life_stress_plot(
 
 
 def xy_downsample(x, y, downsample_factor=None, default_max_values=1000):
-    """
-    This function downsamples the x and y arrays. This exists to make plotting
+    """This function downsamples the x and y arrays. This exists to make plotting
     much faster, particularly when matplotlib becomes very slow for tens of
     thousands of datapoints.
 
@@ -6698,8 +6666,8 @@ def xy_downsample(x, y, downsample_factor=None, default_max_values=1000):
     are more than default_max_values. The downsample factor will aim for the
     number of values to be returned to be between default_max_values/2 and
     default_max_values. By default this is between 500 and 1000.
-    """
 
+    """
     x_sorted = np.sort(x)
     y_sorted = np.sort(y)
     len_x = len(x)
@@ -6738,8 +6706,7 @@ def distributions_input_checking(
     CI_y=None,
     CI_x=None,
 ):
-    """
-    Performs checks and sets default values for the inputs to distributions
+    """Performs checks and sets default values for the inputs to distributions
     sub function (PDF, CDF, SF, HF, CHF)
 
     Parameters
@@ -6802,6 +6769,7 @@ def distributions_input_checking(
     CI_x : list, array, float, int
         The confidence interval x-values to trace. Default is None. Only
         returned if func is 'CDF', 'SF', or 'CHF' and self.name !='Beta'.
+
     """
     if func not in ["PDF", "CDF", "SF", "HF", "CHF", "ALL"]:
         raise ValueError("func must be either 'PDF','CDF', 'SF', 'HF', 'CHF', 'ALL'")
@@ -6937,18 +6905,16 @@ def distributions_input_checking(
             return X, xvals, xmin, xmax, show_plot
         else:  # func ='ALL' which is used for the .plot() method
             return X, xvals, xmin, xmax
-    else:  # everything except the Beta distribution
-        if func in ["PDF", "HF"]:
-            return X, xvals, xmin, xmax, show_plot
-        elif func in ["CDF", "SF", "CHF"]:
-            return X, xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-        else:  # func ='ALL' which is used for the .plot() method
-            return X, xvals, xmin, xmax
+    elif func in ["PDF", "HF"]:
+        return X, xvals, xmin, xmax, show_plot
+    elif func in ["CDF", "SF", "CHF"]:
+        return X, xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+    else:  # func ='ALL' which is used for the .plot() method
+        return X, xvals, xmin, xmax
 
 
 def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
-    """
-    Extracts the confidence bounds at CI_x or CI_y.
+    """Extracts the confidence bounds at CI_x or CI_y.
 
     Parameters
     ----------
@@ -6981,8 +6947,8 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
 
     If CI_type="reliability" then CI_x must be specified in order to extract the
     confidence bounds on reliability.
-    """
 
+    """
     if dist.name == "Exponential":
         if CI_y is not None and CI_x is not None:
             raise ValueError("Both CI_x and CI_y have been provided. Please provide only one.")
@@ -7141,8 +7107,7 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
 
 
 def unpack_single_arrays(array):
-    """
-    Unpacks arrays with a single element to return just that element
+    """Unpacks arrays with a single element to return just that element
 
     Parameters
     ----------
@@ -7155,14 +7120,14 @@ def unpack_single_arrays(array):
         If the input was a single length numpy array then the output will be the
         item from the array. If the input was anything else then the output will
         match the input
+
     """
     out = (array[0] if len(array) == 1 else array) if type(array) == np.ndarray else array
     return out
 
 
 def reshow_figure(handle):
-    """
-    Shows a figure from an axes handle or figure handle.
+    """Shows a figure from an axes handle or figure handle.
     This is useful if the handle is saved to a variable but the figure has been
     closed.
     Note that the Navigation Toolbar (for pan, zoom, and save) is still
@@ -7177,6 +7142,7 @@ def reshow_figure(handle):
     -------
     None
         The figure is automatically shown using plt.show().
+
     """
     if type(handle) is not Figure and type(handle) != _axes.Axes:
         # check that the handle is either an axes or a figure

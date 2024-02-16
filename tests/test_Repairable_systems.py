@@ -16,7 +16,7 @@ rtol = 1e-7
 
 def test_reliability_growth_duane():
     times = [10400, 26900, 43400, 66400, 89400, 130400, 163400, 232000, 242000, 340700]
-    rg_duane = reliability_growth(times=times, model='Duane', target_MTBF=50000, print_results=False, show_plot=False)
+    rg_duane = reliability_growth(times=times, model="Duane", target_MTBF=50000, print_results=False, show_plot=False)
     assert_allclose(rg_duane.A, 0.002355878294089656, rtol=rtol, atol=atol)
     assert_allclose(rg_duane.Alpha, 0.33617199465228115, rtol=rtol, atol=atol)
     assert_allclose(rg_duane.DMTBF_I, 46304.175358824315, rtol=rtol, atol=atol)
@@ -29,7 +29,7 @@ def test_reliability_growth_duane():
 def test_reliability_growth_crow_amsaa():
     times = [10400, 26900, 43400, 66400, 89400, 130400, 163400, 232000, 242000, 340700]
     rg_crow = reliability_growth(
-        times=times, model='Crow-AMSAA', target_MTBF=50000, print_results=False, show_plot=False,
+        times=times, model="Crow-AMSAA", target_MTBF=50000, print_results=False, show_plot=False,
     )
     assert_allclose(rg_crow.Beta, 0.741656619656656, rtol=rtol, atol=atol)
     assert_allclose(rg_crow.Lambda, 0.0007886414235385733, rtol=rtol, atol=atol)
@@ -86,12 +86,12 @@ def test_ROCOF():
     results = ROCOF(times_between_failures=times, show_plot=False, print_results=False)
     assert_allclose(results.U, 2.4094382960447107, rtol=rtol, atol=atol)
     assert_allclose(results.z_crit, (-1.959963984540054, 1.959963984540054), rtol=rtol, atol=atol)
-    assert results.trend == 'worsening'
+    assert results.trend == "worsening"
     assert_allclose(results.Beta_hat, 1.5880533880966818, rtol=rtol, atol=atol)
     assert_allclose(results.Lambda_hat, 3.702728848984535e-05, rtol=rtol, atol=atol)
     assert (
         results.ROCOF
-        == 'ROCOF is not provided when trend is not constant. Use Beta_hat and Lambda_hat to calculate ROCOF at a given time t.'
+        == "ROCOF is not provided when trend is not constant. Use Beta_hat and Lambda_hat to calculate ROCOF at a given time t."
     )
 
 

@@ -1,5 +1,4 @@
-"""
-Nonparametric
+"""Nonparametric.
 
 Provides non-parametric estimates of survival function, cumulative distribution
 function, and cumulative hazard function. Three estimation methods are
@@ -13,7 +12,7 @@ their approach. Kaplan-Meier is more popular. All three methods support failures
 and right censored data. Confidence intervals are provided using the Greenwood
 formula with Normal approximation (as implemented in Minitab).
 """
-from typing import Optional
+from __future__ import annotations
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,8 +27,7 @@ pd.set_option("display.max_columns", 9)  # shows the dataframe without ... trunc
 
 
 class KaplanMeier:
-    """
-    Uses the Kaplan-Meier estimation method to calculate the reliability from
+    """Uses the Kaplan-Meier estimation method to calculate the reliability from
     failure data. Right censoring is supported and confidence bounds are
     provided.
 
@@ -100,15 +98,16 @@ class KaplanMeier:
     transformations of the SF. It is not possible to obtain a useful version of
     the PDF or HF as the derivative of a stepwise function produces
     discontinuous (jagged) functions.
+
     """
 
     def __init__(
         self,
-        failures: Optional[list[int]] = None,
-        right_censored: Optional[list[int]] = None,
-        show_plot=True,
-        print_results=True,
-        plot_CI=True,
+        failures: list[int] | None = None,
+        right_censored: list[int] | None = None,
+        show_plot: bool=True,
+        print_results: bool = True,
+        plot_CI: bool=True,
         CI=0.95,
         plot_type="SF",
         **kwargs,
@@ -140,8 +139,8 @@ class KaplanMeier:
         Data = {"times": times, "cens_code": cens_code}
         df = pd.DataFrame(Data, columns=["times", "cens_code"])
         df2: pd.DataFrame = df.sort_values(by="times")
-        d = df2["times"].values
-        c = df2["cens_code"].values
+        d = df2["times"].to_numpy()
+        c = df2["cens_code"].to_numpy()
 
         self.data = d
         self.censor_codes = c
@@ -218,21 +217,20 @@ class KaplanMeier:
                     KM_y_upper.append(1)
                     KM_y_lower.append(1)
                     KM_y_upper.append(1)
-            else:
-                if KM[i - 2] == KM[i - 1]:  # if the next item is censored
-                    KM_x = np.append(KM_x, (d[i - 1]))
-                    KM_y = np.append(KM_y, KM[i - 1])
-                    KM_y_lower.append(KM_lower[i - 2])
-                    KM_y_upper.append(KM_upper[i - 2])
-                else:  # if the next item is a failure
-                    KM_x = np.append(KM_x, (d[i - 1]))
-                    KM_y = np.append(KM_y, KM[i - 2])
-                    KM_y_lower.append(KM_lower[i - 2])
-                    KM_y_upper.append(KM_upper[i - 2])
-                    KM_x = np.append(KM_x, (d[i - 1]))
-                    KM_y = np.append(KM_y, KM[i - 1])
-                    KM_y_lower.append(KM_lower[i - 2])
-                    KM_y_upper.append(KM_upper[i - 2])
+            elif KM[i - 2] == KM[i - 1]:  # if the next item is censored
+                KM_x = np.append(KM_x, (d[i - 1]))
+                KM_y = np.append(KM_y, KM[i - 1])
+                KM_y_lower.append(KM_lower[i - 2])
+                KM_y_upper.append(KM_upper[i - 2])
+            else:  # if the next item is a failure
+                KM_x = np.append(KM_x, (d[i - 1]))
+                KM_y = np.append(KM_y, KM[i - 2])
+                KM_y_lower.append(KM_lower[i - 2])
+                KM_y_upper.append(KM_upper[i - 2])
+                KM_x = np.append(KM_x, (d[i - 1]))
+                KM_y = np.append(KM_y, KM[i - 1])
+                KM_y_lower.append(KM_lower[i - 2])
+                KM_y_upper.append(KM_upper[i - 2])
         KM_y_lower.append(KM_y_lower[-1])
         KM_y_upper.append(KM_y_upper[-1])
         self.KM = np.array(KM)
@@ -329,8 +327,7 @@ class KaplanMeier:
 
 
 class NelsonAalen:
-    """
-    Uses the Nelson-Aalen estimation method to calculate the reliability from
+    """Uses the Nelson-Aalen estimation method to calculate the reliability from
     failure data. Right censoring is supported and confidence bounds are
     provided.
 
@@ -403,12 +400,13 @@ class NelsonAalen:
     discontinuous (jagged) functions. Nelson-Aalen does obtain the HF directly
     which is then used to obtain the CHF, but this function is not smooth and is
     of little use.
+
     """
 
     def __init__(
         self,
-        failures: Optional[list[int]] = None,
-        right_censored: Optional[list[int]] = None,
+        failures: list[int] | None = None,
+        right_censored: list[int] | None = None,
         show_plot=True,
         print_results=True,
         plot_CI=True,
@@ -523,21 +521,20 @@ class NelsonAalen:
                     NA_y_upper.append(1)
                     NA_y_lower.append(1)
                     NA_y_upper.append(1)
-            else:
-                if NA[i - 2] == NA[i - 1]:  # if the next item is censored
-                    NA_x = np.append(NA_x, (d[i - 1]))
-                    NA_y = np.append(NA_y, NA[i - 1])
-                    NA_y_lower.append(NA_lower[i - 2])
-                    NA_y_upper.append(NA_upper[i - 2])
-                else:  # if the next item is a failure
-                    NA_x = np.append(NA_x, (d[i - 1]))
-                    NA_y = np.append(NA_y, NA[i - 2])
-                    NA_y_lower.append(NA_lower[i - 2])
-                    NA_y_upper.append(NA_upper[i - 2])
-                    NA_x = np.append(NA_x, (d[i - 1]))
-                    NA_y = np.append(NA_y, NA[i - 1])
-                    NA_y_lower.append(NA_lower[i - 2])
-                    NA_y_upper.append(NA_upper[i - 2])
+            elif NA[i - 2] == NA[i - 1]:  # if the next item is censored
+                NA_x = np.append(NA_x, (d[i - 1]))
+                NA_y = np.append(NA_y, NA[i - 1])
+                NA_y_lower.append(NA_lower[i - 2])
+                NA_y_upper.append(NA_upper[i - 2])
+            else:  # if the next item is a failure
+                NA_x = np.append(NA_x, (d[i - 1]))
+                NA_y = np.append(NA_y, NA[i - 2])
+                NA_y_lower.append(NA_lower[i - 2])
+                NA_y_upper.append(NA_upper[i - 2])
+                NA_x = np.append(NA_x, (d[i - 1]))
+                NA_y = np.append(NA_y, NA[i - 1])
+                NA_y_lower.append(NA_lower[i - 2])
+                NA_y_upper.append(NA_upper[i - 2])
         NA_y_lower.append(NA_y_lower[-1])
         NA_y_upper.append(NA_y_upper[-1])
         self.xvals = np.array(NA_x)
@@ -634,8 +631,7 @@ class NelsonAalen:
 
 
 class RankAdjustment:
-    """
-    Uses the rank-adjustment estimation method to calculate the reliability from
+    """Uses the rank-adjustment estimation method to calculate the reliability from
     failure data. Right censoring is supported and confidence bounds are
     provided.
 
@@ -717,6 +713,7 @@ class RankAdjustment:
     Probability_plotting.plotting_positions to obtain y-values for the scatter
     plot. As with plotting_positions, the heuristic constant "a" is accepted,
     with the default being 0.3 for median ranks.
+
     """
 
     def __init__(

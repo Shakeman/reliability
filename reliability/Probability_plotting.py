@@ -1,5 +1,4 @@
-"""
-Probability plotting
+"""Probability plotting
 
 This module contains the functions required to generate linearized probability
 plots of the 8 standard distributions included in reliability. The most common
@@ -67,8 +66,7 @@ dec = 3  # number of decimals to use when rounding fitted parameters in labels
 
 
 def plotting_positions(failures=None, right_censored=None, a=None, sort=False):
-    """
-    Calculates the plotting positions for plotting on probability paper.
+    """Calculates the plotting positions for plotting on probability paper.
 
     Parameters
     ----------
@@ -96,8 +94,8 @@ def plotting_positions(failures=None, right_censored=None, a=None, sort=False):
     Notes
     -----
     This function is primarily used by the probability plotting functions.
-    """
 
+    """
     # error checking the input
     if type(failures) in [list, np.ndarray]:
         f: npt.NDArray[np.float64] = np.asarray(failures)
@@ -184,8 +182,7 @@ def Weibull_probability_plot(
     downsample_scatterplot=False,
     **kwargs,
 ):
-    """
-    Generates a probability plot on Weibull scaled probability paper so that the
+    """Generates a probability plot on Weibull scaled probability paper so that the
     CDF of the distribution appears linear. This function can be used to show
     Weibull_2P or Weibull_3P distributions.
 
@@ -245,6 +242,7 @@ def Weibull_probability_plot(
     Fitters module.
 
     If your plot does not appear automatically, use plt.show() to show it.
+
     """
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
@@ -395,8 +393,7 @@ def Loglogistic_probability_plot(
     downsample_scatterplot=False,
     **kwargs,
 ):
-    """
-    Generates a probability plot on Loglogistically scaled probability paper so
+    """Generates a probability plot on Loglogistically scaled probability paper so
     that the CDF of the distribution appears linear. This function can be used
     to show Loglogistic_2P or Loglogistic_3P distributions.
 
@@ -456,6 +453,7 @@ def Loglogistic_probability_plot(
     Fitters module.
 
     If your plot does not appear automatically, use plt.show() to show it.
+
     """
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
@@ -613,8 +611,7 @@ def Exponential_probability_plot_Weibull_Scale(
     downsample_scatterplot=False,
     **kwargs,
 ):
-    """
-    Generates a probability plot on Weibull scaled probability paper so that the
+    """Generates a probability plot on Weibull scaled probability paper so that the
     CDF of the distribution appears linear. This differs from the Exponential
     probability plot on Exponential scaled probability paper as the Weibull
     paper will make multiple distributions with different Lambda parameters
@@ -680,6 +677,7 @@ def Exponential_probability_plot_Weibull_Scale(
     confidence interval bounds on both time and reliability.
 
     If your plot does not appear automatically, use plt.show() to show it.
+
     """
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
@@ -811,8 +809,7 @@ def Gumbel_probability_plot(
     downsample_scatterplot=False,
     **kwargs,
 ):
-    """
-    Generates a probability plot on Gumbel scaled probability paper so that the
+    """Generates a probability plot on Gumbel scaled probability paper so that the
     CDF of the distribution appears linear.
 
     Parameters
@@ -868,6 +865,7 @@ def Gumbel_probability_plot(
     Fitters module.
 
     If your plot does not appear automatically, use plt.show() to show it.
+
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
@@ -963,8 +961,7 @@ def Normal_probability_plot(
     downsample_scatterplot=False,
     **kwargs,
 ):
-    """
-    Generates a probability plot on Normal scaled probability paper so that the
+    """Generates a probability plot on Normal scaled probability paper so that the
     CDF of the distribution appears linear.
 
     Parameters
@@ -1020,6 +1017,7 @@ def Normal_probability_plot(
     Fitters module.
 
     If your plot does not appear automatically, use plt.show() to show it.
+
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
@@ -1116,8 +1114,7 @@ def Lognormal_probability_plot(
     downsample_scatterplot=False,
     **kwargs,
 ):
-    """
-    Generates a probability plot on Lognormal scaled probability paper so that
+    """Generates a probability plot on Lognormal scaled probability paper so that
     the CDF of the distribution appears linear. This function can be used to
     show Lognormal_2P or Lognormal_3P distributions.
 
@@ -1177,6 +1174,7 @@ def Lognormal_probability_plot(
     Fitters module.
 
     If your plot does not appear automatically, use plt.show() to show it.
+
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
@@ -1323,8 +1321,7 @@ def Beta_probability_plot(
     downsample_scatterplot=False,
     **kwargs,
 ):
-    """
-    Generates a probability plot on Beta scaled probability paper so that the
+    """Generates a probability plot on Beta scaled probability paper so that the
     CDF of the distribution appears linear.
 
     Parameters
@@ -1381,6 +1378,7 @@ def Beta_probability_plot(
     If your plot does not appear automatically, use plt.show() to show it.
 
     Confidence intervals are not included for the Beta distribution.
+
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
@@ -1468,8 +1466,7 @@ def Gamma_probability_plot(
     downsample_scatterplot=False,
     **kwargs,
 ):
-    """
-    Generates a probability plot on Gamma scaled probability paper so that the
+    """Generates a probability plot on Gamma scaled probability paper so that the
     CDF of the distribution appears linear. This function can be used to show
     Gamma_2P or Gamma_3P distributions.
 
@@ -1533,6 +1530,7 @@ def Gamma_probability_plot(
     on the same Gamma probability paper, one of them will always appear curved.
 
     If your plot does not appear automatically, use plt.show() to show it.
+
     """
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
@@ -1696,8 +1694,7 @@ def Exponential_probability_plot(
     downsample_scatterplot=False,
     **kwargs,
 ):
-    """
-    Generates a probability plot on Exponentially scaled probability paper so
+    """Generates a probability plot on Exponentially scaled probability paper so
     that the CDF of the distribution appears linear. This differs from the
     Exponential_probability_plot_Weibull_Scale as Exponential paper will make
     multiple distributions with different Lambda parameters appear as lines
@@ -1760,6 +1757,7 @@ def Exponential_probability_plot(
     confidence interval bounds on both time and reliability.
 
     If your plot does not appear automatically, use plt.show() to show it.
+
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
@@ -1882,8 +1880,7 @@ def PP_plot_parametric(
     downsample_scatterplot=False,
     **kwargs,
 ):
-    """
-    The PP plot (probability-probability plot) consists of plotting the CDF of
+    """The PP plot (probability-probability plot) consists of plotting the CDF of
     one distribution against the CDF of another distribution. If the
     distributions are similar, the PP plot will lie on the diagonal. This
     version of a PP plot is the fully parametric form in which we plot one
@@ -1928,8 +1925,8 @@ def PP_plot_parametric(
     Notes
     -----
     If your plot does not appear automatically, use plt.show() to show it.
-    """
 
+    """
     if X_dist is None or Y_dist is None:
         raise ValueError(
             "X_dist and Y_dist must both be specified as probability distributions generated using the Distributions module",
@@ -2029,8 +2026,7 @@ def QQ_plot_parametric(
     downsample_scatterplot=False,
     **kwargs,
 ):
-    """
-    A QQ plot (quantile-quantile plot) consists of plotting failure units vs
+    """A QQ plot (quantile-quantile plot) consists of plotting failure units vs
     failure units for shared quantiles. A quantile is simply the fraction
     failing (ranging from 0 to 1). To generate this plot we calculate the
     failure units (these may be units of time, strength, cycles, landings, etc.)
@@ -2078,8 +2074,8 @@ def QQ_plot_parametric(
     Notes
     -----
     If your plot does not appear automatically, use plt.show() to show it.
-    """
 
+    """
     if X_dist is None or Y_dist is None:
         raise ValueError(
             "dist_X and dist_Y must both be specified as probability distributions generated using the Distributions module",
@@ -2180,8 +2176,7 @@ def PP_plot_semiparametric(
     downsample_scatterplot=False,
     **kwargs,
 ):
-    """
-    A PP plot (probability-probability plot) consists of plotting the CDF of one
+    """A PP plot (probability-probability plot) consists of plotting the CDF of one
     distribution against the CDF of another distribution. If we have both
     distributions we can use the function PP_plot_parametric. This function is
     for when we want to compare a fitted distribution to an empirical
@@ -2233,8 +2228,8 @@ def PP_plot_semiparametric(
     Nelson-Aalen, and Rank Adjustment will also accept right censored data.
 
     If your plot does not appear automatically, use plt.show() to show it.
-    """
 
+    """
     if X_data_failures is None or Y_dist is None:
         raise ValueError(
             "X_data_failures and Y_dist must both be specified. X_data_failures can be an array or list of failure times. Y_dist must be a probability distribution generated using the Distributions module",
@@ -2349,8 +2344,7 @@ def QQ_plot_semiparametric(
     downsample_scatterplot=False,
     **kwargs,
 ):
-    """
-    A QQ plot (quantile-quantile plot) consists of plotting failure units vs
+    """A QQ plot (quantile-quantile plot) consists of plotting failure units vs
     failure units for shared quantiles. A quantile is simply the fraction
     failing (ranging from 0 to 1). When we have two parametric distributions we
     can plot the failure times for common quanitles against one another using
@@ -2406,8 +2400,8 @@ def QQ_plot_semiparametric(
     Notes
     -----
     If your plot does not appear automatically, use plt.show() to show it.
-    """
 
+    """
     if X_data_failures is None or Y_dist is None:
         raise ValueError(
             "X_data_failures and Y_dist must both be specified. X_data_failures can be an array or list of failure times. Y_dist must be a probability distribution generated using the Distributions module",
@@ -2545,8 +2539,7 @@ def QQ_plot_semiparametric(
 
 
 def plot_points(failures=None, right_censored=None, func="CDF", a=None, downsample_scatterplot=False, **kwargs):
-    """
-    Plots the failure points as a scatter plot based on the plotting positions.
+    """Plots the failure points as a scatter plot based on the plotting positions.
     This is similar to a probability plot, just without the axes scaling or the
     fitted distribution. It may be used to overlay the failure points with a
     fitted distribution on either the PDF, CDF, SF, HF, or CHF. If you choose to
@@ -2600,6 +2593,7 @@ def plot_points(failures=None, right_censored=None, func="CDF", a=None, downsamp
         plot_points(failures=data,func='SF') #plot the failure points on the scatter plot
         fitted_dist.distribution.SF() #plot the distribution
         plt.show()
+
     """
     if failures is None or len(failures) < 1:
         raise ValueError("failures must be an array or list with at least 1 failure time")

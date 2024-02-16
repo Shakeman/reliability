@@ -176,6 +176,7 @@ class Fit_Everything_ALT:
         # To extract the parameters of the Weibull_Exponential model from the results dataframe, you may access the parameters by name:
         print('Weibull Exponential beta =',output.Weibull_Exponential_beta)
         >>> Weibull Exponential beta = 3.0807072337386123
+
     """
 
     def __init__(
@@ -1688,7 +1689,7 @@ class Fit_Everything_ALT:
                 cols, rows, figsize = 1, 1, (7.5, 4)
 
             # this is the order to plot to match the results dataframe
-            plotting_order = self.results["ALT_model"].values
+            plotting_order = self.results["ALT_model"].to_numpy()
             plt.suptitle("Probability plots of each fitted ALT model\n\n")
             subplot_counter = 1
         else:

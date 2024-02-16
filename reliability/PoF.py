@@ -1,5 +1,4 @@
-"""
-Physics of Failure
+"""Physics of Failure
 
 Within the module PoF, are the following functions:
 
@@ -38,8 +37,7 @@ def SN_diagram(
     CI=0.95,
     **kwargs,
 ):
-    """
-    This function will plot the stress vs number of cycles (S-N) diagram when
+    """This function will plot the stress vs number of cycles (S-N) diagram when
     supplied with data from a series of fatigue tests.
 
     Parameters
@@ -99,8 +97,8 @@ def SN_diagram(
         cycles_runout = [10 ** 7, 10 ** 7, 10 ** 7, 10 ** 7, 10 ** 7]
         SN_diagram(stress=stress, cycles=cycles, stress_runout=stress_runout, cycles_runout=cycles_runout,method_for_bounds='residual',cycles_trace=[5 * 10 ** 5], stress_trace=[260])
         plt.show()
-    """
 
+    """
     # error checking of input and changing inputs to arrays
     if type(stress) == np.ndarray:
         pass
@@ -134,7 +132,7 @@ def SN_diagram(
             raise ValueError("cycles_runout must be an array or list")
 
     if method_for_bounds not in ["statistical", "residual", None]:
-        raise ValueError("method_for_bounds must be either " "statistical" "," "residual" ",or None (for no bounds).")
+        raise ValueError("method_for_bounds must be either statistical,residual,or None (for no bounds).")
 
     if CI <= 0 or CI >= 1:
         raise ValueError(
@@ -153,7 +151,7 @@ def SN_diagram(
         show_endurance_limit = True
 
     if xscale not in ["log", "linear"]:
-        raise ValueError("xscale must be " "log" " or " "linear" ". Default is " "log" "")
+        raise ValueError("xscale must be log or linear. Default is log")
 
     if stress_trace is not None and type(stress_trace) not in [np.ndarray, list]:
         raise ValueError("stress_trace must be an array or list. Default is None")
@@ -294,8 +292,7 @@ def SN_diagram(
 
 
 class stress_strain_life_parameters_from_data:
-    """
-    This function will use stress and strain data to calculate the stress-strain
+    """This function will use stress and strain data to calculate the stress-strain
     parameters: K, n.
     If cycles is provided it will also calculate the strain-life parameters:
     sigma_f, epsilon_f, b, c.
@@ -342,6 +339,7 @@ class stress_strain_life_parameters_from_data:
     c : float
         The plastic strain exponent. This is only generated if cycles is
         provided.
+
     """
 
     def __init__(self, strain, stress, E, cycles=None, print_results=True, show_plot=True):
@@ -509,8 +507,7 @@ class stress_strain_life_parameters_from_data:
 
 
 class stress_strain_diagram:
-    """
-    This function plots the stress-strain diagram.
+    """This function plots the stress-strain diagram.
 
     If you do not have the parameters K, n, but you do have stress and strain
     data then you can use the function 'stress_strain_life_parameters_from_data'
@@ -548,6 +545,7 @@ class stress_strain_diagram:
     When specifying min and max stress or strain, Do not specify both stress and
     strain as the corresponding value will be automatically calculated. Only
     specify the min if it is not -max.
+
     """
 
     def __init__(
@@ -752,8 +750,7 @@ class stress_strain_diagram:
 
 
 class strain_life_diagram:
-    """
-    This function plots the strain-life diagram.
+    """This function plots the strain-life diagram.
 
     If you do not have the parameters sigma_f, epsilon_f, b, c, but you do have
     stress, strain, and cycles data then you can use the function
@@ -815,6 +812,7 @@ class strain_life_diagram:
     When specifying min and max stress or strain, do not specify both stress and
     strain as the corresponding value will be automatically calculated. Only
     specify the min if it is not -max.
+
     """
 
     def __init__(
@@ -924,165 +922,164 @@ class strain_life_diagram:
                 )
                 plastic_strain_line = epsilon_f * cycles_2Nf_array**c
                 elastic_strain_line = sigma_f / E * cycles_2Nf_array**b
-            else:
-                if mean_stress_correction_method == "morrow":
+            elif mean_stress_correction_method == "morrow":
 
-                    def morrow(eps_tot, sigma_f, sigma_mean, E, cycles_2Nf, epsilon_f, b, c):
-                        return (sigma_f - sigma_mean) / E * cycles_2Nf**b + epsilon_f * cycles_2Nf**c - eps_tot
+                def morrow(eps_tot, sigma_f, sigma_mean, E, cycles_2Nf, epsilon_f, b, c):
+                    return (sigma_f - sigma_mean) / E * cycles_2Nf**b + epsilon_f * cycles_2Nf**c - eps_tot
 
-                    def fun_m(x):
-                        return morrow(
-                            eps_tot=delta_epsilon_half,
-                            sigma_f=sigma_f,
-                            sigma_mean=mean_stress,
-                            E=E,
-                            cycles_2Nf=x,
-                            epsilon_f=epsilon_f,
-                            b=b,
-                            c=c,
-                        )
-
-                    use_cycles_2Nf = fsolve(fun_m, np.array(10))
-                    cycles_2Nt = (epsilon_f * E / (sigma_f - mean_stress)) ** (1 / (b - c))
-                    epsilon_total = (
-                        (sigma_f - mean_stress) / E
-                    ) * cycles_2Nf_array**b + epsilon_f * cycles_2Nf_array**c
-                    epsilon_total_at_cycles_2Nt = (
-                        (sigma_f - mean_stress) / E
-                    ) * cycles_2Nt**b + epsilon_f * cycles_2Nt**c
-                    equation_str = str(
-                        r"$\epsilon_{tot} = \frac{"
-                        + str(round(sigma_f, 4))
-                        + "-"
-                        + str(round(mean_stress, 4))
-                        + "}{"
-                        + str(round(E, 4))
-                        + "}(2N_f)^{"
-                        + str(round(b, 4))
-                        + "} + "
-                        + str(round(epsilon_f, 4))
-                        + "(2N_f)^{"
-                        + str(round(c, 4))
-                        + "}$",
+                def fun_m(x):
+                    return morrow(
+                        eps_tot=delta_epsilon_half,
+                        sigma_f=sigma_f,
+                        sigma_mean=mean_stress,
+                        E=E,
+                        cycles_2Nf=x,
+                        epsilon_f=epsilon_f,
+                        b=b,
+                        c=c,
                     )
-                    plastic_strain_line = epsilon_f * cycles_2Nf_array**c
-                    elastic_strain_line = ((sigma_f - mean_stress) / E) * cycles_2Nf_array**b
 
-                elif mean_stress_correction_method in [
-                    "modified_morrow",
-                    "modified morrow",
-                ]:
+                use_cycles_2Nf = fsolve(fun_m, np.array(10))
+                cycles_2Nt = (epsilon_f * E / (sigma_f - mean_stress)) ** (1 / (b - c))
+                epsilon_total = (
+                    (sigma_f - mean_stress) / E
+                ) * cycles_2Nf_array**b + epsilon_f * cycles_2Nf_array**c
+                epsilon_total_at_cycles_2Nt = (
+                    (sigma_f - mean_stress) / E
+                ) * cycles_2Nt**b + epsilon_f * cycles_2Nt**c
+                equation_str = str(
+                    r"$\epsilon_{tot} = \frac{"
+                    + str(round(sigma_f, 4))
+                    + "-"
+                    + str(round(mean_stress, 4))
+                    + "}{"
+                    + str(round(E, 4))
+                    + "}(2N_f)^{"
+                    + str(round(b, 4))
+                    + "} + "
+                    + str(round(epsilon_f, 4))
+                    + "(2N_f)^{"
+                    + str(round(c, 4))
+                    + "}$",
+                )
+                plastic_strain_line = epsilon_f * cycles_2Nf_array**c
+                elastic_strain_line = ((sigma_f - mean_stress) / E) * cycles_2Nf_array**b
 
-                    def modified_morrow(eps_tot, sigma_f, sigma_mean, E, cycles_2Nf, epsilon_f, b, c):
-                        return (
-                            (sigma_f - sigma_mean) / E * cycles_2Nf**b
-                            + epsilon_f * ((sigma_f - sigma_mean) / sigma_f) ** (c / b) * cycles_2Nf**c
-                            - eps_tot
-                        )
+            elif mean_stress_correction_method in [
+                "modified_morrow",
+                "modified morrow",
+            ]:
 
-                    def fun_mm(x):
-                        return modified_morrow(
-                            eps_tot=delta_epsilon_half,
-                            sigma_f=sigma_f,
-                            sigma_mean=mean_stress,
-                            E=E,
-                            cycles_2Nf=x,
-                            epsilon_f=epsilon_f,
-                            b=b,
-                            c=c,
-                        )
-
-                    use_cycles_2Nf = fsolve(fun_mm, np.array(10))
-                    cycles_2Nt = (
-                        epsilon_f * E * ((sigma_f - mean_stress) / sigma_f) ** (c / b) / (sigma_f - mean_stress)
-                    ) ** (1 / (b - c))
-                    epsilon_total = ((sigma_f - mean_stress) / E) * cycles_2Nf_array**b + epsilon_f * (
-                        (sigma_f - mean_stress) / sigma_f
-                    ) ** (c / b) * cycles_2Nf_array**c
-                    epsilon_total_at_cycles_2Nt = ((sigma_f - mean_stress) / E) * cycles_2Nt**b + epsilon_f * (
-                        (sigma_f - mean_stress) / sigma_f
-                    ) ** (c / b) * cycles_2Nt**c
-                    equation_str = str(
-                        r"$\epsilon_{tot} = \frac{"
-                        + str(round(sigma_f, 4))
-                        + "-"
-                        + str(round(mean_stress, 4))
-                        + "}{"
-                        + str(round(E, 4))
-                        + "}(2N_f)^{"
-                        + str(round(b, 4))
-                        + "} + "
-                        + str(round(epsilon_f, 4))
-                        + r"(\frac{"
-                        + str(round(sigma_f, 4))
-                        + "-"
-                        + str(round(mean_stress, 4))
-                        + "}{"
-                        + str(round(sigma_f, 4))
-                        + "})^"
-                        + r"\frac{"
-                        + str(c)
-                        + "}{"
-                        + str(b)
-                        + "}"
-                        + "(2N_f)^{"
-                        + str(round(c, 4))
-                        + "}$",
+                def modified_morrow(eps_tot, sigma_f, sigma_mean, E, cycles_2Nf, epsilon_f, b, c):
+                    return (
+                        (sigma_f - sigma_mean) / E * cycles_2Nf**b
+                        + epsilon_f * ((sigma_f - sigma_mean) / sigma_f) ** (c / b) * cycles_2Nf**c
+                        - eps_tot
                     )
-                    plastic_strain_line = (
-                        epsilon_f * ((sigma_f - mean_stress) / sigma_f) ** (c / b) * cycles_2Nf_array**c
+
+                def fun_mm(x):
+                    return modified_morrow(
+                        eps_tot=delta_epsilon_half,
+                        sigma_f=sigma_f,
+                        sigma_mean=mean_stress,
+                        E=E,
+                        cycles_2Nf=x,
+                        epsilon_f=epsilon_f,
+                        b=b,
+                        c=c,
                     )
-                    elastic_strain_line = ((sigma_f - mean_stress) / E) * cycles_2Nf_array**b
-                elif mean_stress_correction_method == "SWT":
 
-                    def SWT(eps_tot, sigma_f, E, cycles_2Nf, epsilon_f, b, c, sigma_max):
-                        return (
-                            (sigma_f**2) / E * cycles_2Nf ** (2 * b) + sigma_f * epsilon_f * (cycles_2Nf) ** (b + c)
-                        ) / sigma_max - eps_tot
+                use_cycles_2Nf = fsolve(fun_mm, np.array(10))
+                cycles_2Nt = (
+                    epsilon_f * E * ((sigma_f - mean_stress) / sigma_f) ** (c / b) / (sigma_f - mean_stress)
+                ) ** (1 / (b - c))
+                epsilon_total = ((sigma_f - mean_stress) / E) * cycles_2Nf_array**b + epsilon_f * (
+                    (sigma_f - mean_stress) / sigma_f
+                ) ** (c / b) * cycles_2Nf_array**c
+                epsilon_total_at_cycles_2Nt = ((sigma_f - mean_stress) / E) * cycles_2Nt**b + epsilon_f * (
+                    (sigma_f - mean_stress) / sigma_f
+                ) ** (c / b) * cycles_2Nt**c
+                equation_str = str(
+                    r"$\epsilon_{tot} = \frac{"
+                    + str(round(sigma_f, 4))
+                    + "-"
+                    + str(round(mean_stress, 4))
+                    + "}{"
+                    + str(round(E, 4))
+                    + "}(2N_f)^{"
+                    + str(round(b, 4))
+                    + "} + "
+                    + str(round(epsilon_f, 4))
+                    + r"(\frac{"
+                    + str(round(sigma_f, 4))
+                    + "-"
+                    + str(round(mean_stress, 4))
+                    + "}{"
+                    + str(round(sigma_f, 4))
+                    + "})^"
+                    + r"\frac{"
+                    + str(c)
+                    + "}{"
+                    + str(b)
+                    + "}"
+                    + "(2N_f)^{"
+                    + str(round(c, 4))
+                    + "}$",
+                )
+                plastic_strain_line = (
+                    epsilon_f * ((sigma_f - mean_stress) / sigma_f) ** (c / b) * cycles_2Nf_array**c
+                )
+                elastic_strain_line = ((sigma_f - mean_stress) / E) * cycles_2Nf_array**b
+            elif mean_stress_correction_method == "SWT":
 
-                    def fun_swt(x):
-                        return SWT(
-                            eps_tot=delta_epsilon_half,
-                            sigma_f=sigma_f,
-                            E=E,
-                            cycles_2Nf=x,
-                            epsilon_f=epsilon_f,
-                            b=b,
-                            c=c,
-                            sigma_max=self.max_stress,
-                        )
+                def SWT(eps_tot, sigma_f, E, cycles_2Nf, epsilon_f, b, c, sigma_max):
+                    return (
+                        (sigma_f**2) / E * cycles_2Nf ** (2 * b) + sigma_f * epsilon_f * (cycles_2Nf) ** (b + c)
+                    ) / sigma_max - eps_tot
 
-                    use_cycles_2Nf = fsolve(fun_swt, np.array(10))
-                    cycles_2Nt = (epsilon_f * E / sigma_f) ** (1 / (b - c))
-                    epsilon_total = (
-                        (sigma_f**2 / E) * cycles_2Nf_array ** (2 * b)
-                        + sigma_f * epsilon_f * cycles_2Nf_array ** (b + c)
-                    ) / self.max_stress
-                    epsilon_total_at_cycles_2Nt = (
-                        (sigma_f**2 / E) * cycles_2Nt ** (2 * b) + sigma_f * epsilon_f * cycles_2Nt ** (b + c)
-                    ) / self.max_stress
-                    equation_str = str(
-                        r"$\epsilon_{tot} = \frac{1}{"
-                        + str(round(self.max_stress, 4))
-                        + "}"
-                        + r"(\frac{"
-                        + str(round(sigma_f, 4))
-                        + "^2}{"
-                        + str(round(E, 4))
-                        + "}(2N_f)^{("
-                        + str(round(b, 4))
-                        + "×2)} + "
-                        + str(round(sigma_f, 4))
-                        + "×"
-                        + str(round(epsilon_f, 4))
-                        + "(2N_f)^{("
-                        + str(round(b, 4))
-                        + "+"
-                        + str(round(c, 4))
-                        + ")})$",
+                def fun_swt(x):
+                    return SWT(
+                        eps_tot=delta_epsilon_half,
+                        sigma_f=sigma_f,
+                        E=E,
+                        cycles_2Nf=x,
+                        epsilon_f=epsilon_f,
+                        b=b,
+                        c=c,
+                        sigma_max=self.max_stress,
                     )
-                    plastic_strain_line = (sigma_f * epsilon_f * cycles_2Nf_array ** (b + c)) / self.max_stress
-                    elastic_strain_line = ((sigma_f**2 / E) * cycles_2Nf_array ** (2 * b)) / self.max_stress
+
+                use_cycles_2Nf = fsolve(fun_swt, np.array(10))
+                cycles_2Nt = (epsilon_f * E / sigma_f) ** (1 / (b - c))
+                epsilon_total = (
+                    (sigma_f**2 / E) * cycles_2Nf_array ** (2 * b)
+                    + sigma_f * epsilon_f * cycles_2Nf_array ** (b + c)
+                ) / self.max_stress
+                epsilon_total_at_cycles_2Nt = (
+                    (sigma_f**2 / E) * cycles_2Nt ** (2 * b) + sigma_f * epsilon_f * cycles_2Nt ** (b + c)
+                ) / self.max_stress
+                equation_str = str(
+                    r"$\epsilon_{tot} = \frac{1}{"
+                    + str(round(self.max_stress, 4))
+                    + "}"
+                    + r"(\frac{"
+                    + str(round(sigma_f, 4))
+                    + "^2}{"
+                    + str(round(E, 4))
+                    + "}(2N_f)^{("
+                    + str(round(b, 4))
+                    + "×2)} + "
+                    + str(round(sigma_f, 4))
+                    + "×"
+                    + str(round(epsilon_f, 4))
+                    + "(2N_f)^{("
+                    + str(round(b, 4))
+                    + "+"
+                    + str(round(c, 4))
+                    + ")})$",
+                )
+                plastic_strain_line = (sigma_f * epsilon_f * cycles_2Nf_array ** (b + c)) / self.max_stress
+                elastic_strain_line = ((sigma_f**2 / E) * cycles_2Nf_array ** (2 * b)) / self.max_stress
 
             self.cycles_to_failure = use_cycles_2Nf[0] / 2
 
@@ -1196,80 +1193,78 @@ class strain_life_diagram:
                 legend_texts2[0]._fontproperties = legend_texts2[1]._fontproperties.copy()
                 legend_texts2[0].set_size(13)
                 plt.gcf().set_size_inches(10, 7)
-        else:  # this is in the case that max stress or strain was not supplied
-            if show_plot is True:
-                cycles_2Nt = (epsilon_f * E / sigma_f) ** (1 / (b - c))
-                cycles_2Nf_array = np.logspace(1, 8, 1000)
-                epsilon_total = (sigma_f / E) * cycles_2Nf_array**b + epsilon_f * cycles_2Nf_array**c
-                epsilon_total_at_cycles_2Nt = (sigma_f / E) * cycles_2Nt**b + epsilon_f * cycles_2Nt**c
-                plt.loglog(
-                    cycles_2Nf_array,
-                    epsilon_total,
-                    color="red",
-                    alpha=0.8,
-                    label=str(
-                        r"$\epsilon_{tot} = \frac{"
-                        + str(round(sigma_f, 4))
-                        + "}{"
-                        + str(round(E, 4))
-                        + "}(2N_f)^{"
-                        + str(round(b, 4))
-                        + "} + "
-                        + str(round(epsilon_f, 4))
-                        + "(2N_f)^{"
-                        + str(round(c, 4))
-                        + "}$",
-                    ),
-                )
-                plt.plot(
-                    [cycles_2Nt, cycles_2Nt],
-                    [10**-6, epsilon_total_at_cycles_2Nt],
-                    "red",
-                    linestyle="--",
-                    alpha=0.5,
-                )
-                plastic_strain_line = epsilon_f * cycles_2Nf_array**c
-                elastic_strain_line = sigma_f / E * cycles_2Nf_array**b
-                plt.plot(
-                    cycles_2Nf_array,
-                    plastic_strain_line,
-                    "orange",
-                    alpha=0.7,
-                    label="plastic strain",
-                )
-                plt.plot(
-                    cycles_2Nf_array,
-                    elastic_strain_line,
-                    "steelblue",
-                    alpha=0.8,
-                    label="elastic strain",
-                )
-                plt.xlabel(r"Reversals to failure $(2N_f)$")
-                plt.ylabel(r"Strain amplitude $(\epsilon_a)$")
-                plt.title("Strain-Life diagram")
-                strain_min_log = 10 ** (int(np.floor(np.log10(min(plastic_strain_line)))))
-                strain_max_log = 10 ** (int(np.ceil(np.log10(max(epsilon_total)))))
-                plt.ylim(strain_min_log, strain_max_log)
-                plt.xlim(min(cycles_2Nf_array), max(cycles_2Nf_array))
-                plt.text(
-                    cycles_2Nt,
-                    strain_min_log,
-                    str(r"$2N_t = $" + str(int(cycles_2Nt))),
-                    verticalalignment="bottom",
-                )
-                plt.grid(True)
-                leg2 = plt.legend()
-                # this is to make the first legend entry (the equation) bigger
-                legend_texts2 = leg2.get_texts()
-                legend_texts2[0]._fontproperties = legend_texts2[1]._fontproperties.copy()
-                legend_texts2[0].set_size(13)
-                self.cycles_to_failure = "Not calculated. Specify max stress or strain to find cycles_to_failure"
+        elif show_plot is True:
+            cycles_2Nt = (epsilon_f * E / sigma_f) ** (1 / (b - c))
+            cycles_2Nf_array = np.logspace(1, 8, 1000)
+            epsilon_total = (sigma_f / E) * cycles_2Nf_array**b + epsilon_f * cycles_2Nf_array**c
+            epsilon_total_at_cycles_2Nt = (sigma_f / E) * cycles_2Nt**b + epsilon_f * cycles_2Nt**c
+            plt.loglog(
+                cycles_2Nf_array,
+                epsilon_total,
+                color="red",
+                alpha=0.8,
+                label=str(
+                    r"$\epsilon_{tot} = \frac{"
+                    + str(round(sigma_f, 4))
+                    + "}{"
+                    + str(round(E, 4))
+                    + "}(2N_f)^{"
+                    + str(round(b, 4))
+                    + "} + "
+                    + str(round(epsilon_f, 4))
+                    + "(2N_f)^{"
+                    + str(round(c, 4))
+                    + "}$",
+                ),
+            )
+            plt.plot(
+                [cycles_2Nt, cycles_2Nt],
+                [10**-6, epsilon_total_at_cycles_2Nt],
+                "red",
+                linestyle="--",
+                alpha=0.5,
+            )
+            plastic_strain_line = epsilon_f * cycles_2Nf_array**c
+            elastic_strain_line = sigma_f / E * cycles_2Nf_array**b
+            plt.plot(
+                cycles_2Nf_array,
+                plastic_strain_line,
+                "orange",
+                alpha=0.7,
+                label="plastic strain",
+            )
+            plt.plot(
+                cycles_2Nf_array,
+                elastic_strain_line,
+                "steelblue",
+                alpha=0.8,
+                label="elastic strain",
+            )
+            plt.xlabel(r"Reversals to failure $(2N_f)$")
+            plt.ylabel(r"Strain amplitude $(\epsilon_a)$")
+            plt.title("Strain-Life diagram")
+            strain_min_log = 10 ** (int(np.floor(np.log10(min(plastic_strain_line)))))
+            strain_max_log = 10 ** (int(np.ceil(np.log10(max(epsilon_total)))))
+            plt.ylim(strain_min_log, strain_max_log)
+            plt.xlim(min(cycles_2Nf_array), max(cycles_2Nf_array))
+            plt.text(
+                cycles_2Nt,
+                strain_min_log,
+                str(r"$2N_t = $" + str(int(cycles_2Nt))),
+                verticalalignment="bottom",
+            )
+            plt.grid(True)
+            leg2 = plt.legend()
+            # this is to make the first legend entry (the equation) bigger
+            legend_texts2 = leg2.get_texts()
+            legend_texts2[0]._fontproperties = legend_texts2[1]._fontproperties.copy()
+            legend_texts2[0].set_size(13)
+            self.cycles_to_failure = "Not calculated. Specify max stress or strain to find cycles_to_failure"
 
 
 def palmgren_miner_linear_damage(rated_life, time_at_stress, stress):
     # TODO Update docstring
-    """
-    Uses the Palmgren-Miner linear damage hypothesis to calculate the outputs.
+    """Uses the Palmgren-Miner linear damage hypothesis to calculate the outputs.
 
     Parameters
     ----------
@@ -1316,6 +1311,7 @@ def palmgren_miner_linear_damage(rated_life, time_at_stress, stress):
         Stress =  2 , Damage fraction = 28.463 %.
         Stress =  4 , Damage fraction = 61.66983 %.
         '''
+
     """
     if len(rated_life) != len(time_at_stress) or len(rated_life) != len(stress):
         raise ValueError("All inputs must be of equal length.")
@@ -1340,8 +1336,7 @@ def palmgren_miner_linear_damage(rated_life, time_at_stress, stress):
 
 
 class fracture_mechanics_crack_initiation:
-    """
-    This function uses the material properties, the local cross sectional area,
+    """This function uses the material properties, the local cross sectional area,
     and force applied to the component to determine how many cycles until crack
     initiation (of a 1mm crack).
 
@@ -1617,8 +1612,7 @@ class fracture_mechanics_crack_initiation:
 
 
 class fracture_mechanics_crack_growth:
-    """
-    This function uses the principles of fracture mechanics to find the number
+    """This function uses the principles of fracture mechanics to find the number
     of cycles required to grow a crack from an initial length until a final
     length. The final length (a_final) may be specified, but if not specified
     then a_final will be set as the critical crack length (a_crit) which causes
@@ -1750,6 +1744,7 @@ class fracture_mechanics_crack_growth:
         Total cycles to failure: 225827 cycles.
         Critical crack length to cause failure was found to be: 18.3 mm.
         '''
+
     """
 
     def __init__(
@@ -2018,8 +2013,7 @@ class fracture_mechanics_crack_growth:
 
 
 def creep_rupture_curves(temp_array, stress_array, TTF_array, stress_trace=None, temp_trace=None):
-    """
-    This function plots the creep rupture curves for a given set of creep data.
+    """This function plots the creep rupture curves for a given set of creep data.
     It also fits the lines of best fit to each temperature.
 
     The time to failure for a given temperature can be found by specifying
@@ -2060,8 +2054,8 @@ def creep_rupture_curves(temp_array, stress_array, TTF_array, stress_trace=None,
         TTF = [37,975,3581,9878,7,17,213,1493,2491,5108,7390,10447,18,167,615,2220,6637,19,102,125,331,3.7,8.9,31.8]
         creep_rupture_curves(temp_array=TEMP, stress_array=STRESS, TTF_array=TTF, stress_trace=70, temp_trace=1100)
         plt.show()
-    """
 
+    """
     if (stress_trace is not None and temp_trace is None) or (stress_trace is None and temp_trace is not None):
         raise ValueError(
             "You must enter both stress_trace and temp_trace to obtain the time to failure at a given stress and temperature.",
@@ -2119,8 +2113,7 @@ def creep_rupture_curves(temp_array, stress_array, TTF_array, stress_trace=None,
 
 
 def creep_failure_time(temp_low, temp_high, time_low, C=20, print_results=True):
-    """
-    This function uses the Larson-Miller relation to find the time to failure
+    """This function uses the Larson-Miller relation to find the time to failure
     due to creep.
 
     The method uses a known failure time (time_low) at a lower failure
@@ -2153,6 +2146,7 @@ def creep_failure_time(temp_low, temp_high, time_low, C=20, print_results=True):
     -------
     time_high : float
         The time to failure at the higher temperature.
+
     """
     LMP = (temp_low + 459.67) * (
         C + np.log10(time_low)
@@ -2166,8 +2160,7 @@ def creep_failure_time(temp_low, temp_high, time_low, C=20, print_results=True):
 
 
 class acceleration_factor:
-    """
-    This function uses the Arrhenius model for Acceleration factor to determine
+    """This function uses the Arrhenius model for Acceleration factor to determine
     the relationship between temperature and reaction rate.
 
     Please see the `online documentation <https://reliability.readthedocs.io/en/latest/Acceleration%20factor.html>`_ for more details and formulas.
@@ -2203,6 +2196,7 @@ class acceleration_factor:
     -----
     Two of the three optional inputs must be specified and the third one will be
     found.
+
     """
 
     def __init__(self, AF=None, T_use=None, T_acc=None, Ea=None, print_results=True):

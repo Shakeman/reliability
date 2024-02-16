@@ -1,5 +1,4 @@
-"""
-Other Functions
+"""Other Functions
 
 This is a collection of several other functions that did not otherwise fit
 within their own module. Included functions are:
@@ -48,8 +47,7 @@ from reliability.Utils import colorprint, round_and_string
 
 
 def stress_strength(stress, strength, show_plot=True, print_results=True, warn=True):
-    """
-    Given the probability distributions for stress and strength, this module
+    """Given the probability distributions for stress and strength, this module
     will find the probability of failure due to stress-strength interference.
     Failure is defined as when stress>strength. The calculation is achieved
     using numerical integration.
@@ -89,8 +87,8 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
 
     A warning will be issued if probability_of_failure > 1. This can occur when
     one of the distributions asymptotes. This warning can not be supressed.
-    """
 
+    """
     if type(stress) not in [
         Weibull_Distribution,
         Normal_Distribution,
@@ -246,8 +244,7 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
 
 
 def stress_strength_normal(stress, strength, show_plot=True, print_results=True, warn=True):
-    """
-    Given the probability distributions for stress and strength, this module
+    """Given the probability distributions for stress and strength, this module
     will find the probability of failure due to stress-strength interference.
     Failure is defined as when stress>strength. Uses the exact formula method
     which is only valid for two Normal Distributions. If you have distributions
@@ -365,8 +362,7 @@ def stress_strength_normal(stress, strength, show_plot=True, print_results=True,
 
 
 class similar_distributions:
-    """
-    This is a tool to find similar distributions when given an input
+    """This is a tool to find similar distributions when given an input
     distribution. It is useful to see how similar one distribution is to
     another. For example, you may look at a Weibull distribution and think it
     looks like a Normal distribution. Using this tool you can determine the
@@ -409,6 +405,7 @@ class similar_distributions:
         from reliability.Other_functions import similar_distributions
         dist = Weibull_Distribution(alpha=50,beta=3.3)
         similar_distributions(distribution=dist)
+
     """
 
     def __init__(
@@ -771,8 +768,7 @@ class similar_distributions:
 
 
 def histogram(data, white_above=None, bins=None, density=True, cumulative=False, **kwargs):
-    """
-    Plots a histogram using the data specified. This is similar to plt.hist
+    """Plots a histogram using the data specified. This is similar to plt.hist
     except that it sets better defaults and also shades the bins white above a
     specified value (white_above). This is useful for representing complete data
     as right censored data in a histogram.
@@ -802,8 +798,8 @@ def histogram(data, white_above=None, bins=None, density=True, cumulative=False,
     Returns
     -------
     None
-    """
 
+    """
     if type(data) not in [np.ndarray, list]:
         raise ValueError("data must be an array or list")
 
@@ -850,8 +846,7 @@ def histogram(data, white_above=None, bins=None, density=True, cumulative=False,
 
 
 class make_right_censored_data:
-    """
-    This function is used to create right censored data from complete data. It
+    """This function is used to create right censored data from complete data. It
     will right censor the data based on a specified threshold or fraction to
     censor.
 
@@ -890,6 +885,7 @@ class make_right_censored_data:
     default to 0.5 to produce multiply censored data. If both threshold and
     fraction_censored are specified, an error will be raised since these methods
     conflict.
+
     """
 
     def __init__(self, data, threshold=None, fraction_censored=None, seed=None):
@@ -914,7 +910,7 @@ class make_right_censored_data:
             if (
                 fraction_censored < 0
                 or fraction_censored >= 1
-                or type(fraction_censored) not in [int, float, np.float_, np.int_]
+                or type(fraction_censored) not in [int, float, np.float64, np.int_]
             ):
                 raise ValueError(
                     "fraction_censored must be >= 0 and < 1. The default is 0.5 which will right censor half the data",
@@ -930,8 +926,7 @@ class make_right_censored_data:
 
 
 class make_ALT_data:
-    """
-    Generates Accelerated Life Test (ALT) data based on model parameters. This
+    """Generates Accelerated Life Test (ALT) data based on model parameters. This
     function is primarily used when testing the functions in ALT_fitters.
 
     Parameters
@@ -1005,6 +1000,7 @@ class make_ALT_data:
         dual stress model.
     mean_life_at_use_stress : float
         This is only provided if use_level_stress is provided.
+
     """
 
     def __init__(
@@ -1182,8 +1178,7 @@ class make_ALT_data:
 
 
 class crosshairs:
-    """
-    Adds interactive crosshairs to matplotlib plots
+    """Adds interactive crosshairs to matplotlib plots
 
     Parameters
     ----------
@@ -1211,6 +1206,7 @@ class crosshairs:
     crosshairs() is called will not be recognised by the snap-to feature. For a
     list of acceptable dateformat strings see
     https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
+
     """
 
     def __init__(self, xlabel=None, ylabel=None, decimals=2, dateformat=None, **kwargs):
@@ -1387,8 +1383,7 @@ class crosshairs:
 
 
 class distribution_explorer:
-    """
-    Generates an interactive plot of PDF, CDF, SF, HF, CHF for the selected
+    """Generates an interactive plot of PDF, CDF, SF, HF, CHF for the selected
     distribution. Parameters can be changed using slider widgets. Distributions
     can be changed using radio button widget.
 
@@ -1408,6 +1403,7 @@ class distribution_explorer:
 
         from reliability.Other_functions import distribution_explorer
         distribution_explorer()
+
     """
 
     def __init__(self):

@@ -1,5 +1,4 @@
-"""
-Convert_data
+"""Convert_data
 
 This module contains converters to easily convert data between multiple formats
 The formats used within reliability are:
@@ -38,8 +37,7 @@ from reliability.Utils import colorprint, removeNaNs, write_df_to_xlsx
 
 
 class xlsx_to_XCN:
-    """
-    Converts data from xlsx format into XCN format. The xlsx format is a
+    """Converts data from xlsx format into XCN format. The xlsx format is a
     Microsoft Excel xlsx file.
 
     Parameters
@@ -81,6 +79,7 @@ class xlsx_to_XCN:
 
     A reduced form (XC) is accepted and all values will be assumed to have a
     quantity (N) of 1.
+
     """
 
     def __init__(
@@ -189,15 +188,13 @@ class xlsx_to_XCN:
         self.__df = pd.DataFrame(data=Data, columns=["event time", "censor code", "number of events"])
 
     def print(self):
-        """
-        This will print a dataframe of the data in XCN format to the console
+        """This will print a dataframe of the data in XCN format to the console
         """
         colorprint("Data (XCN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
     def write_to_xlsx(self, path, **kwargs):
-        """
-        This will export the data in XCN format to an xlsx file at the specified path.
+        """This will export the data in XCN format to an xlsx file at the specified path.
 
         Parameters
         ----------
@@ -205,13 +202,13 @@ class xlsx_to_XCN:
             The file path of the xlsx file to be written
         kwargs
             Keyword arguments passed directly to pandas
+
         """
         write_df_to_xlsx(df=self.__df, path=path, **kwargs)
 
 
 class xlsx_to_FR:
-    """
-    Converts data from xlsx format into FR format. The xlsx format is a
+    """Converts data from xlsx format into FR format. The xlsx format is a
     Microsoft Excel xlsx file.
 
     Parameters
@@ -237,6 +234,7 @@ class xlsx_to_FR:
 
     A reduced form (F) is accepted and all values will be assumed to be
     failures.
+
     """
 
     def __init__(self, path, **kwargs):
@@ -268,15 +266,13 @@ class xlsx_to_FR:
             )
 
     def print(self):
-        """
-        This will print a dataframe of the data in FR format to the console
+        """This will print a dataframe of the data in FR format to the console
         """
         colorprint("Data (FR format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
     def write_to_xlsx(self, path, **kwargs):
-        """
-        This will export the data in FR format to an xlsx file at the specified path.
+        """This will export the data in FR format to an xlsx file at the specified path.
 
         Parameters
         ----------
@@ -284,13 +280,13 @@ class xlsx_to_FR:
             The file path of the xlsx file to be written
         kwargs
             Keyword arguments passed directly to pandas
+
         """
         write_df_to_xlsx(df=self.__df, path=path, **kwargs)
 
 
 class xlsx_to_FNRN:
-    """
-    Converts data from xlsx format into FNRN format. The xlsx format is a
+    """Converts data from xlsx format into FNRN format. The xlsx format is a
     Microsoft Excel xlsx file.
 
     Parameters
@@ -320,6 +316,7 @@ class xlsx_to_FNRN:
 
     A reduced form (FN) is accepted and all values will be assumed to be
     failures.
+
     """
 
     def __init__(self, path, **kwargs):
@@ -402,15 +399,13 @@ class xlsx_to_FNRN:
             self.__df = pd.DataFrame(Data, columns=["failures", "number of failures"])
 
     def print(self):
-        """
-        This will print a dataframe of the data in FNRN format to the console
+        """This will print a dataframe of the data in FNRN format to the console
         """
         colorprint("Data (FNRN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
     def write_to_xlsx(self, path, **kwargs):
-        """
-        This will export the data in FNRN format to an xlsx file at the specified path.
+        """This will export the data in FNRN format to an xlsx file at the specified path.
 
         Parameters
         ----------
@@ -418,13 +413,13 @@ class xlsx_to_FNRN:
             The file path of the xlsx file to be written
         kwargs
             Keyword arguments passed directly to pandas
+
         """
         write_df_to_xlsx(df=self.__df, path=path, **kwargs)
 
 
 class XCN_to_FNRN:
-    """
-    Converts data from XCN format to FNRN format.
+    """Converts data from XCN format to FNRN format.
 
     Parameters
     ----------
@@ -480,6 +475,7 @@ class XCN_to_FNRN:
                       1                   1               7                         3
                       2                   2               8                         2
                       3                   2               9                         1
+
     """
 
     def __init__(self, X, C, N=None, censor_code=None, failure_code=None):
@@ -525,15 +521,13 @@ class XCN_to_FNRN:
             self.__df = pd.DataFrame(Data, columns=["failures", "number of failures"])
 
     def print(self):
-        """
-        This will print a dataframe of the data in FNRN format to the console
+        """This will print a dataframe of the data in FNRN format to the console
         """
         colorprint("Data (FNRN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
     def write_to_xlsx(self, path, **kwargs):
-        """
-        This will export the data in FNRN format to an xlsx file at the specified path.
+        """This will export the data in FNRN format to an xlsx file at the specified path.
 
         Parameters
         ----------
@@ -541,13 +535,13 @@ class XCN_to_FNRN:
             The file path of the xlsx file to be written
         kwargs
             Keyword arguments passed directly to pandas
+
         """
         write_df_to_xlsx(df=self.__df, path=path, **kwargs)
 
 
 class XCN_to_FR:
-    """
-    Converts data from XCN format to FR format.
+    """Converts data from XCN format to FR format.
 
     Parameters
     ----------
@@ -598,6 +592,7 @@ class XCN_to_FR:
                       3               8
                       3               8
                                       9
+
     """
 
     def __init__(self, X, C, N=None, censor_code=None, failure_code=None):
@@ -693,15 +688,13 @@ class XCN_to_FR:
             self.__df = pd.DataFrame(Data, columns=["failures"])
 
     def print(self):
-        """
-        This will print a dataframe of the data in FR format to the console
+        """This will print a dataframe of the data in FR format to the console
         """
         colorprint("Data (FR format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
     def write_to_xlsx(self, path, **kwargs):
-        """
-        This will export the data in FR format to an xlsx file at the specified path.
+        """This will export the data in FR format to an xlsx file at the specified path.
 
         Parameters
         ----------
@@ -709,13 +702,13 @@ class XCN_to_FR:
             The file path of the xlsx file to be written
         kwargs
             Keyword arguments passed directly to pandas
+
         """
         write_df_to_xlsx(df=self.__df, path=path, **kwargs)
 
 
 class FR_to_XCN:
-    """
-    Converts data from FR format to XCN format.
+    """Converts data from FR format to XCN format.
 
     Parameters
     ----------
@@ -759,6 +752,7 @@ class FR_to_XCN:
                         7           C                 1
                         8           C                 2
                         9           C                 4
+
     """
 
     def __init__(self, failures, right_censored=None, censor_code="C", failure_code="F"):
@@ -788,15 +782,13 @@ class FR_to_XCN:
         self.__df = pd.DataFrame(data=Data, columns=["event time", "censor code", "number of events"])
 
     def print(self):
-        """
-        This will print a dataframe of the data in XCN format to the console
+        """This will print a dataframe of the data in XCN format to the console
         """
         colorprint("Data (XCN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
     def write_to_xlsx(self, path, **kwargs):
-        """
-        This will export the data in XCN format to an xlsx file at the specified path.
+        """This will export the data in XCN format to an xlsx file at the specified path.
 
         Parameters
         ----------
@@ -804,13 +796,13 @@ class FR_to_XCN:
             The file path of the xlsx file to be written
         kwargs
             Keyword arguments passed directly to pandas
+
         """
         write_df_to_xlsx(df=self.__df, path=path, **kwargs)
 
 
 class FNRN_to_XCN:
-    """
-    Converts data from FNRN format to XCN format.
+    """Converts data from FNRN format to XCN format.
 
     Parameters
     ----------
@@ -860,6 +852,7 @@ class FNRN_to_XCN:
                         7           C                 1
                         8           C                 2
                         9           C                 3
+
     """
 
     def __init__(
@@ -919,15 +912,13 @@ class FNRN_to_XCN:
         self.__df = pd.DataFrame(data=Data, columns=["event time", "censor code", "number of events"])
 
     def print(self):
-        """
-        This will print a dataframe of the data in XCN format to the console
+        """This will print a dataframe of the data in XCN format to the console
         """
         colorprint("Data (XCN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
     def write_to_xlsx(self, path, **kwargs):
-        """
-        This will export the data in XCN format to an xlsx file at the specified path.
+        """This will export the data in XCN format to an xlsx file at the specified path.
 
         Parameters
         ----------
@@ -935,13 +926,13 @@ class FNRN_to_XCN:
             The file path of the xlsx file to be written
         kwargs
             Keyword arguments passed directly to pandas
+
         """
         write_df_to_xlsx(df=self.__df, path=path, **kwargs)
 
 
 class FR_to_FNRN:
-    """
-    Converts data from FR format to FNRN format
+    """Converts data from FR format to FNRN format
 
     Parameters
     ----------
@@ -983,6 +974,7 @@ class FR_to_FNRN:
                       1                   2               7                         1
                       2                   2               8                         2
                       3                   1               9                         4
+
     """
 
     def __init__(self, failures, right_censored=None):
@@ -1032,15 +1024,13 @@ class FR_to_FNRN:
             self.__df = pd.DataFrame(Data, columns=["failures", "number of failures"])
 
     def print(self):
-        """
-        This will print a dataframe of the data in FNRN format to the console
+        """This will print a dataframe of the data in FNRN format to the console
         """
         colorprint("Data (FNRN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
     def write_to_xlsx(self, path, **kwargs):
-        """
-        This will export the data in FNRN format to an xlsx file at the specified path.
+        """This will export the data in FNRN format to an xlsx file at the specified path.
 
         Parameters
         ----------
@@ -1048,13 +1038,13 @@ class FR_to_FNRN:
             The file path of the xlsx file to be written
         kwargs
             Keyword arguments passed directly to pandas
+
         """
         write_df_to_xlsx(df=self.__df, path=path, **kwargs)
 
 
 class FNRN_to_FR:
-    """
-    Converts data from FNRN format to FR format
+    """Converts data from FNRN format to FR format
 
     Parameters
     ----------
@@ -1103,6 +1093,7 @@ class FNRN_to_FR:
                                        7
                                        7
                                        7
+
     """
 
     def __init__(self, failures, num_failures, right_censored=None, num_right_censored=None):
@@ -1145,15 +1136,13 @@ class FNRN_to_FR:
             self.__df = pd.DataFrame(Data, columns=["failures"])
 
     def print(self):
-        """
-        This will print a dataframe of the data in FR format to the console
+        """This will print a dataframe of the data in FR format to the console
         """
         colorprint("Data (FR format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
     def write_to_xlsx(self, path, **kwargs):
-        """
-        This will export the data in FR format to an xlsx file at the specified path.
+        """This will export the data in FR format to an xlsx file at the specified path.
 
         Parameters
         ----------
@@ -1161,5 +1150,6 @@ class FNRN_to_FR:
             The file path of the xlsx file to be written
         kwargs
             Keyword arguments passed directly to pandas
+
         """
         write_df_to_xlsx(df=self.__df, path=path, **kwargs)

@@ -1,5 +1,4 @@
-"""
-Reliability_testing
+"""Reliability_testing
 
 This is a collection of several statistical tests and reliability test planners.
 Included functions are:
@@ -60,8 +59,7 @@ pd.set_option("display.max_rows", 200)  # prevents ... compression of rows
 
 
 def one_sample_proportion(trials=None, successes=None, CI=0.95, print_results=True):
-    """
-    Calculates the upper and lower bounds of reliability for a given number of
+    """Calculates the upper and lower bounds of reliability for a given number of
     trials and successes.
 
     Parameters
@@ -80,6 +78,7 @@ def one_sample_proportion(trials=None, successes=None, CI=0.95, print_results=Tr
     -------
     limits : tuple
         The confidence interval limits in the form (lower,upper).
+
     """
     if trials is None or successes is None:
         raise ValueError("You must specify the number of trials and successes.")
@@ -143,8 +142,7 @@ def two_proportion_test(
     CI=0.95,
     print_results=True,
 ):
-    """
-    Calculates whether the difference in test results between two samples is
+    """Calculates whether the difference in test results between two samples is
     statistically significant.
 
     For example, assume we have a poll of respondents in which 27/40 people
@@ -174,6 +172,7 @@ def two_proportion_test(
         The lower and upper are bounds on the difference. The result is either
         'significant' or 'non-significant'. If the bounds do not include 0 then
         it is a statistically significant difference.
+
     """
     if CI < 0.5 or CI >= 1:
         raise ValueError("CI must be between 0.5 and 1. Default is 0.95")
@@ -228,8 +227,7 @@ def two_proportion_test(
 
 
 def sample_size_no_failures(reliability, CI=0.95, lifetimes=1, weibull_shape=1, print_results=True):
-    """
-    This is used to determine the sample size required for a test in which no
+    """This is used to determine the sample size required for a test in which no
     failures are expected, and the desired outcome is the lower bound on the
     reliability based on the sample size and desired confidence interval.
 
@@ -258,6 +256,7 @@ def sample_size_no_failures(reliability, CI=0.95, lifetimes=1, weibull_shape=1, 
     n : int
         The number of items required in the test. This will always be an integer
         (rounded up).
+
     """
     if CI < 0.5 or CI >= 1:
         raise ValueError("CI must be between 0.5 and 1")
@@ -318,8 +317,7 @@ def sequential_sampling_chart(
     test_results=None,
     max_samples=100,
 ):
-    """
-    This function plots the accept/reject boundaries for a given set of quality
+    """This function plots the accept/reject boundaries for a given set of quality
     and risk levels. If supplied, the test results are also plotted on the
     chart.
 
@@ -377,6 +375,7 @@ def sequential_sampling_chart(
     will be produced. The test_results are only plotted on the chart if provided
     as an input. The chart will display automatically so plt.show() is not
     required.
+
     """
     if type(test_results) in [list, np.ndarray]:
         F = np.asarray(test_results)
@@ -496,8 +495,7 @@ def sequential_sampling_chart(
 
 
 class reliability_test_planner:
-    """
-    The function reliability_test_planner is used to solves for unknown test
+    """The function reliability_test_planner is used to solves for unknown test
     planning variables, given known variables. The Chi-squared distribution is
     used to find the lower confidence bound on MTBF for a given test duration,
     number of failures, and specified confidence interval.
@@ -565,6 +563,7 @@ class reliability_test_planner:
         >>> MTBF (lower confidence bound): 1907.6398111904953
         >>> Number of failures: 7
         >>> Confidence interval (2 sided):0.8
+
     """
 
     def __init__(
@@ -692,8 +691,7 @@ def reliability_test_duration(
     show_plot=True,
     print_results=True,
 ):
-    """
-    This function calculates the required duration for a reliability test to
+    """This function calculates the required duration for a reliability test to
     achieve the specified producers and consumers risks. This is done based on
     the specified MTBF required and MTBF design. For details please see the
     `algorithm <https://reliability.readthedocs.io/en/latest/Reliability%20test%20duration.html#how-does-the-algorithm-work>`_.
@@ -735,8 +733,8 @@ def reliability_test_duration(
     prediction of number of failures ahead of time is not practical.
 
     If the plot does not show automatically, use plt.show() to show it.
-    """
 
+    """
     if consumer_risk <= 0 or consumer_risk > 0.5:
         raise ValueError("consumer_risk must be between 0 and 0.5")
     if producer_risk <= 0 or producer_risk > 0.5:
@@ -842,8 +840,7 @@ def reliability_test_duration(
 
 
 class chi2test:
-    """
-    Performs the Chi-squared test for goodness of fit to determine whether we
+    """Performs the Chi-squared test for goodness of fit to determine whether we
     can accept or reject the hypothesis that the data is from the specified
     distribution at the specified level of significance.
 
@@ -893,6 +890,7 @@ class chi2test:
     -----
     The result is sensitive to the bins. For this reason, it is recommended to
     leave bins as the default value.
+
     """
 
     def __init__(
@@ -1064,8 +1062,7 @@ class chi2test:
 
 
 class KStest:
-    """
-    Performs the Kolmogorov-Smirnov goodness of fit test to determine whether we
+    """Performs the Kolmogorov-Smirnov goodness of fit test to determine whether we
     can accept or reject the hypothesis that the data is from the specified
     distribution at the specified level of significance.
 
@@ -1098,6 +1095,7 @@ class KStest:
     hypothesis : string
         'ACCEPT' or 'REJECT'. If KS_statistic < KS_critical_value then we can
         accept the hypothesis that the data is from the specified distribution.
+
     """
 
     def __init__(self, distribution, data, significance=0.05, print_results=True, show_plot=True):
@@ -1206,8 +1204,7 @@ class KStest:
 
 
 def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method="MLE", color=None):
-    """
-    Generates a likelihood contour plot. This is used for comparing distributions for statistically significant
+    """Generates a likelihood contour plot. This is used for comparing distributions for statistically significant
     differences.
 
     Parameters
@@ -1248,6 +1245,7 @@ def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method
         likelihood_plot(distribution="Weibull",failures=old_design,CI=[0.9,0.95])
         likelihood_plot(distribution="Weibull",failures=new_design,CI=[0.9,0.95])
         plt.show()
+
     """
 
     def LLfunction(x, y, failures: list[int], right_censored):

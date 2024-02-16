@@ -24,7 +24,7 @@ def test_Weibull_Distribution():
     assert_allclose(dist.variance, 5.365045915063796, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, 0.6311106578189344, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 3.2450893006876456, rtol=rtol, atol=atol)
-    assert dist.param_title_long == 'Weibull Distribution (α=5,β=2,γ=10)'
+    assert dist.param_title_long == "Weibull Distribution (α=5,β=2,γ=10)"
     assert_allclose(dist.quantile(0.2), 12.361903635387193, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 12.9861134604144417, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(20), 1.1316926249544481, rtol=rtol, atol=atol)
@@ -94,7 +94,7 @@ def test_Normal_Distribution():
     assert_allclose(dist.variance, 4, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, 0, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 3, rtol=rtol, atol=atol)
-    assert dist.param_title_long == 'Normal Distribution (μ=5,σ=2)'
+    assert dist.param_title_long == "Normal Distribution (μ=5,σ=2)"
     assert_allclose(dist.quantile(0.2), 3.3167575328541714, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 3.9511989745839187, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(10), 0.6454895953278145, rtol=rtol, atol=atol)
@@ -170,7 +170,7 @@ def test_Lognormal_Distribution():
     assert_allclose(dist.variance, 92.82552776851736, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, 3.689292296091298, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 34.36765343083244, rtol=rtol, atol=atol)
-    assert dist.param_title_long == 'Lognormal Distribution (μ=2,σ=0.8,γ=10)'
+    assert dist.param_title_long == "Lognormal Distribution (μ=2,σ=0.8,γ=10)"
     assert_allclose(dist.quantile(0.2), 13.7685978648453116, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 14.857284757111664, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(20), 9.143537277214762, rtol=rtol, atol=atol)
@@ -240,7 +240,7 @@ def test_Exponential_Distribution():
     assert_allclose(dist.variance, 25, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, 2, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 9, rtol=rtol, atol=atol)
-    assert dist.param_title_long == 'Exponential Distribution (λ=0.2,γ=10)'
+    assert dist.param_title_long == "Exponential Distribution (λ=0.2,γ=10)"
     assert_allclose(dist.quantile(0.2), 11.11571775657105, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 11.783374719693661, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(20), 5, rtol=rtol, atol=atol)
@@ -289,7 +289,7 @@ def test_Gamma_Distribution():
     assert_allclose(dist.variance, 50, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, 1.414213562373095, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 6, rtol=rtol, atol=atol)
-    assert dist.param_title_long == 'Gamma Distribution (α=5,β=2,γ=10)'
+    assert dist.param_title_long == "Gamma Distribution (α=5,β=2,γ=10)"
     assert_allclose(dist.quantile(0.2), 14.121941545164923, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 15.486746053517457, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(20), 6.666666666666647, rtol=rtol, atol=atol)
@@ -359,7 +359,7 @@ def test_Beta_Distribution():
     assert_allclose(dist.variance, 0.025510204081632654, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, -0.5962847939999439, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 2.88, rtol=rtol, atol=atol)
-    assert dist.param_title_long == 'Beta Distribution (α=5,β=2)'
+    assert dist.param_title_long == "Beta Distribution (α=5,β=2)"
     assert_allclose(dist.quantile(0.2), 0.577552475153728, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 0.6396423096199797, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(0.5), 0.2518796992481146, rtol=rtol, atol=atol)
@@ -429,7 +429,7 @@ def test_Loglogistic_Distribution():
     assert_allclose(dist.variance, 144.228617485192, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, 1.2246481827926854, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 8.342064360132765, rtol=rtol, atol=atol)
-    assert dist.param_title_long == 'Loglogistic Distribution (α=50,β=8,γ=10)'
+    assert dist.param_title_long == "Loglogistic Distribution (α=50,β=8,γ=10)"
     assert_allclose(dist.quantile(0.2), 52.044820762685724, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 54.975179587474166, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(20), 41.308716243335226, rtol=rtol, atol=atol)
@@ -499,7 +499,7 @@ def test_Gumbel_Distribution():
     assert_allclose(dist.variance, 6.579736267392906, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, -1.1395470994046486, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 5.4, rtol=rtol, atol=atol)
-    assert dist.param_title_long == 'Gumbel Distribution (μ=15,σ=2)'
+    assert dist.param_title_long == "Gumbel Distribution (μ=15,σ=2)"
     assert_allclose(dist.quantile(0.2), 12.00012002648097, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 12.938139133682554, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(10), 4.349172610672009, rtol=rtol, atol=atol)
@@ -572,7 +572,7 @@ def test_Competing_Risks_Model():
     assert_allclose(dist.variance, 96.68554729591138, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, -0.20597940178753704, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 2.1824677678598667, rtol=rtol, atol=atol)
-    assert dist.name2 == 'Competing risks using 2 distributions'
+    assert dist.name2 == "Competing risks using 2 distributions"
     assert_allclose(dist.quantile(0.2), 14.170859470541174, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 17.908811127053173, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(20), 9.862745898092886, rtol=rtol, atol=atol)
@@ -624,7 +624,7 @@ def test_Mixture_Model():
     assert_allclose(dist.variance, 142.87262375392413, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, 0.015505959874527537, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 3.4018343377801674, rtol=rtol, atol=atol)
-    assert dist.name2 == 'Mixture using 2 distributions'
+    assert dist.name2 == "Mixture using 2 distributions"
     assert_allclose(dist.quantile(0.2), 19.085648329240094, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 24.540270766923847, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(20), 14.686456940211107, rtol=rtol, atol=atol)

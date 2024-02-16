@@ -61,7 +61,18 @@ ignore = [
     "RUF001",  # ambiguous unicode string
     "RUF002",  # ambiguous unicode string
     "S101",    # Use of `assert` detected
+    "ANN101", #missing-type-self
+    "N806", #non-lowercase-variable-in-function
+    "T201", # print statement
+    "SLF001", #private-member-access
+    "N803", #invalid-argument-name
+    "ANN001", #missing-type-function-argument
+    "ANN202", #missing-return-type-private-function
 ]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
 
 [tool.ruff.lint.isort]
 order-by-type = true

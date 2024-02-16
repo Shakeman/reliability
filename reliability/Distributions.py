@@ -1,5 +1,4 @@
-"""
-Probability Distributions Module
+"""Probability Distributions Module
 
 Standard distributions are:
     Weibull_Distribution
@@ -54,8 +53,7 @@ np.seterr(divide="ignore", invalid="ignore")  # ignore the divide by zero warnin
 
 
 class Weibull_Distribution:
-    """
-    Weibull probability distribution. Creates a probability distribution object.
+    """Weibull probability distribution. Creates a probability distribution object.
 
     Parameters
     ----------
@@ -96,6 +94,7 @@ class Weibull_Distribution:
     Notes
     -----
     kwargs are used internally to generate the confidence intervals
+
     """
 
     def __init__(self, alpha=None, beta=None, gamma=0, **kwargs):
@@ -195,8 +194,7 @@ class Weibull_Distribution:
         )  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
     def plot(self, xvals=None, xmin=None, xmax=None):
-        """
-        Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
+        """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
         in a single figure
 
         Parameters
@@ -220,8 +218,8 @@ class Weibull_Distribution:
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters. No plotting keywords are
         accepted.
-        """
 
+        """
         X, xvals, xmin, xmax = distributions_input_checking(
             self,
             "ALL",
@@ -340,8 +338,7 @@ class Weibull_Distribution:
         plt.show()
 
     def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the PDF (probability density function)
+        """Plots the PDF (probability density function)
 
         Parameters
         ----------
@@ -370,6 +367,7 @@ class Weibull_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
@@ -419,8 +417,7 @@ class Weibull_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the CDF (cumulative distribution function)
+        """Plots the CDF (cumulative distribution function)
 
         Parameters
         ----------
@@ -473,8 +470,8 @@ class Weibull_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
-        """
 
+        """
         (
             X,
             xvals,
@@ -545,8 +542,7 @@ class Weibull_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the SF (survival function)
+        """Plots the SF (survival function)
 
         Parameters
         ----------
@@ -599,8 +595,8 @@ class Weibull_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
-        """
 
+        """
         (
             X,
             xvals,
@@ -659,8 +655,7 @@ class Weibull_Distribution:
             return sf
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the HF (hazard function)
+        """Plots the HF (hazard function)
 
         Parameters
         ----------
@@ -689,8 +684,8 @@ class Weibull_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
-        """
 
+        """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
             "HF",
@@ -742,8 +737,7 @@ class Weibull_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the CHF (cumulative hazard function)
+        """Plots the CHF (cumulative hazard function)
 
         Parameters
         ----------
@@ -796,8 +790,8 @@ class Weibull_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
-        """
 
+        """
         (
             X,
             xvals,
@@ -863,8 +857,7 @@ class Weibull_Distribution:
             return chf
 
     def quantile(self, q):
-        """
-        Quantile calculator
+        """Quantile calculator
 
         Parameters
         ----------
@@ -876,6 +869,7 @@ class Weibull_Distribution:
         x : float, array
             The inverse of the CDF at q. This is the probability that a random
             variable from the distribution is < q
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -889,8 +883,7 @@ class Weibull_Distribution:
         return unpack_single_arrays(ppf)
 
     def inverse_SF(self, q):
-        """
-        Inverse survival function calculator
+        """Inverse survival function calculator
 
         Parameters
         ----------
@@ -901,6 +894,7 @@ class Weibull_Distribution:
         -------
         x : float, array
             The inverse of the SF at q.
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -914,8 +908,7 @@ class Weibull_Distribution:
         return unpack_single_arrays(isf)
 
     def mean_residual_life(self, t):
-        """
-        Mean Residual Life calculator
+        """Mean Residual Life calculator
 
         Parameters
         ----------
@@ -926,6 +919,7 @@ class Weibull_Distribution:
         -------
         MRL : float
             The mean residual life
+
         """
 
         def R(x):
@@ -936,8 +930,7 @@ class Weibull_Distribution:
         return MRL
 
     def stats(self):
-        """
-        Descriptive statistics of the probability distribution.
+        """Descriptive statistics of the probability distribution.
         These are the same as the statistics shown using .plot() but printed to
         the console.
 
@@ -985,8 +978,7 @@ class Weibull_Distribution:
         print("Excess kurtosis =", self.excess_kurtosis)
 
     def random_samples(self, number_of_samples, seed=None):
-        """
-        Draws random samples from the probability distribution
+        """Draws random samples from the probability distribution
 
         Parameters
         ----------
@@ -1003,6 +995,7 @@ class Weibull_Distribution:
         Notes
         -----
         This is the same as rvs in scipy.stats
+
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
@@ -1013,8 +1006,7 @@ class Weibull_Distribution:
 
 
 class Normal_Distribution:
-    """
-    Normal probability distribution. Creates a probability distribution object.
+    """Normal probability distribution. Creates a probability distribution object.
 
     Parameters
     ----------
@@ -1051,6 +1043,7 @@ class Normal_Distribution:
     Notes
     -----
     kwargs are used internally to generate the confidence intervals
+
     """
 
     def __init__(self, mu=None, sigma=None, **kwargs):
@@ -1116,8 +1109,7 @@ class Normal_Distribution:
         self._hf0 = 0  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
     def plot(self, xvals=None, xmin=None, xmax=None):
-        """
-        Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
+        """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
         in a single figure
 
         Parameters
@@ -1141,6 +1133,7 @@ class Normal_Distribution:
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters. No plotting keywords are
         accepted.
+
         """
         X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
 
@@ -1253,8 +1246,7 @@ class Normal_Distribution:
         plt.show()
 
     def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the PDF (probability density function)
+        """Plots the PDF (probability density function)
 
         Parameters
         ----------
@@ -1283,6 +1275,7 @@ class Normal_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
@@ -1332,8 +1325,7 @@ class Normal_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the CDF (cumulative distribution function)
+        """Plots the CDF (cumulative distribution function)
 
         Parameters
         ----------
@@ -1386,6 +1378,7 @@ class Normal_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         (
             X,
@@ -1457,8 +1450,7 @@ class Normal_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the SF (survival function)
+        """Plots the SF (survival function)
 
         Parameters
         ----------
@@ -1511,6 +1503,7 @@ class Normal_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         (
             X,
@@ -1570,8 +1563,7 @@ class Normal_Distribution:
             return sf
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the HF (hazard function)
+        """Plots the HF (hazard function)
 
         Parameters
         ----------
@@ -1600,6 +1592,7 @@ class Normal_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
@@ -1649,8 +1642,7 @@ class Normal_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the CHF (cumulative hazard function)
+        """Plots the CHF (cumulative hazard function)
 
         Parameters
         ----------
@@ -1703,6 +1695,7 @@ class Normal_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         (
             X,
@@ -1764,8 +1757,7 @@ class Normal_Distribution:
             return chf
 
     def quantile(self, q):
-        """
-        Quantile calculator
+        """Quantile calculator
 
         Parameters
         ----------
@@ -1777,6 +1769,7 @@ class Normal_Distribution:
         x : float
             The inverse of the CDF at q. This is the probability that a random
             variable from the distribution is < q
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -1790,8 +1783,7 @@ class Normal_Distribution:
         return unpack_single_arrays(ppf)
 
     def inverse_SF(self, q):
-        """
-        Inverse survival function calculator
+        """Inverse survival function calculator
 
         Parameters
         ----------
@@ -1802,6 +1794,7 @@ class Normal_Distribution:
         -------
         x : float
             The inverse of the SF at q.
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -1815,8 +1808,7 @@ class Normal_Distribution:
         return unpack_single_arrays(isf)
 
     def mean_residual_life(self, t):
-        """
-        Mean Residual Life calculator
+        """Mean Residual Life calculator
 
         Parameters
         ----------
@@ -1827,6 +1819,7 @@ class Normal_Distribution:
         -------
         MRL : float
             The mean residual life
+
         """
 
         def R(x):
@@ -1837,8 +1830,7 @@ class Normal_Distribution:
         return MRL
 
     def stats(self):
-        """
-        Descriptive statistics of the probability distribution.
+        """Descriptive statistics of the probability distribution.
         These are the same as the statistics shown using .plot() but printed to
         the console.
 
@@ -1872,8 +1864,7 @@ class Normal_Distribution:
         print("Excess kurtosis =", self.excess_kurtosis)
 
     def random_samples(self, number_of_samples, seed=None):
-        """
-        Draws random samples from the probability distribution
+        """Draws random samples from the probability distribution
 
         Parameters
         ----------
@@ -1890,6 +1881,7 @@ class Normal_Distribution:
         Notes
         -----
         This is the same as rvs in scipy.stats
+
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
@@ -1900,8 +1892,7 @@ class Normal_Distribution:
 
 
 class Lognormal_Distribution:
-    """
-    Lognormal probability distribution. Creates a probability distribution object.
+    """Lognormal probability distribution. Creates a probability distribution object.
 
     Parameters
     ----------
@@ -1942,6 +1933,7 @@ class Lognormal_Distribution:
     Notes
     -----
     kwargs are used internally to generate the confidence intervals
+
     """
 
     def __init__(self, mu=None, sigma=None, gamma=0, **kwargs):
@@ -2044,8 +2036,7 @@ class Lognormal_Distribution:
         )  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
     def plot(self, xvals=None, xmin=None, xmax=None):
-        """
-        Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
+        """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
         in a single figure
 
         Parameters
@@ -2069,6 +2060,7 @@ class Lognormal_Distribution:
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters. No plotting keywords are
         accepted.
+
         """
         X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
 
@@ -2180,8 +2172,7 @@ class Lognormal_Distribution:
         plt.show()
 
     def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the PDF (probability density function)
+        """Plots the PDF (probability density function)
 
         Parameters
         ----------
@@ -2210,6 +2201,7 @@ class Lognormal_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
@@ -2259,8 +2251,7 @@ class Lognormal_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the CDF (cumulative distribution function)
+        """Plots the CDF (cumulative distribution function)
 
         Parameters
         ----------
@@ -2313,6 +2304,7 @@ class Lognormal_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         (
             X,
@@ -2386,8 +2378,7 @@ class Lognormal_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the SF (survival function)
+        """Plots the SF (survival function)
 
         Parameters
         ----------
@@ -2440,6 +2431,7 @@ class Lognormal_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         (
             X,
@@ -2499,8 +2491,7 @@ class Lognormal_Distribution:
             return sf
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the HF (hazard function)
+        """Plots the HF (hazard function)
 
         Parameters
         ----------
@@ -2529,6 +2520,7 @@ class Lognormal_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
@@ -2583,8 +2575,7 @@ class Lognormal_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the CHF (cumulative hazard function)
+        """Plots the CHF (cumulative hazard function)
 
         Parameters
         ----------
@@ -2637,6 +2628,7 @@ class Lognormal_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         (
             X,
@@ -2698,8 +2690,7 @@ class Lognormal_Distribution:
             return chf
 
     def quantile(self, q):
-        """
-        Quantile calculator
+        """Quantile calculator
 
         Parameters
         ----------
@@ -2711,6 +2702,7 @@ class Lognormal_Distribution:
         x : float
             The inverse of the CDF at q. This is the probability that a random
             variable from the distribution is < q
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -2724,8 +2716,7 @@ class Lognormal_Distribution:
         return unpack_single_arrays(ppf)
 
     def inverse_SF(self, q):
-        """
-        Inverse survival function calculator
+        """Inverse survival function calculator
 
         Parameters
         ----------
@@ -2736,6 +2727,7 @@ class Lognormal_Distribution:
         -------
         x : float
             The inverse of the SF at q.
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -2749,8 +2741,7 @@ class Lognormal_Distribution:
         return unpack_single_arrays(isf)
 
     def mean_residual_life(self, t):
-        """
-        Mean Residual Life calculator
+        """Mean Residual Life calculator
 
         Parameters
         ----------
@@ -2761,6 +2752,7 @@ class Lognormal_Distribution:
         -------
         MRL : float
             The mean residual life
+
         """
 
         def R(x):
@@ -2771,8 +2763,7 @@ class Lognormal_Distribution:
         return MRL
 
     def stats(self):
-        """
-        Descriptive statistics of the probability distribution.
+        """Descriptive statistics of the probability distribution.
         These are the same as the statistics shown using .plot() but printed to
         the console.
 
@@ -2820,8 +2811,7 @@ class Lognormal_Distribution:
         print("Excess kurtosis =", self.excess_kurtosis)
 
     def random_samples(self, number_of_samples, seed=None):
-        """
-        Draws random samples from the probability distribution
+        """Draws random samples from the probability distribution
 
         Parameters
         ----------
@@ -2838,6 +2828,7 @@ class Lognormal_Distribution:
         Notes
         -----
         This is the same as rvs in scipy.stats
+
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
@@ -2848,8 +2839,7 @@ class Lognormal_Distribution:
 
 
 class Exponential_Distribution:
-    """
-    Exponential probability distribution. Creates a probability distribution
+    """Exponential probability distribution. Creates a probability distribution
     object.
 
     Parameters
@@ -2888,6 +2878,7 @@ class Exponential_Distribution:
     Notes
     -----
     kwargs are used internally to generate the confidence intervals
+
     """
 
     def __init__(self, Lambda=None, gamma=0, **kwargs):
@@ -2952,8 +2943,7 @@ class Exponential_Distribution:
         self._hf0 = self.Lambda  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
     def plot(self, xvals=None, xmin=None, xmax=None):
-        """
-        Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
+        """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
         in a single figure
 
         Parameters
@@ -2977,8 +2967,8 @@ class Exponential_Distribution:
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters. No plotting keywords are
         accepted.
-        """
 
+        """
         X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
 
         pdf = ss.expon.pdf(X, scale=1 / self.Lambda, loc=self.gamma)
@@ -3091,8 +3081,7 @@ class Exponential_Distribution:
         plt.show()
 
     def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the PDF (probability density function)
+        """Plots the PDF (probability density function)
 
         Parameters
         ----------
@@ -3121,6 +3110,7 @@ class Exponential_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
@@ -3169,8 +3159,7 @@ class Exponential_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the CDF (cumulative distribution function)
+        """Plots the CDF (cumulative distribution function)
 
         Parameters
         ----------
@@ -3220,6 +3209,7 @@ class Exponential_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         if "CI_type" in kwargs:
             kwargs.pop("CI_type")
@@ -3297,8 +3287,7 @@ class Exponential_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the SF (survival function)
+        """Plots the SF (survival function)
 
         Parameters
         ----------
@@ -3348,6 +3337,7 @@ class Exponential_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         if "CI_type" in kwargs:
             kwargs.pop("CI_type")
@@ -3412,8 +3402,7 @@ class Exponential_Distribution:
             return sf
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the HF (hazard function)
+        """Plots the HF (hazard function)
 
         Parameters
         ----------
@@ -3442,6 +3431,7 @@ class Exponential_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
@@ -3491,8 +3481,7 @@ class Exponential_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the CHF (cumulative hazard function)
+        """Plots the CHF (cumulative hazard function)
 
         Parameters
         ----------
@@ -3542,6 +3531,7 @@ class Exponential_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         if "CI_type" in kwargs:
             kwargs.pop("CI_type")
@@ -3607,8 +3597,7 @@ class Exponential_Distribution:
             return chf
 
     def quantile(self, q):
-        """
-        Quantile calculator
+        """Quantile calculator
 
         Parameters
         ----------
@@ -3620,6 +3609,7 @@ class Exponential_Distribution:
         x : float
             The inverse of the CDF at q. This is the probability that a random
             variable from the distribution is < q
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -3633,8 +3623,7 @@ class Exponential_Distribution:
         return unpack_single_arrays(ppf)
 
     def inverse_SF(self, q):
-        """
-        Inverse survival function calculator
+        """Inverse survival function calculator
 
         Parameters
         ----------
@@ -3645,6 +3634,7 @@ class Exponential_Distribution:
         -------
         x : float
             The inverse of the SF at q.
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -3658,8 +3648,7 @@ class Exponential_Distribution:
         return unpack_single_arrays(isf)
 
     def mean_residual_life(self, t):
-        """
-        Mean Residual Life calculator
+        """Mean Residual Life calculator
 
         Parameters
         ----------
@@ -3670,6 +3659,7 @@ class Exponential_Distribution:
         -------
         MRL : float
             The mean residual life
+
         """
 
         def R(x):
@@ -3680,8 +3670,7 @@ class Exponential_Distribution:
         return MRL
 
     def stats(self):
-        """
-        Descriptive statistics of the probability distribution.
+        """Descriptive statistics of the probability distribution.
         These are the same as the statistics shown using .plot() but printed to
         the console.
 
@@ -3722,8 +3711,7 @@ class Exponential_Distribution:
         print("Excess kurtosis =", self.excess_kurtosis)
 
     def random_samples(self, number_of_samples, seed=None):
-        """
-        Draws random samples from the probability distribution
+        """Draws random samples from the probability distribution
 
         Parameters
         ----------
@@ -3740,6 +3728,7 @@ class Exponential_Distribution:
         Notes
         -----
         This is the same as rvs in scipy.stats
+
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
@@ -3750,8 +3739,7 @@ class Exponential_Distribution:
 
 
 class Gamma_Distribution:
-    """
-    Gamma probability distribution. Creates a probability distribution object.
+    """Gamma probability distribution. Creates a probability distribution object.
 
     Parameters
     ----------
@@ -3792,6 +3780,7 @@ class Gamma_Distribution:
     Notes
     -----
     kwargs are used internally to generate the confidence intervals
+
     """
 
     def __init__(self, alpha=None, beta=None, gamma=0, **kwargs):
@@ -3904,8 +3893,7 @@ class Gamma_Distribution:
         )  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
     def plot(self, xvals=None, xmin=None, xmax=None):
-        """
-        Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
+        """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
         in a single figure
 
         Parameters
@@ -3929,6 +3917,7 @@ class Gamma_Distribution:
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters. No plotting keywords are
         accepted.
+
         """
         X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
 
@@ -4040,8 +4029,7 @@ class Gamma_Distribution:
         plt.show()
 
     def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the PDF (probability density function)
+        """Plots the PDF (probability density function)
 
         Parameters
         ----------
@@ -4070,6 +4058,7 @@ class Gamma_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
@@ -4119,8 +4108,7 @@ class Gamma_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the CDF (cumulative distribution function)
+        """Plots the CDF (cumulative distribution function)
 
         Parameters
         ----------
@@ -4173,6 +4161,7 @@ class Gamma_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         (
             X,
@@ -4244,8 +4233,7 @@ class Gamma_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the SF (survival function)
+        """Plots the SF (survival function)
 
         Parameters
         ----------
@@ -4298,6 +4286,7 @@ class Gamma_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         (
             X,
@@ -4357,8 +4346,7 @@ class Gamma_Distribution:
             return sf
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the HF (hazard function)
+        """Plots the HF (hazard function)
 
         Parameters
         ----------
@@ -4387,6 +4375,7 @@ class Gamma_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
@@ -4441,8 +4430,7 @@ class Gamma_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the CHF (cumulative hazard function)
+        """Plots the CHF (cumulative hazard function)
 
         Parameters
         ----------
@@ -4495,6 +4483,7 @@ class Gamma_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         (
             X,
@@ -4556,8 +4545,7 @@ class Gamma_Distribution:
             return chf
 
     def quantile(self, q):
-        """
-        Quantile calculator
+        """Quantile calculator
 
         Parameters
         ----------
@@ -4569,6 +4557,7 @@ class Gamma_Distribution:
         x : float
             The inverse of the CDF at q. This is the probability that a random
             variable from the distribution is < q
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -4582,8 +4571,7 @@ class Gamma_Distribution:
         return unpack_single_arrays(ppf)
 
     def inverse_SF(self, q):
-        """
-        Inverse survival function calculator
+        """Inverse survival function calculator
 
         Parameters
         ----------
@@ -4594,6 +4582,7 @@ class Gamma_Distribution:
         -------
         x : float
             The inverse of the SF at q.
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -4607,8 +4596,7 @@ class Gamma_Distribution:
         return unpack_single_arrays(isf)
 
     def mean_residual_life(self, t):
-        """
-        Mean Residual Life calculator
+        """Mean Residual Life calculator
 
         Parameters
         ----------
@@ -4619,6 +4607,7 @@ class Gamma_Distribution:
         -------
         MRL : float
             The mean residual life
+
         """
 
         def R(x):
@@ -4629,8 +4618,7 @@ class Gamma_Distribution:
         return MRL
 
     def stats(self):
-        """
-        Descriptive statistics of the probability distribution.
+        """Descriptive statistics of the probability distribution.
         These are the same as the statistics shown using .plot() but printed to
         the console.
 
@@ -4678,8 +4666,7 @@ class Gamma_Distribution:
         print("Excess kurtosis =", self.excess_kurtosis)
 
     def random_samples(self, number_of_samples, seed=None):
-        """
-        Draws random samples from the probability distribution
+        """Draws random samples from the probability distribution
 
         Parameters
         ----------
@@ -4696,6 +4683,7 @@ class Gamma_Distribution:
         Notes
         -----
         This is the same as rvs in scipy.stats
+
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
@@ -4706,8 +4694,7 @@ class Gamma_Distribution:
 
 
 class Beta_Distribution:
-    """
-    Beta probability distribution. Creates a probability distribution object.
+    """Beta probability distribution. Creates a probability distribution object.
 
     Parameters
     ----------
@@ -4745,6 +4732,7 @@ class Beta_Distribution:
     Notes
     -----
     kwargs are not accepted
+
     """
 
     def __init__(self, alpha=None, beta=None):
@@ -4785,8 +4773,7 @@ class Beta_Distribution:
         self.Z = None  # this is necessary because distributions_input_checking looks for this value
 
     def plot(self, xvals=None, xmin=None, xmax=None):
-        """
-        Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
+        """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
         in a single figure
 
         Parameters
@@ -4810,6 +4797,7 @@ class Beta_Distribution:
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters. No plotting keywords are
         accepted.
+
         """
         X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
 
@@ -4924,8 +4912,7 @@ class Beta_Distribution:
         plt.show()
 
     def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the PDF (probability density function)
+        """Plots the PDF (probability density function)
 
         Parameters
         ----------
@@ -4954,6 +4941,7 @@ class Beta_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
@@ -4991,8 +4979,7 @@ class Beta_Distribution:
         return pdf
 
     def CDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the CDF (cumulative distribution function)
+        """Plots the CDF (cumulative distribution function)
 
         Parameters
         ----------
@@ -5021,6 +5008,7 @@ class Beta_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot)
 
@@ -5051,8 +5039,7 @@ class Beta_Distribution:
         return cdf
 
     def SF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the SF (survival function)
+        """Plots the SF (survival function)
 
         Parameters
         ----------
@@ -5081,6 +5068,7 @@ class Beta_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
@@ -5118,8 +5106,7 @@ class Beta_Distribution:
         return sf
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the HF (hazard function)
+        """Plots the HF (hazard function)
 
         Parameters
         ----------
@@ -5148,6 +5135,7 @@ class Beta_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
@@ -5185,8 +5173,7 @@ class Beta_Distribution:
         return hf
 
     def CHF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the CHF (cumulative hazard function)
+        """Plots the CHF (cumulative hazard function)
 
         Parameters
         ----------
@@ -5215,6 +5202,7 @@ class Beta_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
@@ -5254,8 +5242,7 @@ class Beta_Distribution:
         return chf
 
     def quantile(self, q):
-        """
-        Quantile calculator
+        """Quantile calculator
 
         Parameters
         ----------
@@ -5267,6 +5254,7 @@ class Beta_Distribution:
         x : float
             The inverse of the CDF at q. This is the probability that a random
             variable from the distribution is < q
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -5280,8 +5268,7 @@ class Beta_Distribution:
         return unpack_single_arrays(ppf)
 
     def inverse_SF(self, q):
-        """
-        Inverse survival function calculator
+        """Inverse survival function calculator
 
         Parameters
         ----------
@@ -5292,6 +5279,7 @@ class Beta_Distribution:
         -------
         x : float
             The inverse of the SF at q.
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -5305,8 +5293,7 @@ class Beta_Distribution:
         return unpack_single_arrays(isf)
 
     def mean_residual_life(self, t):
-        """
-        Mean Residual Life calculator
+        """Mean Residual Life calculator
 
         Parameters
         ----------
@@ -5317,6 +5304,7 @@ class Beta_Distribution:
         -------
         MRL : float
             The mean residual life
+
         """
 
         def R(x):
@@ -5327,8 +5315,7 @@ class Beta_Distribution:
         return MRL
 
     def stats(self):
-        """
-        Descriptive statistics of the probability distribution.
+        """Descriptive statistics of the probability distribution.
         These are the same as the statistics shown using .plot() but printed to
         the console.
 
@@ -5362,8 +5349,7 @@ class Beta_Distribution:
         print("Excess kurtosis =", self.excess_kurtosis)
 
     def random_samples(self, number_of_samples, seed=None):
-        """
-        Draws random samples from the probability distribution
+        """Draws random samples from the probability distribution
 
         Parameters
         ----------
@@ -5380,6 +5366,7 @@ class Beta_Distribution:
         Notes
         -----
         This is the same as rvs in scipy.stats
+
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
@@ -5405,8 +5392,7 @@ class Beta_Distribution:
 
 
 class Loglogistic_Distribution:
-    """
-    Loglogistic probability distribution. Creates a probability distribution
+    """Loglogistic probability distribution. Creates a probability distribution
     object.
 
     Parameters
@@ -5448,6 +5434,7 @@ class Loglogistic_Distribution:
     Notes
     -----
     kwargs are used internally to generate the confidence intervals
+
     """
 
     def __init__(self, alpha=None, beta=None, gamma=0, **kwargs):
@@ -5564,8 +5551,7 @@ class Loglogistic_Distribution:
         )  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
     def plot(self, xvals=None, xmin=None, xmax=None):
-        """
-        Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
+        """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
         in a single figure
 
         Parameters
@@ -5589,8 +5575,8 @@ class Loglogistic_Distribution:
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters. No plotting keywords are
         accepted.
-        """
 
+        """
         X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
 
         pdf = ss.fisk.pdf(X, self.beta, scale=self.alpha, loc=self.gamma)
@@ -5728,8 +5714,7 @@ class Loglogistic_Distribution:
         plt.show()
 
     def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the PDF (probability density function)
+        """Plots the PDF (probability density function)
 
         Parameters
         ----------
@@ -5758,8 +5743,8 @@ class Loglogistic_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
-        """
 
+        """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
             "PDF",
@@ -5808,8 +5793,7 @@ class Loglogistic_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the CDF (cumulative distribution function)
+        """Plots the CDF (cumulative distribution function)
 
         Parameters
         ----------
@@ -5862,6 +5846,7 @@ class Loglogistic_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         (
             X,
@@ -5935,8 +5920,7 @@ class Loglogistic_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the SF (survival function)
+        """Plots the SF (survival function)
 
         Parameters
         ----------
@@ -5989,8 +5973,8 @@ class Loglogistic_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
-        """
 
+        """
         (
             X,
             xvals,
@@ -6049,8 +6033,7 @@ class Loglogistic_Distribution:
             return sf
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the HF (hazard function)
+        """Plots the HF (hazard function)
 
         Parameters
         ----------
@@ -6079,8 +6062,8 @@ class Loglogistic_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
-        """
 
+        """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
             "HF",
@@ -6132,8 +6115,7 @@ class Loglogistic_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the CHF (cumulative hazard function)
+        """Plots the CHF (cumulative hazard function)
 
         Parameters
         ----------
@@ -6186,8 +6168,8 @@ class Loglogistic_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
-        """
 
+        """
         (
             X,
             xvals,
@@ -6253,8 +6235,7 @@ class Loglogistic_Distribution:
             return chf
 
     def quantile(self, q):
-        """
-        Quantile calculator
+        """Quantile calculator
 
         Parameters
         ----------
@@ -6266,6 +6247,7 @@ class Loglogistic_Distribution:
         x : float
             The inverse of the CDF at q. This is the probability that a random
             variable from the distribution is < q
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -6279,8 +6261,7 @@ class Loglogistic_Distribution:
         return unpack_single_arrays(ppf)
 
     def inverse_SF(self, q):
-        """
-        Inverse survival function calculator
+        """Inverse survival function calculator
 
         Parameters
         ----------
@@ -6291,6 +6272,7 @@ class Loglogistic_Distribution:
         -------
         x : float
             The inverse of the SF at q.
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -6304,8 +6286,7 @@ class Loglogistic_Distribution:
         return unpack_single_arrays(isf)
 
     def mean_residual_life(self, t):
-        """
-        Mean Residual Life calculator
+        """Mean Residual Life calculator
 
         Parameters
         ----------
@@ -6316,6 +6297,7 @@ class Loglogistic_Distribution:
         -------
         MRL : float
             The mean residual life
+
         """
 
         def R(x):
@@ -6326,8 +6308,7 @@ class Loglogistic_Distribution:
         return MRL
 
     def stats(self):
-        """
-        Descriptive statistics of the probability distribution.
+        """Descriptive statistics of the probability distribution.
         These are the same as the statistics shown using .plot() but printed to
         the console.
 
@@ -6375,8 +6356,7 @@ class Loglogistic_Distribution:
         print("Excess kurtosis =", self.excess_kurtosis)
 
     def random_samples(self, number_of_samples, seed=None):
-        """
-        Draws random samples from the probability distribution
+        """Draws random samples from the probability distribution
 
         Parameters
         ----------
@@ -6393,6 +6373,7 @@ class Loglogistic_Distribution:
         Notes
         -----
         This is the same as rvs in scipy.stats
+
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
@@ -6403,8 +6384,7 @@ class Loglogistic_Distribution:
 
 
 class Gumbel_Distribution:
-    """
-    Gumbel probability distribution. Creates a probability distribution object.
+    """Gumbel probability distribution. Creates a probability distribution object.
 
     Parameters
     ----------
@@ -6441,6 +6421,7 @@ class Gumbel_Distribution:
     Notes
     -----
     kwargs are used internally to generate the confidence intervals
+
     """
 
     def __init__(self, mu=None, sigma=None, **kwargs):
@@ -6507,8 +6488,7 @@ class Gumbel_Distribution:
         self._hf0 = 0  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
     def plot(self, xvals=None, xmin=None, xmax=None):
-        """
-        Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
+        """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
         in a single figure
 
         Parameters
@@ -6532,6 +6512,7 @@ class Gumbel_Distribution:
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters. No plotting keywords are
         accepted.
+
         """
         X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
 
@@ -6643,8 +6624,7 @@ class Gumbel_Distribution:
         plt.show()
 
     def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the PDF (probability density function)
+        """Plots the PDF (probability density function)
 
         Parameters
         ----------
@@ -6673,6 +6653,7 @@ class Gumbel_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
@@ -6722,8 +6703,7 @@ class Gumbel_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the CDF (cumulative distribution function)
+        """Plots the CDF (cumulative distribution function)
 
         Parameters
         ----------
@@ -6776,6 +6756,7 @@ class Gumbel_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         (
             X,
@@ -6847,8 +6828,7 @@ class Gumbel_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the SF (survival function)
+        """Plots the SF (survival function)
 
         Parameters
         ----------
@@ -6901,6 +6881,7 @@ class Gumbel_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         (
             X,
@@ -6960,8 +6941,7 @@ class Gumbel_Distribution:
             return sf
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the HF (hazard function)
+        """Plots the HF (hazard function)
 
         Parameters
         ----------
@@ -6990,6 +6970,7 @@ class Gumbel_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         X, xvals, xmin, xmax, show_plot = distributions_input_checking(
             self,
@@ -7039,8 +7020,7 @@ class Gumbel_Distribution:
         CI_x=None,
         **kwargs,
     ):
-        """
-        Plots the CHF (cumulative hazard function)
+        """Plots the CHF (cumulative hazard function)
 
         Parameters
         ----------
@@ -7093,6 +7073,7 @@ class Gumbel_Distribution:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         (
             X,
@@ -7154,8 +7135,7 @@ class Gumbel_Distribution:
             return chf
 
     def quantile(self, q):
-        """
-        Quantile calculator
+        """Quantile calculator
 
         Parameters
         ----------
@@ -7167,6 +7147,7 @@ class Gumbel_Distribution:
         x : float
             The inverse of the CDF at q. This is the probability that a random
             variable from the distribution is < q
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -7180,8 +7161,7 @@ class Gumbel_Distribution:
         return unpack_single_arrays(ppf)
 
     def inverse_SF(self, q):
-        """
-        Inverse survival function calculator
+        """Inverse survival function calculator
 
         Parameters
         ----------
@@ -7192,6 +7172,7 @@ class Gumbel_Distribution:
         -------
         x : float
             The inverse of the SF at q.
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -7205,8 +7186,7 @@ class Gumbel_Distribution:
         return unpack_single_arrays(isf)
 
     def mean_residual_life(self, t):
-        """
-        Mean Residual Life calculator
+        """Mean Residual Life calculator
 
         Parameters
         ----------
@@ -7217,6 +7197,7 @@ class Gumbel_Distribution:
         -------
         MRL : float
             The mean residual life
+
         """
 
         def R(x):
@@ -7227,8 +7208,7 @@ class Gumbel_Distribution:
         return MRL
 
     def stats(self):
-        """
-        Descriptive statistics of the probability distribution.
+        """Descriptive statistics of the probability distribution.
         These are the same as the statistics shown using .plot() but printed to
         the console.
 
@@ -7262,8 +7242,7 @@ class Gumbel_Distribution:
         print("Excess kurtosis =", self.excess_kurtosis)
 
     def random_samples(self, number_of_samples, seed=None):
-        """
-        Draws random samples from the probability distribution
+        """Draws random samples from the probability distribution
 
         Parameters
         ----------
@@ -7280,6 +7259,7 @@ class Gumbel_Distribution:
         Notes
         -----
         This is the same as rvs in scipy.stats
+
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
@@ -7290,8 +7270,7 @@ class Gumbel_Distribution:
 
 
 class Competing_Risks_Model:
-    """
-    The competing risks model is used to model the effect of multiple risks
+    """The competing risks model is used to model the effect of multiple risks
     (expressed as probability distributions) that act on a system over time.
     The model is obtained using the product of the survival functions:
 
@@ -7351,6 +7330,7 @@ class Competing_Risks_Model:
     default xvals for maximum accuracy. The default number of values generated
     when xvals is not given is 1000. Consider this carefully when specifying
     xvals in order to avoid inaccuracies in the results.
+
     """
 
     def __init__(self, distributions):
@@ -7441,8 +7421,7 @@ class Competing_Risks_Model:
         self.b95 = X[np.argmin(abs((1 - sf) - 0.95))]
 
     def __combiner(self, xvals=None, xmin=None, xmax=None):
-        """
-        This is a hidden function used to combine the distributions numerically.
+        """This is a hidden function used to combine the distributions numerically.
         It is necessary to do this outside of the __init__ method as it needs to be called by each function (PDF, CDF...) so that xvals is used consistently.
         This approach keeps the API the same as the other probability distributions.
         Users should never need to access this function directly.
@@ -7515,8 +7494,7 @@ class Competing_Risks_Model:
         self._hf0 = hf[0]
 
     def plot(self, xvals=None, xmin=None, xmax=None):
-        """
-        Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
+        """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
         in a single figure
 
         Parameters
@@ -7540,6 +7518,7 @@ class Competing_Risks_Model:
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters. No plotting keywords are
         accepted.
+
         """
         Competing_Risks_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
         plt.figure(figsize=(9, 7))
@@ -7646,8 +7625,7 @@ class Competing_Risks_Model:
         plt.show()
 
     def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """
-        Plots the PDF (probability density function)
+        """Plots the PDF (probability density function)
 
         Parameters
         ----------
@@ -7679,6 +7657,7 @@ class Competing_Risks_Model:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         Competing_Risks_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
@@ -7717,8 +7696,7 @@ class Competing_Risks_Model:
         return unpack_single_arrays(self.__pdf)
 
     def CDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """
-        Plots the CDF (cumulative distribution function)
+        """Plots the CDF (cumulative distribution function)
 
         Parameters
         ----------
@@ -7750,8 +7728,8 @@ class Competing_Risks_Model:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
-        """
 
+        """
         Competing_Risks_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
         if len(self.__xvals) < 2:
@@ -7788,8 +7766,7 @@ class Competing_Risks_Model:
         return unpack_single_arrays(self.__cdf)
 
     def SF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """
-        Plots the SF (survival function)
+        """Plots the SF (survival function)
 
         Parameters
         ----------
@@ -7821,6 +7798,7 @@ class Competing_Risks_Model:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         Competing_Risks_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
@@ -7858,8 +7836,7 @@ class Competing_Risks_Model:
         return unpack_single_arrays(self.__sf)
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """
-        Plots the HF (hazard function)
+        """Plots the HF (hazard function)
 
         Parameters
         ----------
@@ -7891,6 +7868,7 @@ class Competing_Risks_Model:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         Competing_Risks_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
@@ -7929,8 +7907,7 @@ class Competing_Risks_Model:
         return unpack_single_arrays(self.__hf)
 
     def CHF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """
-        Plots the CHF (cumulative hazard function)
+        """Plots the CHF (cumulative hazard function)
 
         Parameters
         ----------
@@ -7962,6 +7939,7 @@ class Competing_Risks_Model:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         Competing_Risks_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
@@ -7999,8 +7977,7 @@ class Competing_Risks_Model:
         return unpack_single_arrays(self.__chf)
 
     def quantile(self, q):
-        """
-        Quantile calculator
+        """Quantile calculator
 
         Parameters
         ----------
@@ -8012,6 +7989,7 @@ class Competing_Risks_Model:
         x : float
             The inverse of the CDF at q. This is the probability that a random
             variable from the distribution is < q
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -8025,8 +8003,7 @@ class Competing_Risks_Model:
         return unpack_single_arrays(ppf)
 
     def inverse_SF(self, q):
-        """
-        Inverse survival function calculator
+        """Inverse survival function calculator
 
         Parameters
         ----------
@@ -8037,6 +8014,7 @@ class Competing_Risks_Model:
         -------
         x : float
             The inverse of the SF at q.
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -8050,8 +8028,7 @@ class Competing_Risks_Model:
         return unpack_single_arrays(isf)
 
     def stats(self):
-        """
-        Descriptive statistics of the probability distribution.
+        """Descriptive statistics of the probability distribution.
         These are the same as the statistics shown using .plot() but printed to
         the console.
 
@@ -8080,8 +8057,7 @@ class Competing_Risks_Model:
         print("Excess kurtosis =", self.excess_kurtosis)
 
     def mean_residual_life(self, t):
-        """
-        Mean Residual Life calculator
+        """Mean Residual Life calculator
 
         Parameters
         ----------
@@ -8092,11 +8068,11 @@ class Competing_Risks_Model:
         -------
         MRL : float
             The mean residual life
+
         """
 
         def __subcombiner(X):
-            """
-            This function does what __combiner does but more efficiently and
+            """This function does what __combiner does but more efficiently and
             also accepts single values
             """
             if type(X) == np.ndarray:
@@ -8138,8 +8114,7 @@ class Competing_Risks_Model:
         return MRL
 
     def random_samples(self, number_of_samples, seed=None):
-        """
-        Draws random samples from the probability distribution
+        """Draws random samples from the probability distribution
 
         Parameters
         ----------
@@ -8156,6 +8131,7 @@ class Competing_Risks_Model:
         Notes
         -----
         This is the same as rvs in scipy.stats
+
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
@@ -8169,8 +8145,7 @@ class Competing_Risks_Model:
 
 
 class Mixture_Model:
-    """
-    The mixture model is used to create a distribution that contains parts from
+    """The mixture model is used to create a distribution that contains parts from
     multiple distributions. This allows for a more complex model to be
     constructed as the sum of other distributions, each multiplied by a
     proportion (where the proportions sum to 1). The model is obtained using the
@@ -8231,6 +8206,7 @@ class Mixture_Model:
     default xvals for maximum accuracy. The default number of values generated
     when xvals is not given is 1000. Consider this carefully when specifying
     xvals in order to avoid inaccuracies in the results.
+
     """
 
     def __init__(self, distributions, proportions=None):
@@ -8333,8 +8309,7 @@ class Mixture_Model:
         self.b95 = X[np.argmin(abs(cdf - 0.95))]
 
     def __combiner(self, xvals=None, xmin=None, xmax=None):
-        """
-        This is a hidden function used to combine the distributions numerically.
+        """This is a hidden function used to combine the distributions numerically.
         It is necessary to do this outside of the __init__ method as it needs to be called by each function (PDF, CDF...) so that xvals is used consistently.
         This approach keeps the API the same as the other probability distributions.
         Users should never need to access this function directly.
@@ -8410,8 +8385,7 @@ class Mixture_Model:
         self._hf0 = hf[0]
 
     def plot(self, xvals=None, xmin=None, xmax=None):
-        """
-        Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
+        """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
         in a single figure
 
         Parameters
@@ -8435,8 +8409,8 @@ class Mixture_Model:
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters. No plotting keywords are
         accepted.
-        """
 
+        """
         Mixture_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
         plt.figure(figsize=(9, 7))
@@ -8543,8 +8517,7 @@ class Mixture_Model:
         plt.show()
 
     def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """
-        Plots the PDF (probability density function)
+        """Plots the PDF (probability density function)
 
         Parameters
         ----------
@@ -8576,6 +8549,7 @@ class Mixture_Model:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         Mixture_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
@@ -8615,8 +8589,7 @@ class Mixture_Model:
         return unpack_single_arrays(self.__pdf)
 
     def CDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """
-        Plots the CDF (cumulative distribution function)
+        """Plots the CDF (cumulative distribution function)
 
         Parameters
         ----------
@@ -8648,6 +8621,7 @@ class Mixture_Model:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         Mixture_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
@@ -8685,8 +8659,7 @@ class Mixture_Model:
         return unpack_single_arrays(self.__cdf)
 
     def SF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """
-        Plots the SF (survival function)
+        """Plots the SF (survival function)
 
         Parameters
         ----------
@@ -8718,6 +8691,7 @@ class Mixture_Model:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         Mixture_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
@@ -8755,8 +8729,7 @@ class Mixture_Model:
         return unpack_single_arrays(self.__sf)
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """
-        Plots the HF (hazard function)
+        """Plots the HF (hazard function)
 
         Parameters
         ----------
@@ -8788,6 +8761,7 @@ class Mixture_Model:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         Mixture_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
@@ -8826,8 +8800,7 @@ class Mixture_Model:
         return unpack_single_arrays(self.__hf)
 
     def CHF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """
-        Plots the CHF (cumulative hazard function)
+        """Plots the CHF (cumulative hazard function)
 
         Parameters
         ----------
@@ -8859,6 +8832,7 @@ class Mixture_Model:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         Mixture_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
@@ -8897,8 +8871,7 @@ class Mixture_Model:
         return unpack_single_arrays(self.__chf)
 
     def quantile(self, q):
-        """
-        Quantile calculator
+        """Quantile calculator
 
         Parameters
         ----------
@@ -8910,6 +8883,7 @@ class Mixture_Model:
         x : float
             The inverse of the CDF at q. This is the probability that a random
             variable from the distribution is < q
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -8923,8 +8897,7 @@ class Mixture_Model:
         return unpack_single_arrays(ppf)
 
     def inverse_SF(self, q):
-        """
-        Inverse survival function calculator
+        """Inverse survival function calculator
 
         Parameters
         ----------
@@ -8935,6 +8908,7 @@ class Mixture_Model:
         -------
         x : float
             The inverse of the SF at q.
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -8948,8 +8922,7 @@ class Mixture_Model:
         return unpack_single_arrays(isf)
 
     def stats(self):
-        """
-        Descriptive statistics of the probability distribution.
+        """Descriptive statistics of the probability distribution.
         These are the same as the statistics shown using .plot() but printed to
         the console.
 
@@ -8974,8 +8947,7 @@ class Mixture_Model:
         print("Excess kurtosis =", self.excess_kurtosis)
 
     def mean_residual_life(self, t):
-        """
-        Mean Residual Life calculator
+        """Mean Residual Life calculator
 
         Parameters
         ----------
@@ -8986,11 +8958,11 @@ class Mixture_Model:
         -------
         MRL : float
             The mean residual life
+
         """
 
         def __subcombiner(X):
-            """
-            This function does what __combiner does but more efficiently and
+            """This function does what __combiner does but more efficiently and
             also accepts single values.
             """
             if type(X) == np.ndarray:
@@ -9032,8 +9004,7 @@ class Mixture_Model:
         return MRL
 
     def random_samples(self, number_of_samples, seed=None):
-        """
-        Draws random samples from the probability distribution
+        """Draws random samples from the probability distribution
 
         Parameters
         ----------
@@ -9050,6 +9021,7 @@ class Mixture_Model:
         Notes
         -----
         This is the same as rvs in scipy.stats
+
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
@@ -9063,8 +9035,7 @@ class Mixture_Model:
 
 
 class DSZI_Model:
-    """
-    Defective Subpopulation Zero Inflated Model. This model should be used when
+    """Defective Subpopulation Zero Inflated Model. This model should be used when
     there are failures at t=0 ("dead on arrival") creating a zero inflated (ZI)
     distribution and/or many right censored failures creating a defective
     subpopulation (DS) model. The parameters DS and ZI represent the maximum and
@@ -9115,6 +9086,7 @@ class DSZI_Model:
     DS and ZI are optional but at least one of them must be specified. Leaving
     them both unspecified is equivalent to the base distribution specified in
     the "distribution" parameter.
+
     """
 
     def __init__(self, distribution, DS=None, ZI=None):
@@ -9197,8 +9169,7 @@ class DSZI_Model:
         self.b95 = X[np.argmin(abs(cdf - 0.95))]
 
     def plot(self, xvals=None, xmin=None, xmax=None):
-        """
-        Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
+        """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
         in a single figure
 
         Parameters
@@ -9222,8 +9193,8 @@ class DSZI_Model:
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters. No plotting keywords are
         accepted.
-        """
 
+        """
         X = generate_X_array(dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax)  # obtain the X array
 
         pdf0 = self.__base_distribution.PDF(xvals=X, show_plot=False)
@@ -9335,8 +9306,7 @@ class DSZI_Model:
         plt.show()
 
     def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the PDF (probability density function)
+        """Plots the PDF (probability density function)
 
         Parameters
         ----------
@@ -9365,6 +9335,7 @@ class DSZI_Model:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         # obtain the X array
         if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
@@ -9401,8 +9372,7 @@ class DSZI_Model:
         return pdf
 
     def CDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the CDF (cumulative distribution function)
+        """Plots the CDF (cumulative distribution function)
 
         Parameters
         ----------
@@ -9431,6 +9401,7 @@ class DSZI_Model:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         # obtain the X array
         if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
@@ -9467,8 +9438,7 @@ class DSZI_Model:
         return cdf
 
     def SF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the SF (survival function)
+        """Plots the SF (survival function)
 
         Parameters
         ----------
@@ -9497,6 +9467,7 @@ class DSZI_Model:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         # obtain the X array
         if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
@@ -9534,8 +9505,7 @@ class DSZI_Model:
         return sf
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the HF (hazard function)
+        """Plots the HF (hazard function)
 
         Parameters
         ----------
@@ -9564,6 +9534,7 @@ class DSZI_Model:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         # obtain the X array
         if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
@@ -9603,8 +9574,7 @@ class DSZI_Model:
         return hf
 
     def CHF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """
-        Plots the CHF (cumulative hazard function)
+        """Plots the CHF (cumulative hazard function)
 
         Parameters
         ----------
@@ -9633,6 +9603,7 @@ class DSZI_Model:
         xmin and/or xmax are specified then an array with 200 elements will be
         created using these limits. If nothing is specified then the range will
         be based on the distribution's parameters.
+
         """
         # obtain the X array
         if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
@@ -9670,8 +9641,7 @@ class DSZI_Model:
         return chf
 
     def quantile(self, q):
-        """
-        Quantile calculator
+        """Quantile calculator
 
         Parameters
         ----------
@@ -9684,6 +9654,7 @@ class DSZI_Model:
         x : float
             The inverse of the CDF at q. This is the probability that a random
             variable from the distribution is < q
+
         """
         if type(q) in [int, float, np.float64]:
             if q < self.ZI or q > self.DS:
@@ -9701,8 +9672,7 @@ class DSZI_Model:
         return unpack_single_arrays(ppf)
 
     def inverse_SF(self, q):
-        """
-        Inverse survival function calculator
+        """Inverse survival function calculator
 
         Parameters
         ----------
@@ -9713,6 +9683,7 @@ class DSZI_Model:
         -------
         x : float
             The inverse of the SF at q.
+
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
@@ -9726,8 +9697,7 @@ class DSZI_Model:
         return unpack_single_arrays(isf)
 
     def mean_residual_life(self, t):
-        """
-        Mean Residual Life calculator
+        """Mean Residual Life calculator
 
         Parameters
         ----------
@@ -9742,16 +9712,15 @@ class DSZI_Model:
         Notes
         -----
         If DS < 1 the MRL will return np.inf
-        """
 
+        """
         MRL = np.inf if self.DS < 1 else self.__base_distribution.mean_residual_life(t=t)
         # infinite life if the CDF never reaches 1
         # the MRL of the scaled distribution is the same as that of the base distribution
         return MRL
 
     def stats(self):
-        """
-        Descriptive statistics of the probability distribution.
+        """Descriptive statistics of the probability distribution.
         These are the same as the statistics shown using .plot() but printed to
         the console.
 
@@ -9776,8 +9745,7 @@ class DSZI_Model:
         print("Excess kurtosis =", self.excess_kurtosis)
 
     def random_samples(self, number_of_samples, right_censored_time=None, seed=None):
-        """
-        Draws random samples from the probability distribution
+        """Draws random samples from the probability distribution
 
         Parameters
         ----------

@@ -14,9 +14,9 @@ setuptools.setup(
     license="LGPLv3",
     url="https://reliability.readthedocs.io/en/latest/",
     project_urls={
-        'Documentation': 'https://reliability.readthedocs.io/en/latest/',
-        'Source Code': 'https://github.com/MatthewReid854/reliability',
-        'Donate': 'https://reliability.readthedocs.io/en/latest/How%20to%20donate%20to%20the%20project.html',
+        "Documentation": "https://reliability.readthedocs.io/en/latest/",
+        "Source Code": "https://github.com/MatthewReid854/reliability",
+        "Donate": "https://reliability.readthedocs.io/en/latest/How%20to%20donate%20to%20the%20project.html",
     },
     keywords=[
         "reliability",

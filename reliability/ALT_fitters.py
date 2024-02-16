@@ -139,6 +139,7 @@ class Fit_Weibull_Exponential:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -568,6 +569,7 @@ class Fit_Weibull_Eyring:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -991,6 +993,7 @@ class Fit_Weibull_Power:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -1435,6 +1438,7 @@ class Fit_Weibull_Dual_Exponential:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -1922,6 +1926,7 @@ class Fit_Weibull_Power_Exponential:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -2422,6 +2427,7 @@ class Fit_Weibull_Dual_Power:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -2891,6 +2897,7 @@ class Fit_Lognormal_Exponential:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -3327,6 +3334,7 @@ class Fit_Lognormal_Eyring:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -3756,6 +3764,7 @@ class Fit_Lognormal_Power:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -4206,6 +4215,7 @@ class Fit_Lognormal_Dual_Exponential:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -4709,6 +4719,7 @@ class Fit_Lognormal_Power_Exponential:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -5209,6 +5220,7 @@ class Fit_Lognormal_Dual_Power:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -5680,6 +5692,7 @@ class Fit_Normal_Exponential:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -6113,6 +6126,7 @@ class Fit_Normal_Eyring:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -6540,6 +6554,7 @@ class Fit_Normal_Power:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -6988,6 +7003,7 @@ class Fit_Normal_Dual_Exponential:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -7475,6 +7491,7 @@ class Fit_Normal_Power_Exponential:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -7959,6 +7976,7 @@ class Fit_Normal_Dual_Power:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -8433,6 +8451,7 @@ class Fit_Exponential_Exponential:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -8845,6 +8864,7 @@ class Fit_Exponential_Eyring:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -9251,6 +9271,7 @@ class Fit_Exponential_Power:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -9678,6 +9699,7 @@ class Fit_Exponential_Dual_Exponential:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -10147,6 +10169,7 @@ class Fit_Exponential_Power_Exponential:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(
@@ -10613,6 +10636,7 @@ class Fit_Exponential_Dual_Power:
     life_stress_plot : object
         The figure object from the life-stress plot (only provided if
         show_life_stress_plot is True).
+
     """
 
     def __init__(

@@ -1,5 +1,4 @@
-"""
-Fitters
+"""Fitters.
 
 This module contains custom fitting functions for parametric distributions which
 support complete and right censored data.
@@ -39,6 +38,7 @@ and the fit might not be successful. Generally the fit achieved by autograd is
 highly successful, and whenever it fails the initial guess will be used and a
 warning will be displayed.
 """
+from __future__ import annotations
 
 import contextlib
 
@@ -93,8 +93,7 @@ pd.options.display.width = 200  # prevents wrapping after default 80 characters
 
 
 class Fit_Everything:
-    """
-    This function will fit all available distributions to the data provided.
+    """This function will fit all available distributions to the data provided.
     The only distributions not fitted are Weibull_DSZI and Weibull_ZI. The
     Beta_2P distribution will only be fitted if the data are between 0 and 1.
 
@@ -202,11 +201,12 @@ class Fit_Everything:
         X = [5,3,8,6,7,4,5,4,2]
         output = Fit_Everything(X)
         print('Weibull Alpha =',output.Weibull_2P_alpha)
+
     """
 
     def __init__(
         self,
-        failures=None,
+        failures: list[int] | None =None,
         right_censored=None,
         exclude=None,
         sort_by="BIC",
@@ -1296,8 +1296,7 @@ class Fit_Everything:
             plt.show()
 
     def __probplot_layout(self):
-        """
-        Internal function to provide layout formatting of the plots.
+        """Internal function to provide layout formatting of the plots.
         """
         items = len(self.results.index.values)  # number of items fitted
         xx1, yy1 = 2.5, 2  # multipliers for easy adjustment of window sizes
@@ -1369,8 +1368,7 @@ class Fit_Everything:
         return cols, rows, figsize, figsizePP
 
     def __histogram_plot(self):
-        """
-        Generates a histogram plot of PDF and CDF of the fitted distributions.
+        """Generates a histogram plot of PDF and CDF of the fitted distributions.
         """
         X = self.failures
         # define plotting limits
@@ -1535,8 +1533,7 @@ class Fit_Everything:
         return plt.gcf()
 
     def __P_P_plot(self):
-        """
-        Generates a subplot of Probability-Probability plots to compare the
+        """Generates a subplot of Probability-Probability plots to compare the
         parametric vs non-parametric plots of the fitted distributions.
         """
         # Kaplan-Meier estimate of quantiles. Used in P-P plot.
@@ -1658,8 +1655,7 @@ class Fit_Everything:
         return plt.gcf()
 
     def __probability_plot(self, best_only=False):
-        """
-        Generates a subplot of all the probability plots
+        """Generates a subplot of all the probability plots
         """
         from reliability.Probability_plotting import (
             Beta_probability_plot,
@@ -1836,8 +1832,7 @@ class Fit_Everything:
 
 
 class Fit_Weibull_2P:
-    """
-    Fits a two parameter Weibull distribution (alpha,beta) to the data provided.
+    """Fits a two parameter Weibull distribution (alpha,beta) to the data provided.
 
     Parameters
     ----------
@@ -1950,6 +1945,7 @@ class Fit_Weibull_2P:
     may be caused by the chosen distribution being a very poor fit to the data
     or the data being heavily censored. If a warning is printed, consider trying
     a different optimizer.
+
     """
 
     def __init__(
@@ -2240,8 +2236,7 @@ class Fit_Weibull_2P:
 
 
 class Fit_Weibull_2P_grouped:
-    """
-    Fits a two parameter Weibull distribution (alpha,beta) to the data provided.
+    """Fits a two parameter Weibull distribution (alpha,beta) to the data provided.
     This function is similar to Fit_Weibull_2P however it accepts a dataframe
     which allows for efficient handling of grouped (repeated) data.
 
@@ -2393,6 +2388,7 @@ class Fit_Weibull_2P_grouped:
         filename = 'C:\\Users\\Current User\\Desktop\\data.xlsx'
         df = pd.read_excel(io=filename)
         Fit_Weibull_2P_grouped(dataframe=df)
+
     """
 
     def __init__(
@@ -2881,8 +2877,7 @@ class Fit_Weibull_2P_grouped:
 
 
 class Fit_Weibull_3P:
-    """
-    Fits a three parameter Weibull distribution (alpha,beta,gamma) to the data
+    """Fits a three parameter Weibull distribution (alpha,beta,gamma) to the data
     provided.
 
     Parameters
@@ -3002,6 +2997,7 @@ class Fit_Weibull_3P:
     If the fitted gamma parameter is less than 0.01, the Weibull_3P results will
     be discarded and the Weibull_2P distribution will be fitted. The returned
     values for gamma and gamma_SE will be 0.
+
     """
 
     def __init__(
@@ -3299,8 +3295,7 @@ class Fit_Weibull_3P:
 
 
 class Fit_Weibull_Mixture:
-    """
-    Fits a mixture of two Weibull_2P distributions (this does not fit the gamma
+    """Fits a mixture of two Weibull_2P distributions (this does not fit the gamma
     parameter). Right censoring is supported, though care should be taken to
     ensure that there still appears to be two groups when plotting only the
     failure data. A second group cannot be made from a mostly or totally
@@ -3437,6 +3432,7 @@ class Fit_Weibull_Mixture:
     may be caused by the chosen distribution being a very poor fit to the data
     or the data being heavily censored. If a warning is printed, consider trying
     a different optimizer.
+
     """
 
     def __init__(
@@ -3777,8 +3773,7 @@ class Fit_Weibull_Mixture:
 
 
 class Fit_Weibull_CR:
-    """
-    Fits a Weibull Competing Risks Model consisting of two Weibull_2P
+    """Fits a Weibull Competing Risks Model consisting of two Weibull_2P
     distributions (this does not fit the gamma parameter). Similar to the
     mixture model, you can use this model when you think there are multiple
     failure modes acting to create the failure data.
@@ -3894,6 +3889,7 @@ class Fit_Weibull_CR:
     types of competing risks models than would be achieved by a Weibull
     Competing Risks model. For this reason, other types of competing risks
     models are not implemented.
+
     """
 
     def __init__(
@@ -4192,8 +4188,7 @@ class Fit_Weibull_CR:
 
 
 class Fit_Weibull_DSZI:
-    """
-    Fits a Weibull Defective Subpopulation Zero Inflated (DSZI) distribution to
+    """Fits a Weibull Defective Subpopulation Zero Inflated (DSZI) distribution to
     the data provided. This is a 4 parameter distribution (alpha, beta, DS, ZI).
 
     Parameters
@@ -4294,6 +4289,7 @@ class Fit_Weibull_DSZI:
     may be caused by the chosen distribution being a very poor fit to the data
     or the data being heavily censored. If a warning is printed, consider trying
     a different optimizer.
+
     """
 
     def __init__(
@@ -4550,8 +4546,7 @@ class Fit_Weibull_DSZI:
 
 
 class Fit_Weibull_DS:
-    """
-    Fits a Weibull Defective Subpopulation (DS) distribution to the data
+    """Fits a Weibull Defective Subpopulation (DS) distribution to the data
     provided. This is a 3 parameter distribution (alpha, beta, DS).
 
     Parameters
@@ -4643,6 +4638,7 @@ class Fit_Weibull_DS:
     may be caused by the chosen distribution being a very poor fit to the data
     or the data being heavily censored. If a warning is printed, consider trying
     a different optimizer.
+
     """
 
     def __init__(
@@ -4850,8 +4846,7 @@ class Fit_Weibull_DS:
 
 
 class Fit_Weibull_ZI:
-    """
-    Fits a Weibull Zero Inflated (ZI) distribution to the data
+    """Fits a Weibull Zero Inflated (ZI) distribution to the data
     provided. This is a 3 parameter distribution (alpha, beta, ZI).
 
     Parameters
@@ -4944,6 +4939,7 @@ class Fit_Weibull_ZI:
     may be caused by the chosen distribution being a very poor fit to the data
     or the data being heavily censored. If a warning is printed, consider trying
     a different optimizer.
+
     """
 
     def __init__(
@@ -5175,8 +5171,7 @@ class Fit_Weibull_ZI:
 
 
 class Fit_Exponential_1P:
-    """
-    Fits a one parameter Exponential distribution (Lambda) to the data provided.
+    """Fits a one parameter Exponential distribution (Lambda) to the data provided.
 
     Parameters
     ----------
@@ -5283,6 +5278,7 @@ class Fit_Exponential_1P:
     may be caused by the chosen distribution being a very poor fit to the data
     or the data being heavily censored. If a warning is printed, consider trying
     a different optimizer.
+
     """
 
     def __init__(
@@ -5506,8 +5502,7 @@ class Fit_Exponential_1P:
 
 
 class Fit_Exponential_2P:
-    """
-    Fits a two parameter Exponential distribution (Lambda, gamma) to the data
+    """Fits a two parameter Exponential distribution (Lambda, gamma) to the data
     provided.
 
     Parameters
@@ -5623,6 +5618,7 @@ class Fit_Exponential_2P:
     may be caused by the chosen distribution being a very poor fit to the data
     or the data being heavily censored. If a warning is printed, consider trying
     a different optimizer.
+
     """
 
     def __init__(
@@ -5887,8 +5883,7 @@ class Fit_Exponential_2P:
 
 
 class Fit_Normal_2P:
-    """
-    Fits a two parameter Normal distribution (mu,sigma) to the data provided.
+    """Fits a two parameter Normal distribution (mu,sigma) to the data provided.
     Note that it will return a fit that may be partially in the negative domain
     (x<0). If you need an entirely positive distribution that is similar to
     Normal then consider using Weibull.
@@ -6004,6 +5999,7 @@ class Fit_Normal_2P:
     may be caused by the chosen distribution being a very poor fit to the data
     or the data being heavily censored. If a warning is printed, consider trying
     a different optimizer.
+
     """
 
     def __init__(
@@ -6292,8 +6288,7 @@ class Fit_Normal_2P:
 
 
 class Fit_Gumbel_2P:
-    """
-    Fits a two parameter Gumbel distribution (mu,sigma) to the data provided.
+    """Fits a two parameter Gumbel distribution (mu,sigma) to the data provided.
     Note that it will return a fit that may be partially in the negative domain
     (x<0). If you need an entirely positive distribution that is similar to
     Gumbel then consider using Weibull.
@@ -6407,6 +6402,7 @@ class Fit_Gumbel_2P:
     may be caused by the chosen distribution being a very poor fit to the data
     or the data being heavily censored. If a warning is printed, consider trying
     a different optimizer.
+
     """
 
     def __init__(
@@ -6641,8 +6637,7 @@ class Fit_Gumbel_2P:
 
 
 class Fit_Lognormal_2P:
-    """
-    Fits a two parameter Lognormal distribution (mu,sigma) to the data provided.
+    """Fits a two parameter Lognormal distribution (mu,sigma) to the data provided.
 
     Parameters
     ----------
@@ -6755,6 +6750,7 @@ class Fit_Lognormal_2P:
     may be caused by the chosen distribution being a very poor fit to the data
     or the data being heavily censored. If a warning is printed, consider trying
     a different optimizer.
+
     """
 
     def __init__(
@@ -7044,8 +7040,7 @@ class Fit_Lognormal_2P:
 
 
 class Fit_Lognormal_3P:
-    """
-    Fits a three parameter Lognormal distribution (mu,sigma,gamma) to the data
+    """Fits a three parameter Lognormal distribution (mu,sigma,gamma) to the data
     provided.
 
     Parameters
@@ -7165,6 +7160,7 @@ class Fit_Lognormal_3P:
     If the fitted gamma parameter is less than 0.01, the Lognormal_3P results
     will be discarded and the Lognormal_2P distribution will be fitted. The
     returned values for gamma and gamma_SE will be 0.
+
     """
 
     def __init__(
@@ -7464,8 +7460,7 @@ class Fit_Lognormal_3P:
 
 
 class Fit_Gamma_2P:
-    """
-    Fits a two parameter Gamma distribution (alpha,beta) to the data provided.
+    """Fits a two parameter Gamma distribution (alpha,beta) to the data provided.
 
     Parameters
     ----------
@@ -7595,6 +7590,7 @@ class Fit_Gamma_2P:
     but this relationship does not extend to the variances or covariances so
     additional calculations are required to find both solutions. The mu,beta
     parametrisation is used for the confidence intervals as it is more stable.
+
     """
 
     def __init__(
@@ -7867,8 +7863,7 @@ class Fit_Gamma_2P:
 
 
 class Fit_Gamma_3P:
-    """
-    Fits a three parameter Gamma distribution (alpha,beta,gamma) to the data
+    """Fits a three parameter Gamma distribution (alpha,beta,gamma) to the data
     provided.
 
     Parameters
@@ -8011,6 +8006,7 @@ class Fit_Gamma_3P:
     to the variances or covariances so additional calculations are required to
     find both solutions. The mu,beta,gamma parametrisation is used for the
     confidence intervals as it is more stable.
+
     """
 
     def __init__(
@@ -8347,8 +8343,7 @@ class Fit_Gamma_3P:
 
 
 class Fit_Beta_2P:
-    """
-    Fits a two parameter Beta distribution (alpha,beta) to the data provided.
+    """Fits a two parameter Beta distribution (alpha,beta) to the data provided.
     All data must be in the range 0 < x < 1.
 
     Parameters
@@ -8453,6 +8448,7 @@ class Fit_Beta_2P:
     a different optimizer.
 
     Confidence intervals on the plots are not provided.
+
     """
 
     def __init__(
@@ -8667,8 +8663,7 @@ class Fit_Beta_2P:
 
 
 class Fit_Loglogistic_2P:
-    """
-    Fits a two parameter Loglogistic distribution (alpha,beta) to the data
+    """Fits a two parameter Loglogistic distribution (alpha,beta) to the data
     provided.
 
     Parameters
@@ -8777,6 +8772,7 @@ class Fit_Loglogistic_2P:
     may be caused by the chosen distribution being a very poor fit to the data
     or the data being heavily censored. If a warning is printed, consider trying
     a different optimizer.
+
     """
 
     def __init__(
@@ -9012,8 +9008,7 @@ class Fit_Loglogistic_2P:
 
 
 class Fit_Loglogistic_3P:
-    """
-    Fits a three parameter Loglogistic distribution (alpha,beta,gamma) to the
+    """Fits a three parameter Loglogistic distribution (alpha,beta,gamma) to the
     data provided.
 
     Parameters
@@ -9133,6 +9128,7 @@ class Fit_Loglogistic_3P:
     If the fitted gamma parameter is less than 0.01, the Loglogistic_3P results
     will be discarded and the Loglogistic_2P distribution will be fitted. The
     returned values for gamma and gamma_SE will be 0.
+
     """
 
     def __init__(

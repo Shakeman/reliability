@@ -1,5 +1,4 @@
-"""
-Repairable systems
+"""Repairable systems
 
 reliability_growth - Fits a reliability growth model to failure data using
     either the Duane model or the Crow-AMSAA model.
@@ -30,8 +29,7 @@ from reliability.Utils import colorprint, round_and_string
 
 
 class reliability_growth:
-    """
-    Fits a reliability growth model tos failure data using either the Duane
+    """Fits a reliability growth model tos failure data using either the Duane
     model or the Crow-AMSAA model.
 
     Parameters
@@ -88,6 +86,7 @@ class reliability_growth:
     Notes
     -----
     For more information see the `documentation <https://reliability.readthedocs.io/en/latest/Reliability%20growth.html>`_.
+
     """
 
     def __init__(
@@ -212,11 +211,10 @@ class reliability_growth:
             marker = kwargs.pop("marker") if "marker" in kwargs else "o"
             if "label" in kwargs:
                 label = kwargs.pop("label")
+            elif model == "Crow-AMSAA":
+                label = "Crow-AMSAA reliability growth curve"
             else:
-                if model == "Crow-AMSAA":
-                    label = "Crow-AMSAA reliability growth curve"
-                else:
-                    label = "Duane reliability growth curve"
+                label = "Duane reliability growth curve"
 
             plt.plot(x_array, MTBF, color=c, label=label, **kwargs)
             plt.scatter(times, MTBF_c, color="k", marker=marker)
@@ -272,8 +270,7 @@ class reliability_growth:
 
 
 class optimal_replacement_time:
-    """
-    Calculates the cost model to determine how cost varies with replacement time.
+    """Calculates the cost model to determine how cost varies with replacement time.
     The cost model may be HPP (good as new replacement) or NHPP (as good as old
     replacement). Default is HPP.
 
@@ -314,6 +311,7 @@ class optimal_replacement_time:
         The optimal replacement time
     min_cost : float
         The minimum cost per unit time
+
     """
 
     def __init__(
@@ -465,8 +463,7 @@ class optimal_replacement_time:
 
 
 class ROCOF:
-    """
-    Uses the failure times or failure interarrival times to determine if there
+    """Uses the failure times or failure interarrival times to determine if there
     is a trend in those times. The test for statistical significance is the
     Laplace test which compares the Laplace test statistic (U) with the z value
     (z_crit) from the standard normal distribution. If there is a statistically
@@ -529,6 +526,7 @@ class ROCOF:
 
     If show_plot is True, the ROCOF plot will be produced. Use plt.show() to
     show the plot.
+
     """
 
     def __init__(
@@ -676,8 +674,7 @@ class ROCOF:
 
 
 class MCF_nonparametric:
-    """
-    The Mean Cumulative Function (MCF) is a cumulative history function that
+    """The Mean Cumulative Function (MCF) is a cumulative history function that
     shows the cumulative number of recurrences of an event, such as repairs over
     time. In the context of repairs over time, the value of the MCF can be
     thought of as the average number of repairs that each system will have
@@ -771,6 +768,7 @@ class MCF_nonparametric:
         from reliability.Repairable_systems import MCF_nonparametric
         times = [[5, 10, 15, 17], [6, 13, 17, 19], [12, 20, 25, 26], [13, 15, 24], [16, 22, 25, 28]]
         MCF_nonparametric(data=times)
+
     """
 
     def __init__(self, data, CI=0.95, print_results=True, show_plot=True, plot_CI=True, **kwargs):
@@ -862,34 +860,33 @@ class MCF_nonparametric:
                         times_sorted[i] not in end_times
                     ):  # check if this system only has one event. If not then increment the number censored count for this system
                         C_seq += 1
-            else:  # everything after the first time
-                if states_sorted[i] == "F":  # failure event
-                    i_adj = i - C_seq
+            elif states_sorted[i] == "F":  # failure event
+                i_adj = i - C_seq
+                r_inv = 1 / r
+                if (
+                    MCF_array[i_adj - 1] == ""
+                ):  # this is the case where the first system only has one event that was censored and there is no data on the first line
+                    MCF_array.append(r_inv)
+                    Var_array.append((r_inv**2) * ((1 - r_inv) ** 2 + (r - 1) * (0 - r_inv) ** 2))
+                    MCF_lower_array.append(MCF_array[i] / np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
+                    MCF_upper_array.append(MCF_array[i] * np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
+                else:  # this the normal case where there was previous data
+                    MCF_array.append(r_inv + MCF_array[i_adj - 1])
+                    Var_array.append(
+                        (r_inv**2) * ((1 - r_inv) ** 2 + (r - 1) * (0 - r_inv) ** 2) + Var_array[i_adj - 1],
+                    )
+                    MCF_lower_array.append(MCF_array[i] / np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
+                    MCF_upper_array.append(MCF_array[i] * np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
+                C_seq = 0
+            else:  # censored event
+                r -= 1
+                C_seq += 1
+                MCF_array.append("")
+                Var_array.append("")
+                MCF_lower_array.append("")
+                MCF_upper_array.append("")
+                if r > 0:
                     r_inv = 1 / r
-                    if (
-                        MCF_array[i_adj - 1] == ""
-                    ):  # this is the case where the first system only has one event that was censored and there is no data on the first line
-                        MCF_array.append(r_inv)
-                        Var_array.append((r_inv**2) * ((1 - r_inv) ** 2 + (r - 1) * (0 - r_inv) ** 2))
-                        MCF_lower_array.append(MCF_array[i] / np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
-                        MCF_upper_array.append(MCF_array[i] * np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
-                    else:  # this the normal case where there was previous data
-                        MCF_array.append(r_inv + MCF_array[i_adj - 1])
-                        Var_array.append(
-                            (r_inv**2) * ((1 - r_inv) ** 2 + (r - 1) * (0 - r_inv) ** 2) + Var_array[i_adj - 1],
-                        )
-                        MCF_lower_array.append(MCF_array[i] / np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
-                        MCF_upper_array.append(MCF_array[i] * np.exp((Z * Var_array[i] ** 0.5) / MCF_array[i]))
-                    C_seq = 0
-                else:  # censored event
-                    r -= 1
-                    C_seq += 1
-                    MCF_array.append("")
-                    Var_array.append("")
-                    MCF_lower_array.append("")
-                    MCF_upper_array.append("")
-                    if r > 0:
-                        r_inv = 1 / r
 
         # format output as dataframe
         data = {
@@ -969,8 +966,7 @@ class MCF_nonparametric:
 
 
 class MCF_parametric:
-    """
-    The Mean Cumulative Function (MCF) is a cumulative history function that
+    """The Mean Cumulative Function (MCF) is a cumulative history function that
     shows the cumulative number of recurrences of an event, such as repairs over
     time. In the context of repairs over time, the value of the MCF can be
     thought of as the average number of repairs that each system will have
@@ -1071,6 +1067,7 @@ class MCF_parametric:
         from reliability.Repairable_systems import MCF_parametric
         times = [[5, 10, 15, 17], [6, 13, 17, 19], [12, 20, 25, 26], [13, 15, 24], [16, 22, 25, 28]]
         MCF_parametric(data=times)
+
     """
 
     def __init__(self, data, CI=0.95, plot_CI=True, print_results=True, show_plot=True, **kwargs):

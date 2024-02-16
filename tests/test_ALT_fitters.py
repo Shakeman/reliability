@@ -3,7 +3,6 @@ import warnings
 from numpy.testing import assert_allclose
 
 from reliability.ALT_fitters import (
-    Fit_Everything_ALT,
     Fit_Exponential_Dual_Exponential,
     Fit_Exponential_Dual_Power,
     Fit_Exponential_Exponential,
@@ -29,6 +28,7 @@ from reliability.ALT_fitters import (
     Fit_Weibull_Power,
     Fit_Weibull_Power_Exponential,
 )
+from reliability.fitting.Fit_Everything_ALT import Fit_Everything_ALT
 from reliability.Other_functions import make_ALT_data
 
 # I would like to make these smaller but the slight differences in different python versions (3.6-3.9) mean that tight tolerances result in test failures

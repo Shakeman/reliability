@@ -1401,10 +1401,8 @@ class Fit_Everything:
             edgecolor="k",
             linewidth=0.5,
         )
-        counter = 0
         ls = "-"
-        for item in plotting_order:
-            counter += 1
+        for counter, item in enumerate(plotting_order):
             if counter > 10:
                 ls = "--"
             if item == "Weibull_2P":

@@ -33,8 +33,7 @@ pyright = "^1.1.350"
 # Same as Black.
 line-length = 120
 
-fix = true
-fixable = ["COM", "E", "F"]
+[tool.ruff.lint]
 exclude = ["tests", "docs/conf.py"]
 
 select = [
@@ -64,12 +63,39 @@ ignore = [
     "S101",    # Use of `assert` detected
 ]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 order-by-type = true
 relative-imports-order = "closest-to-furthest"
 extra-standard-library = ["typing"]
 section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
 known-first-party = []
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+# Enable auto-formatting of code examples in docstrings. Markdown,
+# reStructuredText code/literal blocks and doctests are all supported.
+#
+# This is currently disabled by default, but it is planned for this
+# to be opt-out in the future.
+docstring-code-format = true
+
+# Set the line length limit used when formatting code snippets in
+# docstrings.
+#
+# This only has an effect when the `docstring-code-format` setting is
+# enabled.
+docstring-code-line-length = "dynamic"
 
 [build-system]
 requires = ["poetry-core"]

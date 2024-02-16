@@ -32,6 +32,8 @@ from reliability.Fitters import (
     Fit_Lognormal_2P,
     Fit_Lognormal_3P,
     Fit_Normal_2P,
+)
+from reliability.fitting.fit_weibull import (
     Fit_Weibull_2P,
     Fit_Weibull_3P,
     Fit_Weibull_CR,

@@ -1,7 +1,7 @@
 from numpy.testing import assert_allclose
 
 from reliability.Datasets import automotive, defective_sample, mileage, mixture, system_growth
-from reliability.Fitters import Fit_Weibull_2P, Fit_Weibull_DS, Fit_Weibull_Mixture
+from reliability.fitting.fit_weibull import Fit_Weibull_2P, Fit_Weibull_DS, Fit_Weibull_Mixture
 
 atol = 1e-3
 rtol = 1e-3

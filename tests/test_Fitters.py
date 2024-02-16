@@ -26,12 +26,14 @@ from reliability.Fitters import (
     Fit_Lognormal_2P,
     Fit_Lognormal_3P,
     Fit_Normal_2P,
+)
+from reliability.fitting.fit_everything import Fit_Everything
+from reliability.fitting.fit_weibull import (
     Fit_Weibull_2P,
     Fit_Weibull_3P,
     Fit_Weibull_CR,
     Fit_Weibull_Mixture,
 )
-from reliability.fitting.fit_everything import Fit_Everything
 from reliability.Other_functions import make_right_censored_data
 
 # I would like to make these smaller but the slight differences in different python versions (3.6-3.9) mean that tight tolerances result in test failures

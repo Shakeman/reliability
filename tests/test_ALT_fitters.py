@@ -21,6 +21,9 @@ from reliability.ALT_fitters import (
     Fit_Normal_Eyring,
     Fit_Normal_Power,
     Fit_Normal_Power_Exponential,
+)
+from reliability.fitting_alt.fit_everything_alt import Fit_Everything_ALT
+from reliability.fitting_alt.fit_weibull import (
     Fit_Weibull_Dual_Exponential,
     Fit_Weibull_Dual_Power,
     Fit_Weibull_Exponential,
@@ -28,7 +31,6 @@ from reliability.ALT_fitters import (
     Fit_Weibull_Power,
     Fit_Weibull_Power_Exponential,
 )
-from reliability.fitting.Fit_Everything_ALT import Fit_Everything_ALT
 from reliability.Other_functions import make_ALT_data
 
 # I would like to make these smaller but the slight differences in different python versions (3.6-3.9) mean that tight tolerances result in test failures

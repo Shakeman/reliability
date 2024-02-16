@@ -21,18 +21,20 @@ from reliability.ALT_fitters import (
     Fit_Normal_Eyring,
     Fit_Normal_Power,
     Fit_Normal_Power_Exponential,
-    Fit_Weibull_Dual_Exponential,
-    Fit_Weibull_Dual_Power,
-    Fit_Weibull_Exponential,
-    Fit_Weibull_Eyring,
-    Fit_Weibull_Power,
-    Fit_Weibull_Power_Exponential,
 )
 from reliability.Distributions import (
     Exponential_Distribution,
     Lognormal_Distribution,
     Normal_Distribution,
     Weibull_Distribution,
+)
+from reliability.fitting_alt.fit_weibull import (
+    Fit_Weibull_Dual_Exponential,
+    Fit_Weibull_Dual_Power,
+    Fit_Weibull_Exponential,
+    Fit_Weibull_Eyring,
+    Fit_Weibull_Power,
+    Fit_Weibull_Power_Exponential,
 )
 from reliability.Utils import (
     ALT_fitters_input_checking,

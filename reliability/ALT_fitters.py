@@ -11,8 +11,7 @@ from reliability.Distributions import (
     Lognormal_Distribution,
     Normal_Distribution,
 )
-from reliability.Fitters import Fit_Normal_2P
-from reliability.fitting import Fit_Lognormal_2P, Fit_Weibull_2P
+from reliability.fitting import Fit_Lognormal_2P, Fit_Normal_2P, Fit_Weibull_2P
 from reliability.Utils import (
     ALT_fitters_input_checking,
     ALT_least_squares,

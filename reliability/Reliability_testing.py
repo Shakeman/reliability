@@ -44,15 +44,13 @@ from reliability.Distributions import (
     Normal_Distribution,
     Weibull_Distribution,
 )
-from reliability.Fitters import (
+from reliability.fitting import (
     Fit_Beta_2P,
     Fit_Gamma_2P,
     Fit_Gumbel_2P,
-    Fit_Normal_2P,
-)
-from reliability.fitting import (
     Fit_Loglogistic_2P,
     Fit_Lognormal_2P,
+    Fit_Normal_2P,
     Fit_Weibull_2P,
 )
 from reliability.Utils import colorprint, get_axes_limits

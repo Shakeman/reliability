@@ -20,13 +20,6 @@ from reliability.Distributions import (
     Normal_Distribution,
     Weibull_Distribution,
 )
-from reliability.Fitters import (
-    Fit_Beta_2P,
-    Fit_Gamma_2P,
-    Fit_Gamma_3P,
-    Fit_Gumbel_2P,
-    Fit_Normal_2P,
-)
 from reliability.Nonparametric import KaplanMeier
 from reliability.Probability_plotting import plotting_positions
 from reliability.Utils import (
@@ -405,6 +398,7 @@ class Fit_Everything:
             )
 
         if "Gamma_3P" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Gamma_3P
             self.__Gamma_3P_params = Fit_Gamma_3P(
                 failures=failures,
                 right_censored=right_censored,
@@ -548,6 +542,7 @@ class Fit_Everything:
             )
 
         if "Normal_2P" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Normal_2P
             self.__Normal_2P_params = Fit_Normal_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -640,6 +635,7 @@ class Fit_Everything:
             )
 
         if "Gumbel_2P" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Gumbel_2P
             self.__Gumbel_2P_params = Fit_Gumbel_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -879,6 +875,7 @@ class Fit_Everything:
             )
 
         if "Gamma_2P" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Gamma_2P
             self.__Gamma_2P_params = Fit_Gamma_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -1075,6 +1072,7 @@ class Fit_Everything:
             )
 
         if "Beta_2P" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Beta_2P
             self.__Beta_2P_params = Fit_Beta_2P(
                 failures=failures,
                 right_censored=right_censored,

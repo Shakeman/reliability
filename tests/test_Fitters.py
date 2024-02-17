@@ -14,21 +14,19 @@ from reliability.Distributions import (
     Normal_Distribution,
     Weibull_Distribution,
 )
-from reliability.Fitters import (
-    Fit_Beta_2P,
-    Fit_Gamma_2P,
-    Fit_Gamma_3P,
-    Fit_Gumbel_2P,
-    Fit_Normal_2P,
-)
 from reliability.fitting import (
+    Fit_Beta_2P,
     Fit_Everything,
     Fit_Exponential_1P,
     Fit_Exponential_2P,
+    Fit_Gamma_2P,
+    Fit_Gamma_3P,
+    Fit_Gumbel_2P,
     Fit_Loglogistic_2P,
     Fit_Loglogistic_3P,
     Fit_Lognormal_2P,
     Fit_Lognormal_3P,
+    Fit_Normal_2P,
     Fit_Weibull_2P,
     Fit_Weibull_3P,
     Fit_Weibull_CR,

@@ -311,7 +311,7 @@ def Weibull_probability_plot(
                 beta_SE = __fitted_dist_params.beta_SE
                 Cov_alpha_beta = __fitted_dist_params.Cov_alpha_beta
             else:
-                from reliability.Fitters import Fit_Weibull_3P
+                from reliability.fitting import Fit_Weibull_3P
 
                 fit = Fit_Weibull_3P(
                     failures=failures,
@@ -526,7 +526,7 @@ def Loglogistic_probability_plot(
                 beta_SE = __fitted_dist_params.beta_SE
                 Cov_alpha_beta = __fitted_dist_params.Cov_alpha_beta
             else:
-                from reliability.Fitters import Fit_Loglogistic_3P
+                from reliability.fitting import Fit_Loglogistic_3P
 
                 fit = Fit_Loglogistic_3P(
                     failures=failures,
@@ -735,7 +735,7 @@ def Exponential_probability_plot_Weibull_Scale(
                 Lambda_SE = __fitted_dist_params.Lambda_SE
                 gamma = __fitted_dist_params.gamma
             else:
-                from reliability.Fitters import Fit_Exponential_2P
+                from reliability.fitting import Fit_Exponential_2P
 
                 fit = Fit_Exponential_2P(
                     failures=failures,
@@ -893,7 +893,7 @@ def Gumbel_probability_plot(
             sigma_SE = __fitted_dist_params.sigma_SE
             Cov_mu_sigma = __fitted_dist_params.Cov_mu_sigma
         else:
-            from reliability.Fitters import Fit_Gumbel_2P
+            from reliability.fitting import Fit_Gumbel_2P
 
             fit = Fit_Gumbel_2P(
                 failures=failures,
@@ -1045,7 +1045,7 @@ def Normal_probability_plot(
             sigma_SE = __fitted_dist_params.sigma_SE
             Cov_mu_sigma = __fitted_dist_params.Cov_mu_sigma
         else:
-            from reliability.Fitters import Fit_Normal_2P
+            from reliability.fitting import Fit_Normal_2P
 
             fit = Fit_Normal_2P(
                 failures=failures,
@@ -1213,7 +1213,7 @@ def Lognormal_probability_plot(
                 sigma_SE = __fitted_dist_params.sigma_SE
                 Cov_mu_sigma = __fitted_dist_params.Cov_mu_sigma
             else:
-                from reliability.Fitters import Fit_Lognormal_2P
+                from reliability.fitting import Fit_Lognormal_2P
 
                 fit = Fit_Lognormal_2P(
                     failures=failures,
@@ -1242,7 +1242,7 @@ def Lognormal_probability_plot(
                 sigma_SE = __fitted_dist_params.sigma_SE
                 Cov_mu_sigma = __fitted_dist_params.Cov_mu_sigma
             else:
-                from reliability.Fitters import Fit_Lognormal_3P
+                from reliability.fitting import Fit_Lognormal_3P
 
                 fit = Fit_Lognormal_3P(
                     failures=failures,
@@ -1404,7 +1404,7 @@ def Beta_probability_plot(
         alpha = __fitted_dist_params.alpha
         beta = __fitted_dist_params.beta
     else:
-        from reliability.Fitters import Fit_Beta_2P
+        from reliability.fitting import Fit_Beta_2P
 
         fit = Fit_Beta_2P(
             failures=failures,
@@ -1573,7 +1573,7 @@ def Gamma_probability_plot(
             Cov_alpha_beta = __fitted_dist_params.Cov_alpha_beta
             Cov_mu_beta = __fitted_dist_params.Cov_mu_beta
         else:
-            from reliability.Fitters import Fit_Gamma_2P
+            from reliability.fitting import Fit_Gamma_2P
 
             fit = Fit_Gamma_2P(
                 failures=failures,
@@ -1606,7 +1606,7 @@ def Gamma_probability_plot(
             Cov_alpha_beta = __fitted_dist_params.Cov_alpha_beta
             Cov_mu_beta = __fitted_dist_params.Cov_mu_beta
         else:
-            from reliability.Fitters import Fit_Gamma_3P
+            from reliability.fitting import Fit_Gamma_3P
 
             fit = Fit_Gamma_3P(
                 failures=failures,
@@ -1814,7 +1814,7 @@ def Exponential_probability_plot(
                 Lambda_SE = __fitted_dist_params.Lambda_SE
                 gamma = __fitted_dist_params.gamma
             else:
-                from reliability.Fitters import Fit_Exponential_2P
+                from reliability.fitting import Fit_Exponential_2P
 
                 fit = Fit_Exponential_2P(
                     failures=failures,

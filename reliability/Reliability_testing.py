@@ -48,11 +48,13 @@ from reliability.Fitters import (
     Fit_Beta_2P,
     Fit_Gamma_2P,
     Fit_Gumbel_2P,
-    Fit_Loglogistic_2P,
-    Fit_Lognormal_2P,
     Fit_Normal_2P,
 )
-from reliability.fitting.fit_weibull import Fit_Weibull_2P
+from reliability.fitting import (
+    Fit_Loglogistic_2P,
+    Fit_Lognormal_2P,
+    Fit_Weibull_2P,
+)
 from reliability.Utils import colorprint, get_axes_limits
 
 pd.set_option("display.max_rows", 200)  # prevents ... compression of rows

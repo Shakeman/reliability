@@ -22,23 +22,10 @@ from reliability.Distributions import (
 )
 from reliability.Fitters import (
     Fit_Beta_2P,
-    Fit_Exponential_1P,
-    Fit_Exponential_2P,
     Fit_Gamma_2P,
     Fit_Gamma_3P,
     Fit_Gumbel_2P,
-    Fit_Loglogistic_2P,
-    Fit_Loglogistic_3P,
-    Fit_Lognormal_2P,
-    Fit_Lognormal_3P,
     Fit_Normal_2P,
-)
-from reliability.fitting.fit_weibull import (
-    Fit_Weibull_2P,
-    Fit_Weibull_3P,
-    Fit_Weibull_CR,
-    Fit_Weibull_DS,
-    Fit_Weibull_Mixture,
 )
 from reliability.Nonparametric import KaplanMeier
 from reliability.Probability_plotting import plotting_positions
@@ -169,7 +156,6 @@ class Fit_Everything:
         print('Weibull Alpha =',output.Weibull_2P_alpha)
 
     """
-
     def __init__(
         self,
         failures: list[int] | None =None,
@@ -372,6 +358,7 @@ class Fit_Everything:
         )
         # Fit the parametric models and extract the fitted parameters
         if "Weibull_3P" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Weibull_3P
             self.__Weibull_3P_params = Fit_Weibull_3P(
                 failures=failures,
                 right_censored=right_censored,
@@ -465,6 +452,7 @@ class Fit_Everything:
             )
 
         if "Exponential_2P" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Exponential_2P
             self.__Exponential_2P_params = Fit_Exponential_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -513,6 +501,7 @@ class Fit_Everything:
             )
 
         if "Lognormal_3P" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Lognormal_3P
             self.__Lognormal_3P_params = Fit_Lognormal_3P(
                 failures=failures,
                 right_censored=right_censored,
@@ -604,6 +593,7 @@ class Fit_Everything:
             )
 
         if "Lognormal_2P" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Lognormal_2P
             self.__Lognormal_2P_params = Fit_Lognormal_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -695,6 +685,7 @@ class Fit_Everything:
             )
 
         if "Weibull_2P" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Weibull_2P
             self.__Weibull_2P_params = Fit_Weibull_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -741,6 +732,7 @@ class Fit_Everything:
             )
 
         if "Weibull_Mixture" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Weibull_Mixture
             self.__Weibull_Mixture_params = Fit_Weibull_Mixture(
                 failures=failures,
                 right_censored=right_censored,
@@ -792,6 +784,7 @@ class Fit_Everything:
             )
 
         if "Weibull_CR" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Weibull_CR
             self.__Weibull_CR_params = Fit_Weibull_CR(
                 failures=failures,
                 right_censored=right_censored,
@@ -839,6 +832,7 @@ class Fit_Everything:
             )
 
         if "Weibull_DS" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Weibull_DS
             self.__Weibull_DS_params = Fit_Weibull_DS(
                 failures=failures,
                 right_censored=right_censored,
@@ -932,6 +926,7 @@ class Fit_Everything:
             )
 
         if "Exponential_1P" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Exponential_1P
             self.__Exponential_1P_params = Fit_Exponential_1P(
                 failures=failures,
                 right_censored=right_censored,
@@ -980,6 +975,7 @@ class Fit_Everything:
             )
 
         if "Loglogistic_2P" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Loglogistic_2P
             self.__Loglogistic_2P_params = Fit_Loglogistic_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -1029,6 +1025,7 @@ class Fit_Everything:
             )
 
         if "Loglogistic_3P" not in self.excluded_distributions:
+            from reliability.fitting import Fit_Loglogistic_3P
             self.__Loglogistic_3P_params = Fit_Loglogistic_3P(
                 failures=failures,
                 right_censored=right_censored,

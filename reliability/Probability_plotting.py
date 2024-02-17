@@ -282,7 +282,7 @@ def Weibull_probability_plot(
                 beta_SE = __fitted_dist_params.beta_SE
                 Cov_alpha_beta = __fitted_dist_params.Cov_alpha_beta
             else:
-                from reliability.Fitters import Fit_Weibull_2P
+                from reliability.fitting._fit_weibull import Fit_Weibull_2P
 
                 fit = Fit_Weibull_2P(
                     failures=failures,
@@ -493,7 +493,7 @@ def Loglogistic_probability_plot(
                 beta_SE = __fitted_dist_params.beta_SE
                 Cov_alpha_beta = __fitted_dist_params.Cov_alpha_beta
             else:
-                from reliability.Fitters import Fit_Loglogistic_2P
+                from reliability.fitting import Fit_Loglogistic_2P
 
                 fit = Fit_Loglogistic_2P(
                     failures=failures,
@@ -714,7 +714,7 @@ def Exponential_probability_plot_Weibull_Scale(
                 Lambda = __fitted_dist_params.Lambda
                 Lambda_SE = __fitted_dist_params.Lambda_SE
             else:
-                from reliability.Fitters import Fit_Exponential_1P
+                from reliability.fitting import Fit_Exponential_1P
 
                 fit = Fit_Exponential_1P(
                     failures=failures,
@@ -1793,7 +1793,7 @@ def Exponential_probability_plot(
                 Lambda = __fitted_dist_params.Lambda
                 Lambda_SE = __fitted_dist_params.Lambda_SE
             else:
-                from reliability.Fitters import Fit_Exponential_1P
+                from reliability.fitting import Fit_Exponential_1P
 
                 fit = Fit_Exponential_1P(
                     failures=failures,

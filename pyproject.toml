@@ -38,6 +38,7 @@ line-length = 120
 exclude = ["tests", "docs/conf.py"]
 
 select = [
+    #"ALL",
     "F",  # pyflakes
     "E",  # pycodestyle errors (settings from FastAPI, thanks, @tiangolo!)
     "W",  # pycodestyle warnings
@@ -69,6 +70,7 @@ ignore = [
     "N803", #invalid-argument-name
     "ANN001", #missing-type-function-argument
     "ANN202", #missing-return-type-private-function
+    "FBT002" #boolean-default-value-positional-argument
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.

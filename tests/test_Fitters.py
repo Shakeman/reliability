@@ -14,7 +14,7 @@ from reliability.Distributions import (
     Normal_Distribution,
     Weibull_Distribution,
 )
-from reliability.fitting import (
+from reliability.Fitters import (
     Fit_Beta_2P,
     Fit_Everything,
     Fit_Exponential_1P,

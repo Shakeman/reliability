@@ -8,7 +8,7 @@ from numpy.linalg import LinAlgError
 from reliability.Distributions import (
     Weibull_Distribution,
 )
-from reliability.fitting import Fit_Weibull_2P
+from reliability.Fitters import Fit_Weibull_2P
 from reliability.Utils import (
     ALT_fitters_input_checking,
     ALT_least_squares,

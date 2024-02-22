@@ -38,13 +38,13 @@ and the fit might not be successful. Generally the fit achieved by autograd is
 highly successful, and whenever it fails the initial guess will be used and a
 warning will be displayed.
 """
-from reliability.fitting._fit_basic import Fit_Beta_2P, Fit_Gumbel_2P, Fit_Normal_2P
-from reliability.fitting._fit_everything import Fit_Everything
-from reliability.fitting._fit_exponential import Fit_Exponential_1P, Fit_Exponential_2P
-from reliability.fitting._fit_gamma import Fit_Gamma_2P, Fit_Gamma_3P
-from reliability.fitting._fit_loglog import Fit_Loglogistic_2P, Fit_Loglogistic_3P
-from reliability.fitting._fit_lognorm import Fit_Lognormal_2P, Fit_Lognormal_3P
-from reliability.fitting._fit_weibull import (
+from reliability.Fitters._fit_basic import Fit_Beta_2P, Fit_Gumbel_2P, Fit_Normal_2P
+from reliability.Fitters._fit_everything import Fit_Everything
+from reliability.Fitters._fit_exponential import Fit_Exponential_1P, Fit_Exponential_2P
+from reliability.Fitters._fit_gamma import Fit_Gamma_2P, Fit_Gamma_3P
+from reliability.Fitters._fit_loglog import Fit_Loglogistic_2P, Fit_Loglogistic_3P
+from reliability.Fitters._fit_lognorm import Fit_Lognormal_2P, Fit_Lognormal_3P
+from reliability.Fitters._fit_weibull import (
     Fit_Weibull_2P,
     Fit_Weibull_2P_grouped,
     Fit_Weibull_3P,

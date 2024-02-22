@@ -533,7 +533,7 @@ class Fit_Loglogistic_3P:
 
         # Obtain least squares estimates
         LS_method = "LS" if method == "MLE" else method
-        from reliability.fitting import Fit_Lognormal_3P
+        from reliability.Fitters import Fit_Lognormal_3P
         LS_results = LS_optimization(
             func_name="Loglogistic_3P",
             LL_func=Fit_Lognormal_3P.LL,

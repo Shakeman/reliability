@@ -351,7 +351,7 @@ class Fit_Everything:
         )
         # Fit the parametric models and extract the fitted parameters
         if "Weibull_3P" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Weibull_3P
+            from reliability.Fitters import Fit_Weibull_3P
             self.__Weibull_3P_params = Fit_Weibull_3P(
                 failures=failures,
                 right_censored=right_censored,
@@ -398,7 +398,7 @@ class Fit_Everything:
             )
 
         if "Gamma_3P" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Gamma_3P
+            from reliability.Fitters import Fit_Gamma_3P
             self.__Gamma_3P_params = Fit_Gamma_3P(
                 failures=failures,
                 right_censored=right_censored,
@@ -446,7 +446,7 @@ class Fit_Everything:
             )
 
         if "Exponential_2P" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Exponential_2P
+            from reliability.Fitters import Fit_Exponential_2P
             self.__Exponential_2P_params = Fit_Exponential_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -495,7 +495,7 @@ class Fit_Everything:
             )
 
         if "Lognormal_3P" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Lognormal_3P
+            from reliability.Fitters import Fit_Lognormal_3P
             self.__Lognormal_3P_params = Fit_Lognormal_3P(
                 failures=failures,
                 right_censored=right_censored,
@@ -542,7 +542,7 @@ class Fit_Everything:
             )
 
         if "Normal_2P" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Normal_2P
+            from reliability.Fitters import Fit_Normal_2P
             self.__Normal_2P_params = Fit_Normal_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -588,7 +588,7 @@ class Fit_Everything:
             )
 
         if "Lognormal_2P" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Lognormal_2P
+            from reliability.Fitters import Fit_Lognormal_2P
             self.__Lognormal_2P_params = Fit_Lognormal_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -635,7 +635,7 @@ class Fit_Everything:
             )
 
         if "Gumbel_2P" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Gumbel_2P
+            from reliability.Fitters import Fit_Gumbel_2P
             self.__Gumbel_2P_params = Fit_Gumbel_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -681,7 +681,7 @@ class Fit_Everything:
             )
 
         if "Weibull_2P" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Weibull_2P
+            from reliability.Fitters import Fit_Weibull_2P
             self.__Weibull_2P_params = Fit_Weibull_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -728,7 +728,7 @@ class Fit_Everything:
             )
 
         if "Weibull_Mixture" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Weibull_Mixture
+            from reliability.Fitters import Fit_Weibull_Mixture
             self.__Weibull_Mixture_params = Fit_Weibull_Mixture(
                 failures=failures,
                 right_censored=right_censored,
@@ -780,7 +780,7 @@ class Fit_Everything:
             )
 
         if "Weibull_CR" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Weibull_CR
+            from reliability.Fitters import Fit_Weibull_CR
             self.__Weibull_CR_params = Fit_Weibull_CR(
                 failures=failures,
                 right_censored=right_censored,
@@ -828,7 +828,7 @@ class Fit_Everything:
             )
 
         if "Weibull_DS" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Weibull_DS
+            from reliability.Fitters import Fit_Weibull_DS
             self.__Weibull_DS_params = Fit_Weibull_DS(
                 failures=failures,
                 right_censored=right_censored,
@@ -875,7 +875,7 @@ class Fit_Everything:
             )
 
         if "Gamma_2P" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Gamma_2P
+            from reliability.Fitters import Fit_Gamma_2P
             self.__Gamma_2P_params = Fit_Gamma_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -923,7 +923,7 @@ class Fit_Everything:
             )
 
         if "Exponential_1P" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Exponential_1P
+            from reliability.Fitters import Fit_Exponential_1P
             self.__Exponential_1P_params = Fit_Exponential_1P(
                 failures=failures,
                 right_censored=right_censored,
@@ -972,7 +972,7 @@ class Fit_Everything:
             )
 
         if "Loglogistic_2P" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Loglogistic_2P
+            from reliability.Fitters import Fit_Loglogistic_2P
             self.__Loglogistic_2P_params = Fit_Loglogistic_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -1022,7 +1022,7 @@ class Fit_Everything:
             )
 
         if "Loglogistic_3P" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Loglogistic_3P
+            from reliability.Fitters import Fit_Loglogistic_3P
             self.__Loglogistic_3P_params = Fit_Loglogistic_3P(
                 failures=failures,
                 right_censored=right_censored,
@@ -1072,7 +1072,7 @@ class Fit_Everything:
             )
 
         if "Beta_2P" not in self.excluded_distributions:
-            from reliability.fitting import Fit_Beta_2P
+            from reliability.Fitters import Fit_Beta_2P
             self.__Beta_2P_params = Fit_Beta_2P(
                 failures=failures,
                 right_censored=right_censored,

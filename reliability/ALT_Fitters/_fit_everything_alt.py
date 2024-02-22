@@ -2,19 +2,23 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from reliability.ALT_fitters import (
+from reliability.ALT_Fitters._fit_exponential_alt import (
     Fit_Exponential_Dual_Exponential,
     Fit_Exponential_Dual_Power,
     Fit_Exponential_Exponential,
     Fit_Exponential_Eyring,
     Fit_Exponential_Power,
     Fit_Exponential_Power_Exponential,
+)
+from reliability.ALT_Fitters._fit_lognormal_alt import (
     Fit_Lognormal_Dual_Exponential,
     Fit_Lognormal_Dual_Power,
     Fit_Lognormal_Exponential,
     Fit_Lognormal_Eyring,
     Fit_Lognormal_Power,
     Fit_Lognormal_Power_Exponential,
+)
+from reliability.ALT_Fitters._fit_normal_alt import (
     Fit_Normal_Dual_Exponential,
     Fit_Normal_Dual_Power,
     Fit_Normal_Exponential,
@@ -22,19 +26,19 @@ from reliability.ALT_fitters import (
     Fit_Normal_Power,
     Fit_Normal_Power_Exponential,
 )
-from reliability.Distributions import (
-    Exponential_Distribution,
-    Lognormal_Distribution,
-    Normal_Distribution,
-    Weibull_Distribution,
-)
-from reliability.fitting_alt.fit_weibull import (
+from reliability.ALT_Fitters._fit_weibull_alt import (
     Fit_Weibull_Dual_Exponential,
     Fit_Weibull_Dual_Power,
     Fit_Weibull_Exponential,
     Fit_Weibull_Eyring,
     Fit_Weibull_Power,
     Fit_Weibull_Power_Exponential,
+)
+from reliability.Distributions import (
+    Exponential_Distribution,
+    Lognormal_Distribution,
+    Normal_Distribution,
+    Weibull_Distribution,
 )
 from reliability.Utils import (
     ALT_fitters_input_checking,

@@ -2,7 +2,8 @@ import warnings
 
 from numpy.testing import assert_allclose
 
-from reliability.ALT_fitters import (
+from reliability.ALT_Fitters import (
+    Fit_Everything_ALT,
     Fit_Exponential_Dual_Exponential,
     Fit_Exponential_Dual_Power,
     Fit_Exponential_Exponential,
@@ -21,9 +22,6 @@ from reliability.ALT_fitters import (
     Fit_Normal_Eyring,
     Fit_Normal_Power,
     Fit_Normal_Power_Exponential,
-)
-from reliability.fitting_alt.fit_everything_alt import Fit_Everything_ALT
-from reliability.fitting_alt.fit_weibull import (
     Fit_Weibull_Dual_Exponential,
     Fit_Weibull_Dual_Power,
     Fit_Weibull_Exponential,

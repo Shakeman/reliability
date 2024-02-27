@@ -1,6 +1,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 
 from reliability.Distributions._beta_dist import Beta_Distribution
 from reliability.Distributions._exponential_dist import Exponential_Distribution
@@ -117,25 +118,25 @@ class DSZI_Model:
             )
 
         self.__base_distribution = distribution
-        self.DS = DS
-        self.ZI = ZI
-        self.mean = self.__base_distribution.mean
-        self.variance = self.__base_distribution.variance
-        self.standard_deviation = self.__base_distribution.standard_deviation
-        self.skewness = self.__base_distribution.skewness
-        self.kurtosis = self.__base_distribution.kurtosis
-        self.excess_kurtosis = self.__base_distribution.excess_kurtosis
-        self.median = self.__base_distribution.median
-        self.mode = self.__base_distribution.mode
+        self.DS: float = DS
+        self.ZI: float = ZI
+        self.mean: float = self.__base_distribution.mean
+        self.variance: float = self.__base_distribution.variance
+        self.standard_deviation: np.float64 = self.__base_distribution.standard_deviation
+        self.skewness: float = self.__base_distribution.skewness
+        self.kurtosis: np.float64 = self.__base_distribution.kurtosis
+        self.excess_kurtosis: float = self.__base_distribution.excess_kurtosis
+        self.median: np.float64 = self.__base_distribution.median
+        self.mode: np.float64 = self.__base_distribution.mode
         self.name = "DSZI"
         if distribution.parameters[-1] == 0:
-            params_in_dist = len(distribution.parameters) - 1
+            params_in_dist: int = len(distribution.parameters) - 1
         else:
             params_in_dist = len(distribution.parameters)
         if ZI == 0:
             self.__model_title = "DS Model"
-            self.name2 = "Defective Subpopulation " + self.__base_distribution.name
-            self.__number_of_params = params_in_dist + 1
+            self.name2: str = "Defective Subpopulation " + self.__base_distribution.name
+            self.__number_of_params: int = params_in_dist + 1
         elif DS == 1:
             self.__model_title = "ZI Model"
             self.name2 = "Zero Inflated " + self.__base_distribution.name
@@ -145,18 +146,18 @@ class DSZI_Model:
             self.name2 = "Defective Subpopulation Zero Inflated " + self.__base_distribution.name
             self.__number_of_params = params_in_dist + 2
 
-        xmax = self.__base_distribution.quantile(1 - 1e-10)
-        xmin = self.__base_distribution.quantile(1e-10)
-        X = np.linspace(xmin, xmax, 1000000)
-        pdf0 = self.__base_distribution.PDF(xvals=X, show_plot=False)
-        pdf = pdf0 * (self.DS - self.ZI)  # the DSZI formula for the PDF
-        cdf0 = self.__base_distribution.CDF(xvals=X, show_plot=False)
-        cdf = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
-        self.__pdf_init = pdf
-        self.__cdf_init = cdf
+        xmax: np.float64 = self.__base_distribution.quantile(1 - 1e-10)
+        xmin: np.float64 = self.__base_distribution.quantile(1e-10)
+        X: npt.NDArray[np.float64] = np.linspace(xmin, xmax, 1000000)
+        pdf0: npt.NDArray[np.float64] = self.__base_distribution.PDF(xvals=X, show_plot=False)
+        pdf: npt.NDArray[np.float64] = pdf0 * (self.DS - self.ZI)  # the DSZI formula for the PDF
+        cdf0: npt.NDArray[np.float64] = self.__base_distribution.CDF(xvals=X, show_plot=False)
+        cdf: npt.NDArray[np.float64] = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
+        self.__pdf_init: npt.NDArray[np.float64] = pdf
+        self.__cdf_init: npt.NDArray[np.float64] = cdf
         self.__xvals_init = X
-        self.b5 = X[np.argmin(abs(cdf - 0.05))]
-        self.b95 = X[np.argmin(abs(cdf - 0.95))]
+        self.b5: np.float64 = X[np.argmin(abs(cdf - 0.05))]
+        self.b95: np.float64 = X[np.argmin(abs(cdf - 0.95))]
 
     def plot(self, xvals=None, xmin=None, xmax=None):
         """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
@@ -201,7 +202,7 @@ class DSZI_Model:
         plt.subplot(231)
         plt.plot(X, pdf)
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self.__base_distribution,
             func="PDF",
             X=X,
@@ -215,7 +216,7 @@ class DSZI_Model:
         plt.subplot(232)
         plt.plot(X, cdf)
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self.__base_distribution,
             func="CDF",
             X=X,
@@ -229,7 +230,7 @@ class DSZI_Model:
         plt.subplot(233)
         plt.plot(X, sf)
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self.__base_distribution,
             func="SF",
             X=X,
@@ -243,7 +244,7 @@ class DSZI_Model:
         plt.subplot(234)
         plt.plot(X, hf)
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self.__base_distribution,
             func="HF",
             X=X,
@@ -257,7 +258,7 @@ class DSZI_Model:
         plt.subplot(235)
         plt.plot(X, chf)
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self.__base_distribution,
             func="CHF",
             X=X,
@@ -328,18 +329,18 @@ class DSZI_Model:
 
         """
         # obtain the X array
-        if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
-            X = xvals
+        if xmin is None and xmax is None and type(xvals) not in [list, npt.NDArray[np.float64], type(None)]:
+            X: npt.NDArray[np.float64] | None = xvals
             show_plot = False
         else:
             X = generate_X_array(dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax)
 
-        pdf0 = self.__base_distribution.PDF(xvals=X, show_plot=False)
-        pdf = pdf0 * (self.DS - self.ZI)  # the DSZI formula for the PDF
-        pdf = unpack_single_arrays(pdf)
+        pdf0: npt.NDArray[np.float64] = self.__base_distribution.PDF(xvals=X, show_plot=False)
+        pdf: npt.NDArray[np.float64] = pdf0 * (self.DS - self.ZI)  # the DSZI formula for the PDF
+        pdf: npt.NDArray[np.float64] = unpack_single_arrays(pdf)
 
-        if show_plot is True:
-            limits = get_axes_limits()  # get the previous axes limits
+        if show_plot is True and X is not None:
+            limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, pdf, **kwargs)
             plt.xlabel("x values")
@@ -395,17 +396,17 @@ class DSZI_Model:
         """
         # obtain the X array
         if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
-            X = xvals
+            X: npt.NDArray[np.float64] | None = xvals
             show_plot = False
         else:
             X = generate_X_array(dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax)
 
-        cdf0 = self.__base_distribution.CDF(xvals=X, show_plot=False)
-        cdf = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
-        cdf = unpack_single_arrays(cdf)
+        cdf0: npt.NDArray[np.float64] = self.__base_distribution.CDF(xvals=X, show_plot=False)
+        cdf: npt.NDArray[np.float64] = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
+        cdf: npt.NDArray[np.float64] = unpack_single_arrays(cdf)
 
-        if show_plot is True:
-            limits = get_axes_limits()  # get the previous axes limits
+        if show_plot is True and X is not None:
+            limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, cdf, **kwargs)
             plt.xlabel("x values")
@@ -461,18 +462,18 @@ class DSZI_Model:
         """
         # obtain the X array
         if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
-            X = xvals
+            X: npt.NDArray[np.float64] | None = xvals
             show_plot = False
         else:
             X = generate_X_array(dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax)
 
-        cdf0 = self.__base_distribution.CDF(xvals=X, show_plot=False)
-        cdf = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
-        sf = 1 - cdf
-        sf = unpack_single_arrays(sf)
+        cdf0: npt.NDArray[np.float64] = self.__base_distribution.CDF(xvals=X, show_plot=False)
+        cdf: npt.NDArray[np.float64] = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
+        sf: npt.NDArray[np.float64] = 1 - cdf
+        sf: npt.NDArray[np.float64] = unpack_single_arrays(sf)
 
-        if show_plot is True:
-            limits = get_axes_limits()  # get the previous axes limits
+        if show_plot is True and X is not None:
+            limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, sf, **kwargs)
             plt.xlabel("x values")
@@ -528,20 +529,20 @@ class DSZI_Model:
         """
         # obtain the X array
         if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
-            X = xvals
+            X: npt.NDArray[np.float64] | None  = xvals
             show_plot = False
         else:
             X = generate_X_array(dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax)
 
-        pdf0 = self.__base_distribution.PDF(xvals=X, show_plot=False)
-        pdf = pdf0 * (self.DS - self.ZI)  # the DSZI formula for the PDF
-        cdf0 = self.__base_distribution.CDF(xvals=X, show_plot=False)
-        cdf = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
-        hf = pdf / (1 - cdf)  # pdf/sf
-        hf = unpack_single_arrays(hf)
+        pdf0: npt.NDArray[np.float64] = self.__base_distribution.PDF(xvals=X, show_plot=False)
+        pdf: npt.NDArray[np.float64] = pdf0 * (self.DS - self.ZI)  # the DSZI formula for the PDF
+        cdf0: npt.NDArray[np.float64] = self.__base_distribution.CDF(xvals=X, show_plot=False)
+        cdf: npt.NDArray[np.float64] = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
+        hf: npt.NDArray[np.float64] = pdf / (1 - cdf)  # pdf/sf
+        hf: npt.NDArray[np.float64] = unpack_single_arrays(hf)
 
-        if show_plot is True:
-            limits = get_axes_limits()  # get the previous axes limits
+        if show_plot is True and X is not None:
+            limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, hf, **kwargs)
             plt.xlabel("x values")
@@ -597,18 +598,18 @@ class DSZI_Model:
         """
         # obtain the X array
         if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
-            X = xvals
+            X: npt.NDArray[np.float64] | None = xvals
             show_plot = False
         else:
             X = generate_X_array(dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax)
 
-        cdf0 = self.__base_distribution.CDF(xvals=X, show_plot=False)
-        cdf = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
-        chf = -np.log(1 - cdf)  # -ln(sf)
-        chf = unpack_single_arrays(chf)
+        cdf0: npt.NDArray[np.float64] = self.__base_distribution.CDF(xvals=X, show_plot=False)
+        cdf: npt.NDArray[np.float64] = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
+        chf: npt.NDArray[np.float64] = -np.log(1 - cdf)  # -ln(sf)
+        chf: npt.NDArray[np.float64] = unpack_single_arrays(chf)
 
-        if show_plot is True:
-            limits = get_axes_limits()  # get the previous axes limits
+        if show_plot is True and X is not None:
+            limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits
 
             plt.plot(X, chf, **kwargs)
             plt.xlabel("x values")

@@ -358,7 +358,7 @@ class axes_transforms:
         return ss.beta.cdf(R, a=alpha, b=beta)
 
 
-def get_axes_limits():
+def get_axes_limits() -> tuple[tuple[float, float], tuple[float, float], bool]:
     """This function works in a pair with restore_axes_limits
     This function gets the previous xlim and ylim and also checks whether there
     was a previous plot (based on whether the default 0,1 axes had been
@@ -389,7 +389,7 @@ def get_axes_limits():
     return out
 
 
-def restore_axes_limits(limits: list[tuple[float, float] | bool], dist, func, X, Y, xvals=None, xmin=None, xmax=None):
+def restore_axes_limits(limits: tuple[tuple[float, float], tuple[float, float], bool], dist, func, X, Y, xvals=None, xmin=None, xmax=None):
     """This function works in a pair with get_axes_limits. Using the values
     producted by get_axes_limits which are [xlims, ylims, use_prev_lims], this
     function will determine how to change the axes limits to meet the style
@@ -552,8 +552,8 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
     # obtain the xvals array
     points = 200  # the number of points to use when generating the X array
     points_right = 25  # the number of points given to the area above QU. The total points is still equal to 'points' so the area below QU receives 'points - points_right'
-    QL = dist.quantile(0.0001)  # quantile lower
-    QU = dist.quantile(0.99)  # quantile upper
+    QL: np.float64 = dist.quantile(0.0001)  # quantile lower
+    QU: np.float64  = dist.quantile(0.99)  # quantile upper
     if xvals is not None:
         X = xvals
         if type(X) in [float, int, np.float64]:
@@ -584,7 +584,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                 "xmin must be greater than or equal to 0 for all distributions except the Normal and Gumbel distributions",
             )
         if xmax is None:
-            xmax = dist.quantile(0.9999)
+            xmax: np.float64  = dist.quantile(0.9999)
         if xmin > xmax:
             xmin, xmax = (
                 xmax,
@@ -637,7 +637,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                 )
             else:  # pdf is asymptotic to inf at x=0
                 try:
-                    X = np.hstack(
+                    X: npt.NDArray[np.float64] = np.hstack(
                         [
                             xmin,
                             np.geomspace(QL, QU, points - (points_right + 1)),

@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import scipy.stats as ss
 from scipy import integrate
 
@@ -69,16 +70,16 @@ class Lognormal_Distribution:
         self.mu = float(mu)
         self.sigma = float(sigma)
         self.gamma = float(gamma)
-        self.parameters = np.array([self.mu, self.sigma, self.gamma])
+        self.parameters: npt.NDArray[np.float64] = np.array([self.mu, self.sigma, self.gamma])
         mean, var, skew, kurt = ss.lognorm.stats(self.sigma, self.gamma, np.exp(self.mu), moments="mvsk")
         self.mean = float(mean)
         self.variance = float(var)
         self.standard_deviation = var**0.5
         self.skewness = float(skew)
-        self.kurtosis = kurt + 3
+        self.kurtosis: np.float64 = kurt + 3
         self.excess_kurtosis = float(kurt)
         self.median = ss.lognorm.median(self.sigma, self.gamma, np.exp(self.mu))
-        self.mode = np.exp(self.mu - self.sigma**2) + self.gamma
+        self.mode: np.float64 = np.exp(self.mu - self.sigma**2) + self.gamma
         if self.gamma != 0:
             self.param_title = str(
                 "μ="

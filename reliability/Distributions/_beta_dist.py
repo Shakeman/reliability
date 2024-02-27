@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import scipy.stats as ss
 from scipy import integrate
 
@@ -64,13 +65,13 @@ class Beta_Distribution:
             raise ValueError("Parameters alpha and beta must be specified. Eg. Beta_Distribution(alpha=5,beta=2)")
         self.alpha = float(alpha)
         self.beta = float(beta)
-        self.parameters = np.array([self.alpha, self.beta])
+        self.parameters: npt.NDArray[np.float64] = np.array([self.alpha, self.beta])
         mean, var, skew, kurt = ss.beta.stats(self.alpha, self.beta, 0, 1, moments="mvsk")
         self.mean = float(mean)
         self.variance = float(var)
         self.standard_deviation = var**0.5
         self.skewness = float(skew)
-        self.kurtosis = kurt + 3
+        self.kurtosis: np.float64 = kurt + 3
         self.excess_kurtosis = float(kurt)
         self.median = ss.beta.median(self.alpha, self.beta, 0, 1)
         if self.alpha > 1 and self.beta > 1:

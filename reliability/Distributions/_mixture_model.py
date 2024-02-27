@@ -301,7 +301,7 @@ class Mixture_Model:
         self.__pdf[self.__pdf > 1e100] = 1e100
         plt.plot(self.__xvals, self.__pdf)
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self,
             func="PDF",
             X=self.__xvals,
@@ -315,7 +315,7 @@ class Mixture_Model:
         plt.subplot(232)
         plt.plot(self.__xvals, self.__cdf)
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self,
             func="CDF",
             X=self.__xvals,
@@ -329,7 +329,7 @@ class Mixture_Model:
         plt.subplot(233)
         plt.plot(self.__xvals, self.__sf)
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self,
             func="SF",
             X=self.__xvals,
@@ -344,7 +344,7 @@ class Mixture_Model:
         self.__hf[self.__hf > 1e100] = 1e100
         plt.plot(self.__xvals, self.__hf)
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self,
             func="HF",
             X=self.__xvals,
@@ -358,7 +358,7 @@ class Mixture_Model:
         plt.subplot(235)
         plt.plot(self.__xvals, self.__chf)
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self,
             func="CHF",
             X=self.__xvals,

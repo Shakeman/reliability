@@ -137,7 +137,7 @@ class Beta_Distribution:
         plt.subplot(231)
         plt.plot(X, pdf)
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self,
             func="PDF",
             X=X,
@@ -151,7 +151,7 @@ class Beta_Distribution:
         plt.subplot(232)
         plt.plot(X, cdf)
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self,
             func="CDF",
             X=X,
@@ -165,7 +165,7 @@ class Beta_Distribution:
         plt.subplot(233)
         plt.plot(X, sf)
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self,
             func="SF",
             X=X,
@@ -179,7 +179,7 @@ class Beta_Distribution:
         plt.subplot(234)
         plt.plot(X, hf)
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self,
             func="HF",
             X=X,
@@ -193,7 +193,7 @@ class Beta_Distribution:
         plt.subplot(235)
         plt.plot(X, chf)
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self,
             func="CHF",
             X=X,

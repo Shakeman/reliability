@@ -205,7 +205,7 @@ class Lognormal_Distribution:
         plt.plot(X, pdf)
         plt.title("Probability Density\nFunction")
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self,
             func="PDF",
             X=X,
@@ -219,7 +219,7 @@ class Lognormal_Distribution:
         plt.plot(X, cdf)
         plt.title("Cumulative Distribution\nFunction")
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self,
             func="CDF",
             X=X,
@@ -233,7 +233,7 @@ class Lognormal_Distribution:
         plt.plot(X, sf)
         plt.title("Survival Function")
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self,
             func="SF",
             X=X,
@@ -247,7 +247,7 @@ class Lognormal_Distribution:
         plt.plot(X, hf)
         plt.title("Hazard Function")
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self,
             func="HF",
             X=X,
@@ -261,7 +261,7 @@ class Lognormal_Distribution:
         plt.plot(X, chf)
         plt.title("Cumulative Hazard\nFunction")
         restore_axes_limits(
-            [(0, 1), (0, 1), False],
+            ((0, 1), (0, 1), False),
             dist=self,
             func="CHF",
             X=X,

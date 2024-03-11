@@ -1432,7 +1432,7 @@ class fitters_input_checking:
         The failure data
     right_censored : array, list, optional
         The right censored data
-    method : str, optional
+    method : str
         Must be either "MLE","LS","RRX", or "RRY". Some flexibility in input is
         tolerated. eg "LS", "LEAST SQUARES", "LSQ", "NLRR", "NLLS" will all be
         recogsised as "LS". Default is MLE
@@ -1498,14 +1498,14 @@ class fitters_input_checking:
         self,
         dist: str,
         failures,
+        method: str | None = None,
         right_censored=None,
-        method=None,
-        optimizer=None,
-        CI=0.95,
-        quantiles=False,
-        force_beta=None,
-        force_sigma=None,
-        CI_type=None,
+        optimizer: str | None =None,
+        CI: float =0.95,
+        quantiles: bool | str | list | np.ndarray | None = False,
+        force_beta: float | None=None,
+        force_sigma: float | None=None,
+        CI_type: str | None =None,
     ):
         if dist not in [
             "Everything",
@@ -1539,7 +1539,7 @@ class fitters_input_checking:
             raise ValueError("failures must be a list or array of failure data")
         if type(right_censored) not in [list, np.ndarray]:
             raise ValueError("right_censored must be a list or array of right censored failure data")
-        failures = np.asarray(failures).astype(float)
+        failures: npt.NDArray[np.float64] = np.asarray(failures).astype(float)
         right_censored = np.asarray(right_censored).astype(float)
 
         # check failures and right_censored are in the right range for the distribution
@@ -1756,13 +1756,13 @@ class fitters_input_checking:
         # return everything
         self.failures = failures
         self.right_censored = right_censored
-        self.CI = CI
+        self.CI: float = CI
         self.method = method
-        self.optimizer = optimizer
+        self.optimizer: str | None = optimizer
         self.quantiles = quantiles
         self.force_beta = force_beta
         self.force_sigma = force_sigma
-        self.CI_type = CI_type
+        self.CI_type: str | None = CI_type
 
 
 class ALT_fitters_input_checking:
@@ -5053,7 +5053,7 @@ class LS_optimization:
         LL_func,
         failures,
         right_censored,
-        method="LS",
+        method: str | None ="LS",
         force_shape=None,
         LL_func_force=None,
     ):
@@ -5201,7 +5201,7 @@ class MLE_optimization:
         initial_guess,
         failures,
         right_censored,
-        optimizer,
+        optimizer: str | None,
         force_shape=None,
         LL_func_force=None,
     ):
@@ -5212,7 +5212,7 @@ class MLE_optimization:
             failures,
             right_censored,
             bounds,
-            optimizer,
+            optimizer: str | None,
             force_shape,
             LL_func_force,
             func_name,
@@ -5497,7 +5497,7 @@ class MLE_optimization:
                     ALL_opt_names.pop(i)
             idx_best = ALL_loglik.index(min(ALL_loglik))
             params = ALL_results[idx_best]
-            self.optimizer = ALL_opt_names[idx_best]
+            self.optimizer: str = ALL_opt_names[idx_best]
             self.success = True
 
             if func_name == "Weibull_mixture":
@@ -6678,6 +6678,8 @@ def xy_downsample(x, y, downsample_factor=None, default_max_values=1000):
     else:
         if downsample_factor in [None, True]:
             downsample_factor = np.floor(len_x / (0.5 * default_max_values))
+        elif not isinstance(downsample_factor, int):
+            raise ValueError("downsample_factor must be an integer")
         if len_x / downsample_factor < 2:
             return x, y
         else:

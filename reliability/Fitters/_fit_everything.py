@@ -151,11 +151,11 @@ class Fit_Everything:
     """
     def __init__(
         self,
-        failures: list[int] | None =None,
+        failures =None,
         right_censored=None,
         exclude=None,
         sort_by="BIC",
-        method="MLE",
+        method: str | None ="MLE",
         optimizer=None,
         print_results=True,
         show_histogram_plot=True,

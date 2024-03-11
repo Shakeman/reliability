@@ -151,8 +151,8 @@ class Fit_Loglogistic_2P:
         print_results=True,
         CI=0.95,
         quantiles=None,
-        CI_type="time",
-        method="MLE",
+        CI_type: str | None ="time",
+        method: str | None ="MLE",
         optimizer=None,
         downsample_scatterplot=True,
         **kwargs,
@@ -177,7 +177,7 @@ class Fit_Loglogistic_2P:
         self.gamma = 0
 
         # Obtain least squares estimates
-        LS_method = "LS" if method == "MLE" else method
+        LS_method: str | None = "LS" if method == "MLE" else method
         LS_results = LS_optimization(
             func_name="Loglogistic_2P",
             LL_func=Fit_Loglogistic_2P.LL,
@@ -210,7 +210,7 @@ class Fit_Loglogistic_2P:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.alpha, self.beta]
-        hessian_matrix = hessian(Fit_Loglogistic_2P.LL)(
+        hessian_matrix = hessian(Fit_Loglogistic_2P.LL)( # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -226,16 +226,17 @@ class Fit_Loglogistic_2P:
             self.beta_lower = self.beta * (np.exp(-Z * (self.beta_SE / self.beta)))
         except LinAlgError:
             # this exception is rare but can occur with some optimizers
-            colorprint(
-                str(
-                    "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
-                    + " optimizer is non-invertable for the Loglogistic_2P model.\n"
-                    "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer.",
-                ),
-                text_color="red",
-            )
+            if self.optimizer is not None:
+                colorprint(
+                    str(
+                        "WARNING: The hessian matrix obtained using the "
+                        + self.optimizer
+                        + " optimizer is non-invertable for the Loglogistic_2P model.\n"
+                        "Confidence interval estimates of the parameters could not be obtained.\n"
+                        "You may want to try fitting the model using a different optimizer.",
+                    ),
+                    text_color="red",
+                )
             self.alpha_SE = 0
             self.beta_SE = 0
             self.Cov_alpha_beta = 0
@@ -506,9 +507,9 @@ class Fit_Loglogistic_3P:
         show_probability_plot=True,
         print_results=True,
         CI=0.95,
-        CI_type="time",
+        CI_type: str | None="time",
         optimizer=None,
-        method="MLE",
+        method: str | None="MLE",
         quantiles=None,
         downsample_scatterplot=True,
         **kwargs,
@@ -599,7 +600,7 @@ class Fit_Loglogistic_3P:
             params_2P = [self.alpha, self.beta]
             params_3P = [self.alpha, self.beta, self.gamma]
             # here we need to get alpha_SE and beta_SE from the Loglogistic_2P by providing an adjusted dataset (adjusted for gamma)
-            hessian_matrix = hessian(Fit_Loglogistic_2P.LL)(
+            hessian_matrix = hessian(Fit_Loglogistic_2P.LL)( # type: ignore
                 np.array(tuple(params_2P)),
                 np.array(tuple(failures - self.gamma)),
                 np.array(tuple(right_censored - self.gamma)),
@@ -607,7 +608,7 @@ class Fit_Loglogistic_3P:
             try:
                 covariance_matrix = np.linalg.inv(hessian_matrix)
                 # this is to get the gamma_SE. Unfortunately this approach for alpha_SE and beta_SE give SE values that are very large resulting in incorrect CI plots. This is the same method used by Reliasoft
-                hessian_matrix_for_gamma = hessian(Fit_Loglogistic_3P.LL)(
+                hessian_matrix_for_gamma = hessian(Fit_Loglogistic_3P.LL)( # type: ignore
                     np.array(tuple(params_3P)),
                     np.array(tuple(failures)),
                     np.array(tuple(right_censored)),
@@ -627,16 +628,17 @@ class Fit_Loglogistic_3P:
                 self.gamma_lower = self.gamma * (np.exp(-Z * (self.gamma_SE / self.gamma)))
             except LinAlgError:
                 # this exception is rare but can occur with some optimizers
-                colorprint(
-                    str(
-                        "WARNING: The hessian matrix obtained using the "
-                        + self.optimizer
-                        + " optimizer is non-invertable for the Loglogistic_3P model.\n"
-                        "Confidence interval estimates of the parameters could not be obtained.\n"
-                        "You may want to try fitting the model using a different optimizer.",
-                    ),
-                    text_color="red",
-                )
+                if self.optimizer is not None:
+                    colorprint(
+                        str(
+                            "WARNING: The hessian matrix obtained using the "
+                            + self.optimizer
+                            + " optimizer is non-invertable for the Loglogistic_3P model.\n"
+                            "Confidence interval estimates of the parameters could not be obtained.\n"
+                            "You may want to try fitting the model using a different optimizer.",
+                        ),
+                        text_color="red",
+                    )
                 self.alpha_SE = 0
                 self.beta_SE = 0
                 self.gamma_SE = 0
@@ -762,7 +764,7 @@ class Fit_Loglogistic_3P:
                 downsample_scatterplot=downsample_scatterplot,
                 **kwargs,
             )
-            if self.gamma < 0.01:
+            if self.gamma < 0.01 and fig.axes[0].legend_ is not None:
                 # manually change the legend to reflect that Loglogistic_3P was fitted. The default legend in the probability plot thinks Loglogistic_2P was fitted when gamma=0
                 fig.axes[0].legend_.get_texts()[0].set_text(
                     str(

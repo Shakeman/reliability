@@ -160,8 +160,8 @@ class Fit_Weibull_2P:
         print_results=True,
         CI=0.95,
         quantiles=None,
-        CI_type="time",
-        method="MLE",
+        CI_type: str | None ="time",
+        method: str | None="MLE",
         optimizer=None,
         force_beta=None,
         downsample_scatterplot=True,
@@ -227,7 +227,7 @@ class Fit_Weibull_2P:
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.alpha, self.beta]
         if force_beta is None:
-            hessian_matrix = hessian(Fit_Weibull_2P.LL)(
+            hessian_matrix = hessian(Fit_Weibull_2P.LL)( # type: ignore
                 np.array(tuple(params)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
@@ -246,7 +246,7 @@ class Fit_Weibull_2P:
                 colorprint(
                     str(
                         "WARNING: The hessian matrix obtained using the "
-                        + self.optimizer
+                        + str(self.optimizer)
                         + " optimizer is non-invertable for the Weibull_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
                         "You may want to try fitting the model using a different optimizer.",
@@ -262,7 +262,7 @@ class Fit_Weibull_2P:
                 self.beta_lower = self.beta
 
         else:  # this is for when force beta is specified
-            hessian_matrix = hessian(Fit_Weibull_2P.LL_fb)(
+            hessian_matrix = hessian(Fit_Weibull_2P.LL_fb)( # type: ignore
                 np.array((self.alpha,)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
@@ -282,7 +282,7 @@ class Fit_Weibull_2P:
                 colorprint(
                     str(
                         "WARNING: The hessian matrix obtained using the "
-                        + self.optimizer
+                        + str(self.optimizer)
                         + " optimizer is non-invertable for the Weibull_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
                         "You may want to try fitting the model using a different optimizer.",
@@ -851,7 +851,7 @@ class Fit_Weibull_2P_grouped:
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.alpha, self.beta]
         if force_beta is None:
-            hessian_matrix = hessian(Fit_Weibull_2P_grouped.LL)(
+            hessian_matrix = hessian(Fit_Weibull_2P_grouped.LL)( # type: ignore
                 np.array(tuple(params)),
                 np.array(tuple(failure_times)),
                 np.array(tuple(right_censored_times)),
@@ -872,7 +872,7 @@ class Fit_Weibull_2P_grouped:
                 colorprint(
                     str(
                         "WARNING: The hessian matrix obtained using the "
-                        + self.optimizer
+                        + str(self.optimizer)
                         + " optimizer is non-invertable for the Weibull_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
                         "You may want to try fitting the model using a different optimizer.",
@@ -888,7 +888,7 @@ class Fit_Weibull_2P_grouped:
                 self.beta_lower = self.beta
 
         else:  # this is for when force beta is specified
-            hessian_matrix = hessian(Fit_Weibull_2P_grouped.LL_fb)(
+            hessian_matrix = hessian(Fit_Weibull_2P_grouped.LL_fb)( # type: ignore
                 np.array((self.alpha,)),
                 np.array(tuple(failure_times)),
                 np.array(tuple(right_censored_times)),
@@ -910,7 +910,7 @@ class Fit_Weibull_2P_grouped:
                 colorprint(
                     str(
                         "WARNING: The hessian matrix obtained using the "
-                        + self.optimizer
+                        + str(self.optimizer)
                         + " optimizer is non-invertable for the Weibull_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
                         "You may want to try fitting the model using a different optimizer.",
@@ -1214,7 +1214,7 @@ class Fit_Weibull_3P:
         quantiles=None,
         CI_type="time",
         optimizer=None,
-        method="MLE",
+        method: str | None="MLE",
         downsample_scatterplot=True,
         **kwargs,
     ):
@@ -1304,7 +1304,7 @@ class Fit_Weibull_3P:
             params_2P = [self.alpha, self.beta]
             params_3P = [self.alpha, self.beta, self.gamma]
             # here we need to get alpha_SE and beta_SE from the Weibull_2P by providing an adjusted dataset (adjusted for gamma)
-            hessian_matrix = hessian(Fit_Weibull_2P.LL)(
+            hessian_matrix = hessian(Fit_Weibull_2P.LL)( # type: ignore
                 np.array(tuple(params_2P)),
                 np.array(tuple(failures - self.gamma)),
                 np.array(tuple(right_censored - self.gamma)),
@@ -1312,7 +1312,7 @@ class Fit_Weibull_3P:
             try:
                 covariance_matrix = np.linalg.inv(hessian_matrix)
                 # this is to get the gamma_SE. Unfortunately this approach for alpha_SE and beta_SE give SE values that are very large resulting in incorrect CI plots. This is the same method used by Reliasoft
-                hessian_matrix_for_gamma = hessian(Fit_Weibull_3P.LL)(
+                hessian_matrix_for_gamma = hessian(Fit_Weibull_3P.LL)( # type: ignore
                     np.array(tuple(params_3P)),
                     np.array(tuple(failures)),
                     np.array(tuple(right_censored)),
@@ -1335,7 +1335,7 @@ class Fit_Weibull_3P:
                 colorprint(
                     str(
                         "WARNING: The hessian matrix obtained using the "
-                        + self.optimizer
+                        + str(self.optimizer)
                         + " optimizer is non-invertable for the Weibull_3P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
                         "You may want to try fitting the model using a different optimizer.",
@@ -1467,7 +1467,7 @@ class Fit_Weibull_3P:
                 downsample_scatterplot=downsample_scatterplot,
                 **kwargs,
             )
-            if self.gamma < 0.01:
+            if self.gamma < 0.01 and fig.axes[0].legend_ is not None:
                 # manually change the legend to reflect that Weibull_3P was fitted. The default legend in the probability plot thinks Weibull_2P was fitted when gamma=0
                 fig.axes[0].legend_.get_texts()[0].set_text(
                     str(
@@ -1798,7 +1798,7 @@ class Fit_Weibull_Mixture:
 
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
-        hessian_matrix = hessian(Fit_Weibull_Mixture.LL)(
+        hessian_matrix = hessian(Fit_Weibull_Mixture.LL)( # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1815,7 +1815,7 @@ class Fit_Weibull_Mixture:
             colorprint(
                 str(
                     "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
+                    + str(self.optimizer)
                     + " optimizer is non-invertable for the Weibull_Mixture model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
                     "You may want to try fitting the model using a different optimizer.",
@@ -2239,7 +2239,7 @@ class Fit_Weibull_CR:
 
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
-        hessian_matrix = hessian(Fit_Weibull_CR.LL)(
+        hessian_matrix = hessian(Fit_Weibull_CR.LL)( # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -2255,7 +2255,7 @@ class Fit_Weibull_CR:
             colorprint(
                 str(
                     "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
+                    + str(self.optimizer)
                     + " optimizer is non-invertable for the Weibull_CR model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
                     "You may want to try fitting the model using a different optimizer.",
@@ -2558,7 +2558,7 @@ class Fit_Weibull_DSZI:
         # confidence interval estimates of parameters. This uses the Fisher Matrix so it can be applied to both MLE and LS estimates.
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.alpha, self.beta, self.DS, self.ZI]
-        hessian_matrix = hessian(Fit_Weibull_DSZI.LL)(
+        hessian_matrix = hessian(Fit_Weibull_DSZI.LL)( # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures_zeros)),
             np.array(tuple(failures_no_zeros)),
@@ -2575,7 +2575,7 @@ class Fit_Weibull_DSZI:
             colorprint(
                 str(
                     "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
+                    + str(self.optimizer)
                     + " optimizer is non-invertable for the Weibull_DSZI Model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
                     "You may want to try fitting the model using a different optimizer.",
@@ -2900,7 +2900,7 @@ class Fit_Weibull_DS:
         # confidence interval estimates of parameters. This uses the Fisher Matrix so it can be applied to both MLE and LS estimates.
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.alpha, self.beta, self.DS]
-        hessian_matrix = hessian(Fit_Weibull_DS.LL)(
+        hessian_matrix = hessian(Fit_Weibull_DS.LL)( # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -2915,7 +2915,7 @@ class Fit_Weibull_DS:
             colorprint(
                 str(
                     "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
+                    + str(self.optimizer)
                     + " optimizer is non-invertable for the Weibull_DS Model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
                     "You may want to try fitting the model using a different optimizer.",
@@ -3205,7 +3205,7 @@ class Fit_Weibull_ZI:
         # confidence interval estimates of parameters. This uses the Fisher Matrix so it can be applied to both MLE and LS estimates.
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.alpha, self.beta, self.ZI]
-        hessian_matrix = hessian(Fit_Weibull_ZI.LL)(
+        hessian_matrix = hessian(Fit_Weibull_ZI.LL)( # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures_zeros)),
             np.array(tuple(failures_no_zeros)),
@@ -3222,7 +3222,7 @@ class Fit_Weibull_ZI:
             colorprint(
                 str(
                     "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
+                    + str(self.optimizer)
                     + " optimizer is non-invertable for the Weibull_ZI Model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
                     "You may want to try fitting the model using a different optimizer.",

@@ -103,8 +103,8 @@ class KaplanMeier:
 
     def __init__(
         self,
-        failures: list[int] | None = None,
-        right_censored: list[int] | None = None,
+        failures: npt.NDArray[np.float64] | list[int] | None = None,
+        right_censored: npt.NDArray[np.float64] | list[int] | None = None,
         show_plot: bool=True,
         print_results: bool = True,
         plot_CI: bool=True,
@@ -405,8 +405,8 @@ class NelsonAalen:
 
     def __init__(
         self,
-        failures: list[int] | None = None,
-        right_censored: list[int] | None = None,
+        failures: npt.NDArray[np.float64] | list[int] | None = None,
+        right_censored: npt.NDArray[np.float64] | list[int] | None = None,
         show_plot=True,
         print_results=True,
         plot_CI=True,

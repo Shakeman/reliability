@@ -39,6 +39,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
+from matplotlib.figure import Figure
 from matplotlib.transforms import blended_transform_factory
 
 from reliability.Distributions import (
@@ -65,7 +66,7 @@ np.seterr("ignore")
 dec = 3  # number of decimals to use when rounding fitted parameters in labels
 
 
-def plotting_positions(failures=None, right_censored=None, a=None, sort=False):
+def plotting_positions(failures=None, right_censored=None, a: float | None =None, sort: bool =False) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """Calculates the plotting positions for plotting on probability paper.
 
     Parameters
@@ -150,22 +151,22 @@ def plotting_positions(failures=None, right_censored=None, a=None, sort=False):
             if j > 0:
                 rank_increment.append((n + 1 - adjusted_rank[-1]) / (1 + reverse_i[j]))
                 adjusted_rank.append(adjusted_rank[-1] + rank_increment[-1])
-    F = []
+    F: list[float] = []
     for i in adjusted_rank:
         F.append((i - a) / (n + 1 - 2 * a))
 
     if sort is False:
         # restore the original order of the points using the index from the sorted dataframe
-        idx = failure_rows.index.values
-        df2 = pd.DataFrame(
+        idx: npt.NDArray[np.int64] = failure_rows.index.values
+        df2: pd.DataFrame = pd.DataFrame(
             data={"x": failure_rows.times.values, "y": F, "idx": idx},
             columns=["x", "y", "idx"],
         ).sort_values(by="idx")
-        x = df2.x.values
-        y = df2.y.values
+        x: npt.NDArray[np.float64] = np.array(df2.x.values, dtype=np.float64)
+        y: npt.NDArray[np.float64] = np.array(df2.y.values, dtype=np.float64)
     else:
-        x = failure_rows.times.values
-        y = F
+        x = np.array(failure_rows.times.values, dtype=np.float64)
+        y = np.array(F, dtype=np.float64)
     return x, y
 
 
@@ -176,7 +177,7 @@ def Weibull_probability_plot(
     __fitted_dist_params=None,
     a=None,
     CI=0.95,
-    CI_type="time",
+    CI_type: str | None="time",
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
@@ -270,7 +271,17 @@ def Weibull_probability_plot(
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
-
+        if type(CI_type) not in [str, type(None)]:
+            raise ValueError('CI_type must be "time", "reliability", or "none"')
+        if CI_type is not None:
+            if CI_type.upper() in ["T", "TIME"]:
+                CI_type = "time"
+            elif CI_type.upper() in ["R", "REL", "RELIABILITY"]:
+                CI_type = "reliability"
+            elif CI_type.upper() in ["NONE", "OFF"]:
+                CI_type = "none"
+            else:
+                raise ValueError('CI_type must be "time", "reliability", or "none"')
         if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
             fit_gamma = True
 
@@ -387,7 +398,7 @@ def Loglogistic_probability_plot(
     __fitted_dist_params=None,
     a=None,
     CI=0.95,
-    CI_type="time",
+    CI_type: str | None ="time",
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
@@ -481,7 +492,17 @@ def Loglogistic_probability_plot(
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
-
+        if type(CI_type) not in [str, type(None)]:
+            raise ValueError('CI_type must be "time", "reliability", or "none"')
+        if CI_type is not None:
+            if CI_type.upper() in ["T", "TIME"]:
+                CI_type = "time"
+            elif CI_type.upper() in ["R", "REL", "RELIABILITY"]:
+                CI_type = "reliability"
+            elif CI_type.upper() in ["NONE", "OFF"]:
+                CI_type = "none"
+            else:
+                raise ValueError('CI_type must be "time", "reliability", or "none"')
         if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
             fit_gamma = True
 
@@ -802,11 +823,11 @@ def Gumbel_probability_plot(
     right_censored=None,
     __fitted_dist_params=None,
     a=None,
-    CI=0.95,
-    CI_type="time",
-    show_fitted_distribution=True,
-    show_scatter_points=True,
-    downsample_scatterplot=False,
+    CI: float=0.95,
+    CI_type: str | None="time",
+    show_fitted_distribution: bool=True,
+    show_scatter_points: bool=True,
+    downsample_scatterplot: bool=False,
     **kwargs,
 ):
     """Generates a probability plot on Gumbel scaled probability paper so that the
@@ -886,6 +907,18 @@ def Gumbel_probability_plot(
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
+        # error checking for CI_type
+        if type(CI_type) not in [str, type(None)]:
+            raise ValueError('CI_type must be "time", "reliability", or "none"')
+        if CI_type is not None:
+            if CI_type.upper() in ["T", "TIME"]:
+                CI_type = "time"
+            elif CI_type.upper() in ["R", "REL", "RELIABILITY"]:
+                CI_type = "reliability"
+            elif CI_type.upper() in ["NONE", "OFF"]:
+                CI_type = "none"
+            else:
+                raise ValueError('CI_type must be "time", "reliability", or "none"')
         if __fitted_dist_params is not None:
             mu = __fitted_dist_params.mu
             sigma = __fitted_dist_params.sigma
@@ -955,7 +988,7 @@ def Normal_probability_plot(
     __fitted_dist_params=None,
     a=None,
     CI=0.95,
-    CI_type="time",
+    CI_type: str | None ="time",
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
@@ -1037,7 +1070,17 @@ def Normal_probability_plot(
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
-
+        if type(CI_type) not in [str, type(None)]:
+            raise ValueError('CI_type must be "time", "reliability", or "none"')
+        if CI_type is not None:
+            if CI_type.upper() in ["T", "TIME"]:
+                CI_type = "time"
+            elif CI_type.upper() in ["R", "REL", "RELIABILITY"]:
+                CI_type = "reliability"
+            elif CI_type.upper() in ["NONE", "OFF"]:
+                CI_type = "none"
+            else:
+                raise ValueError('CI_type must be "time", "reliability", or "none"')
         if __fitted_dist_params is not None:
             mu = __fitted_dist_params.mu
             sigma = __fitted_dist_params.sigma
@@ -1108,7 +1151,7 @@ def Lognormal_probability_plot(
     __fitted_dist_params=None,
     a=None,
     CI=0.95,
-    CI_type="time",
+    CI_type: str | None ="time",
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
@@ -1201,7 +1244,17 @@ def Lognormal_probability_plot(
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
-
+        if type(CI_type) not in [str, type(None)]:
+            raise ValueError('CI_type must be "time", "reliability", or "none"')
+        if CI_type is not None:
+            if CI_type.upper() in ["T", "TIME"]:
+                CI_type = "time"
+            elif CI_type.upper() in ["R", "REL", "RELIABILITY"]:
+                CI_type = "reliability"
+            elif CI_type.upper() in ["NONE", "OFF"]:
+                CI_type = "none"
+            else:
+                raise ValueError('CI_type must be "time", "reliability", or "none"')
         if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
             fit_gamma = True
 
@@ -1460,12 +1513,12 @@ def Gamma_probability_plot(
     __fitted_dist_params=None,
     a=None,
     CI=0.95,
-    CI_type="time",
+    CI_type: str | None="time",
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
     **kwargs,
-):
+) -> Figure:
     """Generates a probability plot on Gamma scaled probability paper so that the
     CDF of the distribution appears linear. This function can be used to show
     Gamma_2P or Gamma_3P distributions.
@@ -1559,7 +1612,17 @@ def Gamma_probability_plot(
     # We can't skip fitting when show_fitted_distribution = False because the axes scaling needs beta
     if CI <= 0 or CI >= 1:
         raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
-
+    if type(CI_type) not in [str, type(None)]:
+        raise ValueError('CI_type must be "time", "reliability", or "none"')
+    if CI_type is not None:
+        if CI_type.upper() in ["T", "TIME"]:
+            CI_type = "time"
+        elif CI_type.upper() in ["R", "REL", "RELIABILITY"]:
+            CI_type = "reliability"
+        elif CI_type.upper() in ["NONE", "OFF"]:
+            CI_type = "none"
+        else:
+            raise ValueError('CI_type must be "time", "reliability", or "none"')
     if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
         fit_gamma = True
 
@@ -2067,6 +2130,10 @@ def QQ_plot_parametric(
 
     Returns
     -------
+    figure : object
+        The figure handle of the QQ plot is returned as an object
+
+
     model_parameters : list
         [m,m1,c1] - these are the values for the lines of best fit. m is used in
         Y=m.X, and m1 and c1 are used in Y=m1.X+c1
@@ -2164,7 +2231,7 @@ def QQ_plot_parametric(
 
     plt.xlim([xmin - 0.05 * xdelta, xmax + 0.05 * xdelta])
     plt.ylim([ymin - 0.05 * ydelta, ymax + 0.05 * ydelta])
-    return [m, deg1[0], deg1[1]]
+    return plt.gcf(), [m, deg1[0], deg1[1]]
 
 
 def PP_plot_semiparametric(
@@ -2175,7 +2242,7 @@ def PP_plot_semiparametric(
     method="KM",
     downsample_scatterplot=False,
     **kwargs,
-):
+) -> Figure:
     """A PP plot (probability-probability plot) consists of plotting the CDF of one
     distribution against the CDF of another distribution. If we have both
     distributions we can use the function PP_plot_parametric. This function is
@@ -2343,7 +2410,7 @@ def QQ_plot_semiparametric(
     method="KM",
     downsample_scatterplot=False,
     **kwargs,
-):
+) -> tuple[Figure, list[np.float64]]:
     """A QQ plot (quantile-quantile plot) consists of plotting failure units vs
     failure units for shared quantiles. A quantile is simply the fraction
     failing (ranging from 0 to 1). When we have two parametric distributions we
@@ -2393,6 +2460,8 @@ def QQ_plot_semiparametric(
 
     Returns
     -------
+    figure: object
+        The figure handle for the QQ plot
     model_parameters : list
         [m,m1,c1] - these are the values for the lines of best fit. m is used in
         Y=m.X, and m1 and c1 are used in Y=m1.X+c1
@@ -2535,7 +2604,7 @@ def QQ_plot_semiparametric(
     plt.xlim(lims)
     plt.ylim(lims)
     plt.title("Quantile-Quantile Plot\nSemi-parametric")
-    return [m, deg1[0], deg1[1]]
+    return plt.gcf(), [m, deg1[0], deg1[1]]
 
 
 def plot_points(failures=None, right_censored=None, func="CDF", a=None, downsample_scatterplot=False, **kwargs):

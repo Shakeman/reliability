@@ -25,6 +25,7 @@ import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import scipy.stats as ss
 from matplotlib.lines import Line2D
 from matplotlib.widgets import RadioButtons, Slider
@@ -888,7 +889,7 @@ class make_right_censored_data:
 
     """
 
-    def __init__(self, data, threshold=None, fraction_censored=None, seed=None):
+    def __init__(self, data: npt.NDArray[np.float64], threshold=None, fraction_censored=None, seed=None):
         if type(data) not in [list, np.ndarray]:
             raise ValueError("data must be a list or array")
         data = np.asarray(data)

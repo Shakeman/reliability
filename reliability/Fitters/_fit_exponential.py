@@ -4,6 +4,7 @@ from __future__ import annotations
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import scipy.stats as ss
 from autograd.differential_operators import hessian
@@ -45,7 +46,7 @@ class Fit_Exponential_1P:
     print_results : bool, optional
         Prints a dataframe of the point estimate, standard error, Lower CI and
         Upper CI for the model's parameter. True or False. Default = True
-    method : str, optional
+    method : str
         The method used to fit the distribution. Must be either 'MLE' (maximum
         likelihood estimation), 'LS' (least squares estimation), 'RRX' (Rank
         regression on X), or 'RRY' (Rank regression on Y). LS will perform both
@@ -144,22 +145,22 @@ class Fit_Exponential_1P:
 
     def __init__(
         self,
-        failures=None,
-        right_censored=None,
+        failures: npt.NDArray[np.float64] | None =None,
+        right_censored: npt.NDArray[np.float64] | None =None,
         show_probability_plot=True,
         print_results=True,
         CI=0.95,
-        quantiles=None,
-        method="MLE",
-        optimizer=None,
+        quantiles: bool | str | list | np.ndarray | None=None,
+        method: str | None = "MLE",
+        optimizer: str | None = None,
         downsample_scatterplot=True,
         **kwargs,
     ):
         inputs = fitters_input_checking(
             dist="Exponential_1P",
             failures=failures,
-            right_censored=right_censored,
             method=method,
+            right_censored=right_censored,
             optimizer=optimizer,
             CI=CI,
             quantiles=quantiles,
@@ -168,12 +169,12 @@ class Fit_Exponential_1P:
         right_censored = inputs.right_censored
         CI = inputs.CI
         method = inputs.method
-        optimizer = inputs.optimizer
+        optimizer= inputs.optimizer
         quantiles = inputs.quantiles
         self.gamma = 0
 
         # Obtain least squares estimates
-        LS_method = "LS" if method == "MLE" else method
+        LS_method: str | None = "LS" if method == "MLE" else method
         LS_results = LS_optimization(
             func_name="Exponential_1P",
             LL_func=Fit_Exponential_1P.LL,
@@ -199,12 +200,12 @@ class Fit_Exponential_1P:
             )
             self.Lambda = MLE_results.scale
             self.method = "Maximum Likelihood Estimation (MLE)"
-            self.optimizer = MLE_results.optimizer
+            self.optimizer: str | None  = MLE_results.optimizer
 
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.Lambda]
-        hessian_matrix = hessian(Fit_Exponential_1P.LL)(
+        hessian_matrix = hessian(Fit_Exponential_1P.LL)( # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -220,16 +221,17 @@ class Fit_Exponential_1P:
             self.Lambda_upper_inv = 1 / self.Lambda_lower
         except LinAlgError:
             # this exception is rare but can occur with some optimizers
-            colorprint(
-                str(
-                    "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
-                    + " optimizer is non-invertable for the Exponential_1P model.\n"
-                    "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer.",
-                ),
-                text_color="red",
-            )
+            if self.optimizer is not None:
+                colorprint(
+                    str(
+                        "WARNING: The hessian matrix obtained using the "
+                        + self.optimizer
+                        + " optimizer is non-invertable for the Exponential_1P model.\n"
+                        "Confidence interval estimates of the parameters could not be obtained.\n"
+                        "You may want to try fitting the model using a different optimizer.",
+                    ),
+                    text_color="red",
+                )
             self.Lambda_SE = 0
             self.Lambda_upper = self.Lambda
             self.Lambda_lower = self.Lambda
@@ -490,7 +492,7 @@ class Fit_Exponential_2P:
         print_results=True,
         CI=0.95,
         quantiles=None,
-        method="MLE",
+        method: str | None="MLE",
         optimizer=None,
         downsample_scatterplot=True,
         **kwargs,
@@ -559,13 +561,13 @@ class Fit_Exponential_2P:
                 self.Lambda = MLE_results.scale
             self.gamma = MLE_results.gamma
             self.method = "Maximum Likelihood Estimation (MLE)"
-            self.optimizer = MLE_results.optimizer
+            self.optimizer: str | None  = MLE_results.optimizer
 
         # confidence interval estimates of parameters. Uses Exponential_1P because gamma (while optimized) cannot be used in the MLE solution as the solution is unbounded. This is why there are no CI limits on gamma.
         Z = -ss.norm.ppf((1 - CI) / 2)
         params_1P = [self.Lambda]
         params_2P = [self.Lambda, self.gamma]
-        hessian_matrix = hessian(Fit_Exponential_1P.LL)(
+        hessian_matrix = hessian(Fit_Exponential_1P.LL)( # type: ignore
             np.array(tuple(params_1P)),
             np.array(tuple(failures - self.gamma)),
             np.array(tuple(right_censored - self.gamma)),
@@ -584,16 +586,17 @@ class Fit_Exponential_2P:
             self.Lambda_upper_inv = 1 / self.Lambda_lower
         except LinAlgError:
             # this exception is rare but can occur with some optimizers
-            colorprint(
-                str(
-                    "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
-                    + " optimizer is non-invertable for the Exponential_2P model.\n"
-                    "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer.",
-                ),
-                text_color="red",
-            )
+            if self.optimizer is not None:
+                colorprint(
+                    str(
+                        "WARNING: The hessian matrix obtained using the "
+                        + self.optimizer
+                        + " optimizer is non-invertable for the Exponential_2P model.\n"
+                        "Confidence interval estimates of the parameters could not be obtained.\n"
+                        "You may want to try fitting the model using a different optimizer.",
+                    ),
+                    text_color="red",
+                )
             self.Lambda_SE = 0
             self.gamma_SE = 0
             self.Lambda_upper = self.Lambda

@@ -157,8 +157,8 @@ class Fit_Lognormal_2P:
         CI=0.95,
         quantiles=None,
         optimizer=None,
-        CI_type="time",
-        method="MLE",
+        CI_type: str | None ="time",
+        method: str | None="MLE",
         force_sigma=None,
         downsample_scatterplot=True,
         **kwargs,
@@ -223,7 +223,7 @@ class Fit_Lognormal_2P:
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.mu, self.sigma]
         if force_sigma is None:
-            hessian_matrix = hessian(Fit_Lognormal_2P.LL)(
+            hessian_matrix = hessian(Fit_Lognormal_2P.LL)( # type: ignore
                 np.array(tuple(params)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
@@ -242,7 +242,7 @@ class Fit_Lognormal_2P:
                 colorprint(
                     str(
                         "WARNING: The hessian matrix obtained using the "
-                        + self.optimizer
+                        + str(self.optimizer)
                         + " optimizer is non-invertable for the Lognormal_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
                         "You may want to try fitting the model using a different optimizer.",
@@ -257,7 +257,7 @@ class Fit_Lognormal_2P:
                 self.sigma_upper = self.sigma
                 self.sigma_lower = self.sigma
         else:
-            hessian_matrix = hessian(Fit_Lognormal_2P.LL_fs)(
+            hessian_matrix = hessian(Fit_Lognormal_2P.LL_fs)( # type: ignore
                 np.array((self.mu,)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
@@ -277,7 +277,7 @@ class Fit_Lognormal_2P:
                 colorprint(
                     str(
                         "WARNING: The hessian matrix obtained using the "
-                        + self.optimizer
+                        + str(self.optimizer)
                         + " optimizer is non-invertable for the Lognormal_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
                         "You may want to try fitting the model using a different optimizer.",
@@ -566,9 +566,9 @@ class Fit_Lognormal_3P:
         print_results=True,
         CI=0.95,
         quantiles=None,
-        CI_type="time",
+        CI_type: str | None="time",
         optimizer=None,
-        method="MLE",
+        method: str | None="MLE",
         downsample_scatterplot=True,
         **kwargs,
     ):
@@ -658,7 +658,7 @@ class Fit_Lognormal_3P:
             params_2P = [self.mu, self.sigma]
             params_3P = [self.mu, self.sigma, self.gamma]
             # here we need to get mu_SE and sigma_SE from the Lognormal_2P by providing an adjusted dataset (adjusted for gamma)
-            hessian_matrix = hessian(Fit_Lognormal_2P.LL)(
+            hessian_matrix = hessian(Fit_Lognormal_2P.LL)( # type: ignore
                 np.array(tuple(params_2P)),
                 np.array(tuple(failures - self.gamma)),
                 np.array(tuple(right_censored - self.gamma)),
@@ -666,7 +666,7 @@ class Fit_Lognormal_3P:
             try:
                 covariance_matrix = np.linalg.inv(hessian_matrix)
                 # this is to get the gamma_SE. Unfortunately this approach for mu_SE and sigma_SE give SE values that are very large resulting in incorrect CI plots. This is the same method used by Reliasoft
-                hessian_matrix_for_gamma = hessian(Fit_Lognormal_3P.LL)(
+                hessian_matrix_for_gamma = hessian(Fit_Lognormal_3P.LL)( # type: ignore
                     np.array(tuple(params_3P)),
                     np.array(tuple(failures)),
                     np.array(tuple(right_censored)),
@@ -689,7 +689,7 @@ class Fit_Lognormal_3P:
                 colorprint(
                     str(
                         "WARNING: The hessian matrix obtained using the "
-                        + self.optimizer
+                        + str(self.optimizer)
                         + " optimizer is non-invertable for the Lognormal_3P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
                         "You may want to try fitting the model using a different optimizer.",
@@ -821,7 +821,7 @@ class Fit_Lognormal_3P:
                 downsample_scatterplot=downsample_scatterplot,
                 **kwargs,
             )
-            if self.gamma < 0.01:
+            if self.gamma < 0.01 and fig.axes[0].legend_ is not None:
                 # manually change the legend to reflect that Lognormal_3P was fitted. The default legend in the probability plot thinks Lognormal_2P was fitted when gamma=0
                 fig.axes[0].legend_.get_texts()[0].set_text(
                     str(

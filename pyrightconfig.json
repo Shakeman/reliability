@@ -1,4 +1,5 @@
 {
     "reportUnknownMemberType": false,
+    "reportAttributeAccessIssue": false,
     "typeCheckingMode ": "basic",
 }

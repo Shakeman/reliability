@@ -8,6 +8,7 @@ import scipy.stats as ss
 from autograd.differential_operators import hessian
 from autograd.scipy.special import gamma as agamma
 from autograd_gamma import gammaincc
+from matplotlib.figure import Figure
 from numpy.linalg import LinAlgError
 
 from reliability.Distributions import (
@@ -173,10 +174,10 @@ class Fit_Gamma_2P:
         show_probability_plot=True,
         print_results=True,
         CI=0.95,
-        method="MLE",
+        method: str | None="MLE",
         optimizer=None,
         quantiles=None,
-        CI_type="time",
+        CI_type: str | None="time",
         downsample_scatterplot=True,
         **kwargs,
     ):
@@ -236,7 +237,7 @@ class Fit_Gamma_2P:
         # and mu beta (mb) parametrisation
         Z = -ss.norm.ppf((1 - CI) / 2)
         params_ab = [self.alpha, self.beta]
-        hessian_matrix_ab = hessian(Fit_Gamma_2P.LL_ab)(
+        hessian_matrix_ab = hessian(Fit_Gamma_2P.LL_ab)( # type: ignore
             np.array(tuple(params_ab)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -252,7 +253,7 @@ class Fit_Gamma_2P:
             self.beta_lower = self.beta * (np.exp(-Z * (self.beta_SE / self.beta)))
 
             params_mb = [self.mu, self.beta]
-            hessian_matrix_mb = hessian(Fit_Gamma_2P.LL_mb)(
+            hessian_matrix_mb = hessian(Fit_Gamma_2P.LL_mb)( # type: ignore
                 np.array(tuple(params_mb)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
@@ -264,16 +265,17 @@ class Fit_Gamma_2P:
             self.mu_lower = self.mu * (np.exp(-Z * (self.mu_SE / self.mu)))
         except LinAlgError:
             # this exception is rare but can occur with some optimizers
-            colorprint(
-                str(
-                    "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
-                    + " optimizer is non-invertable for the Gamma_2P model.\n"
-                    "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer.",
-                ),
-                text_color="red",
-            )
+            if self.optimizer is not None:
+                colorprint(
+                    str(
+                        "WARNING: The hessian matrix obtained using the "
+                        + self.optimizer
+                        + " optimizer is non-invertable for the Gamma_2P model.\n"
+                        "Confidence interval estimates of the parameters could not be obtained.\n"
+                        "You may want to try fitting the model using a different optimizer.",
+                    ),
+                    text_color="red",
+                )
             self.alpha_SE = 0
             self.beta_SE = 0
             self.mu_SE = 0
@@ -590,7 +592,7 @@ class Fit_Gamma_3P:
         print_results=True,
         CI=0.95,
         optimizer=None,
-        method="MLE",
+        method: str | None="MLE",
         quantiles=None,
         CI_type="time",
         downsample_scatterplot=True,
@@ -689,14 +691,14 @@ class Fit_Gamma_3P:
             params_2P_mb = [self.mu, self.beta]
             params_3P_abg = [self.alpha, self.beta, self.gamma]
             # here we need to get alpha_SE and beta_SE from the Gamma_2P by providing an adjusted dataset (adjusted for gamma)
-            hessian_matrix_ab = hessian(Fit_Gamma_2P.LL_ab)(
+            hessian_matrix_ab = hessian(Fit_Gamma_2P.LL_ab)( # type: ignore
                 np.array(tuple(params_2P_ab)),
                 np.array(tuple(failures - self.gamma)),
                 np.array(tuple(right_censored - self.gamma)),
             )
             try:
                 covariance_matrix_ab = np.linalg.inv(hessian_matrix_ab)
-                hessian_matrix_mb = hessian(Fit_Gamma_2P.LL_mb)(
+                hessian_matrix_mb = hessian(Fit_Gamma_2P.LL_mb)( # type: ignore
                     np.array(tuple(params_2P_mb)),
                     np.array(tuple(failures - self.gamma)),
                     np.array(tuple(right_censored - self.gamma)),
@@ -704,7 +706,7 @@ class Fit_Gamma_3P:
                 covariance_matrix_mb = np.linalg.inv(hessian_matrix_mb)
 
                 # this is to get the gamma_SE. Unfortunately this approach for alpha_SE and beta_SE give SE values that are very large resulting in incorrect CI plots. This is the same method used by Reliasoft
-                hessian_matrix_for_gamma = hessian(Fit_Gamma_3P.LL_abg)(
+                hessian_matrix_for_gamma = hessian(Fit_Gamma_3P.LL_abg)( # type: ignore
                     np.array(tuple(params_3P_abg)),
                     np.array(tuple(failures)),
                     np.array(tuple(right_censored)),
@@ -727,16 +729,17 @@ class Fit_Gamma_3P:
                 self.gamma_lower = self.gamma * (np.exp(-Z * (self.gamma_SE / self.gamma)))
             except LinAlgError:
                 # this exception is rare but can occur with some optimizers
-                colorprint(
-                    str(
-                        "WARNING: The hessian matrix obtained using the "
-                        + self.optimizer
-                        + " optimizer is non-invertable for the Gamma_3P model.\n"
-                        "Confidence interval estimates of the parameters could not be obtained.\n"
-                        "You may want to try fitting the model using a different optimizer.",
-                    ),
-                    text_color="red",
-                )
+                if self.optimizer is not None:
+                    colorprint(
+                        str(
+                            "WARNING: The hessian matrix obtained using the "
+                            + self.optimizer
+                            + " optimizer is non-invertable for the Gamma_3P model.\n"
+                            "Confidence interval estimates of the parameters could not be obtained.\n"
+                            "You may want to try fitting the model using a different optimizer.",
+                        ),
+                        text_color="red",
+                    )
                 self.alpha_SE = 0
                 self.beta_SE = 0
                 self.mu_SE = 0
@@ -860,7 +863,7 @@ class Fit_Gamma_3P:
             from reliability.Probability_plotting import Gamma_probability_plot
 
             rc = None if len(right_censored) == 0 else right_censored
-            fig = Gamma_probability_plot(
+            fig: Figure = Gamma_probability_plot(
                 failures=failures,
                 right_censored=rc,
                 __fitted_dist_params=self,
@@ -869,8 +872,7 @@ class Fit_Gamma_3P:
                 downsample_scatterplot=downsample_scatterplot,
                 **kwargs,
             )
-            if self.gamma < 0.01:
-                # manually change the legend to reflect that Gamma_3P was fitted. The default legend in the probability plot thinks Gamma_2P was fitted when gamma=0
+            if self.gamma < 0.01 and fig.axes[0].legend_ is not None:
                 fig.axes[0].legend_.get_texts()[0].set_text(
                     str(
                         "Fitted Gamma_3P\n(α="

@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import scipy.stats as ss
 from scipy import integrate
 
@@ -65,18 +66,18 @@ class Exponential_Distribution:
         self.name = "Exponential"
         if Lambda is None:
             raise ValueError("Parameter Lambda must be specified. Eg. Exponential_Distribution(Lambda=3)")
-        self.Lambda = float(Lambda)
-        self.gamma = float(gamma)
-        self.parameters = np.array([self.Lambda, self.gamma])
+        self.Lambda: float = float(Lambda)
+        self.gamma: float = float(gamma)
+        self.parameters: npt.NDArray[np.float64] = np.array([self.Lambda, self.gamma])
         mean, var, skew, kurt = ss.expon.stats(scale=1 / self.Lambda, loc=self.gamma, moments="mvsk")
-        self.mean = float(mean)
-        self.variance = float(var)
-        self.standard_deviation = var**0.5
+        self.mean: float = float(mean)
+        self.variance: float = float(var)
+        self.standard_deviation: np.float64 = var**0.5
         self.skewness = float(skew)
-        self.kurtosis = kurt + 3
-        self.excess_kurtosis = float(kurt)
-        self.median = ss.expon.median(scale=1 / self.Lambda, loc=self.gamma)
-        self.mode = self.gamma
+        self.kurtosis: float = kurt + 3
+        self.excess_kurtosis: float = float(kurt)
+        self.median: np.float64 = ss.expon.median(scale=1 / self.Lambda, loc=self.gamma)
+        self.mode: float = self.gamma
         if self.gamma != 0:
             self.param_title = str(
                 "λ=" + round_and_string(self.Lambda, dec) + ",γ=" + round_and_string(self.gamma, dec),
@@ -90,11 +91,11 @@ class Exponential_Distribution:
             )
             self.name2 = "Exponential_2P"
         else:
-            self.param_title = str("λ=" + round_and_string(self.Lambda, dec))
-            self.param_title_long = str("Exponential Distribution (λ=" + round_and_string(self.Lambda, dec) + ")")
-            self.name2 = "Exponential_1P"
-        self.b5 = ss.expon.ppf(0.05, scale=1 / self.Lambda, loc=self.gamma)
-        self.b95 = ss.expon.ppf(0.95, scale=1 / self.Lambda, loc=self.gamma)
+            self.param_title: str = str("λ=" + round_and_string(self.Lambda, dec))
+            self.param_title_long: str = str("Exponential Distribution (λ=" + round_and_string(self.Lambda, dec) + ")")
+            self.name2: str = "Exponential_1P"
+        self.b5: np.float64 = ss.expon.ppf(0.05, scale=1 / self.Lambda, loc=self.gamma)
+        self.b95: np.float64 = ss.expon.ppf(0.95, scale=1 / self.Lambda, loc=self.gamma)
 
         # extracts values for confidence interval plotting
         if "Lambda_SE" in kwargs:

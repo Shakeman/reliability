@@ -1,5 +1,7 @@
 import warnings
 
+import numpy as np
+import numpy.testing as npt
 from numpy.testing import assert_allclose
 
 from reliability.Distributions import (
@@ -440,7 +442,7 @@ def test_Fit_Exponential_1P():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     dist = Exponential_Distribution(Lambda=5)
-    rawdata = dist.random_samples(20, seed=5)
+    rawdata: npt.NDArray[np.float64] = dist.random_samples(20, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
 
     MLE = Fit_Exponential_1P(

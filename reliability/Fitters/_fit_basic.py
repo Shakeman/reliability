@@ -163,12 +163,12 @@ class Fit_Normal_2P:
         right_censored=None,
         show_probability_plot=True,
         print_results=True,
-        CI=0.95,
+        CI: float=0.95,
         quantiles=None,
-        optimizer=None,
-        CI_type="time",
-        method="MLE",
-        force_sigma=None,
+        optimizer: str | None =None,
+        CI_type: str | None ="time",
+        method: str | None ="MLE",
+        force_sigma: float | None =None,
         downsample_scatterplot=True,
         **kwargs,
     ):
@@ -187,10 +187,10 @@ class Fit_Normal_2P:
         right_censored = inputs.right_censored
         CI = inputs.CI
         method = inputs.method
-        optimizer = inputs.optimizer
+        optimizer= inputs.optimizer
         quantiles = inputs.quantiles
         force_sigma = inputs.force_sigma
-        CI_type = inputs.CI_type
+        CI_type= inputs.CI_type
 
         # Obtain least squares estimates
         LS_method = "LS" if method == "MLE" else method
@@ -231,7 +231,7 @@ class Fit_Normal_2P:
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.mu, self.sigma]
         if force_sigma is None:
-            hessian_matrix = hessian(Fit_Normal_2P.LL)(
+            hessian_matrix = hessian(Fit_Normal_2P.LL)( # type: ignore
                 np.array(tuple(params)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
@@ -250,7 +250,7 @@ class Fit_Normal_2P:
                 colorprint(
                     str(
                         "WARNING: The hessian matrix obtained using the "
-                        + self.optimizer
+                        + str(self.optimizer)
                         + " optimizer is non-invertable for the Normal_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
                         "You may want to try fitting the model using a different optimizer.",
@@ -266,7 +266,7 @@ class Fit_Normal_2P:
                 self.sigma_lower = self.sigma
 
         else:
-            hessian_matrix = hessian(Fit_Normal_2P.LL_fs)(
+            hessian_matrix = hessian(Fit_Normal_2P.LL_fs)( # type: ignore
                 np.array((self.mu,)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
@@ -286,7 +286,7 @@ class Fit_Normal_2P:
                 colorprint(
                     str(
                         "WARNING: The hessian matrix obtained using the "
-                        + self.optimizer
+                        + str(self.optimizer)
                         + " optimizer is non-invertable for the Normal_2P model.\n"
                         "Confidence interval estimates of the parameters could not be obtained.\n"
                         "You may want to try fitting the model using a different optimizer.",
@@ -568,8 +568,8 @@ class Fit_Gumbel_2P:
         print_results=True,
         CI=0.95,
         quantiles=None,
-        CI_type="time",
-        method="MLE",
+        CI_type: str | None="time",
+        method: str | None="MLE",
         optimizer=None,
         downsample_scatterplot=True,
         **kwargs,
@@ -626,7 +626,7 @@ class Fit_Gumbel_2P:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.mu, self.sigma]
-        hessian_matrix = hessian(Fit_Gumbel_2P.LL)(
+        hessian_matrix = hessian(Fit_Gumbel_2P.LL)( # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -642,16 +642,17 @@ class Fit_Gumbel_2P:
             self.sigma_lower = self.sigma * (np.exp(-Z * (self.sigma_SE / self.sigma)))
         except LinAlgError:
             # this exception is rare but can occur with some optimizers
-            colorprint(
-                str(
-                    "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
-                    + " optimizer is non-invertable for the Gumbel_2P model.\n"
-                    "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer.",
-                ),
-                text_color="red",
-            )
+            if self.optimizer is not None:
+                colorprint(
+                    str(
+                        "WARNING: The hessian matrix obtained using the "
+                        + self.optimizer
+                        + " optimizer is non-invertable for the Gumbel_2P model.\n"
+                        "Confidence interval estimates of the parameters could not be obtained.\n"
+                        "You may want to try fitting the model using a different optimizer.",
+                    ),
+                    text_color="red",
+                )
             self.mu_SE = 0
             self.sigma_SE = 0
             self.Cov_mu_sigma = 0
@@ -908,7 +909,7 @@ class Fit_Beta_2P:
         print_results=True,
         CI=0.95,
         quantiles=None,
-        method="MLE",
+        method: str | None="MLE",
         optimizer=None,
         downsample_scatterplot=True,
         **kwargs,
@@ -964,7 +965,7 @@ class Fit_Beta_2P:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.alpha, self.beta]
-        hessian_matrix = hessian(Fit_Beta_2P.LL)(
+        hessian_matrix = hessian(Fit_Beta_2P.LL)( # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -980,16 +981,17 @@ class Fit_Beta_2P:
             self.beta_lower = self.beta * (np.exp(-Z * (self.beta_SE / self.beta)))
         except LinAlgError:
             # this exception is rare but can occur with some optimizers
-            colorprint(
-                str(
-                    "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
-                    + " optimizer is non-invertable for the Beta_2P model.\n"
-                    "Confidence interval estimates of the parameters could not be obtained.\n"
-                    "You may want to try fitting the model using a different optimizer.",
-                ),
-                text_color="red",
-            )
+            if self.optimizer is not None:
+                colorprint(
+                    str(
+                        "WARNING: The hessian matrix obtained using the "
+                        + self.optimizer
+                        + " optimizer is non-invertable for the Beta_2P model.\n"
+                        "Confidence interval estimates of the parameters could not be obtained.\n"
+                        "You may want to try fitting the model using a different optimizer.",
+                    ),
+                    text_color="red",
+                )
             self.alpha_SE = 0
             self.beta_SE = 0
             self.Cov_alpha_beta = 0

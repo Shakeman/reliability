@@ -115,9 +115,9 @@ class xlsx_to_XCN:
             raise ValueError(error_str)
         C_out = []
         # need to upper() the input since we are comparing with C_upper
-        if type(failure_code_in_xlsx) in [str, np.str_]:
+        if failure_code_in_xlsx is not None and type(failure_code_in_xlsx) in [str, np.str_]:
             failure_code_in_xlsx = failure_code_in_xlsx.upper()
-        if type(censor_code_in_xlsx) in [str, np.str_]:
+        if censor_code_in_xlsx is not None and type(censor_code_in_xlsx) in [str, np.str_]:
             censor_code_in_xlsx = censor_code_in_xlsx.upper()
 
         for item in C_upper:
@@ -625,12 +625,9 @@ class XCN_to_FR:
             )
             raise ValueError(error_str)
 
-        if type(failure_code) in [
-            str,
-            np.str_,
-        ]:  # need to upper() the input since we are comparing with C_upper
+        if failure_code is not None and type(failure_code) in [str, np.str_]:
             failure_code = failure_code.upper()
-        if type(censor_code) in [str, np.str_]:
+        if censor_code is not None and type(censor_code) in [str, np.str_]:
             censor_code = censor_code.upper()
 
         failures = np.array([])

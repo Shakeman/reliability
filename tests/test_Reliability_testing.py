@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from numpy.testing import assert_allclose
@@ -83,40 +84,13 @@ def test_KStest():
     assert results.hypothesis == "ACCEPT"
 
 
-@pytest.mark.flaky(reruns=3)
+
 def test_likelihood_plot():
-    old_design = [
-        2,
-        9,
-        23,
-        38,
-        67,
-        2,
-        11,
-        28,
-        40,
-        76,
-        3,
-        17,
-        33,
-        45,
-        90,
-        4,
-        17,
-        34,
-        55,
-        115,
-        6,
-        19,
-        34,
-        56,
-        126,
-        9,
-        21,
-        37,
-        57,
-        197,
-    ]
-    new_design = [15, 116, 32, 148, 61, 178, 67, 181, 75, 183]
-    likelihood_plot(distribution="Weibull", failures=old_design, CI=[0.9, 0.95])
-    likelihood_plot(distribution="Weibull", failures=new_design, CI=[0.9, 0.95])
+    old_design = [2,9,23,38,67,2,11,28,40,76,3,17,33,45,90,4,17,34,55,115,6,19,34,56,126,9,21,37,57,197]
+    new_design = [15,116,32,148,61,178,67,181,75,183]
+
+    fig = likelihood_plot(distribution="Weibull", failures=old_design, CI=[0.9, 0.95])
+    assert isinstance(fig, plt.Figure)
+
+    fig = likelihood_plot(distribution="Weibull", failures=new_design, CI=[0.9, 0.95])
+    assert isinstance(fig, plt.Figure)

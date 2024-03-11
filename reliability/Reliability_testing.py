@@ -1203,7 +1203,7 @@ class KStest:
             plt.subplots_adjust(top=0.9)
 
 
-def likelihood_plot(distribution, failures, right_censored=None, CI=0.95, method="MLE", color=None):
+def likelihood_plot(distribution, failures, right_censored=None, CI: float | list[float]|None =0.95, method="MLE", color=None):
     """Generates a likelihood contour plot. This is used for comparing distributions for statistically significant
     differences.
 

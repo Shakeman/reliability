@@ -13,7 +13,6 @@ MCF_nonparametric - Mean CUmulative Function Non-parametric. Used to determine
 MCF_parametric - Mean Cumulative Function Parametric. Fits a parametric model to
     the data obtained from MCF_nonparametric
 """
-from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -91,7 +90,7 @@ class reliability_growth:
 
     def __init__(
         self,
-        times=None,
+        times: npt.NDArray[np.float64] | None =None,
         target_MTBF=None,
         show_plot=True,
         print_results=True,
@@ -100,7 +99,7 @@ class reliability_growth:
         **kwargs,
     ):
         if type(times) in [list, np.ndarray]:
-            times: npt.NDArray[Any] = np.sort(np.asarray(times))
+            times = np.sort(np.asarray(times))
         else:
             raise ValueError("times must be an array or list of failure times")
 
@@ -235,8 +234,8 @@ class reliability_growth:
                     target_label = "Target MTBF"
                 # plot the red line tracing the target MTBF
                 plt.plot(
-                    [0, t_target, t_target],
-                    [target_MTBF, target_MTBF, 0],
+                    np.array([0, t_target, t_target]),
+                    np.array([target_MTBF, target_MTBF, 0]),
                     color="red",
                     linewidth=1,
                     label=target_label,

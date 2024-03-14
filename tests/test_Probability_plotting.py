@@ -4,6 +4,7 @@ import numpy.typing as npt
 import pytest
 
 from reliability.Distributions import (
+    Beta_Distribution,
     Exponential_Distribution,
     Gumbel_Distribution,
     Loglogistic_Distribution,
@@ -11,7 +12,9 @@ from reliability.Distributions import (
     Normal_Distribution,
     Weibull_Distribution,
 )
+from reliability.Other_functions import make_right_censored_data
 from reliability.Probability_plotting import (
+    Beta_probability_plot,
     Exponential_probability_plot,
     Exponential_probability_plot_Weibull_Scale,
     Gumbel_probability_plot,
@@ -20,6 +23,7 @@ from reliability.Probability_plotting import (
     Normal_probability_plot,
     PP_plot_parametric,
     PP_plot_semiparametric,
+    QQ_plot_parametric,
     QQ_plot_semiparametric,
     Weibull_probability_plot,
     plot_points,
@@ -366,3 +370,73 @@ def test_Lognormal_probability_plot():
 
     with pytest.raises(ValueError):
         Lognormal_probability_plot(failures=[10, 20], CI_type="invalid type")
+
+def test_QQ_plot_parametric():
+    # test Case 1 Basic
+    X_dist = Weibull_Distribution(alpha=100, beta=2)
+    Y_dist = Weibull_Distribution(alpha=120, beta=3)
+    expected_model = [1.1371382215319796, 0.839195193693172, 33.01171610495985]
+    fig, model = QQ_plot_parametric(X_dist=X_dist, Y_dist=Y_dist)
+    assert isinstance(fig, plt.Figure)
+    assert np.allclose(model, expected_model)
+
+    # test Case 2 No X input
+    with pytest.raises(ValueError):
+        QQ_plot_parametric(X_dist=X_dist, Y_dist=None)
+
+    # Test Case 3 No Y Input
+    with pytest.raises(ValueError):
+        QQ_plot_parametric(X_dist=None, Y_dist=Y_dist)
+
+    # Test Case 4 with keyword arguments
+    fig, model = QQ_plot_parametric(X_dist=X_dist, Y_dist=Y_dist, show_fitted_lines=False, show_diagonal_line=True)
+    assert isinstance(fig, plt.Figure)
+    assert np.allclose(model, expected_model)
+
+    # Test Case 5 with downsampling
+    fig, model = QQ_plot_parametric(X_dist=X_dist, Y_dist=Y_dist, downsample_scatterplot=True)
+    assert isinstance(fig, plt.Figure)
+    assert np.allclose(model, expected_model)
+
+def test_Beta_probability_plot():
+    # Test case 1: Basic test case with failure data
+    dist = Beta_Distribution(alpha=5, beta=4)
+    rawdata = dist.random_samples(20, seed=5)
+    data = make_right_censored_data(data=rawdata, threshold=dist.mean)
+    fig = Beta_probability_plot(failures=data.failures)
+    assert isinstance(fig, plt.Figure)
+
+    # Test case 2: Test case with right censored data
+    fig = Beta_probability_plot(failures=data.failures, right_censored=data.right_censored)
+    assert isinstance(fig, plt.Figure)
+
+    # Test case 3: Test case with fitted distribution
+    fig = Beta_probability_plot(failures=data.failures, __fitted_dist_params=dist)
+    assert isinstance(fig, plt.Figure)
+
+    # Test case 4: Test case with custom parameters
+    fig = Beta_probability_plot(failures=data.failures, show_fitted_distribution=False, show_scatter_points=False)
+    assert isinstance(fig, plt.Figure)
+
+    # Test case 5: Test case with downsampling
+    dist = Beta_Distribution(alpha=5, beta=4)
+    rawdata = dist.random_samples(1000, seed=5)
+    data = make_right_censored_data(data=rawdata, threshold=dist.mean)
+    fig = Beta_probability_plot(failures=data.failures, downsample_scatterplot=True)
+    assert isinstance(fig, plt.Figure)
+
+    # Test case 6: Test case with invalid input
+    with pytest.raises(ValueError):
+        Beta_probability_plot(failures=[], show_fitted_distribution=True)
+
+    with pytest.raises(ValueError):
+        Beta_probability_plot(failures="invalid input")
+
+    with pytest.raises(ValueError):
+        Beta_probability_plot(failures=[10], __fitted_dist_params=None)
+
+    with pytest.raises(ValueError):
+        Beta_probability_plot(failures=[10, 20], CI=1.5)
+
+    with pytest.raises(ValueError):
+        Beta_probability_plot(failures=[10, 20], CI_type="invalid type")

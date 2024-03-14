@@ -106,7 +106,7 @@ def test_MCF_nonparametric():
 
 def test_MCF_parametric():
     times = MCF_1().times
-    results = MCF_parametric(data=times, show_plot=False, print_results=False)
+    results = MCF_parametric(data=times)
     assert_allclose(sum(results.MCF), 22.833333333333332, rtol=rtol, atol=atol)
     assert_allclose(sum(results.times), 214, rtol=rtol, atol=atol)
     assert_allclose(results.alpha, 11.980589826209348, rtol=rtol, atol=atol)

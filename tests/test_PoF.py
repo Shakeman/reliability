@@ -1,4 +1,3 @@
-import pytest
 from numpy.testing import assert_allclose
 
 from reliability.PoF import (
@@ -18,7 +17,7 @@ atol = 1e-8
 rtol = 1e-7
 
 
-@pytest.mark.flaky(reruns=3)
+
 def test_SN_diagram():
     stress: list[int] = [340, 300, 290, 275, 260, 255, 250, 235, 230, 220, 215, 210]
     cycles: list[int] = [15000, 24000, 36000, 80000, 177000, 162000, 301000, 290000, 361000, 881000, 1300000, 2500000]

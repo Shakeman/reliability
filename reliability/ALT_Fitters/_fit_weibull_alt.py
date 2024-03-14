@@ -226,7 +226,7 @@ class Fit_Weibull_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.b, self.beta]
-        hessian_matrix = hessian(LL_func)(
+        hessian_matrix = hessian(LL_func)(# type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -252,7 +252,7 @@ class Fit_Weibull_Exponential:
             colorprint(
                 str(
                     "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
+                    + str(self.optimizer)
                     + " optimizer is non-invertable for the Weibull_Exponential model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
                     "You may want to try fitting the model using a different optimizer.",
@@ -656,7 +656,7 @@ class Fit_Weibull_Eyring:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.c, self.beta]
-        hessian_matrix = hessian(LL_func)(
+        hessian_matrix = hessian(LL_func)(# type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -682,7 +682,7 @@ class Fit_Weibull_Eyring:
             colorprint(
                 str(
                     "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
+                    + str(self.optimizer)
                     + " optimizer is non-invertable for the Weibull_Eyring model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
                     "You may want to try fitting the model using a different optimizer.",
@@ -1080,7 +1080,7 @@ class Fit_Weibull_Power:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.n, self.beta]
-        hessian_matrix = hessian(LL_func)(
+        hessian_matrix = hessian(LL_func)(# type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1106,7 +1106,7 @@ class Fit_Weibull_Power:
             colorprint(
                 str(
                     "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
+                    + str(self.optimizer)
                     + " optimizer is non-invertable for the Weibull_Power model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
                     "You may want to try fitting the model using a different optimizer.",
@@ -1544,7 +1544,7 @@ class Fit_Weibull_Dual_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.b, self.c, self.beta]
-        hessian_matrix = hessian(LL_func)(
+        hessian_matrix = hessian(LL_func)(# type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1576,7 +1576,7 @@ class Fit_Weibull_Dual_Exponential:
             colorprint(
                 str(
                     "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
+                    + str(self.optimizer)
                     + " optimizer is non-invertable for the Weibull_Dual_Exponential model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
                     "You may want to try fitting the model using a different optimizer.",
@@ -2032,7 +2032,7 @@ class Fit_Weibull_Power_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.c, self.n, self.beta]
-        hessian_matrix = hessian(LL_func)(
+        hessian_matrix = hessian(LL_func)(# type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -2064,7 +2064,7 @@ class Fit_Weibull_Power_Exponential:
             colorprint(
                 str(
                     "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
+                    + str(self.optimizer)
                     + " optimizer is non-invertable for the Weibull_Power_Exponential model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
                     "You may want to try fitting the model using a different optimizer.",
@@ -2533,7 +2533,7 @@ class Fit_Weibull_Dual_Power:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.c, self.m, self.n, self.beta]
-        hessian_matrix = hessian(LL_func)(
+        hessian_matrix = hessian(LL_func)(# type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -2565,7 +2565,7 @@ class Fit_Weibull_Dual_Power:
             colorprint(
                 str(
                     "WARNING: The hessian matrix obtained using the "
-                    + self.optimizer
+                    + str(self.optimizer)
                     + " optimizer is non-invertable for the Weibull_Dual_Power model.\n"
                     "Confidence interval estimates of the parameters could not be obtained.\n"
                     "You may want to try fitting the model using a different optimizer.",

@@ -1069,7 +1069,7 @@ class MCF_parametric:
 
     """
 
-    def __init__(self, data, CI=0.95, plot_CI=True, print_results=True, show_plot=True, **kwargs):
+    def __init__(self, data, CI=0.95):
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
@@ -1114,7 +1114,8 @@ class MCF_parametric:
         self.alpha_lower = self.alpha * (np.exp(-Z * (self.alpha_SE / self.alpha)))
         self.beta_upper = self.beta * (np.exp(Z * (self.beta_SE / self.beta)))
         self.beta_lower = self.beta * (np.exp(-Z * (self.beta_SE / self.beta)))
-
+        self.CI = CI
+        self.Z = Z
         Data = {
             "Parameter": ["Alpha", "Beta"],
             "Point Estimate": [self.alpha, self.beta],
@@ -1133,66 +1134,66 @@ class MCF_parametric:
             ],
         )
 
-        if print_results is True:
-            CI_rounded = CI * 100
-            if CI_rounded % 1 == 0:
-                CI_rounded = int(CI * 100)
-            colorprint(
-                str("Mean Cumulative Function Parametric Model (" + str(CI_rounded) + "% CI):"),
-                bold=True,
-                underline=True,
+    def print_results(self):
+        CI_rounded = self.CI * 100
+        if CI_rounded % 1 == 0:
+            CI_rounded = int(self.CI * 100)
+        colorprint(
+            str("Mean Cumulative Function Parametric Model (" + str(CI_rounded) + "% CI):"),
+            bold=True,
+            underline=True,
+        )
+        print("MCF = (t/α)^β")
+        print(self.results.to_string(index=False), "\n")
+        if self.beta_upper <= 1:
+            print("Since Beta is less than 1, the system repair rate is IMPROVING over time.")
+        elif self.beta_lower < 1 and self.beta_upper > 1:
+            print("Since Beta is approximately 1, the system repair rate is remaining CONSTANT over time.")
+        else:
+            print("Since Beta is greater than 1, the system repair rate is WORSENING over time.")
+
+    def plot(self, plot_CI=True, **kwargs):
+        if "color" in kwargs:
+            color = kwargs.pop("color")
+            marker_color = "k"
+        else:
+            color = "steelblue"
+            marker_color = "k"
+
+        marker = kwargs.pop("marker") if "marker" in kwargs else "."
+
+        label = kwargs.pop("label") if "label" in kwargs else "$\\hat{MCF} = (\\frac{t}{\\alpha})^\\beta$"
+
+        x_line = np.linspace(0.001, max(self.times) * 10, 1000)
+        y_line = (x_line / self.alpha) ** self.beta
+        plt.plot(x_line, y_line, color=color, label=label, **kwargs)
+
+        if plot_CI is True:
+            p1 = -(self.beta / self.alpha) * (x_line / self.alpha) ** self.beta
+            p2 = ((x_line / self.alpha) ** self.beta) * np.log(x_line / self.alpha)
+            var = self.var_alpha * p1**2 + self.var_beta * p2**2 + 2 * p1 * p2 * self.cov_alpha_beta
+            SD = var**0.5
+            y_line_lower = y_line * np.exp((-self.Z * SD) / y_line)
+            y_line_upper = y_line * np.exp((self.Z * SD) / y_line)
+            plt.fill_between(
+                x_line,
+                y_line_lower,
+                y_line_upper,
+                color=color,
+                alpha=0.3,
+                linewidth=0,
             )
-            print("MCF = (t/α)^β")
-            print(self.results.to_string(index=False), "\n")
-            if self.beta_upper <= 1:
-                print("Since Beta is less than 1, the system repair rate is IMPROVING over time.")
-            elif self.beta_lower < 1 and self.beta_upper > 1:
-                print("Since Beta is approximately 1, the system repair rate is remaining CONSTANT over time.")
-            else:
-                print("Since Beta is greater than 1, the system repair rate is WORSENING over time.")
 
-        if show_plot is True:
-            if "color" in kwargs:
-                color = kwargs.pop("color")
-                marker_color = "k"
-            else:
-                color = "steelblue"
-                marker_color = "k"
-
-            marker = kwargs.pop("marker") if "marker" in kwargs else "."
-
-            label = kwargs.pop("label") if "label" in kwargs else "$\\hat{MCF} = (\\frac{t}{\\alpha})^\\beta$"
-
-            x_line = np.linspace(0.001, max(self.times) * 10, 1000)
-            y_line = (x_line / alpha) ** beta
-            plt.plot(x_line, y_line, color=color, label=label, **kwargs)
-
-            if plot_CI is True:
-                p1 = -(beta / alpha) * (x_line / alpha) ** beta
-                p2 = ((x_line / alpha) ** beta) * np.log(x_line / alpha)
-                var = var_alpha * p1**2 + var_beta * p2**2 + 2 * p1 * p2 * cov_alpha_beta
-                SD = var**0.5
-                y_line_lower = y_line * np.exp((-Z * SD) / y_line)
-                y_line_upper = y_line * np.exp((Z * SD) / y_line)
-                plt.fill_between(
-                    x_line,
-                    y_line_lower,
-                    y_line_upper,
-                    color=color,
-                    alpha=0.3,
-                    linewidth=0,
-                )
-
-            plt.scatter(self.times, self.MCF, marker=marker, color=marker_color, **kwargs)
-            plt.ylabel("Mean cumulative number of failures")
-            plt.xlabel("Time")
-            title_str = str(
-                "Parametric estimate of the Mean Cumulative Function\n"
-                + r"$MCF = (\frac{t}{\alpha})^\beta$ with α="
-                + str(round(alpha, 4))
-                + ", β="
-                + str(round(beta, 4)),
-            )
-            plt.xlim(0, max(self.times) * 1.2)
-            plt.ylim(0, max(self.MCF) * 1.4)
-            plt.title(title_str)
+        plt.scatter(self.times, self.MCF, marker=marker, color=marker_color, **kwargs)
+        plt.ylabel("Mean cumulative number of failures")
+        plt.xlabel("Time")
+        title_str = str(
+            "Parametric estimate of the Mean Cumulative Function\n"
+            + r"$MCF = (\frac{t}{\alpha})^\beta$ with α="
+            + str(round(self.alpha, 4))
+            + ", β="
+            + str(round(self.beta, 4)),
+        )
+        plt.xlim(0, max(self.times) * 1.2)
+        plt.ylim(0, max(self.MCF) * 1.4)
+        plt.title(title_str)

@@ -6,6 +6,7 @@ import pytest
 from reliability.Distributions import (
     Beta_Distribution,
     Exponential_Distribution,
+    Gamma_Distribution,
     Gumbel_Distribution,
     Loglogistic_Distribution,
     Lognormal_Distribution,
@@ -17,6 +18,7 @@ from reliability.Probability_plotting import (
     Beta_probability_plot,
     Exponential_probability_plot,
     Exponential_probability_plot_Weibull_Scale,
+    Gamma_probability_plot,
     Gumbel_probability_plot,
     Loglogistic_probability_plot,
     Lognormal_probability_plot,
@@ -440,3 +442,48 @@ def test_Beta_probability_plot():
 
     with pytest.raises(ValueError):
         Beta_probability_plot(failures=[10, 20], CI_type="invalid type")
+
+
+def test_Gamma_probability_plot():
+    # Test case 1: Basic test case with failure data
+    failures = [10, 20, 30, 40, 50]
+    fig = Gamma_probability_plot(failures=failures)
+    assert isinstance(fig, plt.Figure)
+
+    # Test case 2: Test case with right censored data
+    failures = [10, 20, 30, 40, 50]
+    right_censored = [25, 35]
+    fig = Gamma_probability_plot(failures=failures, right_censored=right_censored)
+    assert isinstance(fig, plt.Figure)
+
+    # Test case 3: Test case with fitted distribution
+    failures = [10, 20, 30, 40, 50]
+    fitted_dist_params = Gamma_Distribution(alpha=100, beta=2)
+    fig = Gamma_probability_plot(failures=failures, __fitted_dist_params=fitted_dist_params)
+    assert isinstance(fig, plt.Figure)
+
+    # Test case 4: Test case with custom parameters
+    failures = [10, 20, 30, 40, 50]
+    fig = Gamma_probability_plot(failures=failures, show_fitted_distribution=False, show_scatter_points=False)
+    assert isinstance(fig, plt.Figure)
+
+    # Test case 5: Test case with downsampling
+    failures = np.random.randint(1, 100, size=10000)
+    fig = Gamma_probability_plot(failures=failures, downsample_scatterplot=True)
+    assert isinstance(fig, plt.Figure)
+
+    # Test case 6: Test case with invalid input
+    with pytest.raises(ValueError):
+        Gamma_probability_plot(failures=[], show_fitted_distribution=True)
+
+    with pytest.raises(ValueError):
+        Gamma_probability_plot(failures="invalid input")
+
+    with pytest.raises(ValueError):
+        Gamma_probability_plot(failures=[10], __fitted_dist_params=None)
+
+    with pytest.raises(ValueError):
+        Gamma_probability_plot(failures=[10, 20], CI=1.5)
+
+    with pytest.raises(ValueError):
+        Gamma_probability_plot(failures=[10, 20], CI_type="invalid type")

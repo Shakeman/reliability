@@ -1,5 +1,5 @@
-from .Old_Utils import (
-    ALT_fitters_input_checking,
+from reliability.Utils._input_checking_utils import ALT_fitters_input_checking, fitters_input_checking
+from reliability.Utils._Old_Utils import (
     ALT_least_squares,
     ALT_MLE_optimization,
     ALT_prob_plot,
@@ -13,7 +13,6 @@ from .Old_Utils import (
     distributions_input_checking,
     extract_CI,
     fill_no_autoscale,
-    fitters_input_checking,
     generate_X_array,
     get_axes_limits,
     least_squares,

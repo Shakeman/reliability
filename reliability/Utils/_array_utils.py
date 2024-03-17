@@ -8,6 +8,41 @@ import scipy.stats as ss
 from reliability.Utils._ancillary_utils import colorprint
 
 
+def anderson_darling(fitted_cdf, empirical_cdf):
+    """Calculates the Anderson-Darling goodness of fit statistic.
+    These formulas are based on the method used in MINITAB which gives an
+    adjusted form of the original AD statistic described on Wikipedia.
+
+    Parameters
+    ----------
+    fitted_cdf : list, array
+        The fitted CDF values at the data points
+    empirical_cdf  : list, array
+        The empirical (rank adjustment) CDF values at the data points
+
+    Returns
+    -------
+    AD : float
+        The anderson darling (adjusted) test statistic.
+
+    """
+    if type(fitted_cdf) != np.ndarray:
+        fitted_cdf = [fitted_cdf]  # required when there is only 1 failure
+    Z = np.sort(np.asarray(fitted_cdf))
+    Zi = np.hstack([Z, 1 - 1e-12])
+    Zi_1 = (np.hstack([0, Zi]))[0:-1]  # Z_i-1
+    FnZi = np.sort(np.asarray(empirical_cdf))
+    FnZi_1 = np.hstack([0, FnZi])  # Fn(Z_i-1)
+    lnZi = np.log(Zi)
+    lnZi_1 = np.hstack([0, lnZi])[0:-1]
+
+    A = -Zi - np.log(1 - Zi) + Zi_1 + np.log(1 - Zi_1)
+    B = 2 * np.log(1 - Zi) * FnZi_1 - 2 * np.log(1 - Zi_1) * FnZi_1
+    C = lnZi * FnZi_1**2 - np.log(1 - Zi) * FnZi_1**2 - lnZi_1 * FnZi_1**2 + np.log(1 - Zi_1) * FnZi_1**2
+    n = len(fitted_cdf)
+    AD = n * ((A + B + C).sum())
+    return AD
+
 def unpack_single_arrays(array):
     """Unpacks arrays with a single element to return just that element
 

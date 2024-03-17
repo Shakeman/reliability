@@ -1,25 +1,29 @@
-from reliability.Utils._ancillary_utils import colorprint, round_and_string
-from reliability.Utils._input_checking_utils import ALT_fitters_input_checking, fitters_input_checking
+from reliability.Utils._ancillary_utils import colorprint, round_and_string, write_df_to_xlsx
+from reliability.Utils._array_utils import (
+    clean_CI_arrays,
+    generate_X_array,
+    no_reverse,
+    removeNaNs,
+    transform_spaced,
+    unpack_single_arrays,
+    xy_downsample,
+    zeroise_below_gamma,
+)
+from reliability.Utils._input_checking_utils import (
+    ALT_fitters_input_checking,
+    distributions_input_checking,
+    fitters_input_checking,
+    validate_CI_params,
+)
 from reliability.Utils._Old_Utils import (
     ALT_prob_plot,
     anderson_darling,
     axes_transforms,
-    clean_CI_arrays,
     distribution_confidence_intervals,
-    distributions_input_checking,
     extract_CI,
-    generate_X_array,
     life_stress_plot,
     make_fitted_dist_params_for_ALT_probplots,
-    no_reverse,
     probability_plot_xylims,
-    removeNaNs,
-    transform_spaced,
-    unpack_single_arrays,
-    validate_CI_params,
-    write_df_to_xlsx,
-    xy_downsample,
-    zeroise_below_gamma,
 )
 from reliability.Utils._optimization_utils import ALT_MLE_optimization, LS_optimization, MLE_optimization
 from reliability.Utils._plot_utils import (

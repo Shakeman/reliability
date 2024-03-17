@@ -1,9 +1,256 @@
+
 import numpy as np
 import pandas as pd
+import scipy.stats as ss
 
 from reliability.Utils._ancillary_utils import colorprint
+from reliability.Utils._array_utils import (
+    generate_X_array,
+)
 
 
+def distributions_input_checking(
+    self,
+    func,
+    xvals,
+    xmin,
+    xmax,
+    show_plot=None,
+    plot_CI=None,
+    CI_type=None,
+    CI=None,
+    CI_y=None,
+    CI_x=None,
+):
+    """Performs checks and sets default values for the inputs to distributions
+    sub function (PDF, CDF, SF, HF, CHF)
+
+    Parameters
+    ----------
+    self : object
+        Distribution object created by reliability.Distributions
+    func : str
+        Must be either 'PDF','CDF', 'SF', 'HF', 'CHF'
+    xvals : array, list
+        x-values for plotting.
+    xmin : int, float
+        minimum x-value for plotting.
+    xmax : int, float
+        maximum x-value for plotting.
+    show_plot : bool
+        Whether the plot is to be shown.
+    plot_CI : bool, optional
+        Whether the confidence intervals are to be shown on the plot. Default is
+        None.
+    CI_type : str, optional
+        If specified, it must be "time" or "reliability". Default is None
+    CI : float, optional
+        The confidence intervals. If specified, it must be between 0 and 1.
+        Default is None.
+    CI_y : list, array, optional
+        The confidence interval y-values to trace. Default is None.
+    CI_x : list, array, optional
+        The confidence interval x-values to trace. Default is None.
+
+    Returns
+    -------
+    X : array
+        An array of the x-values for the plot. Created using generate_X_array
+    xvals : array, list
+        x-values for plotting.
+    xmin : int, float
+        minimum x-value for plotting.
+    xmax : int, float
+        maximum x-value for plotting.
+    show_plot : bool
+        Whether the plot is to be shown. Default is True. Only returned if func
+        is 'PDF','CDF', 'SF', 'HF, or 'CHF'
+    plot_CI : bool
+        Whether the confidence intervals are to be shown on the plot. Default is
+        True. Only returned if func is 'CDF', 'SF', or 'CHF' and self.name
+        !='Beta'.
+    CI_type : str
+        The type of confidence interval. Will be either "time", "reliability", or "none".
+        Default is "time". Only returned if func is 'CDF', 'SF', or 'CHF'.
+        If self.name =='Beta' or self.name=='Exponential' it will return 'none'. If
+        self.CI_type is specified and CI_type is not specified then self.CI_type will be
+        used for CI_type.
+    CI : float
+        The confidence intervals between 0 and 1. Default is 0.95. Only returned
+        if func is 'CDF', 'SF', or 'CHF' and self.name !='Beta'. If self.CI is
+        specified and CI is None then self.CI will be used for CI.
+    CI_y : list, array, float, int
+        The confidence interval y-values to trace. Default is None. Only
+        returned if func is 'CDF', 'SF', or 'CHF' and self.name !='Beta'.
+    CI_x : list, array, float, int
+        The confidence interval x-values to trace. Default is None. Only
+        returned if func is 'CDF', 'SF', or 'CHF' and self.name !='Beta'.
+
+    """
+    if func not in ["PDF", "CDF", "SF", "HF", "CHF", "ALL"]:
+        raise ValueError("func must be either 'PDF','CDF', 'SF', 'HF', 'CHF', 'ALL'")
+
+    # type checking
+    if type(xvals) not in [type(None), list, np.ndarray, int, float, np.float64]:
+        raise ValueError(
+            "xvals must be an int, float, list, or array. Default is None. Value of xvals is:" + print(xvals),
+        )
+    if type(xmin) not in [type(None), int, float]:
+        raise ValueError("xmin must be an int or float. Default is None")
+    if type(xmax) not in [type(None), int, float]:
+        raise ValueError("xmax must be an int or float. Default is None")
+    if type(show_plot) not in [type(None), bool]:
+        raise ValueError("show_plot must be True or False. Default is True")
+    if type(plot_CI) not in [type(None), bool]:
+        raise ValueError(
+            "plot_CI must be True or False. Default is True. Only used if the distribution object was created by Fitters.",
+        )
+    if type(CI_type) not in [type(None), str]:
+        raise ValueError(
+            'CI_type must be "time" or "reliability". Default is "time". Only used if the distribution object was created by Fitters.',
+        )
+    if CI is True:
+        CI = 0.95
+    if CI is False:
+        CI = 0.95
+        plot_CI = False
+    if type(CI) not in [type(None), float]:
+        raise ValueError(
+            "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval. Only used if the distribution object was created by Fitters.",
+        )
+    if type(CI_y) not in [type(None), list, np.ndarray, float, int]:
+        raise ValueError(
+            'CI_y must be a list, array, float, or int. Default is None. Only used if the distribution object was created by Fitters anc CI_type="time".',
+        )
+    if type(CI_x) not in [type(None), list, np.ndarray, float, int]:
+        raise ValueError(
+            'CI_x must be a list, array, float, or int. Default is None. Only used if the distribution object was created by Fitters anc CI_type="reliability".',
+        )
+
+    # default values
+    if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
+        X = xvals
+        show_plot = False
+    else:
+        X = generate_X_array(dist=self, xvals=xvals, xmin=xmin, xmax=xmax)
+
+    if CI is None and self.Z is None:
+        CI = 0.95
+    elif CI is not None:  # CI takes precedence over Z
+        if CI <= 0 or CI >= 1:
+            raise ValueError("CI must be between 0 and 1")
+    else:  # CI is None and Z is not None
+        CI = 1 - ss.norm.cdf(-self.Z) * 2  # converts Z to CI
+
+    if show_plot is None:
+        show_plot = True
+
+    no_CI_array = ["None", "NONE", "none", "OFF", "Off", "off"]
+    if self.name == "Exponential":
+        if CI_type not in no_CI_array and CI_type is not None:
+            colorprint(
+                "WARNING: CI_type is not required for the Exponential distribution since the confidence intervals of time and reliability are identical",
+                text_color="red",
+            )
+        CI_type = None
+    elif self.name == "Beta":
+        if CI_type not in no_CI_array and CI_type is not None:
+            colorprint(
+                "WARNING: CI_type is not used for the Beta distribution since the confidence intervals are not implemented",
+                text_color="red",
+            )
+        CI_type = None
+    else:
+        if CI_type is None:
+            CI_type = None if self.CI_type in no_CI_array or self.CI_type is None else self.CI_type
+        elif CI_type in no_CI_array:
+            CI_type = None
+
+        if isinstance(CI_type, str):
+            if CI_type.upper() in ["T", "TIME"]:
+                CI_type = "time"
+            elif CI_type.upper() in ["R", "REL", "RELIABILITY"]:
+                CI_type = "reliability"
+            else:
+                colorprint(
+                    "WARNING: CI_type is not recognised. Accepted values are 'time', 'reliability' and 'none'",
+                    text_color="red",
+                )
+                CI_type = None
+
+    if CI_x is not None and CI_y is not None:
+        if CI_type == "reliability":
+            colorprint(
+                "WARNING: CI_x and CI_y can not be specified at the same time. CI_y has been reset to None and the results for CI_x will be provided.",
+                text_color="red",
+            )
+            CI_y = None
+        else:
+            colorprint(
+                "WARNING: CI_x and CI_y can not be specified at the same time. CI_x has been reset to None and the results for CI_y will be provided.",
+                text_color="red",
+            )
+            CI_x = None
+
+    if CI_x is not None:
+        if type(CI_x) in [float, int]:
+            if CI_x <= 0 and self.name not in ["Normal", "Gumbel"]:
+                raise ValueError("CI_x must be greater than 0")
+            CI_x = np.array([CI_x])  # package as array. Will be unpacked later
+        else:
+            CI_x = np.asarray(CI_x)
+            if min(CI_x) <= 0 and self.name not in ["Normal", "Gumbel"]:
+                raise ValueError("CI_x values must all be greater than 0")
+
+    if CI_y is not None:
+        if type(CI_y) in [float, int]:
+            if CI_y <= 0:
+                raise ValueError("CI_y must be greater than 0")
+            if CI_y >= 1 and func in ["CDF", "SF"]:
+                raise ValueError("CI_y must be less than 1")
+            CI_y = np.array([CI_y])  # package as array. Will be unpacked later
+        else:
+            CI_y = np.asarray(CI_y)
+            if min(CI_y) <= 0:
+                raise ValueError("CI_y values must all be above 0")
+            if max(CI_y) >= 1 and func in ["CDF", "SF"]:
+                raise ValueError("CI_y values must all be below 1")
+
+    if self.name == "Beta":
+        if func in ["PDF", "CDF", "SF", "HF", "CHF"]:
+            return X, xvals, xmin, xmax, show_plot
+        else:  # func ='ALL' which is used for the .plot() method
+            return X, xvals, xmin, xmax
+    elif func in ["PDF", "HF"]:
+        return X, xvals, xmin, xmax, show_plot
+    elif func in ["CDF", "SF", "CHF"]:
+        return X, xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+    else:  # func ='ALL' which is used for the .plot() method
+        return X, xvals, xmin, xmax
+
+
+
+def validate_CI_params(*args):
+    """Returns False if any of the args is None or Nan, else returns True.
+    This function is different to using all() because it performs the checks
+    using np.isfinite(arg).
+
+    Parameters
+    ----------
+    *args : bool
+        Any number of boolean arguments
+
+    Returns
+    -------
+    is_valid : bool
+        False if any of the args is None or Nan else returns True.
+
+    """
+    is_valid = True
+    for arg in args:
+        if arg is None or np.isfinite(arg) is np.False_:
+            is_valid = False
+    return is_valid
 class fitters_input_checking:
     """This function performs error checking and some basic default operations for
     all the inputs given to each of the fitters.

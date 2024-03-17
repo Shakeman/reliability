@@ -1,6 +1,76 @@
+import os
 
 import numpy as np
 
+
+def write_df_to_xlsx(df, path, **kwargs):
+    """Writes a dataframe to an xlsx file
+    For use exclusively by the Convert_data module
+
+    Parameters
+    ----------
+    df : dataframe
+        The dataframe to be written
+    path : str
+        The file path to the xlsx file.
+
+    Returns
+    -------
+    None
+        Writing the dataframe is the only action from this function.
+
+    Notes
+    -----
+    The path must include the full file path including the extension. It is also
+    necessary to use r at the start to specify raw text. See the
+    `documentation <https://reliability.readthedocs.io/en/latest/Converting%20data%20between%20different%20formats.html>`_ for an example.
+
+    """
+    # this section checks whether the file exists and reprompts the user based on their choices
+    ready_to_write = False
+    counter1 = 0
+    counter2 = 0
+    path_changed = False
+    while ready_to_write is False:
+        counter1 += 1
+        counter2 += 1
+        try:
+            f = open(path)  # try to open the file to see if it exists  # noqa: SIM115
+            f.close()
+            if counter1 == 1:
+                colorprint(
+                    "WARNING: the specified output file already exists",
+                    text_color="red",
+                )
+            choice = input("Do you want to overwrite the existing file (Y/N): ") if counter2 == 1 else "N"
+            # subsequent loops can only be entered if the user did not want to overwrite the file
+            if choice.upper() == "N":
+                X = os.path.split(path)
+                Y = X[1].split(".")
+                Z = str(
+                    Y[0] + "(new)" + "." + Y[1],
+                )  # auto renaming will keep adding (new) to the filename if it already exists
+                path = str(X[0] + "\\" + Z)
+                path_changed = True
+            elif choice.upper() == "Y":
+                ready_to_write = True
+            else:
+                print("Invalid choice. Please specify Y or N")
+                counter2 = 0
+        except OSError:  # file does not exist
+            ready_to_write = True
+    if path_changed is True:
+        print("Your output file has been renamed to:", path)
+    # this section does the writing
+    keys = kwargs.keys()
+    if "excel_writer" in keys:
+        colorprint(
+            "WARNING: excel_writer has been overridden by path. Please only use path to specify the file path for the xlsx file to write.",
+            text_color="red",
+        )
+        kwargs.pop("excel_writer")
+    write_index = kwargs.pop("index") if "index" in keys else False
+    df.to_excel(path, index=write_index, **kwargs)
 
 def round_and_string(
     number: np.float64 | float,

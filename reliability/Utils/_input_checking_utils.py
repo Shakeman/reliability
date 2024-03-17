@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from reliability.Utils._Old_Utils import colorprint
+from reliability.Utils._ancillary_utils import colorprint
 
 
 class fitters_input_checking:

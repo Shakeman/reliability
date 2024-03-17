@@ -1,3 +1,4 @@
+from reliability.Utils._ancillary_utils import colorprint
 from reliability.Utils._input_checking_utils import ALT_fitters_input_checking, fitters_input_checking
 from reliability.Utils._Old_Utils import (
     ALT_least_squares,
@@ -8,7 +9,6 @@ from reliability.Utils._Old_Utils import (
     anderson_darling,
     axes_transforms,
     clean_CI_arrays,
-    colorprint,
     distribution_confidence_intervals,
     distributions_input_checking,
     extract_CI,

@@ -11,27 +11,29 @@ from reliability.Utils._Old_Utils import (
     distribution_confidence_intervals,
     distributions_input_checking,
     extract_CI,
-    fill_no_autoscale,
     generate_X_array,
-    get_axes_limits,
     life_stress_plot,
-    line_no_autoscale,
     make_fitted_dist_params_for_ALT_probplots,
     no_reverse,
     probability_plot_xylims,
-    probability_plot_xyticks,
     removeNaNs,
-    reshow_figure,
-    restore_axes_limits,
     transform_spaced,
     unpack_single_arrays,
     validate_CI_params,
     write_df_to_xlsx,
     xy_downsample,
-    xy_transform,
     zeroise_below_gamma,
 )
-from reliability.Utils._plot_utils import linear_regression
+from reliability.Utils._plot_utils import (
+    fill_no_autoscale,
+    get_axes_limits,
+    line_no_autoscale,
+    linear_regression,
+    probability_plot_xyticks,
+    reshow_figure,
+    restore_axes_limits,
+    xy_transform,
+)
 from reliability.Utils._statstic_utils import ALT_least_squares, least_squares
 
 __all__ = [

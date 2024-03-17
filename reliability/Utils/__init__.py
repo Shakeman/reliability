@@ -1,10 +1,7 @@
 from reliability.Utils._ancillary_utils import colorprint, round_and_string
 from reliability.Utils._input_checking_utils import ALT_fitters_input_checking, fitters_input_checking
 from reliability.Utils._Old_Utils import (
-    ALT_MLE_optimization,
     ALT_prob_plot,
-    LS_optimization,
-    MLE_optimization,
     anderson_darling,
     axes_transforms,
     clean_CI_arrays,
@@ -24,6 +21,7 @@ from reliability.Utils._Old_Utils import (
     xy_downsample,
     zeroise_below_gamma,
 )
+from reliability.Utils._optimization_utils import ALT_MLE_optimization, LS_optimization, MLE_optimization
 from reliability.Utils._plot_utils import (
     fill_no_autoscale,
     get_axes_limits,

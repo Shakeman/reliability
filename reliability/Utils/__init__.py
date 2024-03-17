@@ -1,7 +1,6 @@
-from reliability.Utils._ancillary_utils import colorprint
+from reliability.Utils._ancillary_utils import colorprint, round_and_string
 from reliability.Utils._input_checking_utils import ALT_fitters_input_checking, fitters_input_checking
 from reliability.Utils._Old_Utils import (
-    ALT_least_squares,
     ALT_MLE_optimization,
     ALT_prob_plot,
     LS_optimization,
@@ -15,10 +14,8 @@ from reliability.Utils._Old_Utils import (
     fill_no_autoscale,
     generate_X_array,
     get_axes_limits,
-    least_squares,
     life_stress_plot,
     line_no_autoscale,
-    linear_regression,
     make_fitted_dist_params_for_ALT_probplots,
     no_reverse,
     probability_plot_xylims,
@@ -26,7 +23,6 @@ from reliability.Utils._Old_Utils import (
     removeNaNs,
     reshow_figure,
     restore_axes_limits,
-    round_and_string,
     transform_spaced,
     unpack_single_arrays,
     validate_CI_params,
@@ -35,6 +31,8 @@ from reliability.Utils._Old_Utils import (
     xy_transform,
     zeroise_below_gamma,
 )
+from reliability.Utils._plot_utils import linear_regression
+from reliability.Utils._statstic_utils import ALT_least_squares, least_squares
 
 __all__ = [
     "round_and_string",

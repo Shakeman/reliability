@@ -2,6 +2,86 @@
 import numpy as np
 
 
+def round_and_string(
+    number: np.float64 | float,
+    decimals: int = 5,
+    integer_floats_to_ints: bool = True,
+    large_scientific_limit: float = 1e9,
+    small_scientific_limit: float = 1e-4,
+):
+    """This function is used to round a number to a specified number of decimals and convert to string.
+    It is used heavily in the formatting of the parameter titles within reliability.Distributions
+
+    The rules applied are slightly different than rounding to a number of significant figures as it keeps more
+    preceeding zeros. Special formatting rules are applied when:
+        abs(number) <= small_scientific_limit
+        abs(number) >= large_scientific_limit
+        number = 0
+
+    Parameters
+    ----------
+    number : float
+        The number to be rounded
+    decimals : int
+        The number of decimals (not including preceeding zeros) that are to be
+        in the output
+    integer_floats_to_ints : bool, optional
+        Default is True. Removes trailing zeros from floats if there are no
+        significant decimals (eg. 12.0 becomes 12).
+    large_scientific_limit : int, float, optional
+        The limit above which to keep numbers formatted in scientific notation. Default is 1e9.
+    small_scientific_limit : int, float, optional
+        The limit below which to keep numbers formatted in scientific notation. Default is 1e-4.
+
+    Returns
+    -------
+    out : string
+        The number formatted and converted to string.
+
+    Notes
+    -----
+    Examples (with decimals = 5):
+        original: -1e+20  // new: -1e+20
+        original: -100000000.0  // new: -100000000
+        original: -10.0  // new: -10
+        original: -5.4857485e-05  // new: -5.48575e-05
+        original: -2.54875415e-16  // new: -2.54875e-16
+        original: 0.0  // new: 0
+        original: 0  // new: 0
+        original: 2.54875415e-16  // new: 2.54875e-16
+        original: 5.4857485e-05  // new: 5.48575e-05
+        original: 10.0  // new: 10
+        original: 100000000.0  // new: 100000000
+        original: 1e+20  // new: 1e+20
+
+    """
+    if decimals < 1:
+        decimals = 0
+
+    if np.isfinite(number):  # check the input is not NaN
+        decimal = number % 1
+        if number == 0:
+            if integer_floats_to_ints is True and decimal == 0:
+                number = int(number)
+            out = number
+        elif abs(number) >= large_scientific_limit or abs(number) <= small_scientific_limit:
+            if decimal != 0:
+                # special formatting is only applied when the number is a float in the ranges specified above
+                out = str("{:0." + str(decimals) + "e}").format(number)
+                excess_zeros = "".join(["0"] * decimals)
+                out = out.replace("." + excess_zeros + "e", "e")
+            else:
+                out = number
+                if integer_floats_to_ints is True and decimal == 0:
+                    out = int(out)
+        else:
+            out = round(number, decimals)
+            if integer_floats_to_ints is True and decimal == 0:
+                out = int(out)
+    else:  # NaN
+        out = number
+    return str(out)
+
 def colorprint(
     string,
     text_color=None,

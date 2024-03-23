@@ -124,7 +124,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
                 "xmin must be greater than or equal to 0 for all distributions except the Normal and Gumbel distributions",
             )
         if xmax is None:
-            xmax: np.float64  = dist.quantile(0.9999)
+            xmax = dist.quantile(0.9999)
         if xmin > xmax:
             xmin, xmax = (
                 xmax,
@@ -622,7 +622,7 @@ def transform_spaced(
         def fwd(x: float):
             return np.log(-np.log(1 - x))
 
-        def inv(x: npt.NDArray[np.float64]):
+        def inv(x: npt.NDArray[np.float64]): #type: ignore
             return 1 - np.exp(-np.exp(x))
 
     elif transform in ["loglogistic", "Loglogistic", "LL", "ll", "loglog"]:
@@ -630,7 +630,7 @@ def transform_spaced(
         def fwd(x: float):
             return np.log(1 / x - 1)
 
-        def inv(x: npt.NDArray[np.float64]):
+        def inv(x: npt.NDArray[np.float64]): #type: ignore
             return 1 / (np.exp(x) + 1)
 
     elif transform in ["exponential", "Exponential", "expon", "Expon", "exp", "Exp"]:

@@ -93,7 +93,7 @@ def distributions_input_checking(
     # type checking
     if type(xvals) not in [type(None), list, np.ndarray, int, float, np.float64]:
         raise ValueError(
-            "xvals must be an int, float, list, or array. Default is None. Value of xvals is:" + print(xvals),
+            "xvals must be an int, float, list, or array. Default is None. Value of xvals is:" + str(xvals),
         )
     if type(xmin) not in [type(None), int, float]:
         raise ValueError("xmin must be an int or float. Default is None")
@@ -1028,7 +1028,7 @@ class ALT_fitters_input_checking:
             if type(use_level_stress) in [list, tuple, np.ndarray, str, bool, dict]:
                 raise ValueError("use_level_stress must be a number")
             use_level_stress = float(use_level_stress)
-        if is_dual_stress is True and use_level_stress is not None:
+        elif is_dual_stress is True and use_level_stress is not None:
             if type(use_level_stress) not in [list, np.ndarray]:
                 raise ValueError(
                     "use_level_stress must be an array or list of the use level stresses. eg. use_level_stress = [stress_1, stress_2].",

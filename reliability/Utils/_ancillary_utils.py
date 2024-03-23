@@ -1,9 +1,62 @@
 import os
+from itertools import chain, repeat
 
 import numpy as np
 
 
-def write_df_to_xlsx(df, path, **kwargs):
+def is_allowed_character(character: str) -> bool:
+    """
+    Checks if a character is allowed.
+
+    Args:
+        character (str): The character to check.
+
+    Returns:
+        bool: True if the character is allowed, False otherwise.
+    """
+    return character in 'YN'
+
+
+def validate_yes_no_prompt(prompt_msg) -> str:
+    """
+    Validates a yes/no prompt input and returns the choice.
+
+    Args:
+        prompt_msg (str): The message to display as the prompt.
+
+    Returns:
+        str: The validated choice, either 'Y' or 'N'.
+    """
+    bad_input_msg = "Invalid choice. Please specify Y or N"
+    prompts = chain([prompt_msg], repeat('\n'.join([bad_input_msg, prompt_msg])))
+    replies = map(input, prompts)
+    uppercased_replies = map(str.upper, replies)
+    stripped_replies = map(str.strip, uppercased_replies)
+    choice: str = next(filter(is_allowed_character, stripped_replies))
+    return choice
+
+
+def update_path(path: str) -> str:
+    """
+    Update the given path by adding '(new)' to the filename if it already exists.
+
+    Args:
+        path (str): The original path.
+
+    Returns:
+        str: The updated path with '(new)' added to the filename.
+
+    """
+    X: tuple[str, str] = os.path.split(path)
+    Y: list[str] = X[1].split(".")
+    Z = str(
+        Y[0] + "(new)" + "." + Y[1],
+    )  # auto renaming will keep adding (new) to the filename if it already exists
+    path = str(X[0] + "\\" + Z)
+    return path
+
+
+def write_df_to_xlsx(df, path: str, **kwargs) -> None:
     """Writes a dataframe to an xlsx file
     For use exclusively by the Convert_data module
 
@@ -27,40 +80,16 @@ def write_df_to_xlsx(df, path, **kwargs):
 
     """
     # this section checks whether the file exists and reprompts the user based on their choices
-    ready_to_write = False
-    counter1 = 0
-    counter2 = 0
-    path_changed = False
-    while ready_to_write is False:
-        counter1 += 1
-        counter2 += 1
-        try:
-            f = open(path)  # try to open the file to see if it exists  # noqa: SIM115
-            f.close()
-            if counter1 == 1:
-                colorprint(
-                    "WARNING: the specified output file already exists",
-                    text_color="red",
-                )
-            choice = input("Do you want to overwrite the existing file (Y/N): ") if counter2 == 1 else "N"
-            # subsequent loops can only be entered if the user did not want to overwrite the file
-            if choice.upper() == "N":
-                X = os.path.split(path)
-                Y = X[1].split(".")
-                Z = str(
-                    Y[0] + "(new)" + "." + Y[1],
-                )  # auto renaming will keep adding (new) to the filename if it already exists
-                path = str(X[0] + "\\" + Z)
-                path_changed = True
-            elif choice.upper() == "Y":
-                ready_to_write = True
-            else:
-                print("Invalid choice. Please specify Y or N")
-                counter2 = 0
-        except OSError:  # file does not exist
-            ready_to_write = True
-    if path_changed is True:
-        print("Your output file has been renamed to:", path)
+    if os.path.exists(path):
+        colorprint(
+            "WARNING: the specified output file already exists",
+            text_color="red",
+        )
+        prompt_msg = "Do you want to overwrite the existing file (Y/N): "
+        choice: str = validate_yes_no_prompt(prompt_msg)
+        if choice == "N":
+            write_df_to_xlsx(df, update_path(path))
+            return None
     # this section does the writing
     keys = kwargs.keys()
     if "excel_writer" in keys:
@@ -70,15 +99,15 @@ def write_df_to_xlsx(df, path, **kwargs):
         )
         kwargs.pop("excel_writer")
     write_index = kwargs.pop("index") if "index" in keys else False
-    df.to_excel(path, index=write_index, **kwargs)
+    df.to_excel(path, index=write_index, engine='xlsxwriter', **kwargs)
 
 def round_and_string(
     number: np.float64 | float,
-    decimals: int = 5,
+    decimals: int | None = 5,
     integer_floats_to_ints: bool = True,
     large_scientific_limit: float = 1e9,
     small_scientific_limit: float = 1e-4,
-):
+) -> str:
     """This function is used to round a number to a specified number of decimals and convert to string.
     It is used heavily in the formatting of the parameter titles within reliability.Distributions
 
@@ -125,9 +154,10 @@ def round_and_string(
         original: 1e+20  // new: 1e+20
 
     """
-    if decimals < 1:
+    if decimals is not None and decimals < 1:
         decimals = 0
-
+    if decimals == 0:
+        decimals = None  # this is needed for the round function to work properly with some numpy types
     if np.isfinite(number):  # check the input is not NaN
         decimal = number % 1
         if number == 0:
@@ -135,15 +165,13 @@ def round_and_string(
                 number = int(number)
             out = number
         elif abs(number) >= large_scientific_limit or abs(number) <= small_scientific_limit:
-            if decimal != 0:
+            if decimals is not None and decimal != 0:
                 # special formatting is only applied when the number is a float in the ranges specified above
                 out = str("{:0." + str(decimals) + "e}").format(number)
                 excess_zeros = "".join(["0"] * decimals)
                 out = out.replace("." + excess_zeros + "e", "e")
             else:
                 out = number
-                if integer_floats_to_ints is True and decimal == 0:
-                    out = int(out)
         else:
             out = round(number, decimals)
             if integer_floats_to_ints is True and decimal == 0:

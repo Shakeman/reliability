@@ -418,14 +418,12 @@ class optimal_replacement_time:
             ORT_array = []  # optimal replacement time
 
             # get the ORT from the minimum CPUT for each CC
-            if q == 1:
 
-                def calc_ORT(x):
+            def calc_ORT(x):
+                if q == 1:
                     return weibull_alpha * (x / (cost_PM * (weibull_beta - 1))) ** (1 / weibull_beta)
 
-            else:  # q = 0
-
-                def calc_ORT(x):
+                else:  # q = 0
                     return t[np.argmin((cost_PM * sf + x * (1 - sf)) / integral)]
 
             vcalc_ORT = np.vectorize(calc_ORT)
@@ -534,9 +532,6 @@ class ROCOF:
         failure_times=None,
         CI=0.95,
         test_end=None,
-        show_plot=True,
-        print_results=True,
-        **kwargs,
     ):
         if times_between_failures is not None and failure_times is not None:
             raise ValueError(
@@ -576,9 +571,6 @@ class ROCOF:
             n = len(ti)
             if tn < sum(ti):
                 raise ValueError("test_end cannot be less than the final test time")
-
-        ls = kwargs.pop("linestyle") if "linestyle" in kwargs else "--"
-        label_1 = kwargs.pop("label") if "label" in kwargs else "Failure interarrival times"
 
         tc = np.cumsum(ti[0:n])
         sum_tc = sum(tc)
@@ -626,50 +618,58 @@ class ROCOF:
             x_to_plot = x
             MTBF = np.ones_like(x_to_plot) / rocof
 
+        self.__MTBF = MTBF
+        self.__x = x
+        self.__ti = ti
+        self.__x_to_plot = x_to_plot
+        self.__results_str = results_str
         CI_rounded = CI * 100
         if CI_rounded % 1 == 0:
             CI_rounded = int(CI * 100)
+        self.__CI_rounded = CI_rounded
 
-        if print_results is True:
-            colorprint("Results from ROCOF analysis:", bold=True, underline=True)
-            print(results_str)
-            if z_crit > U:
-                print(str("At " + str(CI_rounded) + "% confidence level the ROCOF is IMPROVING. Assume NHPP."))
-                print(
-                    "ROCOF assuming NHPP has parameters: Beta_hat =",
-                    round_and_string(B, decimals=3),
-                    ", Lambda_hat =",
-                    round_and_string(L, decimals=4),
-                )
-            elif -z_crit < U:
-                print(str("At " + str(CI_rounded) + "% confidence level the ROCOF is WORSENING. Assume NHPP."))
-                print(
-                    "ROCOF assuming NHPP has parameters: Beta_hat =",
-                    round_and_string(B, decimals=3),
-                    ", Lambda_hat =",
-                    round_and_string(L, decimals=4),
-                )
-            else:
-                print(str("At " + str(CI_rounded) + "% confidence level the ROCOF is CONSTANT. Assume HPP."))
-                print(
-                    "ROCOF assuming HPP is",
-                    round_and_string(rocof, decimals=4),
-                    "failures per unit time.",
-                )
-
-        if show_plot is True:
-            plt.plot(x_to_plot, MTBF, linestyle=ls, label="MTBF")
-            plt.scatter(x, ti, label=label_1, **kwargs)
-            plt.ylabel("Times between failures")
-            plt.xlabel("Failure number")
-            title_str = str(
-                "Failure interarrival times vs failure number\nAt "
-                + str(CI_rounded)
-                + "% confidence level the ROCOF is "
-                + self.trend.upper(),
+    def print_results(self):
+        colorprint("Results from ROCOF analysis:", bold=True, underline=True)
+        print(self.__results_str)
+        if self.z_crit[0] > self.U:
+            print(str("At " + str(self.__CI_rounded) + "% confidence level the ROCOF is IMPROVING. Assume NHPP."))
+            print(
+                "ROCOF assuming NHPP has parameters: Beta_hat =",
+                round_and_string(self.Beta_hat, decimals=3),
+                ", Lambda_hat =",
+                round_and_string(self.Lambda_hat, decimals=4),
             )
-            plt.title(title_str)
-            plt.legend()
+        elif self.z_crit[1] < self.U:
+            print(str("At " + str(self.__CI_rounded) + "% confidence level the ROCOF is WORSENING. Assume NHPP."))
+            print(
+                "ROCOF assuming NHPP has parameters: Beta_hat =",
+                round_and_string(self.Beta_hat, decimals=3),
+                ", Lambda_hat =",
+                round_and_string(self.Lambda_hat, decimals=4),
+            )
+        else:
+            print(str("At " + str(self.__CI_rounded) + "% confidence level the ROCOF is CONSTANT. Assume HPP."))
+            print(
+                "ROCOF assuming HPP is",
+                round_and_string(self.ROCOF, decimals=4),
+                "failures per unit time.",
+            )
+
+    def plot(self, **kwargs):
+        ls = kwargs.pop("linestyle") if "linestyle" in kwargs else "--"
+        label_1 = kwargs.pop("label") if "label" in kwargs else "Failure interarrival times"
+        plt.plot(self.__x_to_plot, self.__MTBF, linestyle=ls, label="MTBF")
+        plt.scatter(self.__x , self.__ti, label=label_1, **kwargs)
+        plt.ylabel("Times between failures")
+        plt.xlabel("Failure number")
+        title_str = str(
+            "Failure interarrival times vs failure number\nAt "
+            + str(self.__CI_rounded)
+            + "% confidence level the ROCOF is "
+            + self.trend.upper(),
+        )
+        plt.title(title_str)
+        plt.legend()
 
 
 class MCF_nonparametric:
@@ -770,7 +770,7 @@ class MCF_nonparametric:
 
     """
 
-    def __init__(self, data, CI=0.95, print_results=True, show_plot=True, plot_CI=True, **kwargs):
+    def __init__(self, data, CI=0.95):
         # check input is a list
         if isinstance(data, list):
             pass
@@ -912,56 +912,80 @@ class MCF_nonparametric:
         self.lower = RESULTS_lower
         self.upper = RESULTS_upper
         self.variance = RESULTS_variance
+        self.last_time = last_time
 
         CI_rounded = CI * 100
         if CI_rounded % 1 == 0:
             CI_rounded = int(CI * 100)
+        self.CI_rounded = CI_rounded
 
-        if print_results is True:
-            pd.set_option("display.width", 200)  # prevents wrapping after default 80 characters
-            pd.set_option("display.max_columns", 9)  # shows the dataframe without ... truncation
-            colorprint(
-                str("Mean Cumulative Function results (" + str(CI_rounded) + "% CI):"),
-                bold=True,
-                underline=True,
-            )
-            print(self.results.to_string(index=False), "\n")
+    def print_results(self):
+        """
+        Prints the Mean Cumulative Function results with confidence interval.
 
-        if show_plot is True:
-            x_MCF = [0, RESULTS_time[0]]
-            y_MCF = [0, 0]
-            y_upper = [0, 0]
-            y_lower = [0, 0]
-            x_MCF.append(RESULTS_time[0])
-            y_MCF.append(RESULTS_MCF[0])
-            y_upper.append(RESULTS_upper[0])
-            y_lower.append(RESULTS_lower[0])
-            for i, _ in enumerate(RESULTS_time):
-                if i > 0:
-                    x_MCF.append(RESULTS_time[i])
-                    y_MCF.append(RESULTS_MCF[i - 1])
-                    y_upper.append(RESULTS_upper[i - 1])
-                    y_lower.append(RESULTS_lower[i - 1])
-                    x_MCF.append(RESULTS_time[i])
-                    y_MCF.append(RESULTS_MCF[i])
-                    y_upper.append(RESULTS_upper[i])
-                    y_lower.append(RESULTS_lower[i])
-            x_MCF.append(last_time)  # add the last horizontal line
-            y_MCF.append(RESULTS_MCF[-1])
-            y_upper.append(RESULTS_upper[-1])
-            y_lower.append(RESULTS_lower[-1])
-            title_str = "Non-parametric estimate of the Mean Cumulative Function"
+        This method sets display options for pandas dataframe to prevent wrapping and truncation,
+        and then prints the results with a header indicating the confidence interval.
 
-            col = kwargs.pop("color") if "color" in kwargs else "steelblue"
-            if plot_CI is True:
-                plt.fill_between(x_MCF, y_lower, y_upper, color=col, alpha=0.3, linewidth=0)
-                title_str = str(title_str + "\nwith " + str(CI_rounded) + "% one-sided confidence interval bounds")
-            plt.plot(x_MCF, y_MCF, color=col, **kwargs)
-            plt.xlabel("Time")
-            plt.ylabel("Mean cumulative number of failures")
-            plt.title(title_str)
-            plt.xlim(0, last_time)
-            plt.ylim(0, max(RESULTS_upper) * 1.05)
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        pd.set_option("display.width", 200)  # prevents wrapping after default 80 characters
+        pd.set_option("display.max_columns", 9)  # shows the dataframe without ... truncation
+        colorprint(
+            str("Mean Cumulative Function results (" + str(self.CI_rounded) + "% CI):"),
+            bold=True,
+            underline=True,
+        )
+        print(self.results.to_string(index=False), "\n")
+
+    def plot(self, plot_CI=True, **kwargs):
+        """
+        Plot the non-parametric estimate of the Mean Cumulative Function (MCF) for repairable systems.
+
+        Args:
+            plot_CI (bool, optional): Whether to plot the confidence interval bounds. Defaults to True.
+            **kwargs: Additional keyword arguments to be passed to the `plt.plot` function.
+
+        Returns:
+            None
+        """
+        x_MCF = [0, self.time[0]]
+        y_MCF = [0, 0]
+        y_upper = [0, 0]
+        y_lower = [0, 0]
+        x_MCF.append(self.time[0])
+        y_MCF.append(self.MCF[0])
+        y_upper.append(self.upper[0])
+        y_lower.append(self.lower [0])
+        for i, _ in enumerate(self.time):
+            if i > 0:
+                x_MCF.append(self.time[i])
+                y_MCF.append(self.MCF[i - 1])
+                y_upper.append(self.upper[i - 1])
+                y_lower.append(self.lower [i - 1])
+                x_MCF.append(self.time[i])
+                y_MCF.append(self.MCF[i])
+                y_upper.append(self.upper[i])
+                y_lower.append(self.lower [i])
+        x_MCF.append(self.last_time)  # add the last horizontal line
+        y_MCF.append(self.MCF[-1])
+        y_upper.append(self.upper[-1])
+        y_lower.append(self.lower [-1])
+        title_str = "Non-parametric estimate of the Mean Cumulative Function"
+
+        col = kwargs.pop("color") if "color" in kwargs else "steelblue"
+        if plot_CI is True:
+            plt.fill_between(x_MCF, y_lower, y_upper, color=col, alpha=0.3, linewidth=0)
+            title_str = str(title_str + "\nwith " + str(self.CI_rounded) + "% one-sided confidence interval bounds")
+        plt.plot(x_MCF, y_MCF, color=col, **kwargs)
+        plt.xlabel("Time")
+        plt.ylabel("Mean cumulative number of failures")
+        plt.title(title_str)
+        plt.xlim(0, self.last_time)
+        plt.ylim(0, max(self.upper) * 1.05)
 
 
 class MCF_parametric:
@@ -1075,8 +1099,6 @@ class MCF_parametric:
 
         MCF_NP = MCF_nonparametric(
             data=data,
-            print_results=False,
-            show_plot=False,
         )  # all the MCF calculations to get the plot points are done in MCF_nonparametric
         self.times = MCF_NP.time
         self.MCF = MCF_NP.MCF

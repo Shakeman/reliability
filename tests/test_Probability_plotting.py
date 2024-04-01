@@ -194,7 +194,7 @@ def test_Gumbel_probability_plot():
     # Test case 3: Test case with fitted distribution
     failures = [10, 20, 30, 40, 50]
     fitted_dist_params = Gumbel_Distribution(mu=25, sigma=5)
-    fig = Gumbel_probability_plot(failures=failures, __fitted_dist_params=fitted_dist_params)
+    fig = Gumbel_probability_plot(failures=failures, _fitted_dist_params=fitted_dist_params)
     assert isinstance(fig, plt.Figure)
 
     # Test case 4: Test case with custom parameters
@@ -215,7 +215,7 @@ def test_Gumbel_probability_plot():
         Gumbel_probability_plot(failures="invalid input")
 
     with pytest.raises(ValueError):
-        Gumbel_probability_plot(failures=[10], __fitted_dist_params=None)
+        Gumbel_probability_plot(failures=[10], _fitted_dist_params=None)
 
     with pytest.raises(ValueError):
         Gumbel_probability_plot(failures=[10, 20], CI=1.5)
@@ -344,7 +344,7 @@ def test_Lognormal_probability_plot():
     # Test case 3: Test case with fitted distribution
     failures = [10, 20, 30, 40, 50]
     fitted_dist_params = Lognormal_Distribution(mu=25, sigma=5)
-    fig = Lognormal_probability_plot(failures=failures, __fitted_dist_params=fitted_dist_params)
+    fig = Lognormal_probability_plot(failures=failures, _fitted_dist_params=fitted_dist_params)
     assert isinstance(fig, plt.Figure)
 
     # Test case 4: Test case with custom parameters
@@ -365,7 +365,7 @@ def test_Lognormal_probability_plot():
         Lognormal_probability_plot(failures="invalid input")
 
     with pytest.raises(ValueError):
-        Lognormal_probability_plot(failures=[10], __fitted_dist_params=None)
+        Lognormal_probability_plot(failures=[10], _fitted_dist_params=None)
 
     with pytest.raises(ValueError):
         Lognormal_probability_plot(failures=[10, 20], CI=1.5)
@@ -413,7 +413,7 @@ def test_Beta_probability_plot():
     assert isinstance(fig, plt.Figure)
 
     # Test case 3: Test case with fitted distribution
-    fig = Beta_probability_plot(failures=data.failures, __fitted_dist_params=dist)
+    fig = Beta_probability_plot(failures=data.failures, _fitted_dist_params=dist)
     assert isinstance(fig, plt.Figure)
 
     # Test case 4: Test case with custom parameters
@@ -435,7 +435,7 @@ def test_Beta_probability_plot():
         Beta_probability_plot(failures="invalid input")
 
     with pytest.raises(ValueError):
-        Beta_probability_plot(failures=[10], __fitted_dist_params=None)
+        Beta_probability_plot(failures=[10], _fitted_dist_params=None)
 
     with pytest.raises(ValueError):
         Beta_probability_plot(failures=[10, 20], CI=1.5)
@@ -459,7 +459,7 @@ def test_Gamma_probability_plot():
     # Test case 3: Test case with fitted distribution
     failures = [10, 20, 30, 40, 50]
     fitted_dist_params = Gamma_Distribution(alpha=100, beta=2)
-    fig = Gamma_probability_plot(failures=failures, __fitted_dist_params=fitted_dist_params)
+    fig = Gamma_probability_plot(failures=failures, _fitted_dist_params=fitted_dist_params)
     assert isinstance(fig, plt.Figure)
 
     # Test case 4: Test case with custom parameters
@@ -480,7 +480,7 @@ def test_Gamma_probability_plot():
         Gamma_probability_plot(failures="invalid input")
 
     with pytest.raises(ValueError):
-        Gamma_probability_plot(failures=[10], __fitted_dist_params=None)
+        Gamma_probability_plot(failures=[10], _fitted_dist_params=None)
 
     with pytest.raises(ValueError):
         Gamma_probability_plot(failures=[10, 20], CI=1.5)

@@ -403,7 +403,7 @@ class Fit_Lognormal_2P:
             Lognormal_probability_plot(
                 failures=failures,
                 right_censored=rc,
-                __fitted_dist_params=self,
+                _fitted_dist_params=self,
                 CI=CI,
                 CI_type=CI_type,
                 downsample_scatterplot=downsample_scatterplot,
@@ -815,7 +815,7 @@ class Fit_Lognormal_3P:
             fig = Lognormal_probability_plot(
                 failures=failures,
                 right_censored=rc,
-                __fitted_dist_params=self,
+                _fitted_dist_params=self,
                 CI=CI,
                 CI_type=CI_type,
                 downsample_scatterplot=downsample_scatterplot,

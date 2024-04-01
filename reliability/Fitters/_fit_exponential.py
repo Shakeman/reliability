@@ -341,7 +341,7 @@ class Fit_Exponential_1P:
             Exponential_probability_plot_Weibull_Scale(
                 failures=failures,
                 right_censored=rc,
-                __fitted_dist_params=self,
+                _fitted_dist_params=self,
                 CI=CI,
                 downsample_scatterplot=downsample_scatterplot,
                 **kwargs,
@@ -716,7 +716,7 @@ class Fit_Exponential_2P:
                 failures=failures,
                 right_censored=rc,
                 CI=CI,
-                __fitted_dist_params=self,
+                _fitted_dist_params=self,
                 downsample_scatterplot=downsample_scatterplot,
                 **kwargs,
             )

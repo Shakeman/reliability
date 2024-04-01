@@ -408,7 +408,7 @@ class Fit_Weibull_2P:
             Weibull_probability_plot(
                 failures=failures,
                 right_censored=rc,
-                __fitted_dist_params=self,
+                _fitted_dist_params=self,
                 CI=CI,
                 CI_type=CI_type,
                 downsample_scatterplot=downsample_scatterplot,
@@ -1049,7 +1049,7 @@ class Fit_Weibull_2P_grouped:
             Weibull_probability_plot(
                 failures=failures,
                 right_censored=rc,
-                __fitted_dist_params=self,
+                _fitted_dist_params=self,
                 CI=CI,
                 CI_type=CI_type,
                 downsample_scatterplot=downsample_scatterplot,
@@ -1461,7 +1461,7 @@ class Fit_Weibull_3P:
             fig = Weibull_probability_plot(
                 failures=failures,
                 right_censored=rc,
-                __fitted_dist_params=self,
+                _fitted_dist_params=self,
                 CI=CI,
                 CI_type=CI_type,
                 downsample_scatterplot=downsample_scatterplot,

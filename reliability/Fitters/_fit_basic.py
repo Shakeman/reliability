@@ -412,7 +412,7 @@ class Fit_Normal_2P:
             Normal_probability_plot(
                 failures=failures,
                 right_censored=rc,
-                __fitted_dist_params=self,
+                _fitted_dist_params=self,
                 CI=CI,
                 CI_type=CI_type,
                 downsample_scatterplot=downsample_scatterplot,
@@ -768,7 +768,7 @@ class Fit_Gumbel_2P:
             Gumbel_probability_plot(
                 failures=failures,
                 right_censored=rc,
-                __fitted_dist_params=self,
+                _fitted_dist_params=self,
                 CI=CI,
                 CI_type=CI_type,
                 downsample_scatterplot=downsample_scatterplot,
@@ -1091,7 +1091,7 @@ class Fit_Beta_2P:
             Beta_probability_plot(
                 failures=failures,
                 right_censored=rc,
-                __fitted_dist_params=self,
+                _fitted_dist_params=self,
                 downsample_scatterplot=downsample_scatterplot,
                 **kwargs,
             )

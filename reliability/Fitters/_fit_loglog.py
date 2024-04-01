@@ -352,7 +352,7 @@ class Fit_Loglogistic_2P:
             Loglogistic_probability_plot(
                 failures=failures,
                 right_censored=rc,
-                __fitted_dist_params=self,
+                _fitted_dist_params=self,
                 CI=CI,
                 CI_type=CI_type,
                 downsample_scatterplot=downsample_scatterplot,
@@ -758,7 +758,7 @@ class Fit_Loglogistic_3P:
             fig = Loglogistic_probability_plot(
                 failures=failures,
                 right_censored=rc,
-                __fitted_dist_params=self,
+                _fitted_dist_params=self,
                 CI=CI,
                 CI_type=CI_type,
                 downsample_scatterplot=downsample_scatterplot,

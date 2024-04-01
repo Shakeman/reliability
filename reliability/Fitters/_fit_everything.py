@@ -1648,42 +1648,42 @@ class Fit_Everything:
                 Exponential_probability_plot_Weibull_Scale(
                     failures=self.failures,
                     right_censored=self.right_censored,
-                    __fitted_dist_params=self.__Exponential_1P_params,
+                    _fitted_dist_params=self.__Exponential_1P_params,
                     downsample_scatterplot=self.__downsample_scatterplot,
                 )
             elif item == "Exponential_2P":
                 Exponential_probability_plot_Weibull_Scale(
                     failures=self.failures,
                     right_censored=self.right_censored,
-                    __fitted_dist_params=self.__Exponential_2P_params,
+                    _fitted_dist_params=self.__Exponential_2P_params,
                     downsample_scatterplot=self.__downsample_scatterplot,
                 )
             elif item == "Lognormal_2P":
                 Lognormal_probability_plot(
                     failures=self.failures,
                     right_censored=self.right_censored,
-                    __fitted_dist_params=self.__Lognormal_2P_params,
+                    _fitted_dist_params=self.__Lognormal_2P_params,
                     downsample_scatterplot=self.__downsample_scatterplot,
                 )
             elif item == "Lognormal_3P":
                 Lognormal_probability_plot(
                     failures=self.failures,
                     right_censored=self.right_censored,
-                    __fitted_dist_params=self.__Lognormal_3P_params,
+                    _fitted_dist_params=self.__Lognormal_3P_params,
                     downsample_scatterplot=self.__downsample_scatterplot,
                 )
             elif item == "Weibull_2P":
                 Weibull_probability_plot(
                     failures=self.failures,
                     right_censored=self.right_censored,
-                    __fitted_dist_params=self.__Weibull_2P_params,
+                    _fitted_dist_params=self.__Weibull_2P_params,
                     downsample_scatterplot=self.__downsample_scatterplot,
                 )
             elif item == "Weibull_3P":
                 Weibull_probability_plot(
                     failures=self.failures,
                     right_censored=self.right_censored,
-                    __fitted_dist_params=self.__Weibull_3P_params,
+                    _fitted_dist_params=self.__Weibull_3P_params,
                     downsample_scatterplot=self.__downsample_scatterplot,
                 )
             elif item == "Weibull_Mixture":
@@ -1717,49 +1717,49 @@ class Fit_Everything:
                 Loglogistic_probability_plot(
                     failures=self.failures,
                     right_censored=self.right_censored,
-                    __fitted_dist_params=self.__Loglogistic_2P_params,
+                    _fitted_dist_params=self.__Loglogistic_2P_params,
                     downsample_scatterplot=self.__downsample_scatterplot,
                 )
             elif item == "Loglogistic_3P":
                 Loglogistic_probability_plot(
                     failures=self.failures,
                     right_censored=self.right_censored,
-                    __fitted_dist_params=self.__Loglogistic_3P_params,
+                    _fitted_dist_params=self.__Loglogistic_3P_params,
                     downsample_scatterplot=self.__downsample_scatterplot,
                 )
             elif item == "Gamma_2P":
                 Gamma_probability_plot(
                     failures=self.failures,
                     right_censored=self.right_censored,
-                    __fitted_dist_params=self.__Gamma_2P_params,
+                    _fitted_dist_params=self.__Gamma_2P_params,
                     downsample_scatterplot=self.__downsample_scatterplot,
                 )
             elif item == "Gamma_3P":
                 Gamma_probability_plot(
                     failures=self.failures,
                     right_censored=self.right_censored,
-                    __fitted_dist_params=self.__Gamma_3P_params,
+                    _fitted_dist_params=self.__Gamma_3P_params,
                     downsample_scatterplot=self.__downsample_scatterplot,
                 )
             elif item == "Normal_2P":
                 Normal_probability_plot(
                     failures=self.failures,
                     right_censored=self.right_censored,
-                    __fitted_dist_params=self.__Normal_2P_params,
+                    _fitted_dist_params=self.__Normal_2P_params,
                     downsample_scatterplot=self.__downsample_scatterplot,
                 )
             elif item == "Gumbel_2P":
                 Gumbel_probability_plot(
                     failures=self.failures,
                     right_censored=self.right_censored,
-                    __fitted_dist_params=self.__Gumbel_2P_params,
+                    _fitted_dist_params=self.__Gumbel_2P_params,
                     downsample_scatterplot=self.__downsample_scatterplot,
                 )
             elif item == "Beta_2P":
                 Beta_probability_plot(
                     failures=self.failures,
                     right_censored=self.right_censored,
-                    __fitted_dist_params=self.__Beta_2P_params,
+                    _fitted_dist_params=self.__Beta_2P_params,
                     downsample_scatterplot=self.__downsample_scatterplot,
                 )
 

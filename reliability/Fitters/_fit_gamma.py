@@ -398,7 +398,7 @@ class Fit_Gamma_2P:
             Gamma_probability_plot(
                 failures=failures,
                 right_censored=rc,
-                __fitted_dist_params=self,
+                _fitted_dist_params=self,
                 CI_type=CI_type,
                 CI=CI,
                 downsample_scatterplot=downsample_scatterplot,
@@ -866,7 +866,7 @@ class Fit_Gamma_3P:
             fig: Figure = Gamma_probability_plot(
                 failures=failures,
                 right_censored=rc,
-                __fitted_dist_params=self,
+                _fitted_dist_params=self,
                 CI=CI,
                 CI_type=CI_type,
                 downsample_scatterplot=downsample_scatterplot,

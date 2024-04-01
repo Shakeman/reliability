@@ -174,7 +174,7 @@ def Weibull_probability_plot(
     failures=None,
     right_censored=None,
     fit_gamma=False,
-    __fitted_dist_params=None,
+    _fitted_dist_params=None,
     a=None,
     CI=0.95,
     CI_type: str | None="time",
@@ -248,7 +248,7 @@ def Weibull_probability_plot(
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 2 and __fitted_dist_params is None:
+    elif len(failures) < 2 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -282,16 +282,16 @@ def Weibull_probability_plot(
                 CI_type = "none"
             else:
                 raise ValueError('CI_type must be "time", "reliability", or "none"')
-        if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
+        if _fitted_dist_params is not None and _fitted_dist_params.gamma > 0:
             fit_gamma = True
 
         if fit_gamma is False:
-            if __fitted_dist_params is not None:
-                alpha = __fitted_dist_params.alpha
-                beta = __fitted_dist_params.beta
-                alpha_SE = __fitted_dist_params.alpha_SE
-                beta_SE = __fitted_dist_params.beta_SE
-                Cov_alpha_beta = __fitted_dist_params.Cov_alpha_beta
+            if _fitted_dist_params is not None:
+                alpha = _fitted_dist_params.alpha
+                beta = _fitted_dist_params.beta
+                alpha_SE = _fitted_dist_params.alpha_SE
+                beta_SE = _fitted_dist_params.beta_SE
+                Cov_alpha_beta = _fitted_dist_params.Cov_alpha_beta
             else:
                 from reliability.Fitters._fit_weibull import Fit_Weibull_2P
 
@@ -314,13 +314,13 @@ def Weibull_probability_plot(
                     "Fitted Weibull_2P (α=" + round_and_string(alpha, dec) + ", β=" + round_and_string(beta, dec) + ")",
                 )
         elif fit_gamma is True:
-            if __fitted_dist_params is not None:
-                alpha = __fitted_dist_params.alpha
-                beta = __fitted_dist_params.beta
-                gamma = __fitted_dist_params.gamma
-                alpha_SE = __fitted_dist_params.alpha_SE
-                beta_SE = __fitted_dist_params.beta_SE
-                Cov_alpha_beta = __fitted_dist_params.Cov_alpha_beta
+            if _fitted_dist_params is not None:
+                alpha = _fitted_dist_params.alpha
+                beta = _fitted_dist_params.beta
+                gamma = _fitted_dist_params.gamma
+                alpha_SE = _fitted_dist_params.alpha_SE
+                beta_SE = _fitted_dist_params.beta_SE
+                Cov_alpha_beta = _fitted_dist_params.Cov_alpha_beta
             else:
                 from reliability.Fitters import Fit_Weibull_3P
 
@@ -395,7 +395,7 @@ def Loglogistic_probability_plot(
     failures=None,
     right_censored=None,
     fit_gamma=False,
-    __fitted_dist_params=None,
+    _fitted_dist_params=None,
     a=None,
     CI=0.95,
     CI_type: str | None ="time",
@@ -469,7 +469,7 @@ def Loglogistic_probability_plot(
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 2 and __fitted_dist_params is None:
+    elif len(failures) < 2 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -503,16 +503,16 @@ def Loglogistic_probability_plot(
                 CI_type = "none"
             else:
                 raise ValueError('CI_type must be "time", "reliability", or "none"')
-        if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
+        if _fitted_dist_params is not None and _fitted_dist_params.gamma > 0:
             fit_gamma = True
 
         if fit_gamma is False:
-            if __fitted_dist_params is not None:
-                alpha = __fitted_dist_params.alpha
-                beta = __fitted_dist_params.beta
-                alpha_SE = __fitted_dist_params.alpha_SE
-                beta_SE = __fitted_dist_params.beta_SE
-                Cov_alpha_beta = __fitted_dist_params.Cov_alpha_beta
+            if _fitted_dist_params is not None:
+                alpha = _fitted_dist_params.alpha
+                beta = _fitted_dist_params.beta
+                alpha_SE = _fitted_dist_params.alpha_SE
+                beta_SE = _fitted_dist_params.beta_SE
+                Cov_alpha_beta = _fitted_dist_params.Cov_alpha_beta
             else:
                 from reliability.Fitters import Fit_Loglogistic_2P
 
@@ -539,13 +539,13 @@ def Loglogistic_probability_plot(
                     + ")",
                 )
         elif fit_gamma is True:
-            if __fitted_dist_params is not None:
-                alpha = __fitted_dist_params.alpha
-                beta = __fitted_dist_params.beta
-                gamma = __fitted_dist_params.gamma
-                alpha_SE = __fitted_dist_params.alpha_SE
-                beta_SE = __fitted_dist_params.beta_SE
-                Cov_alpha_beta = __fitted_dist_params.Cov_alpha_beta
+            if _fitted_dist_params is not None:
+                alpha = _fitted_dist_params.alpha
+                beta = _fitted_dist_params.beta
+                gamma = _fitted_dist_params.gamma
+                alpha_SE = _fitted_dist_params.alpha_SE
+                beta_SE = _fitted_dist_params.beta_SE
+                Cov_alpha_beta = _fitted_dist_params.Cov_alpha_beta
             else:
                 from reliability.Fitters import Fit_Loglogistic_3P
 
@@ -624,7 +624,7 @@ def Exponential_probability_plot_Weibull_Scale(
     failures=None,
     right_censored=None,
     fit_gamma=False,
-    __fitted_dist_params=None,
+    _fitted_dist_params=None,
     a=None,
     CI=0.95,
     show_fitted_distribution=True,
@@ -703,7 +703,7 @@ def Exponential_probability_plot_Weibull_Scale(
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 1 and __fitted_dist_params is None:
+    elif len(failures) < 1 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 1")
 
     if type(failures) not in [np.ndarray, list]:
@@ -727,13 +727,13 @@ def Exponential_probability_plot_Weibull_Scale(
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
-        if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
+        if _fitted_dist_params is not None and _fitted_dist_params.gamma > 0:
             fit_gamma = True
 
         if fit_gamma is False:
-            if __fitted_dist_params is not None:
-                Lambda = __fitted_dist_params.Lambda
-                Lambda_SE = __fitted_dist_params.Lambda_SE
+            if _fitted_dist_params is not None:
+                Lambda = _fitted_dist_params.Lambda
+                Lambda_SE = _fitted_dist_params.Lambda_SE
             else:
                 from reliability.Fitters import Fit_Exponential_1P
 
@@ -751,10 +751,10 @@ def Exponential_probability_plot_Weibull_Scale(
             else:
                 label = str("Fitted Exponential_1P (λ=" + round_and_string(Lambda, dec) + ")")
         elif fit_gamma is True:
-            if __fitted_dist_params is not None:
-                Lambda = __fitted_dist_params.Lambda
-                Lambda_SE = __fitted_dist_params.Lambda_SE
-                gamma = __fitted_dist_params.gamma
+            if _fitted_dist_params is not None:
+                Lambda = _fitted_dist_params.Lambda
+                Lambda_SE = _fitted_dist_params.Lambda_SE
+                gamma = _fitted_dist_params.gamma
             else:
                 from reliability.Fitters import Fit_Exponential_2P
 
@@ -821,7 +821,7 @@ def Exponential_probability_plot_Weibull_Scale(
 def Gumbel_probability_plot(
     failures=None,
     right_censored=None,
-    __fitted_dist_params=None,
+    _fitted_dist_params=None,
     a=None,
     CI: float=0.95,
     CI_type: str | None="time",
@@ -890,7 +890,7 @@ def Gumbel_probability_plot(
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 2 and __fitted_dist_params is None:
+    elif len(failures) < 2 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -919,12 +919,12 @@ def Gumbel_probability_plot(
                 CI_type = "none"
             else:
                 raise ValueError('CI_type must be "time", "reliability", or "none"')
-        if __fitted_dist_params is not None:
-            mu = __fitted_dist_params.mu
-            sigma = __fitted_dist_params.sigma
-            mu_SE = __fitted_dist_params.mu_SE
-            sigma_SE = __fitted_dist_params.sigma_SE
-            Cov_mu_sigma = __fitted_dist_params.Cov_mu_sigma
+        if _fitted_dist_params is not None:
+            mu = _fitted_dist_params.mu
+            sigma = _fitted_dist_params.sigma
+            mu_SE = _fitted_dist_params.mu_SE
+            sigma_SE = _fitted_dist_params.sigma_SE
+            Cov_mu_sigma = _fitted_dist_params.Cov_mu_sigma
         else:
             from reliability.Fitters import Fit_Gumbel_2P
 
@@ -985,7 +985,7 @@ def Gumbel_probability_plot(
 def Normal_probability_plot(
     failures=None,
     right_censored=None,
-    __fitted_dist_params=None,
+    _fitted_dist_params=None,
     a=None,
     CI=0.95,
     CI_type: str | None ="time",
@@ -1054,7 +1054,7 @@ def Normal_probability_plot(
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 2 and __fitted_dist_params is None:
+    elif len(failures) < 2 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -1081,12 +1081,12 @@ def Normal_probability_plot(
                 CI_type = "none"
             else:
                 raise ValueError('CI_type must be "time", "reliability", or "none"')
-        if __fitted_dist_params is not None:
-            mu = __fitted_dist_params.mu
-            sigma = __fitted_dist_params.sigma
-            mu_SE = __fitted_dist_params.mu_SE
-            sigma_SE = __fitted_dist_params.sigma_SE
-            Cov_mu_sigma = __fitted_dist_params.Cov_mu_sigma
+        if _fitted_dist_params is not None:
+            mu = _fitted_dist_params.mu
+            sigma = _fitted_dist_params.sigma
+            mu_SE = _fitted_dist_params.mu_SE
+            sigma_SE = _fitted_dist_params.sigma_SE
+            Cov_mu_sigma = _fitted_dist_params.Cov_mu_sigma
         else:
             from reliability.Fitters import Fit_Normal_2P
 
@@ -1148,7 +1148,7 @@ def Lognormal_probability_plot(
     failures=None,
     right_censored=None,
     fit_gamma=False,
-    __fitted_dist_params=None,
+    _fitted_dist_params=None,
     a=None,
     CI=0.95,
     CI_type: str | None ="time",
@@ -1221,7 +1221,7 @@ def Lognormal_probability_plot(
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 2 and __fitted_dist_params is None:
+    elif len(failures) < 2 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -1255,16 +1255,16 @@ def Lognormal_probability_plot(
                 CI_type = "none"
             else:
                 raise ValueError('CI_type must be "time", "reliability", or "none"')
-        if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
+        if _fitted_dist_params is not None and _fitted_dist_params.gamma > 0:
             fit_gamma = True
 
         if fit_gamma is False:
-            if __fitted_dist_params is not None:
-                mu = __fitted_dist_params.mu
-                sigma = __fitted_dist_params.sigma
-                mu_SE = __fitted_dist_params.mu_SE
-                sigma_SE = __fitted_dist_params.sigma_SE
-                Cov_mu_sigma = __fitted_dist_params.Cov_mu_sigma
+            if _fitted_dist_params is not None:
+                mu = _fitted_dist_params.mu
+                sigma = _fitted_dist_params.sigma
+                mu_SE = _fitted_dist_params.mu_SE
+                sigma_SE = _fitted_dist_params.sigma_SE
+                Cov_mu_sigma = _fitted_dist_params.Cov_mu_sigma
             else:
                 from reliability.Fitters import Fit_Lognormal_2P
 
@@ -1287,13 +1287,13 @@ def Lognormal_probability_plot(
                     "Fitted Lognormal_2P (μ=" + round_and_string(mu, dec) + ", σ=" + round_and_string(sigma, dec) + ")",
                 )
         elif fit_gamma is True:
-            if __fitted_dist_params is not None:
-                mu = __fitted_dist_params.mu
-                sigma = __fitted_dist_params.sigma
-                gamma = __fitted_dist_params.gamma
-                mu_SE = __fitted_dist_params.mu_SE
-                sigma_SE = __fitted_dist_params.sigma_SE
-                Cov_mu_sigma = __fitted_dist_params.Cov_mu_sigma
+            if _fitted_dist_params is not None:
+                mu = _fitted_dist_params.mu
+                sigma = _fitted_dist_params.sigma
+                gamma = _fitted_dist_params.gamma
+                mu_SE = _fitted_dist_params.mu_SE
+                sigma_SE = _fitted_dist_params.sigma_SE
+                Cov_mu_sigma = _fitted_dist_params.Cov_mu_sigma
             else:
                 from reliability.Fitters import Fit_Lognormal_3P
 
@@ -1366,7 +1366,7 @@ def Lognormal_probability_plot(
 def Beta_probability_plot(
     failures=None,
     right_censored=None,
-    __fitted_dist_params=None,
+    _fitted_dist_params=None,
     a=None,
     CI=0.95,
     show_fitted_distribution=True,
@@ -1435,7 +1435,7 @@ def Beta_probability_plot(
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 2 and __fitted_dist_params is None:
+    elif len(failures) < 2 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -1453,9 +1453,9 @@ def Beta_probability_plot(
     if CI <= 0 or CI >= 1:
         raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
-    if __fitted_dist_params is not None:
-        alpha = __fitted_dist_params.alpha
-        beta = __fitted_dist_params.beta
+    if _fitted_dist_params is not None:
+        alpha = _fitted_dist_params.alpha
+        beta = _fitted_dist_params.beta
     else:
         from reliability.Fitters import Fit_Beta_2P
 
@@ -1510,7 +1510,7 @@ def Gamma_probability_plot(
     failures=None,
     right_censored=None,
     fit_gamma=False,
-    __fitted_dist_params=None,
+    _fitted_dist_params=None,
     a=None,
     CI=0.95,
     CI_type: str | None="time",
@@ -1588,7 +1588,7 @@ def Gamma_probability_plot(
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 2 and __fitted_dist_params is None:
+    elif len(failures) < 2 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -1623,18 +1623,18 @@ def Gamma_probability_plot(
             CI_type = "none"
         else:
             raise ValueError('CI_type must be "time", "reliability", or "none"')
-    if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
+    if _fitted_dist_params is not None and _fitted_dist_params.gamma > 0:
         fit_gamma = True
 
     if fit_gamma is False:
-        if __fitted_dist_params is not None:
-            alpha = __fitted_dist_params.alpha
-            beta = __fitted_dist_params.beta
-            alpha_SE = __fitted_dist_params.alpha_SE
-            beta_SE = __fitted_dist_params.beta_SE
-            mu_SE = __fitted_dist_params.mu_SE
-            Cov_alpha_beta = __fitted_dist_params.Cov_alpha_beta
-            Cov_mu_beta = __fitted_dist_params.Cov_mu_beta
+        if _fitted_dist_params is not None:
+            alpha = _fitted_dist_params.alpha
+            beta = _fitted_dist_params.beta
+            alpha_SE = _fitted_dist_params.alpha_SE
+            beta_SE = _fitted_dist_params.beta_SE
+            mu_SE = _fitted_dist_params.mu_SE
+            Cov_alpha_beta = _fitted_dist_params.Cov_alpha_beta
+            Cov_mu_beta = _fitted_dist_params.Cov_mu_beta
         else:
             from reliability.Fitters import Fit_Gamma_2P
 
@@ -1659,15 +1659,15 @@ def Gamma_probability_plot(
                 "Fitted Gamma_2P (α=" + round_and_string(alpha, dec) + ", β=" + round_and_string(beta, dec) + ")",
             )
     elif fit_gamma is True:
-        if __fitted_dist_params is not None:
-            alpha = __fitted_dist_params.alpha
-            beta = __fitted_dist_params.beta
-            gamma = __fitted_dist_params.gamma
-            alpha_SE = __fitted_dist_params.alpha_SE
-            beta_SE = __fitted_dist_params.beta_SE
-            mu_SE = __fitted_dist_params.mu_SE
-            Cov_alpha_beta = __fitted_dist_params.Cov_alpha_beta
-            Cov_mu_beta = __fitted_dist_params.Cov_mu_beta
+        if _fitted_dist_params is not None:
+            alpha = _fitted_dist_params.alpha
+            beta = _fitted_dist_params.beta
+            gamma = _fitted_dist_params.gamma
+            alpha_SE = _fitted_dist_params.alpha_SE
+            beta_SE = _fitted_dist_params.beta_SE
+            mu_SE = _fitted_dist_params.mu_SE
+            Cov_alpha_beta = _fitted_dist_params.Cov_alpha_beta
+            Cov_mu_beta = _fitted_dist_params.Cov_mu_beta
         else:
             from reliability.Fitters import Fit_Gamma_3P
 
@@ -1749,7 +1749,7 @@ def Exponential_probability_plot(
     failures=None,
     right_censored=None,
     fit_gamma=False,
-    __fitted_dist_params=None,
+    _fitted_dist_params=None,
     a=None,
     CI=0.95,
     show_fitted_distribution=True,
@@ -1824,7 +1824,7 @@ def Exponential_probability_plot(
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 1 and __fitted_dist_params is None:
+    elif len(failures) < 1 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 1")
 
     if type(failures) not in [np.ndarray, list]:
@@ -1848,13 +1848,13 @@ def Exponential_probability_plot(
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
 
-        if __fitted_dist_params is not None and __fitted_dist_params.gamma > 0:
+        if _fitted_dist_params is not None and _fitted_dist_params.gamma > 0:
             fit_gamma = True
 
         if fit_gamma is False:
-            if __fitted_dist_params is not None:
-                Lambda = __fitted_dist_params.Lambda
-                Lambda_SE = __fitted_dist_params.Lambda_SE
+            if _fitted_dist_params is not None:
+                Lambda = _fitted_dist_params.Lambda
+                Lambda_SE = _fitted_dist_params.Lambda_SE
             else:
                 from reliability.Fitters import Fit_Exponential_1P
 
@@ -1872,10 +1872,10 @@ def Exponential_probability_plot(
             else:
                 label = str("Fitted Exponential_1P (λ=" + round_and_string(Lambda, dec) + ")")
         elif fit_gamma is True:
-            if __fitted_dist_params is not None:
-                Lambda = __fitted_dist_params.Lambda
-                Lambda_SE = __fitted_dist_params.Lambda_SE
-                gamma = __fitted_dist_params.gamma
+            if _fitted_dist_params is not None:
+                Lambda = _fitted_dist_params.Lambda
+                Lambda_SE = _fitted_dist_params.Lambda_SE
+                gamma = _fitted_dist_params.gamma
             else:
                 from reliability.Fitters import Fit_Exponential_2P
 

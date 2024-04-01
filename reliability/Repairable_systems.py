@@ -165,7 +165,30 @@ class reliability_growth:
         self.__t_target = t_target
         self.__max_time = max_time
 
-    def print_results(self):
+    def print_results(self) -> None:
+        """
+        Prints the results of the reliability growth model parameters and demonstrated metrics.
+
+        If the model is "Crow-AMSAA", it prints the Crow-AMSAA reliability growth model parameters:
+        - Beta
+        - Lambda
+        - Growth rate
+
+        If the model is not "Crow-AMSAA" (assumed to be "Duane"), it prints the Duane reliability growth model parameters:
+        - Alpha
+        - A
+
+        It also prints the following demonstrated metrics:
+        - Demonstrated MTBF (cumulative)
+        - Demonstrated MTBF (instantaneous)
+        - Demonstrated failure intensity (cumulative)
+        - Demonstrated failure intensity (instantaneous)
+
+        If a target MTBF is specified, it also prints the time to reach the target MTBF.
+
+        Returns:
+        None
+        """
         if self.__model == "Crow-AMSAA":
             colorprint(
                 "Crow-AMSAA reliability growth model parameters:",
@@ -192,7 +215,18 @@ class reliability_growth:
             print("Time to reach target MTBF:", round_and_string(self.time_to_target))
         print("")  # blank line
 
-    def plot(self, log_scale=False, **kwargs):
+    def plot(self, log_scale=False, **kwargs) -> plt.Axes:
+        """
+        Plot the reliability growth curve.
+
+        Parameters:
+        - log_scale (bool): If True, the x and y axes will be displayed in logarithmic scale.
+        - **kwargs: Additional keyword arguments to customize the plot.
+
+        Returns:
+        - matplotlib.axes.Axes: The current axes instance.
+
+        """
         if log_scale is True:
             xmax = 10 ** np.ceil(np.log10(max(self.__max_time, self.__t_target)))
             x_array = np.geomspace(0.00001, xmax * 100, 1000)
@@ -266,6 +300,7 @@ class reliability_growth:
             else:
                 plt.ylim(0, max(self.__MTBF_c) * 1.2)
         plt.tight_layout()
+        return plt.gca()
 
 
 class optimal_replacement_time:
@@ -517,13 +552,6 @@ class ROCOF:
     CI : float
         The confidence interval for the Laplace test. Must be between 0 and 1.
         Default is 0.95 for 95% CI.
-    show_plot : bool, optional
-        If True the plot will be produced. Default = True.
-    print_results : bool, optional
-        If True the results will be printed to console. Default = True.
-    kwargs
-        Plotting keywords that are passed directly to matplotlib (e.g. color,
-        label, linestyle).
 
     Returns
     -------
@@ -664,7 +692,16 @@ class ROCOF:
             CI_rounded = int(CI * 100)
         self.__CI_rounded = CI_rounded
 
-    def print_results(self):
+    def print_results(self) -> None:
+        """
+        Print the results from the ROCOF analysis.
+
+        This method prints the results of the ROCOF analysis, including the confidence level,
+        the type of trend (improving, worsening, or constant), and the parameters of the ROCOF assuming NHPP or HPP.
+
+        Returns:
+            None
+        """
         colorprint("Results from ROCOF analysis:", bold=True, underline=True)
         print(self.__results_str)
         if self.z_crit[0] > self.U:
@@ -702,7 +739,19 @@ class ROCOF:
                 "failures per unit time.",
             )
 
-    def plot(self, **kwargs):
+    def plot(self, **kwargs) -> plt.Axes:
+        """
+        Plot the failure interarrival times and mean time between failures (MTBF) of a repairable system.
+
+        Parameters:
+        - linestyle (str, optional): The line style for the MTBF plot. Default is '--'.
+        - label (str, optional): The label for the failure interarrival times plot. Default is 'Failure interarrival times'.
+        - **kwargs: Additional keyword arguments to be passed to the scatter plot function.
+
+        Returns:
+        - matplotlib.axes.Axes: The current axes instance.
+
+        """
         ls = kwargs.pop("linestyle") if "linestyle" in kwargs else "--"
         label_1 = kwargs.pop("label") if "label" in kwargs else "Failure interarrival times"
         plt.plot(self.__x_to_plot, self.__MTBF, linestyle=ls, label="MTBF")
@@ -717,6 +766,7 @@ class ROCOF:
         )
         plt.title(title_str)
         plt.legend()
+        return plt.gca()
 
 
 class MCF_nonparametric:
@@ -751,21 +801,9 @@ class MCF_nonparametric:
         right censored value. If you only have data from 1 system you may enter
         the data in a single list as data = [3,7,12] and it will be nested
         within another list automatically.
-    print_results : bool, optional
-        Prints the table of MCF results (state, time, MCF_lower, MCF, MCF_upper,
-        variance). Default = True.
     CI : float, optional
         Confidence interval. Must be between 0 and 1. Default = 0.95 for 95% CI
         (one sided).
-    show_plot : bool, optional
-        If True the plot will be shown. Default = True. Use plt.show() to show
-        it.
-    plot_CI : bool, optional
-        If True, the plot will include the confidence intervals. Default = True.
-        Set as False to remove the confidence intervals from the plot.
-    kwargs
-        Plotting keywords that are passed directly to matplotlib (e.g. color,
-        label, linestyle).
 
     Returns
     -------
@@ -966,29 +1004,29 @@ class MCF_nonparametric:
             CI_rounded = int(CI * 100)
         self.CI_rounded = CI_rounded
 
-    def print_results(self):
-        """
-        Prints the Mean Cumulative Function results with confidence interval.
+    def print_results(self) -> None:
+            """
+            Prints the Mean Cumulative Function results with confidence interval.
 
-        This method sets display options for pandas dataframe to prevent wrapping and truncation,
-        and then prints the results with a header indicating the confidence interval.
+            This method sets display options for pandas dataframe to prevent wrapping and truncation,
+            and then prints the results with a header indicating the confidence interval.
 
-        Args:
-            None
+            Args:
+                None
 
-        Returns:
-            None
-        """
-        pd.set_option("display.width", 200)  # prevents wrapping after default 80 characters
-        pd.set_option("display.max_columns", 9)  # shows the dataframe without ... truncation
-        colorprint(
-            str("Mean Cumulative Function results (" + str(self.CI_rounded) + "% CI):"),
-            bold=True,
-            underline=True,
-        )
-        print(self.results.to_string(index=False), "\n")
+            Returns:
+                None
+            """
+            pd.set_option("display.width", 200)  # prevents wrapping after default 80 characters
+            pd.set_option("display.max_columns", 9)  # shows the dataframe without ... truncation
+            colorprint(
+                str("Mean Cumulative Function results (" + str(self.CI_rounded) + "% CI):"),
+                bold=True,
+                underline=True,
+            )
+            print(self.results.to_string(index=False), "\n")
 
-    def plot(self, plot_CI=True, **kwargs):
+    def plot(self, plot_CI=True, **kwargs) -> plt.Axes:
         """
         Plot the non-parametric estimate of the Mean Cumulative Function (MCF) for repairable systems.
 
@@ -997,7 +1035,15 @@ class MCF_nonparametric:
             **kwargs: Additional keyword arguments to be passed to the `plt.plot` function.
 
         Returns:
+            matplotlib.axes.Axes: The current axes instance.
+
+        Raises:
             None
+
+        Example:
+            To plot the MCF with confidence interval bounds:
+            >>> repairable_system.plot(plot_CI=True, color='red')
+
         """
         x_MCF = [0, self.time[0]]
         y_MCF = [0, 0]
@@ -1033,6 +1079,7 @@ class MCF_nonparametric:
         plt.title(title_str)
         plt.xlim(0, self.last_time)
         plt.ylim(0, max(self.upper) * 1.05)
+        return plt.gca()
 
 
 class MCF_parametric:
@@ -1065,21 +1112,9 @@ class MCF_parametric:
         right censored value. If you only have data from 1 system you may enter
         the data in a single list as data = [3,7,12] and it will be nested
         within another list automatically.
-    print_results : bool, optional
-        Prints the table of MCF results (state, time, MCF_lower, MCF, MCF_upper,
-        variance). Default = True.
     CI : float, optional
         Confidence interval. Must be between 0 and 1. Default = 0.95 for 95% CI
         (one sided).
-    show_plot : bool, optional
-        If True the plot will be shown. Default = True. Use plt.show() to show
-        it.
-    plot_CI : bool, optional
-        If True, the plot will include the confidence intervals. Default = True.
-        Set as False to remove the confidence intervals from the plot.
-    kwargs
-        Plotting keywords that are passed directly to matplotlib (e.g. color,
-        label, linestyle).
 
     Returns
     -------
@@ -1203,7 +1238,16 @@ class MCF_parametric:
             ],
         )
 
-    def print_results(self):
+    def print_results(self) -> None:
+        """
+        Print the results of the Mean Cumulative Function Parametric Model.
+
+        This method calculates and prints the results of the Mean Cumulative Function Parametric Model,
+        including the Confidence Interval (CI), the MCF equation, and the system repair rate.
+
+        Returns:
+            None
+        """
         CI_rounded = self.CI * 100
         if CI_rounded % 1 == 0:
             CI_rounded = int(self.CI * 100)
@@ -1221,7 +1265,18 @@ class MCF_parametric:
         else:
             print("Since Beta is greater than 1, the system repair rate is WORSENING over time.")
 
-    def plot(self, plot_CI=True, **kwargs):
+    def plot(self, plot_CI=True, **kwargs) -> plt.Axes:
+        """
+        Plot the parametric estimate of the Mean Cumulative Function (MCF) for repairable systems.
+
+        Args:
+            plot_CI (bool, optional): Whether to plot the confidence interval. Defaults to True.
+            **kwargs: Additional keyword arguments to be passed to the plot function.
+
+        Returns:
+            plt.Axes: The matplotlib Axes object containing the plot.
+
+        """
         if "color" in kwargs:
             color = kwargs.pop("color")
             marker_color = "k"
@@ -1266,3 +1321,4 @@ class MCF_parametric:
         plt.xlim(0, max(self.times) * 1.2)
         plt.ylim(0, max(self.MCF) * 1.4)
         plt.title(title_str)
+        return plt.gca()

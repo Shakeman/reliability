@@ -14,6 +14,8 @@ MCF_parametric - Mean Cumulative Function Parametric. Fits a parametric model to
     the data obtained from MCF_nonparametric
 """
 
+from typing import TYPE_CHECKING
+
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
@@ -26,7 +28,8 @@ from scipy.optimize import curve_fit
 
 from reliability.Utils import colorprint, round_and_string
 
-
+if TYPE_CHECKING:
+    import numpy.typing as npt
 class reliability_growth:
     """Fits a reliability growth model tos failure data using either the Duane
     model or the Crow-AMSAA model.
@@ -41,15 +44,8 @@ class reliability_growth:
         The target MTBF for the reliability growth curve. Default is None.
     log_scale : bool, optional
         Sets the x and y scales to log scales. Only used if show_plot is True.
-    show_plot : bool, optional
-        Default is True. If True the plot will be generated. Use plt.show() to
-        show it.
     model : str, optional
         The model to use. Must be 'Duane' or 'Crow-AMSAA'. Default is 'Duane'.
-    print_results : bool, optional
-        Default is True. If True the results will be printed to the console.
-    kwargs
-        Other keyword arguments passed to matplotlib.
 
     Returns
     -------
@@ -90,14 +86,10 @@ class reliability_growth:
 
     def __init__(
         self,
-        times: npt.NDArray[np.float64] | None =None,
+        times: npt.NDArray[np.float64] | list[int] | None =None,
         target_MTBF=None,
-        show_plot=True,
-        print_results=True,
-        log_scale=False,
         model="Duane",
-        **kwargs,
-    ):
+    ) -> None:
         if type(times) in [list, np.ndarray]:
             times = np.sort(np.asarray(times))
         else:
@@ -121,6 +113,9 @@ class reliability_growth:
             model = "Crow-AMSAA"
         else:
             raise ValueError('method must be either "Duane" or "Crow-AMSAA".')
+
+        self.__model = model
+        self.__target_MTBF = target_MTBF
 
         n: int = len(times)
         max_time: np.int32 = max(times)
@@ -153,6 +148,7 @@ class reliability_growth:
             ) * self.DFI_C  # Demonstrated failure intensity (instantaneous). Reported by reliasoft
             self.DMTBF_I: np.float64 = 1 / self.DFI_I  # Demonstrated MTBF (instantaneous). Reported by reliasoft
             self.A: np.float64 = 1 / b
+            self.__b = b
 
         if target_MTBF is not None:
             if model == "Crow-AMSAA":
@@ -164,108 +160,112 @@ class reliability_growth:
             t_target = np.float64(0)
             self.time_to_target: np.float64 = np.float64(0)
             print("Specify target_MTBF to obtain the time_to_target")
+        self.__times = times
+        self.__MTBF_c = MTBF_c
+        self.__t_target = t_target
+        self.__max_time = max_time
 
-        if print_results is True:
-            if model == "Crow-AMSAA":
-                colorprint(
-                    "Crow-AMSAA reliability growth model parameters:",
-                    bold=True,
-                    underline=True,
-                )
-                print("Beta:", round_and_string(self.Beta))
-                print("Lambda:", round_and_string(self.Lambda))
-                print("Growth rate:", round_and_string(self.growth_rate))
-            else:  # Duane
-                colorprint(
-                    "Duane reliability growth model parameters:",
-                    bold=True,
-                    underline=True,
-                )
-                print("Alpha:", round_and_string(self.Alpha))
-                print("A:", round_and_string(self.A))
-            print("Demonstrated MTBF (cumulative):", round_and_string(self.DMTBF_C))
-            print("Demonstrated MTBF (instantaneous):", round_and_string(self.DMTBF_I))
-            print("Demonstrated failure intensity (cumulative):", round_and_string(self.DFI_C))
-            print("Demonstrated failure intensity (instantaneous):", round_and_string(self.DFI_I))
+    def print_results(self):
+        if self.__model == "Crow-AMSAA":
+            colorprint(
+                "Crow-AMSAA reliability growth model parameters:",
+                bold=True,
+                underline=True,
+            )
+            print("Beta:", round_and_string(self.Beta))
+            print("Lambda:", round_and_string(self.Lambda))
+            print("Growth rate:", round_and_string(self.growth_rate))
+        else:  # Duane
+            colorprint(
+                "Duane reliability growth model parameters:",
+                bold=True,
+                underline=True,
+            )
+            print("Alpha:", round_and_string(self.Alpha))
+            print("A:", round_and_string(self.A))
+        print("Demonstrated MTBF (cumulative):", round_and_string(self.DMTBF_C))
+        print("Demonstrated MTBF (instantaneous):", round_and_string(self.DMTBF_I))
+        print("Demonstrated failure intensity (cumulative):", round_and_string(self.DFI_C))
+        print("Demonstrated failure intensity (instantaneous):", round_and_string(self.DFI_I))
 
-            if target_MTBF is not None:
-                print("Time to reach target MTBF:", round_and_string(self.time_to_target))
-            print("")  # blank line
+        if self.__target_MTBF is not None:
+            print("Time to reach target MTBF:", round_and_string(self.time_to_target))
+        print("")  # blank line
 
-        if show_plot is True:
-            if log_scale is True:
-                xmax = 10 ** np.ceil(np.log10(max(max_time, t_target)))
-                x_array = np.geomspace(0.00001, xmax * 100, 1000)
+    def plot(self, log_scale=False, **kwargs):
+        if log_scale is True:
+            xmax = 10 ** np.ceil(np.log10(max(self.__max_time, self.__t_target)))
+            x_array = np.geomspace(0.00001, xmax * 100, 1000)
+        else:
+            xmax = max(self.__max_time, self.__t_target) * 2
+            x_array = np.linspace(0, xmax, 1000)
+
+        if self.__model == "Crow-AMSAA":
+            MTBF = 1 / (self.Lambda * x_array ** (self.Beta - 1))
+        else:  # Duane
+            MTBF = self.__b * x_array**self.Alpha
+
+        # kwargs handling
+        c = kwargs.pop("color") if "color" in kwargs else "steelblue"
+        marker = kwargs.pop("marker") if "marker" in kwargs else "o"
+        if "label" in kwargs:
+            label = kwargs.pop("label")
+        elif self.__model == "Crow-AMSAA":
+            label = "Crow-AMSAA reliability growth curve"
+        else:
+            label = "Duane reliability growth curve"
+
+        plt.plot(x_array, MTBF, color=c, label=label, **kwargs)
+        plt.scatter(self.__times, self.__MTBF_c, color="k", marker=marker)
+
+        if self.__target_MTBF is not None:
+            # this section checks if "Target MTBF" is already in the legend
+            # and if so it doesn't add it again. This is done since plotting
+            # Duane on top of Crow-AMSAA would create duplicates in the
+            # legend
+            leg = plt.gca().get_legend()
+            if leg is not None:
+                target_plotted = False
+                for item in leg.texts:
+                    if item._text == "Target MTBF":
+                        target_plotted = True
+                target_label = None if target_plotted is True else "Target MTBF"
             else:
-                xmax = max(max_time, t_target) * 2
-                x_array = np.linspace(0, xmax, 1000)
+                target_label = "Target MTBF"
+            # plot the red line tracing the target MTBF
+            plt.plot(
+                np.array([0, self.__t_target, self.__t_target]),
+                np.array([self.__target_MTBF, self.__target_MTBF, 0]),
+                color="red",
+                linewidth=1,
+                label=target_label,
+            )
+        plt.title("MTBF vs Time")
+        plt.xlabel("Time")
+        plt.ylabel("Cumulative MTBF")
+        plt.legend()
 
-            if model == "Crow-AMSAA":
-                MTBF = 1 / (self.Lambda * x_array ** (self.Beta - 1))
-            else:  # Duane
-                MTBF = b * x_array**self.Alpha
-
-            # kwargs handling
-            c = kwargs.pop("color") if "color" in kwargs else "steelblue"
-            marker = kwargs.pop("marker") if "marker" in kwargs else "o"
-            if "label" in kwargs:
-                label = kwargs.pop("label")
-            elif model == "Crow-AMSAA":
-                label = "Crow-AMSAA reliability growth curve"
+        if log_scale is True:
+            ymin = 10 ** np.floor(np.log10(min(self.__MTBF_c)))
+            if self.__target_MTBF is not None:
+                xmin = 10 ** np.floor(np.log10(min(min(self.__times), self.__target_MTBF)))
+                ymax = 10 ** np.ceil(np.log10(max(max(self.__MTBF_c), self.__target_MTBF) * 1.2))
             else:
-                label = "Duane reliability growth curve"
-
-            plt.plot(x_array, MTBF, color=c, label=label, **kwargs)
-            plt.scatter(times, MTBF_c, color="k", marker=marker)
-
-            if target_MTBF is not None:
-                # this section checks if "Target MTBF" is already in the legend
-                # and if so it doesn't add it again. This is done since plotting
-                # Duane on top of Crow-AMSAA would create duplicates in the
-                # legend
-                leg = plt.gca().get_legend()
-                if leg is not None:
-                    target_plotted = False
-                    for item in leg.texts:
-                        if item._text == "Target MTBF":
-                            target_plotted = True
-                    target_label = None if target_plotted is True else "Target MTBF"
-                else:
-                    target_label = "Target MTBF"
-                # plot the red line tracing the target MTBF
-                plt.plot(
-                    np.array([0, t_target, t_target]),
-                    np.array([target_MTBF, target_MTBF, 0]),
-                    color="red",
-                    linewidth=1,
-                    label=target_label,
-                )
-            plt.title("MTBF vs Time")
-            plt.xlabel("Time")
-            plt.ylabel("Cumulative MTBF")
-            plt.legend()
-
-            if log_scale is True:
-                ymin = 10 ** np.floor(np.log10(min(MTBF_c)))
-                if target_MTBF is not None:
-                    xmin = 10 ** np.floor(np.log10(min(min(times), target_MTBF)))
-                    ymax = 10 ** np.ceil(np.log10(max(max(MTBF_c), target_MTBF) * 1.2))
-                else:
-                    xmin = 10 ** np.floor(np.log10(min(times)))
-                    ymax = 10 ** np.ceil(np.log10(max(MTBF_c) * 1.2))
-                plt.xlim(xmin, xmax)
-                plt.ylim(ymin, ymax)
-                plt.xscale("log")
-                plt.yscale("log")
-                plt.gca().xaxis.set_major_formatter(ScalarFormatter(useOffset=False))
-                plt.gca().yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
+                xmin = 10 ** np.floor(np.log10(min(self.__times)))
+                ymax = 10 ** np.ceil(np.log10(max(self.__MTBF_c) * 1.2))
+            plt.xlim(xmin, xmax)
+            plt.ylim(ymin, ymax)
+            plt.xscale("log")
+            plt.yscale("log")
+            plt.gca().xaxis.set_major_formatter(ScalarFormatter(useOffset=False))
+            plt.gca().yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
+        else:
+            plt.xlim(0, xmax)
+            if self.__target_MTBF is not None:
+                plt.ylim(0, max(max(self.__MTBF_c), self.__target_MTBF) * 1.2)
             else:
-                plt.xlim(0, xmax)
-                if target_MTBF is not None:
-                    plt.ylim(0, max(max(MTBF_c), target_MTBF) * 1.2)
-                else:
-                    plt.ylim(0, max(MTBF_c) * 1.2)
-            plt.tight_layout()
+                plt.ylim(0, max(self.__MTBF_c) * 1.2)
+        plt.tight_layout()
 
 
 class optimal_replacement_time:
@@ -288,21 +288,6 @@ class optimal_replacement_time:
         The restoration factor. Must be 0 or 1. Use q=1 for Power Law NHPP
         (as good as old) or q=0 for HPP (as good as new). Default is q=0 (as
         good as new).
-    show_time_plot : bool, axes, optional
-        If True the plot of replacment time vs cost per unit time will be
-        produced in a new figure. If an axes subclass is passed then the plot
-        be generated in that axes. If False then no plot will be generated.
-        Default is True.
-    show_ratio_plot : bool, axes, optional
-        If True the plot of cost ratio vs replacement interval will be
-        produced in a new figure. If an axes subclass is passed then the plot
-        be generated in that axes. If False then no plot will be generated.
-        Default is True.
-    print_results : bool, optional
-        If True the results will be printed to console. Default = True.
-    kwargs
-        Plotting keywords that are passed directly to matplotlib (e.g. color,
-        label, linestyle).
 
     Returns
     -------
@@ -319,13 +304,8 @@ class optimal_replacement_time:
         cost_CM: float,
         weibull_alpha: float,
         weibull_beta: float,
-        show_time_plot: bool | SubplotBase = True,
-        show_ratio_plot: bool | SubplotBase = True,
-        print_results: bool = True,
         q: int = 0,
-        **kwargs,
     ):
-        c = kwargs.pop("color") if "color" in kwargs else "steelblue"
         if cost_PM > cost_CM:
             raise ValueError(
                 "Cost_PM must be less than Cost_CM otherwise preventative maintenance should not be conducted.",
@@ -361,6 +341,9 @@ class optimal_replacement_time:
             sf = vcalc_SF(t)
             integral = vintegrate_SF(t)
 
+            self.__sf = sf
+            self.__integral = integral
+
             CPUT = (cost_PM * sf + cost_CM * (1 - sf)) / integral
             idx = np.argmin(CPUT)
             min_cost = CPUT[idx]  # minimum cost per unit time
@@ -371,92 +354,145 @@ class optimal_replacement_time:
             )
         self.ORT = ORT
         self.min_cost = min_cost
-        min_cost_rounded = round_and_string(min_cost, decimals=2)
-        ORT_rounded = round_and_string(ORT, decimals=2)
+        self.__min_cost_rounded = round_and_string(min_cost, decimals=2)
+        self.__ORT_rounded = round_and_string(ORT, decimals=2)
+        self.__q = q
+        self.__t = t
+        self.__CPUT = CPUT
+        self.__weibull_alpha = weibull_alpha
+        self.__weibull_beta = weibull_beta
+        self.__alpha_multiple = alpha_multiple
+        self.__cost_CM = cost_CM
+        self.__cost_PM = cost_PM
 
-        if print_results is True:
+    def print_results(self) -> None:
+            """
+            Prints the results from the optimal_replacement_time calculation.
+
+            The method prints the cost model assumption and the minimum cost per unit time
+            along with the optimal replacement time.
+
+            Parameters:
+                None
+
+            Returns:
+                None
+            """
             colorprint("Results from optimal_replacement_time:", bold=True, underline=True)
-            if q == 0:
+            if self.__q == 0:
                 print("Cost model assuming as good as new replacement (q=0):")
             else:
                 print("Cost model assuming as good as old replacement (q=1):")
             print(
                 "The minimum cost per unit time is",
-                min_cost_rounded,
+                self.__min_cost_rounded,
                 "\nThe optimal replacement time is",
-                ORT_rounded,
+                self.__ORT_rounded,
             )
 
-        if show_time_plot is True or issubclass(type(show_time_plot), SubplotBase) is True:
-            if issubclass(type(show_time_plot), SubplotBase) is True:
-                plt.sca(ax=show_time_plot)  # use the axes passed
-            else:
-                plt.figure()  # if no axes is passed, make a new figure
-            plt.plot(t, CPUT, color=c, **kwargs)
-            plt.plot(ORT, min_cost, "o", color=c)
-            text_str = str(
-                "\nMinimum cost per unit time is "
-                + str(min_cost_rounded)
-                + "\nOptimal replacement time is "
-                + str(ORT_rounded),
-            )
-            plt.text(ORT, min_cost, text_str, va="top")
-            plt.xlabel("Replacement time")
-            plt.ylabel("Cost per unit time")
-            plt.title("Optimal replacement time estimation")
-            plt.ylim([0, min_cost * 2])
-            plt.xlim([0, weibull_alpha * alpha_multiple])
+    def show_time_plot(self, subplot=None, **kwargs):
+        """
+        Display a time plot of the repairable system.
 
-        if show_ratio_plot is True or issubclass(type(show_ratio_plot), SubplotBase) is True:
-            if issubclass(type(show_ratio_plot), SubplotBase) is True:
-                plt.sca(ax=show_ratio_plot)  # use the axes passed
-            else:
-                plt.figure()  # if no axes is passed, make a new figure
-            xupper = np.round(cost_CM / cost_PM, 0) * 2
-            CC_CP = np.linspace(1, xupper, 200)  # cost CM / cost PM
-            CC = CC_CP * cost_PM
-            ORT_array = []  # optimal replacement time
+        Args:
+            subplot (matplotlib.axes.Axes, optional): The subplot to use for the plot. If not provided, a new figure will be created.
+            **kwargs: Additional keyword arguments to customize the plot.
 
-            # get the ORT from the minimum CPUT for each CC
+        Returns:
+            matplotlib.axes.Axes: The current axes instance.
 
-            def calc_ORT(x):
-                if q == 1:
-                    return weibull_alpha * (x / (cost_PM * (weibull_beta - 1))) ** (1 / weibull_beta)
+        Raises:
+            None
 
-                else:  # q = 0
-                    return t[np.argmin((cost_PM * sf + x * (1 - sf)) / integral)]
+        Example usage:
+            system = RepairableSystem()
+            system.show_time_plot(subplot=ax, color='red', linestyle='--')
 
-            vcalc_ORT = np.vectorize(calc_ORT)
-            ORT_array = vcalc_ORT(CC)
+        """
+        c = kwargs.pop("color") if "color" in kwargs else "steelblue"
+        if subplot is not None and issubclass(type(subplot), SubplotBase):
+            plt.sca(ax=subplot)  # use the axes passed
+        else:
+            plt.figure()  # if no axes is passed, make a new figure
+        plt.plot(self.__t, self.__CPUT, color=c, **kwargs)
+        plt.plot(self.ORT, self.min_cost, "o", color=c)
+        text_str = str(
+            "\nMinimum cost per unit time is "
+            + str(self.__min_cost_rounded)
+            + "\nOptimal replacement time is "
+            + str(self.__ORT_rounded),
+        )
+        plt.text(self.ORT, self.min_cost, text_str, va="top")
+        plt.xlabel("Replacement time")
+        plt.ylabel("Cost per unit time")
+        plt.title("Optimal replacement time estimation")
+        plt.ylim([0, self.min_cost * 2])
+        plt.xlim([0, self.__weibull_alpha * self.__alpha_multiple])
+        return plt.gca()
 
-            plt.plot(CC_CP, ORT_array)
-            plt.xlim(1, xupper)
-            plt.ylim(0, self.ORT * 2)
-            plt.scatter(cost_CM / cost_PM, self.ORT)
-            # vertical alignment based on plot increasing or decreasing
-            if ORT_array[50] > ORT_array[40]:
-                va = "top"
-                mult = 0.95
-            else:
-                va = "bottom"
-                mult = 1.05
-            plt.text(
-                s=str(
-                    "$cost_{CM} = $"
-                    + str(cost_CM)
-                    + "\n$cost_{PM} = $"
-                    + str(cost_PM)
-                    + "\nInterval = "
-                    + round_and_string(self.ORT, 2),
-                ),
-                x=cost_CM / cost_PM * 1.05,
-                y=self.ORT * mult,
-                ha="left",
-                va=va,
-            )
-            plt.xlabel(r"Cost ratio $\left(\frac{CM}{PM}\right)$")
-            plt.ylabel("Replacement Interval")
-            plt.title("Optimal replacement interval\nacross a range of CM costs")
+    def show_ratio_plot(self, subplot=None):
+        """
+        Displays a plot of the optimal replacement interval across a range of CM costs.
+
+        Args:
+            subplot (matplotlib.axes.Axes, optional): The subplot to use for the plot. If not provided, a new figure will be created.
+
+        Returns:
+            matplotlib.axes.Axes: The current axes instance.
+
+        Raises:
+            None
+        """
+        if subplot is not None and issubclass(type(subplot), SubplotBase):
+            plt.sca(ax=subplot)  # use the axes passed
+        else:
+            plt.figure()  # if no axes is passed, make a new figure
+        xupper = np.round(self.__cost_CM / self.__cost_PM, 0) * 2
+        CC_CP = np.linspace(1, xupper, 200)  # cost CM / cost PM
+        CC = CC_CP * self.__cost_PM
+        ORT_array = []  # optimal replacement time
+
+        # get the ORT from the minimum CPUT for each CC
+
+        def calc_ORT(x):
+            if self.__q == 1:
+                return self.__weibull_alpha * (x / (self.__cost_PM * (self.__weibull_beta - 1))) ** (1 / self.__weibull_beta)
+
+            else:  # q = 0
+                return self.__t[np.argmin((self.__cost_PM * self.__sf + x * (1 - self.__sf)) / self.__integral)]
+
+        vcalc_ORT = np.vectorize(calc_ORT)
+        ORT_array = vcalc_ORT(CC)
+
+        plt.plot(CC_CP, ORT_array)
+        plt.xlim(1, xupper)
+        plt.ylim(0, self.ORT * 2)
+        plt.scatter(self.__cost_CM / self.__cost_PM, self.ORT)
+        # vertical alignment based on plot increasing or decreasing
+        if ORT_array[50] > ORT_array[40]:
+            va = "top"
+            mult = 0.95
+        else:
+            va = "bottom"
+            mult = 1.05
+        plt.text(
+            s=str(
+                "$cost_{CM} = $"
+                + str(self.__cost_CM)
+                + "\n$cost_{PM} = $"
+                + str(self.__cost_PM)
+                + "\nInterval = "
+                + round_and_string(self.ORT, 2),
+            ),
+            x=self.__cost_CM / self.__cost_PM * 1.05,
+            y=self.ORT * mult,
+            ha="left",
+            va=va,
+        )
+        plt.xlabel(r"Cost ratio $\left(\frac{CM}{PM}\right)$")
+        plt.ylabel("Replacement Interval")
+        plt.title("Optimal replacement interval\nacross a range of CM costs")
+        return plt.gca()
 
 
 class ROCOF:
@@ -632,26 +668,37 @@ class ROCOF:
         colorprint("Results from ROCOF analysis:", bold=True, underline=True)
         print(self.__results_str)
         if self.z_crit[0] > self.U:
-            print(str("At " + str(self.__CI_rounded) + "% confidence level the ROCOF is IMPROVING. Assume NHPP."))
-            print(
-                "ROCOF assuming NHPP has parameters: Beta_hat =",
-                round_and_string(self.Beta_hat, decimals=3),
-                ", Lambda_hat =",
-                round_and_string(self.Lambda_hat, decimals=4),
-            )
+            if isinstance(self.Beta_hat, (float, int)) and isinstance(self.Lambda_hat, (float, int)):
+                print(str("At " + str(self.__CI_rounded) + "% confidence level the ROCOF is IMPROVING. Assume NHPP."))
+                print(
+                    "ROCOF assuming NHPP has parameters: Beta_hat =",
+                    round_and_string(float(self.Beta_hat), decimals=3),
+                    ", Lambda_hat =",
+                    round_and_string(float(self.Lambda_hat), decimals=4),
+                )
+            else:
+                print("Invalid type for Beta_hat or Lambda_hat.")
         elif self.z_crit[1] < self.U:
-            print(str("At " + str(self.__CI_rounded) + "% confidence level the ROCOF is WORSENING. Assume NHPP."))
-            print(
-                "ROCOF assuming NHPP has parameters: Beta_hat =",
-                round_and_string(self.Beta_hat, decimals=3),
-                ", Lambda_hat =",
-                round_and_string(self.Lambda_hat, decimals=4),
-            )
+            if isinstance(self.Beta_hat, (float, int)) and isinstance(self.Lambda_hat, (float, int)):
+                print(str("At " + str(self.__CI_rounded) + "% confidence level the ROCOF is IMPROVING. Assume NHPP."))
+                print(str("At " + str(self.__CI_rounded) + "% confidence level the ROCOF is WORSENING. Assume NHPP."))
+                print(
+                    "ROCOF assuming NHPP has parameters: Beta_hat =",
+                    round_and_string(self.Beta_hat, decimals=3),
+                    ", Lambda_hat =",
+                    round_and_string(self.Lambda_hat, decimals=4),
+                )
+            else:
+                print("Invalid type for Beta_hat or Lambda_hat.")
         else:
             print(str("At " + str(self.__CI_rounded) + "% confidence level the ROCOF is CONSTANT. Assume HPP."))
+            if isinstance(self.ROCOF, (float, int)):
+                rocof_value = round_and_string(self.ROCOF, decimals=4)
+            else:
+                rocof_value = "ROCOF is not provided when trend is not constant."
             print(
                 "ROCOF assuming HPP is",
-                round_and_string(self.ROCOF, decimals=4),
+                rocof_value,
                 "failures per unit time.",
             )
 
@@ -1206,7 +1253,7 @@ class MCF_parametric:
                 linewidth=0,
             )
 
-        plt.scatter(self.times, self.MCF, marker=marker, color=marker_color, **kwargs)
+        plt.scatter(np.array(self.times), np.array(self.MCF), marker=marker, color=marker_color, **kwargs)
         plt.ylabel("Mean cumulative number of failures")
         plt.xlabel("Time")
         title_str = str(

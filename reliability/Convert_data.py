@@ -30,7 +30,9 @@ values (ie. every event is assumed to have a quantity of 1). XCN may not be just
 X as this is the same as F from FR format.
 """
 
+
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 
 from reliability.Utils import colorprint, removeNaNs, write_df_to_xlsx
@@ -364,7 +366,7 @@ class xlsx_to_FNRN:
         self.num_right_censored = FNRN.num_right_censored
 
         # make the dataframe for printing and writing to excel
-        if self.right_censored is not None:
+        if self.right_censored is not None and self.num_right_censored is not None:
             f, nf, rc, nrc = (
                 list(self.failures),
                 list(self.num_failures),
@@ -486,7 +488,7 @@ class XCN_to_FNRN:
         self.right_censored = FNRN.right_censored
         self.num_right_censored = FNRN.num_right_censored
         # make the dataframe for printing and writing to excel
-        if self.right_censored is not None:
+        if self.right_censored is not None and self.num_right_censored is not None:
             f, nf, rc, nrc = (
                 list(self.failures),
                 list(self.num_failures),
@@ -595,7 +597,7 @@ class XCN_to_FR:
 
     """
 
-    def __init__(self, X, C, N=None, censor_code=None, failure_code=None):
+    def __init__(self, X: list[int] | npt.NDArray, C, N=None, censor_code=None, failure_code=None):
         if type(N) == type(None):
             N = np.ones_like(X)  # assume a quantity of 1 if not specified
         if type(X) not in [list, np.ndarray]:
@@ -986,7 +988,7 @@ class FR_to_FNRN:
             self.right_censored = None
             self.num_right_censored = None
         # make the dataframe for printing and writing to excel
-        if self.right_censored is not None:
+        if self.right_censored is not None and self.num_right_censored is not None:
             f, nf, rc, nrc = (
                 list(self.failures),
                 list(self.num_failures),
@@ -1093,7 +1095,7 @@ class FNRN_to_FR:
 
     """
 
-    def __init__(self, failures, num_failures, right_censored=None, num_right_censored=None):
+    def __init__(self, failures, num_failures, right_censored=None, num_right_censored: npt.NDArray | list[int] | None = None):
         if type(failures) not in [list, np.ndarray]:
             raise ValueError("failures must be a list or array.")
         if type(num_failures) not in [list, np.ndarray]:
@@ -1106,7 +1108,7 @@ class FNRN_to_FR:
             failures_out = np.append(failures_out, np.ones(int(num_failures[i])) * f)
         self.failures = failures_out
 
-        if right_censored is not None:
+        if right_censored is not None and num_right_censored is not None:
             if type(right_censored) not in [list, np.ndarray]:
                 raise ValueError("right_censored must be a list or array.")
             if type(num_right_censored) not in [list, np.ndarray]:

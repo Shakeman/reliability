@@ -1,5 +1,9 @@
+
+from typing import Any
+
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import scipy.stats as ss
 from scipy import integrate
 
@@ -336,7 +340,7 @@ class Normal_Distribution:
         CI_y=None,
         CI_x=None,
         **kwargs,
-    ):
+    ) -> tuple[Any, Any | npt.NDArray, Any] | Any :
         """Plots the CDF (cumulative distribution function)
 
         Parameters

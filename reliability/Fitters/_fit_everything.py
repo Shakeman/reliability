@@ -1218,45 +1218,25 @@ class Fit_Everything:
             )
         elif best_dist == "Gumbel_2P":
             self.best_distribution = Gumbel_Distribution(mu=self.Gumbel_2P_mu, sigma=self.Gumbel_2P_sigma)
+        self.__method = method
+        self.__failures = failures
+        self.__right_censored = right_censored
 
         # print the results
-        if print_results is True:  # printing occurs by default
-            frac_censored = self._frac_cens * 100
-            colorprint("Results from Fit_Everything:", bold=True, underline=True)
-            print("Analysis method:", method)
-            print(
-                "Failures / Right censored:",
-                str(str(len(failures)) + "/" + str(len(right_censored))),
-                str("(" + round_and_string(frac_censored) + "% right censored)"),
-                "\n",
-            )
-            print(self.results.to_string(index=False), "\n")
+    def print_results(self):
+        frac_censored = self._frac_cens * 100
+        colorprint("Results from Fit_Everything:", bold=True, underline=True)
+        print("Analysis method:", self.__method)
+        print(
+            "Failures / Right censored:",
+            str(str(len(self.__failures)) + "/" + str(len(self.__right_censored))),
+            str("(" + round_and_string(frac_censored) + "% right censored)"),
+            "\n",
+        )
+        print(self.results.to_string(index=False), "\n")
 
-        if show_histogram_plot is True:
-            # plotting enabled by default
-            self.histogram_plot = Fit_Everything.__histogram_plot(self)
 
-        if show_PP_plot is True:
-            # plotting enabled by default
-            self.PP_plot = Fit_Everything.__P_P_plot(self)
-
-        if show_probability_plot is True:
-            # plotting enabled by default
-            self.probability_plot = Fit_Everything.__probability_plot(self)
-
-        if show_best_distribution_probability_plot is True:
-            # plotting enabled by default
-            self.best_distribution_probability_plot = Fit_Everything.__probability_plot(self, best_only=True)
-
-        if (
-            show_histogram_plot is True
-            or show_PP_plot is True
-            or show_probability_plot is True
-            or show_best_distribution_probability_plot is True
-        ):
-            plt.show()
-
-    def __probplot_layout(self):
+    def probplot_layout(self):
         """Internal function to provide layout formatting of the plots.
         """
         items = len(self.results.index.values)  # number of items fitted
@@ -1328,7 +1308,7 @@ class Fit_Everything:
             )
         return cols, rows, figsize, figsizePP
 
-    def __histogram_plot(self):
+    def histogram_plot(self):
         """Generates a histogram plot of PDF and CDF of the fitted distributions.
         """
         X = self.failures
@@ -1493,7 +1473,7 @@ class Fit_Everything:
         plt.subplots_adjust(left=0, bottom=0.10, right=0.97, top=0.88, wspace=0.18)
         return plt.gcf()
 
-    def __P_P_plot(self):
+    def p_p_plot(self):
         """Generates a subplot of Probability-Probability plots to compare the
         parametric vs non-parametric plots of the fitted distributions.
         """
@@ -1615,7 +1595,7 @@ class Fit_Everything:
         plt.tight_layout()
         return plt.gcf()
 
-    def __probability_plot(self, best_only=False):
+    def probability_plot(self, best_only=False):
         """Generates a subplot of all the probability plots
         """
         from reliability.Probability_plotting import (

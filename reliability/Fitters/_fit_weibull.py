@@ -3128,7 +3128,7 @@ class Fit_Weibull_ZI:
     distribution : object
         a DSZI_Model object with the parameters of the fitted distribution
     results : dataframe
-        a pandas dataframe of the results (point estimate, standard error,
+        a pandas dataframe of the results (point estimate, standard error,2
         lower CI and upper CI for each parameter)
     goodness_of_fit : dataframe
         a pandas dataframe of the goodness of fit values (Log-likelihood, AICc,
@@ -3150,12 +3150,8 @@ class Fit_Weibull_ZI:
         self,
         failures=None,
         right_censored=None,
-        show_probability_plot=True,
-        print_results=True,
         CI=0.95,
         optimizer=None,
-        downsample_scatterplot=True,
-        **kwargs,
     ):
         # need to remove zeros before passing to fitters input checking
         failures = np.asarray(failures)
@@ -3287,12 +3283,27 @@ class Fit_Weibull_ZI:
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
         self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
+        self.__CI: float = CI
+        self.__failures = failures
+        self.__right_censored = right_censored
+        self.__failures_no_zeros = failures_no_zeros
+        self.__n = n
 
-        if print_results is True:
-            CI_rounded = CI * 100
+    def print_results(self) -> None:
+            """
+            Prints the results of the Weibull fitting analysis.
+
+            This method prints various statistics and results obtained from the Weibull fitting analysis,
+            including the confidence interval, analysis method, optimizer used, number of failures and right censored data points,
+            as well as the results and goodness of fit statistics.
+
+            Returns:
+                None
+            """
+            CI_rounded = self.__CI * 100
             if CI_rounded % 1 == 0:
-                CI_rounded = int(CI * 100)
-            frac_censored = len(right_censored) / n * 100
+                CI_rounded = int(self.__CI * 100)
+            frac_censored = len(self.__right_censored) / self.__n * 100
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(
@@ -3305,55 +3316,66 @@ class Fit_Weibull_ZI:
                 print("Optimizer:", self.optimizer)
             print(
                 "Failures / Right censored:",
-                str(str(len(failures)) + "/" + str(len(right_censored))),
+                str(str(len(self.__failures)) + "/" + str(len(self.__right_censored))),
                 str("(" + round_and_string(frac_censored) + "% right censored)"),
                 "\n",
             )
             print(self.results.to_string(index=False), "\n")
             print(self.goodness_of_fit.to_string(index=False), "\n")
 
-        if show_probability_plot is True:
-            from reliability.Probability_plotting import (
-                Weibull_probability_plot,
-                plot_points,
-            )
+    def plot(self, downsample_scatterplot=True, **kwargs):
+        """
+        Plots the Weibull probability plot and scatter points.
 
-            rc = None if len(right_censored) == 0 else right_censored
-            Weibull_probability_plot(
-                failures=failures_no_zeros,
-                right_censored=rc,
-                show_fitted_distribution=False,
-                show_scatter_points=False,
-                **kwargs,
+        Args:
+            downsample_scatterplot (bool, optional): Whether to downsample the scatter plot. Defaults to True.
+            **kwargs: Additional keyword arguments to be passed to the plotting functions.
+
+        Returns:
+            matplotlib.axes.Axes: The current axes instance.
+
+        """
+        from reliability.Probability_plotting import (
+            Weibull_probability_plot,
+            plot_points,
+        )
+
+        rc = None if len(self.__right_censored) == 0 else self.__right_censored
+        Weibull_probability_plot(
+            failures=self.__failures_no_zeros,
+            right_censored=rc,
+            show_fitted_distribution=False,
+            show_scatter_points=False,
+            **kwargs,
+        )
+        if "label" in kwargs:
+            label_str = kwargs.pop("label")
+        else:
+            label_str = str(
+                r"Fitted Weibull_ZI"
+                + r" ($\alpha=$"
+                + round_and_string(self.alpha, dec)
+                + r", $\beta=$"
+                + round_and_string(self.beta, dec)
+                + r", $ZI=$"
+                + round_and_string(self.ZI, dec)
+                + ")",
             )
-            if "label" in kwargs:
-                label_str = kwargs.pop("label")
-            else:
-                label_str = str(
-                    r"Fitted Weibull_ZI"
-                    + r" ($\alpha=$"
-                    + round_and_string(self.alpha, dec)
-                    + r", $\beta=$"
-                    + round_and_string(self.beta, dec)
-                    + r", $ZI=$"
-                    + round_and_string(self.ZI, dec)
-                    + ")",
-                )
-            plot_points(
-                failures=failures,
-                right_censored=right_censored,
-                downsample_scatterplot=downsample_scatterplot,
-                **kwargs,
-            )
-            xvals = np.logspace(
-                np.log10(min(failures_no_zeros)) - 3,
-                np.log10(max(failures_no_zeros)) + 1,
-                1000,
-            )
-            self.distribution.CDF(xvals=xvals, label=label_str, **kwargs)
-            # need to add this manually as Weibull_probability_plot can only add Weibull_2P and Weibull_3P using __fitted_dist_params
-            plt.title("Probability Plot\nWeibull Zero Inflated CDF")
-            self.probability_plot = plt.gca()
+        plot_points(
+            failures=self.__failures,
+            right_censored=self.__right_censored,
+            downsample_scatterplot=downsample_scatterplot,
+            **kwargs,
+        )
+        xvals = np.logspace(
+            np.log10(min(self.__failures_no_zeros)) - 3,
+            np.log10(max(self.__failures_no_zeros)) + 1,
+            1000,
+        )
+        self.distribution.CDF(xvals=xvals, label=label_str, **kwargs)
+        # need to add this manually as Weibull_probability_plot can only add Weibull_2P and Weibull_3P using __fitted_dist_params
+        plt.title("Probability Plot\nWeibull Zero Inflated CDF")
+        return plt.gca()
 
     @staticmethod
     def logf(t, a, b, zi):  # Log PDF (Weibull ZI)

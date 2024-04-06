@@ -1223,21 +1223,34 @@ class Fit_Everything:
         self.__right_censored = right_censored
 
         # print the results
-    def print_results(self):
-        frac_censored = self._frac_cens * 100
-        colorprint("Results from Fit_Everything:", bold=True, underline=True)
-        print("Analysis method:", self.__method)
-        print(
-            "Failures / Right censored:",
-            str(str(len(self.__failures)) + "/" + str(len(self.__right_censored))),
-            str("(" + round_and_string(frac_censored) + "% right censored)"),
-            "\n",
-        )
-        print(self.results.to_string(index=False), "\n")
+    def print_results(self) -> None:
+            """
+            Prints the results from the Fit_Everything analysis.
+
+            The method prints the analysis method used, the number of failures and right censored data points,
+            and the results table.
+
+            Returns:
+                None
+            """
+            frac_censored = self._frac_cens * 100
+            colorprint("Results from Fit_Everything:", bold=True, underline=True)
+            print("Analysis method:", self.__method)
+            print(
+                "Failures / Right censored:",
+                str(str(len(self.__failures)) + "/" + str(len(self.__right_censored))),
+                str("(" + round_and_string(frac_censored) + "% right censored)"),
+                "\n",
+            )
+            print(self.results.to_string(index=False), "\n")
 
 
-    def probplot_layout(self):
+    def __probplot_layout(self):
         """Internal function to provide layout formatting of the plots.
+
+        Returns:
+            Tuple: A tuple containing the number of columns, number of rows,
+                    figure size for the plots, and figure size for the plots in pixels.
         """
         items = len(self.results.index.values)  # number of items fitted
         xx1, yy1 = 2.5, 2  # multipliers for easy adjustment of window sizes
@@ -1308,8 +1321,14 @@ class Fit_Everything:
             )
         return cols, rows, figsize, figsizePP
 
-    def histogram_plot(self):
+    def histogram_plot(self) -> plt.Figure:
         """Generates a histogram plot of PDF and CDF of the fitted distributions.
+
+        This method generates a histogram plot of the Probability Density Function (PDF) and Cumulative Distribution Function (CDF)
+        of the fitted distributions. It uses the failures data provided to calculate the necessary parameters for plotting.
+
+        Returns:
+            matplotlib.figure.Figure: The generated histogram plot figure.
         """
         X = self.failures
         # define plotting limits
@@ -1473,9 +1492,13 @@ class Fit_Everything:
         plt.subplots_adjust(left=0, bottom=0.10, right=0.97, top=0.88, wspace=0.18)
         return plt.gcf()
 
-    def p_p_plot(self):
-        """Generates a subplot of Probability-Probability plots to compare the
+    def p_p_plot(self) -> plt.Figure:
+        """
+        Generates a subplot of Probability-Probability plots to compare the
         parametric vs non-parametric plots of the fitted distributions.
+
+        Returns:
+            matplotlib.figure.Figure: The generated figure object.
         """
         # Kaplan-Meier estimate of quantiles. Used in P-P plot.
         nonparametric = KaplanMeier(
@@ -1596,7 +1619,15 @@ class Fit_Everything:
         return plt.gcf()
 
     def probability_plot(self, best_only=False):
-        """Generates a subplot of all the probability plots
+        """
+        Generates a subplot of all the probability plots.
+
+        Parameters:
+            best_only (bool): If True, only the probability plot of the best fitted distribution will be shown.
+                              If False, probability plots of all fitted distributions will be shown.
+
+        Returns:
+            matplotlib.figure.Figure: The generated figure object containing the probability plots.
         """
         from reliability.Probability_plotting import (
             Beta_probability_plot,

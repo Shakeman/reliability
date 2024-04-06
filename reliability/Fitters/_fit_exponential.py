@@ -303,50 +303,77 @@ class Fit_Exponential_1P:
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
         self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
+        self.__CI = CI
+        self.__failures = failures
+        self.__right_censored = right_censored
+        self.__n = n
+        self.__quantiles = quantiles
 
-        if print_results is True:
-            CI_rounded = CI * 100
-            if CI_rounded % 1 == 0:
-                CI_rounded = int(CI * 100)
-            frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
-                frac_censored = int(frac_censored)
-            colorprint(
-                str("Results from Fit_Exponential_1P (" + str(CI_rounded) + "% CI):"),
-                bold=True,
-                underline=True,
-            )
-            print("Analysis method:", self.method)
-            if self.optimizer is not None:
-                print("Optimizer:", self.optimizer)
-            print(
-                "Failures / Right censored:",
-                str(str(len(failures)) + "/" + str(len(right_censored))),
-                str("(" + round_and_string(frac_censored) + "% right censored)"),
-                "\n",
-            )
-            print(self.results.to_string(index=False), "\n")
-            print(self.goodness_of_fit.to_string(index=False), "\n")
+    def print_results(self) -> None:
+        """
+        Prints the results of the exponential fitting analysis.
 
-            if quantiles is not None:
-                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
-                print(self.quantiles.to_string(index=False), "\n")
+        This method prints various results and statistics obtained from the exponential fitting analysis.
+        It includes the confidence interval, analysis method, optimizer used (if applicable),
+        number of failures and right censored data points, the results table, goodness of fit statistics,
+        and the table of quantiles (if available).
 
-        if show_probability_plot is True:
-            from reliability.Probability_plotting import (
-                Exponential_probability_plot_Weibull_Scale,
-            )
+        Returns:
+            None
+        """
+        CI_rounded = self.__CI * 100
+        if CI_rounded % 1 == 0:
+            CI_rounded = int(self.__CI * 100)
+        frac_censored = len(self.__right_censored) / self.__n * 100
+        if frac_censored % 1 < 1e-10:
+            frac_censored = int(frac_censored)
+        colorprint(
+            str("Results from Fit_Exponential_1P (" + str(CI_rounded) + "% CI):"),
+            bold=True,
+            underline=True,
+        )
+        print("Analysis method:", self.method)
+        if self.optimizer is not None:
+            print("Optimizer:", self.optimizer)
+        print(
+            "Failures / Right censored:",
+            str(str(len(self.__failures)) + "/" + str(len(self.__right_censored))),
+            str("(" + round_and_string(frac_censored) + "% right censored)"),
+            "\n",
+        )
+        print(self.results.to_string(index=False), "\n")
+        print(self.goodness_of_fit.to_string(index=False), "\n")
 
-            rc = None if len(right_censored) == 0 else right_censored
-            Exponential_probability_plot_Weibull_Scale(
-                failures=failures,
-                right_censored=rc,
-                _fitted_dist_params=self,
-                CI=CI,
-                downsample_scatterplot=downsample_scatterplot,
-                **kwargs,
-            )
-            self.probability_plot = plt.gca()
+        if self.__quantiles is not None:
+            print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
+            print(self.quantiles.to_string(index=False), "\n")
+
+    def plot(self, downsample_scatterplot=True, **kwargs) -> plt.Figure:
+        """
+        Generates a probability plot for the fitted exponential distribution.
+
+        Args:
+            downsample_scatterplot (bool, optional): Whether to downsample the scatterplot. Defaults to True.
+            **kwargs: Additional keyword arguments to be passed to the Exponential_probability_plot_Weibull_Scale function.
+
+        Returns:
+            plt.Figure: The generated probability plot figure.
+        """
+        from reliability.Probability_plotting import (
+            Exponential_probability_plot_Weibull_Scale,
+        )
+
+        rc = None if len(self.__right_censored) == 0 else self.__right_censored
+        Exponential_probability_plot_Weibull_Scale(
+            failures=self.__failures,
+            right_censored=rc,
+            _fitted_dist_params=self,
+            CI=self.__CI,
+            downsample_scatterplot=downsample_scatterplot,
+            **kwargs,
+        )
+        return plt.gcf()
+
 
     @staticmethod
     def logf(t, L):  # Log PDF (1 parameter Expon)
@@ -677,50 +704,77 @@ class Fit_Exponential_2P:
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
         self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
+        self.__CI = CI
+        self.__failures = failures
+        self.__right_censored = right_censored
+        self.__n = n
+        self.__quantiles = quantiles
 
-        if print_results is True:
-            CI_rounded = CI * 100
-            if CI_rounded % 1 == 0:
-                CI_rounded = int(CI * 100)
-            frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
-                frac_censored = int(frac_censored)
-            colorprint(
-                str("Results from Fit_Exponential_2P (" + str(CI_rounded) + "% CI):"),
-                bold=True,
-                underline=True,
-            )
-            print("Analysis method:", self.method)
-            if self.optimizer is not None:
-                print("Optimizer:", self.optimizer)
-            print(
-                "Failures / Right censored:",
-                str(str(len(failures)) + "/" + str(len(right_censored))),
-                str("(" + round_and_string(frac_censored) + "% right censored)"),
-                "\n",
-            )
-            print(self.results.to_string(index=False), "\n")
-            print(self.goodness_of_fit.to_string(index=False), "\n")
+    def print_results(self) -> None:
+        """
+        Prints the results of the exponential fitting analysis.
 
-            if quantiles is not None:
-                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
-                print(self.quantiles.to_string(index=False), "\n")
+        This method prints various statistics and results obtained from the exponential fitting analysis.
+        It includes the confidence interval, analysis method, optimizer (if applicable), number of failures
+        and right censored data points, as well as the results and goodness of fit statistics.
 
-        if show_probability_plot is True:
-            from reliability.Probability_plotting import (
-                Exponential_probability_plot_Weibull_Scale,
-            )
+        If quantiles are available, it also prints a table of quantiles with the confidence interval bounds.
 
-            rc = None if len(right_censored) == 0 else right_censored
-            Exponential_probability_plot_Weibull_Scale(
-                failures=failures,
-                right_censored=rc,
-                CI=CI,
-                _fitted_dist_params=self,
-                downsample_scatterplot=downsample_scatterplot,
-                **kwargs,
-            )
-            self.probability_plot = plt.gca()
+        Returns:
+            None
+        """
+        CI_rounded = self.__CI * 100
+        if CI_rounded % 1 == 0:
+            CI_rounded = int(self.__CI * 100)
+        frac_censored = len(self.__right_censored) / self.__n * 100
+        if frac_censored % 1 < 1e-10:
+            frac_censored = int(frac_censored)
+        colorprint(
+            str("Results from Fit_Exponential_2P (" + str(CI_rounded) + "% CI):"),
+            bold=True,
+            underline=True,
+        )
+        print("Analysis method:", self.method)
+        if self.optimizer is not None:
+            print("Optimizer:", self.optimizer)
+        print(
+            "Failures / Right censored:",
+            str(str(len(self.__failures)) + "/" + str(len(self.__right_censored))),
+            str("(" + round_and_string(frac_censored) + "% right censored)"),
+            "\n",
+        )
+        print(self.results.to_string(index=False), "\n")
+        print(self.goodness_of_fit.to_string(index=False), "\n")
+
+        if self.__quantiles is not None:
+            print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
+            print(self.quantiles.to_string(index=False), "\n")
+
+    def plot(self, downsample_scatterplot=True, **kwargs) -> plt.Figure:
+        """
+        Plots the Exponential probability plot on a Weibull Scale.
+
+        Args:
+            downsample_scatterplot (bool, optional): Whether to downsample the scatterplot. Defaults to True.
+            **kwargs: Additional keyword arguments to be passed to the Exponential_probability_plot_Weibull_Scale function.
+
+        Returns:
+            plt.Figure: The matplotlib Figure object containing the plot.
+        """
+        from reliability.Probability_plotting import (
+            Exponential_probability_plot_Weibull_Scale,
+        )
+
+        rc = None if len(self.__right_censored) == 0 else self.__right_censored
+        Exponential_probability_plot_Weibull_Scale(
+            failures=self.__failures,
+            right_censored=rc,
+            CI=self.__CI,
+            _fitted_dist_params=self,
+            downsample_scatterplot=downsample_scatterplot,
+            **kwargs,
+        )
+        return plt.gcf()
 
     @staticmethod
     def logf(t, L, g):  # Log PDF (2 parameter Expon)

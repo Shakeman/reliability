@@ -606,9 +606,7 @@ class XCN_to_FR:
             raise ValueError("C must be a list or array.")
         if type(N) not in [list, np.ndarray]:
             raise ValueError("N must be a list or array.")
-        if len(X) != len(C):
-            raise ValueError("The length of X and C must match.")
-        if len(X) != len(N):
+        if N is not None and len(X) != len(N):
             raise ValueError("The length of X, C and N must match.")
 
         C_upper = []

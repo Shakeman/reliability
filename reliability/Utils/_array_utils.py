@@ -8,7 +8,7 @@ import scipy.stats as ss
 from reliability.Utils._ancillary_utils import colorprint
 
 
-def anderson_darling(fitted_cdf, empirical_cdf):
+def anderson_darling(fitted_cdf, empirical_cdf) -> float:
     """Calculates the Anderson-Darling goodness of fit statistic.
     These formulas are based on the method used in MINITAB which gives an
     adjusted form of the original AD statistic described on Wikipedia.
@@ -39,8 +39,8 @@ def anderson_darling(fitted_cdf, empirical_cdf):
     A = -Zi - np.log(1 - Zi) + Zi_1 + np.log(1 - Zi_1)
     B = 2 * np.log(1 - Zi) * FnZi_1 - 2 * np.log(1 - Zi_1) * FnZi_1
     C = lnZi * FnZi_1**2 - np.log(1 - Zi) * FnZi_1**2 - lnZi_1 * FnZi_1**2 + np.log(1 - Zi_1) * FnZi_1**2
-    n = len(fitted_cdf)
-    AD = n * ((A + B + C).sum())
+    n: int = len(fitted_cdf)
+    AD: float = n * ((A + B + C).sum())
     return AD
 
 def unpack_single_arrays(array):

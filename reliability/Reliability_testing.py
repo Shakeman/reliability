@@ -1466,7 +1466,7 @@ def likelihood_plot(distribution, failures, right_censored=None, CI: float | lis
         )
         plt.contourf(X, Y, LLmesh, [LLcontour, LLmax], colors=color, alpha=0.5 / len(CI))
         # get the plotting limits
-        v = contour.collections[0].get_paths()[0].vertices
+        v = contour.allsegs[0][0]
         xmin = min(xmin, min(v[:, 0]))
         xmax = max(xmax, max(v[:, 0]))
         ymin = min(ymin, min(v[:, 1]))

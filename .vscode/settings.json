@@ -2,10 +2,6 @@
     // VSCode
     "python.testing.pytestArgs": [
         "tests",
-        "--cov=reliability/",
-        "--cov-report=xml",
-        "--cov-report=html",
-        "-n 4",
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,

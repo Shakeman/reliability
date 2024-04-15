@@ -2076,7 +2076,10 @@ def PP_plot_parametric(
         plt.plot([0, 1], [0, 1], color="red", alpha=0.7, label="Y = X")
     plt.title("Probability-Probability plot\nParametric")
     plt.axis("square")
-    plt.xlim([0, 1])
+    if plt.gca().get_xscale() == "log":
+        plt.xlim([1e-10, 1])
+    else:
+        plt.xlim([0, 1])
     plt.ylim([0, 1])
     return plt.gcf()
 

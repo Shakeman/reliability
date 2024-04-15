@@ -2395,7 +2395,10 @@ def PP_plot_semiparametric(
     plt.ylabel(Y_label_str)
     plt.xlabel(xlabel)
     plt.axis("square")
-    plt.xlim([0, 1])
+    if plt.gca().get_xscale() == "log":
+        plt.xlim([1e-10, 1])
+    else:
+        plt.xlim([0, 1])
     plt.ylim([0, 1])
     plt.title("Probability-Probability Plot\nSemi-parametric")
     return plt.gcf()

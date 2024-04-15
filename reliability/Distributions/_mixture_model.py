@@ -177,11 +177,11 @@ class Mixture_Model:
         self.__pdf_init = pdf
         self.__cdf_init = cdf
         self.__xvals_init = X
-        self.mean = integrate.simps(pdf * X, x=X)
-        self.standard_deviation = (integrate.simps(pdf * (X - self.mean) ** 2, x=X)) ** 0.5
+        self.mean = integrate.simpson(pdf * X, x=X)
+        self.standard_deviation = (integrate.simpson(pdf * (X - self.mean) ** 2, x=X)) ** 0.5
         self.variance = self.standard_deviation**2
-        self.skewness = integrate.simps(pdf * ((X - self.mean) / self.standard_deviation) ** 3, x=X)
-        self.kurtosis = integrate.simps(pdf * ((X - self.mean) / self.standard_deviation) ** 4, x=X)
+        self.skewness = integrate.simpson(pdf * ((X - self.mean) / self.standard_deviation) ** 3, x=X)
+        self.kurtosis = integrate.simpson(pdf * ((X - self.mean) / self.standard_deviation) ** 4, x=X)
         self.mode = X[np.argmax(pdf)]
         self.median = X[np.argmin(abs((1 - cdf) - 0.5))]
         self.excess_kurtosis = self.kurtosis - 3
@@ -880,7 +880,7 @@ class Mixture_Model:
         t_full = np.linspace(t, self.__xmax_inf, 1000000)
         sf_full = __subcombiner(t_full)
         sf_single = __subcombiner(t)
-        MRL = integrate.simps(sf_full, x=t_full) / sf_single
+        MRL = integrate.simpson(sf_full, x=t_full) / sf_single
         return MRL
 
     def random_samples(self, number_of_samples, seed=None):

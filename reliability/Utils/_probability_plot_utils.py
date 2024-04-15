@@ -436,9 +436,9 @@ def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha
         raise ValueError("dist is unrecognised")
     if xlim_lower < 0 and dist not in ["normal", "gumbel"]:
         xlim_lower = 0
-        if plt.gca().get_xscale() == "log":
-            xlim_lower = 1e-10
     # set xlims
+    if xlim_lower <= 0 and plt.gca().get_xscale() == "log":
+        xlim_lower = 1e-10
     plt.xlim(xlim_lower, xlim_upper)
 
     # y limits

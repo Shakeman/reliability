@@ -2231,8 +2231,12 @@ def QQ_plot_parametric(
     xdelta = xmax - xmin
     ymin, ymax = min(dist_Y_ISF), max(dist_Y_ISF)
     ydelta = ymax - ymin
-
-    plt.xlim([xmin - 0.05 * xdelta, xmax + 0.05 * xdelta])
+    xlim_lower = xmin - 0.05 * xdelta
+    if plt.gca().get_xscale() == "log":
+        xlim_lower = 1e-10
+    xlim_upper = max_value + 0.05 * xdelta
+    x_lims = [xlim_lower, max_value + xlim_upper]
+    plt.xlim(x_lims)
     plt.ylim([ymin - 0.05 * ydelta, ymax + 0.05 * ydelta])
     return plt.gcf(), [m, deg1[0], deg1[1]]
 
@@ -2606,7 +2610,11 @@ def QQ_plot_semiparametric(
         plt.plot(x_fit, y1_fit, color="green", alpha=0.5, label=text_str1)
         plt.legend(title="Fitted lines:")
     delta = max_value - min_value
-    lims = [min_value - 0.05 * delta, max_value + 0.05 * delta]
+    xlim_lower = min_value - 0.05 * delta
+    if plt.gca().get_xscale() == "log":
+        xlim_lower = 1e-10
+    xlim_upper = max_value + 0.05 * delta
+    lims = [xlim_lower, max_value + xlim_upper]
     plt.xlim(lims)
     plt.ylim(lims)
     plt.title("Quantile-Quantile Plot\nSemi-parametric")

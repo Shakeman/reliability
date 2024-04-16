@@ -84,7 +84,7 @@ def test_fracture_mechanics_crack_initiation():
     assert_allclose(results.sigma_mean, -5.684341886080802e-14, rtol=rtol, atol=atol)
     assert_allclose(results.sigma_min, -506.7290859876518, rtol=rtol, atol=atol)
 
-
+@pytest.mark.filterwarnings('ignore::UserWarning')
 def test_fracture_mechanics():
     results = fracture_mechanics_crack_growth(Kc=66, C=6.91 * 10**-12, m=3, P=0.15, W=100, t=5, Kt=2.41, D=10)
     assert_allclose(results.Nf_stage_1_iterative, 7576, rtol=rtol, atol=atol)
@@ -98,7 +98,7 @@ def test_fracture_mechanics():
     assert_allclose(results.transition_length_iterative, 2.4520443881041274, rtol=rtol, atol=atol)
     assert_allclose(results.transition_length_simplified, 2.0798236309560947, rtol=rtol, atol=atol)
 
-
+@pytest.mark.filterwarnings('ignore::UserWarning')
 def test_creep():
     TEMP = [
         900,

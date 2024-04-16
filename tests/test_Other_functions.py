@@ -67,16 +67,14 @@ def test_crosshairs():
     plt.close()
     plt.ioff()
 
-
-@pytest.mark.flaky(reruns=5)
+@pytest.mark.filterwarnings('ignore::UserWarning')
 def test_distribution_explorer():
     plt.ion()
     distribution_explorer()
     plt.close()
     plt.ioff()
 
-
-@pytest.mark.flaky(reruns=5)
+@pytest.mark.filterwarnings('ignore::UserWarning')
 def test_histogram():
     plt.ion()
     dist = Weibull_Distribution(alpha=30, beta=4)

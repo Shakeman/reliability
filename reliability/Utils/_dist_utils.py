@@ -342,10 +342,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                 q = np.exp(-np.asarray(CI_y))
             else:
                 raise ValueError("func must be CDF, SF, or CHF")
-            SF_time = distribution_confidence_intervals.exponential_CI(self=dist, CI=CI, q=q)
+            SF_time = distribution_confidence_intervals.exponential_CI(dist=dist, CI=CI, q=q)
             lower, upper = SF_time[0], SF_time[1]
         elif CI_x is not None:
-            SF_rel = distribution_confidence_intervals.exponential_CI(self=dist, CI=CI, x=CI_x)
+            SF_rel = distribution_confidence_intervals.exponential_CI(dist=dist, CI=CI, x=CI_x)
             if func == "SF":
                 lower, upper = SF_rel[1], SF_rel[0]
             elif func == "CDF":
@@ -383,11 +383,11 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                     raise ValueError("func must be CDF, SF, or CHF")
             if dist.name == "Weibull":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.weibull_CI(self=dist, CI_type="time", CI=CI, q=q)
+                    SF_time = distribution_confidence_intervals.weibull_CI(dist=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.weibull_CI(
-                        self=dist,
+                        dist=dist,
                         CI_type="reliability",
                         CI=CI,
                         x=CI_x,
@@ -400,11 +400,11 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
             elif dist.name == "Normal":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.normal_CI(self=dist, CI_type="time", CI=CI, q=q)
+                    SF_time = distribution_confidence_intervals.normal_CI(dist=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.normal_CI(
-                        self=dist,
+                        dist=dist,
                         CI_type="reliability",
                         CI=CI,
                         x=CI_x,
@@ -417,11 +417,11 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[0]), -np.log(SF_rel[1])
             elif dist.name == "Lognormal":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.lognormal_CI(self=dist, CI_type="time", CI=CI, q=q)
+                    SF_time = distribution_confidence_intervals.lognormal_CI(dist=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.lognormal_CI(
-                        self=dist,
+                        dist=dist,
                         CI_type="reliability",
                         CI=CI,
                         x=CI_x,
@@ -434,10 +434,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[0]), -np.log(SF_rel[1])
             elif dist.name == "Gamma":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.gamma_CI(self=dist, CI_type="time", CI=CI, q=q)
+                    SF_time = distribution_confidence_intervals.gamma_CI(dist=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
-                    SF_rel = distribution_confidence_intervals.gamma_CI(self=dist, CI_type="reliability", CI=CI, x=CI_x)
+                    SF_rel = distribution_confidence_intervals.gamma_CI(dist=dist, CI_type="reliability", CI=CI, x=CI_x)
                     if func == "SF":
                         lower, upper = SF_rel[0], SF_rel[1]
                     elif func == "CDF":
@@ -446,11 +446,11 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
             elif dist.name == "Gumbel":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.gumbel_CI(self=dist, CI_type="time", CI=CI, q=q)
+                    SF_time = distribution_confidence_intervals.gumbel_CI(dist=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.gumbel_CI(
-                        self=dist,
+                        dist=dist,
                         CI_type="reliability",
                         CI=CI,
                         x=CI_x,
@@ -463,11 +463,11 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
             elif dist.name == "Loglogistic":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.loglogistic_CI(self=dist, CI_type="time", CI=CI, q=q)
+                    SF_time = distribution_confidence_intervals.loglogistic_CI(dist=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.loglogistic_CI(
-                        self=dist,
+                        dist=dist,
                         CI_type="reliability",
                         CI=CI,
                         x=CI_x,
@@ -507,7 +507,7 @@ class distribution_confidence_intervals:
 
     @staticmethod
     def exponential_CI(
-        self,
+        dist,
         func="CDF",
         plot_CI=None,
         CI=None,
@@ -521,7 +521,7 @@ class distribution_confidence_intervals:
 
         Parameters
         ----------
-        self : object
+        dist : object
             The distribution object
         func : str
             Must be either "CDF", "SF" or "CHF". Default is "CDF"
@@ -568,7 +568,7 @@ class distribution_confidence_intervals:
         points = 200
 
         # this section plots the confidence interval
-        if self.Lambda_SE is not None and self.Z is not None and (plot_CI is True or q is not None or x is not None):
+        if dist.Lambda_SE is not None and dist.Z is not None and (plot_CI is True or q is not None or x is not None):
             if func not in ["CDF", "SF", "CHF"]:
                 raise ValueError("func must be either CDF, SF, or CHF")
             if type(q) not in [list, np.ndarray, type(None)]:
@@ -594,18 +594,18 @@ class distribution_confidence_intervals:
                 plt.title(text_title)
                 plt.subplots_adjust(top=0.81)
 
-            Lambda_upper = self.Lambda * (np.exp(Z * (self.Lambda_SE / self.Lambda)))
-            Lambda_lower = self.Lambda * (np.exp(-Z * (self.Lambda_SE / self.Lambda)))
+            Lambda_upper = dist.Lambda * (np.exp(Z * (dist.Lambda_SE / dist.Lambda)))
+            Lambda_lower = dist.Lambda * (np.exp(-Z * (dist.Lambda_SE / dist.Lambda)))
 
             if x is not None:
-                t = x - self.gamma
+                t = x - dist.gamma
             else:
-                t0 = self.quantile(0.00001) - self.gamma
+                t0 = dist.quantile(0.00001) - dist.gamma
                 if t0 <= 0:
                     t0 = 0.0001
                 t = np.geomspace(
                     t0,
-                    self.quantile(0.99999) - self.gamma,
+                    dist.quantile(0.99999) - dist.gamma,
                     points,
                 )
 
@@ -639,40 +639,17 @@ class distribution_confidence_intervals:
                 yy_lower = -np.log(Y_lower)
 
             if plot_CI is True:
-                fill_no_autoscale(
-                    xlower=t + self.gamma,
-                    xupper=t + self.gamma,
-                    ylower=yy_lower,
-                    yupper=yy_upper,
-                    color=color,
-                    alpha=0.3,
-                    linewidth=0,
-                )
-                line_no_autoscale(
-                    x=t + self.gamma,
-                    y=yy_lower,
-                    color=color,
-                    linewidth=0,
-                )  # these are invisible but need to be added to the plot for crosshairs() to find them
-                line_no_autoscale(
-                    x=t + self.gamma,
-                    y=yy_upper,
-                    color=color,
-                    linewidth=0,
-                )  # still need to specify color otherwise the invisible CI lines will consume default colors
-                # plt.scatter(t + self.gamma, yy_lower,color='blue',marker='.')
-                # plt.scatter(t + self.gamma, yy_upper, color='red', marker='.')
-
+                CI_plot(x=t + dist.gamma, x_lower=t + dist.gamma, x_upper=t + dist.gamma,  yy_lower=yy_lower, yy_upper=yy_upper, color=color)
             if q is not None:
-                t_lower = -np.log(q) / Lambda_upper + self.gamma
-                t_upper = -np.log(q) / Lambda_lower + self.gamma
+                t_lower = -np.log(q) / Lambda_upper + dist.gamma
+                t_upper = -np.log(q) / Lambda_lower + dist.gamma
                 return t_lower, t_upper
             elif x is not None:
                 return Y_lower, Y_upper
 
     @staticmethod
     def weibull_CI(
-        self,
+        dist,
         func="CDF",
         plot_CI=None,
         CI_type=None,
@@ -687,7 +664,7 @@ class distribution_confidence_intervals:
 
         Parameters
         ----------
-        self : object
+        dist : object
             The distribution object
         func : str
             Must be either "CDF", "SF" or "CHF". Default is "CDF"
@@ -740,7 +717,7 @@ class distribution_confidence_intervals:
 
         # this determines if the user has specified for the CI bounds to be shown or hidden.
         if (
-            validate_CI_params(self.alpha_SE, self.beta_SE, self.Cov_alpha_beta, self.Z) is True
+            validate_CI_params(dist.alpha_SE, dist.beta_SE, dist.Cov_alpha_beta, dist.Z) is True
             and (plot_CI is True or q is not None or x is not None)
             and CI_type is not None
         ):
@@ -809,7 +786,7 @@ class distribution_confidence_intervals:
             if CI_type == "time":
                 # Y is reliability (R)
                 if func == "CHF":
-                    chf_array = np.geomspace(1e-8, self._chf[-1] * 1.5, points)
+                    chf_array = np.geomspace(1e-8, dist._chf[-1] * 1.5, points)
                     Y = np.exp(-chf_array)
                 elif q is not None:
                     Y = q
@@ -817,11 +794,11 @@ class distribution_confidence_intervals:
                     Y = transform_spaced("weibull", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
 
                 # v is ln(t)
-                v_lower = v(Y, self.alpha, self.beta) - Z * (var_v(self, Y) ** 0.5)
-                v_upper = v(Y, self.alpha, self.beta) + Z * (var_v(self, Y) ** 0.5)
+                v_lower = v(Y, dist.alpha, dist.beta) - Z * (var_v(dist, Y) ** 0.5)
+                v_upper = v(Y, dist.alpha, dist.beta) + Z * (var_v(dist, Y) ** 0.5)
 
-                t_lower = np.exp(v_lower) + self.gamma  # transform back from ln(t)
-                t_upper = np.exp(v_upper) + self.gamma
+                t_lower = np.exp(v_lower) + dist.gamma  # transform back from ln(t)
+                t_upper = np.exp(v_upper) + dist.gamma
 
                 # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
                 t_lower, t_upper, Y, Y = clean_CI_arrays(
@@ -876,22 +853,22 @@ class distribution_confidence_intervals:
             # Confidence bounds on Reliability (in terms of time)
             elif CI_type == "reliability":
                 if x is not None:
-                    t = x - self.gamma
+                    t = x - dist.gamma
                 else:
-                    t0 = self.quantile(0.00001) - self.gamma
+                    t0 = dist.quantile(0.00001) - dist.gamma
                     if t0 <= 0:
                         t0 = 0.0001
                     t = np.geomspace(
                         t0,
-                        self.quantile(0.99999) - self.gamma,
+                        dist.quantile(0.99999) - dist.gamma,
                         points,
                     )
 
                 # u is reliability ln(-ln(R))
                 u_lower = (
-                    u(t, self.alpha, self.beta) + Z * var_u(self, t) ** 0.5
+                    u(t, dist.alpha, dist.beta) + Z * var_u(dist, t) ** 0.5
                 )  # note that gamma is incorporated into u but not in var_u. This is the same as just shifting a Weibull_2P across
-                u_upper = u(t, self.alpha, self.beta) - Z * var_u(self, t) ** 0.5
+                u_upper = u(t, dist.alpha, dist.beta) - Z * var_u(dist, t) ** 0.5
 
                 Y_lower = np.exp(-np.exp(u_lower))  # transform back from ln(-ln(R))
                 Y_upper = np.exp(-np.exp(u_upper))
@@ -921,36 +898,13 @@ class distribution_confidence_intervals:
                     yy_upper = -np.log(Y_upper)
 
                 if plot_CI is True:
-                    fill_no_autoscale(
-                        xlower=t + self.gamma,
-                        xupper=t + self.gamma,
-                        ylower=yy_lower,
-                        yupper=yy_upper,
-                        color=color,
-                        alpha=0.3,
-                        linewidth=0,
-                    )
-                    line_no_autoscale(
-                        x=t + self.gamma,
-                        y=yy_lower,
-                        color=color,
-                        linewidth=0,
-                    )  # these are invisible but need to be added to the plot for crosshairs() to find them
-                    line_no_autoscale(
-                        x=t + self.gamma,
-                        y=yy_upper,
-                        color=color,
-                        linewidth=0,
-                    )  # still need to specify color otherwise the invisible CI lines will consume default colors
-                    # plt.scatter(t + self.gamma, yy_upper, color='red')
-                    # plt.scatter(t + self.gamma, yy_lower, color='blue')
-
+                    CI_plot(x=t + dist.gamma, x_lower=t + dist.gamma, x_upper=t + dist.gamma,  yy_lower=yy_lower, yy_upper=yy_upper, color=color)
                 if x is not None:
                     return Y_lower, Y_upper
 
     @staticmethod
     def gamma_CI(
-        self,
+        dist,
         func="CDF",
         plot_CI=None,
         CI_type=None,
@@ -965,7 +919,7 @@ class distribution_confidence_intervals:
 
         Parameters
         ----------
-        self : object
+        dist : object
             The distribution object
         func : str
             Must be either "CDF", "SF" or "CHF". Default is "CDF".
@@ -1017,7 +971,7 @@ class distribution_confidence_intervals:
         # this determines if the user has specified for the CI bounds to be shown or hidden.
 
         if (
-            validate_CI_params(self.mu_SE, self.beta_SE, self.Cov_mu_beta, self.Z) is True
+            validate_CI_params(dist.mu_SE, dist.beta_SE, dist.Cov_mu_beta, dist.Z) is True
             and (plot_CI is True or q is not None or x is not None)
             and CI_type is not None
         ):
@@ -1086,27 +1040,27 @@ class distribution_confidence_intervals:
             if CI_type == "time":
                 # Y is reliability (R)
                 if func == "CHF":
-                    chf_array = np.geomspace(1e-8, self._chf[-1] * 1.5, points)
+                    chf_array = np.geomspace(1e-8, dist._chf[-1] * 1.5, points)
                     Y = np.exp(-chf_array)
                 elif q is not None:
                     Y = q
-                elif self.beta > 3:
+                elif dist.beta > 3:
                     Y = transform_spaced(
                         "gamma",
                         y_lower=1e-8,
                         y_upper=1 - 1e-8,
-                        beta=self.beta,
+                        beta=dist.beta,
                         num=points,
                     )
                 else:
                     Y = np.linspace(1e-8, 1 - 1e-8, points)
 
                 # v is ln(t)
-                v_lower = v(Y, self.mu, self.beta) - Z * (var_v(self, Y) ** 0.5)
-                v_upper = v(Y, self.mu, self.beta) + Z * (var_v(self, Y) ** 0.5)
+                v_lower = v(Y, dist.mu, dist.beta) - Z * (var_v(dist, Y) ** 0.5)
+                v_upper = v(Y, dist.mu, dist.beta) + Z * (var_v(dist, Y) ** 0.5)
 
-                t_lower = np.exp(v_lower) + self.gamma
-                t_upper = np.exp(v_upper) + self.gamma
+                t_lower = np.exp(v_lower) + dist.gamma
+                t_upper = np.exp(v_upper) + dist.gamma
 
                 # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
                 t_lower, t_upper, Y, Y = clean_CI_arrays(
@@ -1160,19 +1114,19 @@ class distribution_confidence_intervals:
             # Confidence bounds on Reliability (in terms of time)
             elif CI_type == "reliability":
                 if x is not None:
-                    t = x - self.gamma
+                    t = x - dist.gamma
                 else:
-                    t0 = 0.0001 if self.gamma == 0 else self.quantile(1e-07)
+                    t0 = 0.0001 if dist.gamma == 0 else dist.quantile(1e-07)
                     t = np.linspace(
-                        t0 - self.gamma,
-                        self.quantile(0.99999) - self.gamma,
+                        t0 - dist.gamma,
+                        dist.quantile(0.99999) - dist.gamma,
                         points,
                     )
 
                 # u is reliability
                 # note that gamma is incorporated into u but not in var_u. This is the same as just shifting a Gamma_2P across
-                R = u(t, self.mu, self.beta)
-                varR = var_u(self, t)
+                R = u(t, dist.mu, dist.beta)
+                varR = var_u(dist, t)
                 R_lower = R / (R + (1 - R) * np.exp((Z * varR**0.5) / (R * (1 - R))))
                 R_upper = R / (R + (1 - R) * np.exp((-Z * varR**0.5) / (R * (1 - R))))
 
@@ -1205,40 +1159,16 @@ class distribution_confidence_intervals:
                     yy_upper = -np.log(Y_upper)
 
                 if plot_CI is True:
-                    fill_no_autoscale(
-                        xlower=t + self.gamma,
-                        xupper=t + self.gamma,
-                        ylower=yy_lower,
-                        yupper=yy_upper,
-                        color=color,
-                        alpha=0.3,
-                        linewidth=0,
-                    )
-
-                    line_no_autoscale(
-                        x=t + self.gamma,
-                        y=yy_lower,
-                        color=color,
-                        linewidth=0,
-                    )  # these are invisible but need to be added to the plot for crosshairs() to find them
-                    line_no_autoscale(
-                        x=t + self.gamma,
-                        y=yy_upper,
-                        color=color,
-                        linewidth=0,
-                    )  # still need to specify color otherwise the invisible CI lines will consume default colors
-                    # plt.scatter(t + self.gamma, yy_upper, color='red')
-                    # plt.scatter(t + self.gamma, yy_lower, color='blue')
-                if x is not None:
+                    CI_plot(x=t + dist.gamma, x_lower=t + dist.gamma, x_upper=t + dist.gamma,  yy_lower=yy_lower, yy_upper=yy_upper, color=color)
                     return Y_lower, Y_upper
 
     @staticmethod
     def normal_CI(
-        self,
+        dist,
+        CI_type: str,
+        CI: float,
         func="CDF",
         plot_CI=None,
-        CI_type=None,
-        CI=None,
         text_title="",
         color=None,
         q=None,
@@ -1300,7 +1230,7 @@ class distribution_confidence_intervals:
 
         # this determines if the user has specified for the CI bounds to be shown or hidden.
         if (
-            validate_CI_params(self.mu_SE, self.sigma_SE, self.Cov_mu_sigma, self.Z) is True
+            validate_CI_params(dist.mu_SE, dist.sigma_SE, dist.Cov_mu_sigma, dist.Z) is True
             and (plot_CI is True or q is not None or x is not None)
             and CI_type is not None
         ):
@@ -1370,14 +1300,14 @@ class distribution_confidence_intervals:
             if CI_type == "time":
                 # Y is reliability (R)
                 if func == "CHF":
-                    chf_array = np.geomspace(1e-8, self._chf[-1] * 1.5, points)
+                    chf_array = np.geomspace(1e-8, dist._chf[-1] * 1.5, points)
                     Y = np.exp(-chf_array)
                 else:  # CDF and SF
                     Y = q if q is not None else transform_spaced("normal", y_lower=1e-08, y_upper=1 - 1e-08, num=points)
 
                 # v is t
-                t_lower = v(Y, self.mu, self.sigma) - Z * (var_v(self, Y) ** 0.5)
-                t_upper = v(Y, self.mu, self.sigma) + Z * (var_v(self, Y) ** 0.5)
+                t_lower = v(Y, dist.mu, dist.sigma) - Z * (var_v(dist, Y) ** 0.5)
+                t_upper = v(Y, dist.mu, dist.sigma) + Z * (var_v(dist, Y) ** 0.5)
 
                 # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
                 t_lower, t_upper, Y, Y = clean_CI_arrays(
@@ -1430,11 +1360,11 @@ class distribution_confidence_intervals:
 
             # Confidence bounds on Reliability (in terms of time)
             elif CI_type == "reliability":
-                t = x if x is not None else np.linspace(self.quantile(1e-05), self.quantile(0.99999), points)
+                t = x if x is not None else np.linspace(dist.quantile(1e-05), dist.quantile(0.99999), points)
 
                 # u is reliability u = phiinv(R)
-                u_lower = u(t, self.mu, self.sigma) + Z * var_u(self, t) ** 0.5
-                u_upper = u(t, self.mu, self.sigma) - Z * var_u(self, t) ** 0.5
+                u_lower = u(t, dist.mu, dist.sigma) + Z * var_u(dist, t) ** 0.5
+                u_upper = u(t, dist.mu, dist.sigma) - Z * var_u(dist, t) ** 0.5
 
                 Y_lower = ss.norm.cdf(u_lower)  # transform back from u = phiinv(R)
                 Y_upper = ss.norm.cdf(u_upper)
@@ -1464,40 +1394,17 @@ class distribution_confidence_intervals:
                     yy_upper = -np.log(Y_upper)
 
                 if plot_CI is True:
-                    fill_no_autoscale(
-                        xlower=t,
-                        xupper=t,
-                        ylower=yy_lower,
-                        yupper=yy_upper,
-                        color=color,
-                        alpha=0.3,
-                        linewidth=0,
-                    )
-                    line_no_autoscale(
-                        x=t,
-                        y=yy_lower,
-                        color=color,
-                        linewidth=0,
-                    )  # these are invisible but need to be added to the plot for crosshairs() to find them
-                    line_no_autoscale(
-                        x=t,
-                        y=yy_upper,
-                        color=color,
-                        linewidth=0,
-                    )  # still need to specify color otherwise the invisible CI lines will consume default colors
-                    # plt.scatter(t, yy_upper, color='red')
-                    # plt.scatter(t, yy_lower, color='blue')
-
+                    CI_plot(x=t, x_lower=t, x_upper=t, yy_lower=yy_lower, yy_upper=yy_upper, color=color)
                 if x is not None:
                     return Y_lower, Y_upper
 
     @staticmethod
     def lognormal_CI(
-        self,
+        dist,
+        CI_type: str,
+        CI: float,
         func="CDF",
         plot_CI=None,
-        CI_type=None,
-        CI=None,
         text_title="",
         color=None,
         q=None,
@@ -1508,7 +1415,7 @@ class distribution_confidence_intervals:
 
         Parameters
         ----------
-        self : object
+        dist : object
             The distribution object
         func : str
             Must be either "CDF", "SF" or "CHF". Default is "CDF".
@@ -1559,7 +1466,7 @@ class distribution_confidence_intervals:
 
         # this determines if the user has specified for the CI bounds to be shown or hidden.
         if (
-            validate_CI_params(self.mu_SE, self.sigma_SE, self.Cov_mu_sigma, self.Z) is True
+            validate_CI_params(dist.mu_SE, dist.sigma_SE, dist.Cov_mu_sigma, dist.Z) is True
             and (plot_CI is True or q is not None or x is not None)
             and CI_type is not None
         ):
@@ -1630,17 +1537,17 @@ class distribution_confidence_intervals:
                 # Confidence bounds on time (in terms of reliability)
                 # Y is reliability (R)
                 if func == "CHF":
-                    chf_array = np.geomspace(1e-8, self._chf[-1] * 1.5, points)
+                    chf_array = np.geomspace(1e-8, dist._chf[-1] * 1.5, points)
                     Y = np.exp(-chf_array)
                 else:  # CDF and SF
                     Y = q if q is not None else transform_spaced("normal", y_lower=1e-08, y_upper=1 - 1e-08, num=points)
 
                 # v is ln(t)
-                v_lower = v(Y, self.mu, self.sigma) - Z * (var_v(self, Y) ** 0.5)
-                v_upper = v(Y, self.mu, self.sigma) + Z * (var_v(self, Y) ** 0.5)
+                v_lower = v(Y, dist.mu, dist.sigma) - Z * (var_v(dist, Y) ** 0.5)
+                v_upper = v(Y, dist.mu, dist.sigma) + Z * (var_v(dist, Y) ** 0.5)
 
-                t_lower = np.exp(v_lower) + self.gamma
-                t_upper = np.exp(v_upper) + self.gamma
+                t_lower = np.exp(v_lower) + dist.gamma
+                t_upper = np.exp(v_upper) + dist.gamma
 
                 # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
                 t_lower, t_upper, Y, Y = clean_CI_arrays(
@@ -1694,20 +1601,20 @@ class distribution_confidence_intervals:
             elif CI_type == "reliability":
                 # Confidence bounds on Reliability (in terms of time)
                 if x is not None:
-                    t = x - self.gamma
+                    t = x - dist.gamma
                 else:
-                    t0 = self.quantile(0.00001) - self.gamma
+                    t0 = dist.quantile(0.00001) - dist.gamma
                     if t0 <= 0:
                         t0 = 0.0001
                     t = np.geomspace(
                         t0,
-                        self.quantile(0.99999) - self.gamma,
+                        dist.quantile(0.99999) - dist.gamma,
                         points,
                     )
 
                 # u is reliability u = phiinv(R)
-                u_lower = u(t, self.mu, self.sigma) + Z * var_u(self, t) ** 0.5
-                u_upper = u(t, self.mu, self.sigma) - Z * var_u(self, t) ** 0.5
+                u_lower = u(t, dist.mu, dist.sigma) + Z * var_u(dist, t) ** 0.5
+                u_upper = u(t, dist.mu, dist.sigma) - Z * var_u(dist, t) ** 0.5
 
                 Y_lower = ss.norm.cdf(u_lower)  # transform back from u = phiinv(R)
                 Y_upper = ss.norm.cdf(u_upper)
@@ -1737,36 +1644,13 @@ class distribution_confidence_intervals:
                     yy_upper = -np.log(Y_upper)
 
                 if plot_CI is True:
-                    fill_no_autoscale(
-                        xlower=t + self.gamma,
-                        xupper=t + self.gamma,
-                        ylower=yy_lower,
-                        yupper=yy_upper,
-                        color=color,
-                        alpha=0.3,
-                        linewidth=0,
-                    )
-                    line_no_autoscale(
-                        x=t + self.gamma,
-                        y=yy_lower,
-                        color=color,
-                        linewidth=0,
-                    )  # these are invisible but need to be added to the plot for crosshairs() to find them
-                    line_no_autoscale(
-                        x=t + self.gamma,
-                        y=yy_upper,
-                        color=color,
-                        linewidth=0,
-                    )  # still need to specify color otherwise the invisible CI lines will consume default colors
-                    # plt.scatter(t+ self.gamma, yy_upper, color='red')
-                    # plt.scatter(t+ self.gamma, yy_lower, color='blue')
-
+                    CI_plot(x=t + dist.gamma, x_lower=t + dist.gamma, x_upper=t + dist.gamma,  yy_lower=yy_lower, yy_upper=yy_upper, color=color)
                 if x is not None:
                     return Y_lower, Y_upper
 
     @staticmethod
     def loglogistic_CI(
-        self,
+        dist,
         func="CDF",
         plot_CI=None,
         CI_type=None,
@@ -1781,7 +1665,7 @@ class distribution_confidence_intervals:
 
         Parameters
         ----------
-        self : object
+        sedistlf : object
             The distribution object
         func : str
             Must be either "CDF", "SF" or "CHF". Default is "CDF".
@@ -1832,7 +1716,7 @@ class distribution_confidence_intervals:
 
         # this determines if the user has specified for the CI bounds to be shown or hidden.
         if (
-            validate_CI_params(self.alpha_SE, self.beta_SE, self.Cov_alpha_beta, self.Z) is True
+            validate_CI_params(dist.alpha_SE, dist.beta_SE, dist.Cov_alpha_beta, dist.Z) is True
             and (plot_CI is True or q is not None or x is not None)
             and CI_type is not None
         ):
@@ -1900,7 +1784,7 @@ class distribution_confidence_intervals:
             if CI_type == "time":  # Confidence bounds on time (in terms of reliability)
                 # Y is reliability (R)
                 if func == "CHF":
-                    chf_array = np.geomspace(1e-8, self._chf[-1] * 1.5, points)
+                    chf_array = np.geomspace(1e-8, dist._chf[-1] * 1.5, points)
                     Y = np.exp(-chf_array)
                 elif q is not None:
                     Y = q
@@ -1908,11 +1792,11 @@ class distribution_confidence_intervals:
                     Y = transform_spaced("loglogistic", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
 
                 # v is ln(t)
-                v_lower = v(Y, self.alpha, self.beta) - Z * (var_v(self, Y) ** 0.5)
-                v_upper = v(Y, self.alpha, self.beta) + Z * (var_v(self, Y) ** 0.5)
+                v_lower = v(Y, dist.alpha, dist.beta) - Z * (var_v(dist, Y) ** 0.5)
+                v_upper = v(Y, dist.alpha, dist.beta) + Z * (var_v(dist, Y) ** 0.5)
 
-                t_lower = np.exp(v_lower) + self.gamma  # transform back from ln(t)
-                t_upper = np.exp(v_upper) + self.gamma
+                t_lower = np.exp(v_lower) + dist.gamma  # transform back from ln(t)
+                t_upper = np.exp(v_upper) + dist.gamma
 
                 # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
                 t_lower, t_upper, Y, Y = clean_CI_arrays(
@@ -1965,22 +1849,22 @@ class distribution_confidence_intervals:
 
             elif CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
                 if x is not None:
-                    t = x - self.gamma
+                    t = x - dist.gamma
                 else:
-                    t0 = self.quantile(0.00001) - self.gamma
+                    t0 = dist.quantile(0.00001) - dist.gamma
                     if t0 <= 0:
                         t0 = 0.0001
                     t = np.geomspace(
                         t0,
-                        self.quantile(0.99999) - self.gamma,
+                        dist.quantile(0.99999) - dist.gamma,
                         points,
                     )
 
                 # u is reliability ln(1/R - 1)
                 u_lower = (
-                    u(t, self.alpha, self.beta) + Z * var_u(self, t) ** 0.5
+                    u(t, dist.alpha, dist.beta) + Z * var_u(dist, t) ** 0.5
                 )  # note that gamma is incorporated into u but not in var_u. This is the same as just shifting a Weibull_2P across
-                u_upper = u(t, self.alpha, self.beta) - Z * var_u(self, t) ** 0.5
+                u_upper = u(t, dist.alpha, dist.beta) - Z * var_u(dist, t) ** 0.5
 
                 Y_lower = 1 / (np.exp(u_lower) + 1)  # transform back from ln(1/R - 1)
                 Y_upper = 1 / (np.exp(u_upper) + 1)
@@ -2010,35 +1894,13 @@ class distribution_confidence_intervals:
                     yy_upper = -np.log(Y_upper)
 
                 if plot_CI is True:
-                    fill_no_autoscale(
-                        xlower=t + self.gamma,
-                        xupper=t + self.gamma,
-                        ylower=yy_lower,
-                        yupper=yy_upper,
-                        color=color,
-                        alpha=0.3,
-                        linewidth=0,
-                    )
-                    line_no_autoscale(
-                        x=t + self.gamma,
-                        y=yy_lower,
-                        color=color,
-                        linewidth=0,
-                    )  # these are invisible but need to be added to the plot for crosshairs() to find them
-                    line_no_autoscale(
-                        x=t + self.gamma,
-                        y=yy_upper,
-                        color=color,
-                        linewidth=0,
-                    )  # still need to specify color otherwise the invisible CI lines will consume default colors
-                    # plt.scatter(t + self.gamma, yy_upper, color='red')
-                    # plt.scatter(t + self.gamma, yy_lower, color='blue')
+                    CI_plot(x=t + dist.gamma, x_lower=t + dist.gamma, x_upper=t + dist.gamma,  yy_lower=yy_lower, yy_upper=yy_upper, color=color)
                 if x is not None:
                     return Y_lower, Y_upper
 
     @staticmethod
     def gumbel_CI(
-        self,
+        dist,
         func="CDF",
         plot_CI=None,
         CI_type=None,
@@ -2053,7 +1915,7 @@ class distribution_confidence_intervals:
 
         Parameters
         ----------
-        self : object
+        dist : object
             The distribution object
         func : str
             Must be either "CDF", "SF" or "CHF". Default is "CDF".
@@ -2104,7 +1966,7 @@ class distribution_confidence_intervals:
 
         # this determines if the user has specified for the CI bounds to be shown or hidden.
         if (
-            validate_CI_params(self.mu_SE, self.sigma_SE, self.Cov_mu_sigma, self.Z) is True
+            validate_CI_params(dist.mu_SE, dist.sigma_SE, dist.Cov_mu_sigma, dist.Z) is True
             and (plot_CI is True or q is not None or x is not None)
             and CI_type is not None
         ):
@@ -2173,14 +2035,14 @@ class distribution_confidence_intervals:
             if CI_type == "time":  # Confidence bounds on time (in terms of reliability)
                 # Y is reliability (R)
                 if func == "CHF":
-                    chf_array = np.geomspace(1e-8, self._chf[-1] * 1.5, points)
+                    chf_array = np.geomspace(1e-8, dist._chf[-1] * 1.5, points)
                     Y = np.exp(-chf_array)
                 else:  # CDF and SF
                     Y = q if q is not None else transform_spaced("gumbel", y_lower=1e-08, y_upper=1 - 1e-08, num=points)
 
                 # v is t
-                t_lower = v(Y, self.mu, self.sigma) - Z * (var_v(self, Y) ** 0.5)
-                t_upper = v(Y, self.mu, self.sigma) + Z * (var_v(self, Y) ** 0.5)
+                t_lower = v(Y, dist.mu, dist.sigma) - Z * (var_v(dist, Y) ** 0.5)
+                t_upper = v(Y, dist.mu, dist.sigma) + Z * (var_v(dist, Y) ** 0.5)
 
                 # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
                 t_lower, t_upper, Y, Y = clean_CI_arrays(
@@ -2232,11 +2094,11 @@ class distribution_confidence_intervals:
                     return t_lower, t_upper
 
             elif CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
-                t = x if x is not None else np.linspace(self.quantile(1e-05), self.quantile(0.99999), points)
+                t = x if x is not None else np.linspace(dist.quantile(1e-05), dist.quantile(0.99999), points)
 
                 # u is reliability u = ln(-ln(R))
-                u_lower = u(t, self.mu, self.sigma) + Z * var_u(self, t) ** 0.5
-                u_upper = u(t, self.mu, self.sigma) - Z * var_u(self, t) ** 0.5
+                u_lower = u(t, dist.mu, dist.sigma) + Z * var_u(dist, t) ** 0.5
+                u_upper = u(t, dist.mu, dist.sigma) - Z * var_u(dist, t) ** 0.5
 
                 Y_lower = np.exp(-np.exp(u_lower))  # transform back from ln(-ln(R))
                 Y_upper = np.exp(-np.exp(u_upper))
@@ -2266,28 +2128,31 @@ class distribution_confidence_intervals:
                     yy_upper = -np.log(Y_upper)
 
                 if plot_CI is True:
-                    fill_no_autoscale(
-                        xlower=t,
-                        xupper=t,
-                        ylower=yy_lower,
-                        yupper=yy_upper,
-                        color=color,
-                        alpha=0.3,
-                        linewidth=0,
-                    )
-                    line_no_autoscale(
-                        x=t,
-                        y=yy_lower,
-                        color=color,
-                        linewidth=0,
-                    )  # these are invisible but need to be added to the plot for crosshairs() to find them
-                    line_no_autoscale(
-                        x=t,
-                        y=yy_upper,
-                        color=color,
-                        linewidth=0,
-                    )  # still need to specify color otherwise the invisible CI lines will consume default colors
-                    # plt.scatter(t, yy_upper, color='red')
-                    # plt.scatter(t, yy_lower, color='blue')
+                    CI_plot(x=t, x_lower=t, x_upper=t, yy_lower=yy_lower, yy_upper=yy_upper, color=color)
                 if x is not None:
                     return Y_lower, Y_upper
+
+def CI_plot(x, x_lower, x_upper,  yy_lower, yy_upper, color) -> None:
+    fill_no_autoscale(
+        xlower=x_lower,
+        xupper=x_upper,
+        ylower=yy_lower,
+        yupper=yy_upper,
+        color=color,
+        alpha=0.3,
+        linewidth=0,
+    )
+    line_no_autoscale(
+        x=x,
+        y=yy_lower,
+        color=color,
+        linewidth=0,
+    )  # these are invisible but need to be added to the plot for crosshairs() to find them
+    line_no_autoscale(
+        x=x,
+        y=yy_upper,
+        color=color,
+        linewidth=0,
+    )  # still need to specify color otherwise the invisible CI lines will consume default colors
+    # plt.scatter(t, yy_upper, color='red')
+    # plt.scatter(t, yy_lower, color='blue')

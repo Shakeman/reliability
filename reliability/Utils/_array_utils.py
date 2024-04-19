@@ -542,7 +542,7 @@ def no_reverse(x, CI_type, plot_type):
             if idxmax < len(x) - 1:
                 x[idxmax::] = max(x)
         else:
-            return ValueError("The parameter 'decreasing' must be True or False")
+            raise ValueError("The parameter 'decreasing' must be True or False")
     return x
 
 

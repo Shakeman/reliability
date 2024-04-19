@@ -508,9 +508,9 @@ class distribution_confidence_intervals:
     @staticmethod
     def exponential_CI(
         dist,
+        CI: float,
         func="CDF",
         plot_CI=None,
-        CI=None,
         text_title="",
         color=None,
         q=None,
@@ -650,10 +650,10 @@ class distribution_confidence_intervals:
     @staticmethod
     def weibull_CI(
         dist,
+        CI_type: str,
+        CI: float,
         func="CDF",
         plot_CI=None,
-        CI_type=None,
-        CI=None,
         text_title="",
         color=None,
         q=None,
@@ -905,10 +905,10 @@ class distribution_confidence_intervals:
     @staticmethod
     def gamma_CI(
         dist,
+        CI_type: str,
+        CI: float,
         func="CDF",
         plot_CI=None,
-        CI_type=None,
-        CI=None,
         text_title="",
         color=None,
         q=None,
@@ -1651,10 +1651,10 @@ class distribution_confidence_intervals:
     @staticmethod
     def loglogistic_CI(
         dist,
+        CI_type: str,
+        CI: float,
         func="CDF",
         plot_CI=None,
-        CI_type=None,
-        CI=None,
         text_title="",
         color=None,
         q=None,
@@ -1812,12 +1812,13 @@ class distribution_confidence_intervals:
                     t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
                     t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
 
-                if func == "CDF":
-                    yy = 1 - Y
-                elif func == "SF":
-                    yy = Y
-                elif func == "CHF":
-                    yy = -np.log(Y)
+                match func:
+                    case "CDF":
+                        yy = 1 - Y
+                    case "SF":
+                        yy = Y
+                    case "CHF":
+                        yy = -np.log(Y)
 
                 if plot_CI is True:
                     fill_no_autoscale(
@@ -1883,15 +1884,16 @@ class distribution_confidence_intervals:
                     Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
 
-                if func == "CDF":
-                    yy_lower = 1 - Y_lower
-                    yy_upper = 1 - Y_upper
-                elif func == "SF":
-                    yy_lower = Y_lower
-                    yy_upper = Y_upper
-                elif func == "CHF":
-                    yy_lower = -np.log(Y_lower)
-                    yy_upper = -np.log(Y_upper)
+                match func:
+                    case "CDF":
+                        yy_lower = 1 - Y_lower
+                        yy_upper = 1 - Y_upper
+                    case "SF":
+                        yy_lower = Y_lower
+                        yy_upper = Y_upper
+                    case "CHF":
+                        yy_lower = -np.log(Y_lower)
+                        yy_upper = -np.log(Y_upper)
 
                 if plot_CI is True:
                     CI_plot(x=t + dist.gamma, x_lower=t + dist.gamma, x_upper=t + dist.gamma,  yy_lower=yy_lower, yy_upper=yy_upper, color=color)
@@ -1901,10 +1903,10 @@ class distribution_confidence_intervals:
     @staticmethod
     def gumbel_CI(
         dist,
+        CI_type: str,
+        CI: float,
         func="CDF",
         plot_CI=None,
-        CI_type=None,
-        CI=None,
         text_title="",
         color=None,
         q=None,
@@ -1997,7 +1999,7 @@ class distribution_confidence_intervals:
 
             if plot_CI is True:
                 # formats the confidence interval value ==> 0.95 becomes 95
-                CI_100 = round(CI * 100, 4)
+                CI_100: float = round(CI * 100, 4)
                 # removes decimals if the only decimal is 0
                 if CI_100 % 1 == 0:
                     CI_100 = int(CI_100)
@@ -2058,12 +2060,13 @@ class distribution_confidence_intervals:
                     t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
                     t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
 
-                if func == "CDF":
-                    yy = 1 - Y
-                elif func == "SF":
-                    yy = Y
-                elif func == "CHF":
-                    yy = -np.log(Y)
+                match func:
+                    case "CDF":
+                        yy = 1 - Y
+                    case "SF":
+                        yy = Y
+                    case "CHF":
+                        yy = -np.log(Y)
 
                 if plot_CI is True:
                     fill_no_autoscale(
@@ -2117,15 +2120,16 @@ class distribution_confidence_intervals:
                     Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
 
-                if func == "CDF":
-                    yy_lower = 1 - Y_lower
-                    yy_upper = 1 - Y_upper
-                elif func == "SF":
-                    yy_lower = Y_lower
-                    yy_upper = Y_upper
-                elif func == "CHF":
-                    yy_lower = -np.log(Y_lower)
-                    yy_upper = -np.log(Y_upper)
+                match func:
+                    case "CDF":
+                        yy_lower = 1 - Y_lower
+                        yy_upper = 1 - Y_upper
+                    case "SF":
+                        yy_lower = Y_lower
+                        yy_upper = Y_upper
+                    case "CHF":
+                        yy_lower = -np.log(Y_lower)
+                        yy_upper = -np.log(Y_upper)
 
                 if plot_CI is True:
                     CI_plot(x=t, x_lower=t, x_upper=t, yy_lower=yy_lower, yy_upper=yy_upper, color=color)

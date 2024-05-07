@@ -879,7 +879,7 @@ class Normal_Distribution:
         print("Skewness =", self.skewness)
         print("Excess kurtosis =", self.excess_kurtosis)
 
-    def random_samples(self, number_of_samples, seed=None):
+    def random_samples(self, number_of_samples: int, seed: int | None =None) -> npt.NDArray[np.float64]:
         """Draws random samples from the probability distribution
 
         Parameters
@@ -903,5 +903,5 @@ class Normal_Distribution:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             np.random.seed(seed)
-        RVS = ss.norm.rvs(loc=self.mu, scale=self.sigma, size=number_of_samples)
+        RVS: npt.NDArray[np.float64] = ss.norm.rvs(loc=self.mu, scale=self.sigma, size=number_of_samples)
         return RVS

@@ -23,13 +23,13 @@ from reliability.Utils._plot_utils import fill_no_autoscale, line_no_autoscale
 
 
 def life_stress_plot(
-    model,
-    dist,
+    model: str,
+    dist: str,
     life_func,
-    failure_groups,
-    stresses_for_groups,
-    use_level_stress=None,
-    ax=True,
+    failure_groups: list[list[float]],
+    stresses_for_groups: list[float],
+    use_level_stress: float | None =None,
+    ax: bool =True,
 ):
     """Generates a life stress plot using the inputs provided. The life stress plot
     is an output from each of the ALT_fitters.
@@ -78,7 +78,7 @@ def life_stress_plot(
         "Flipped",
     ]:
         ax = True
-        swap_xy = True
+        swap_xy: bool = True
     else:
         swap_xy = False
 

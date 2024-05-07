@@ -1,3 +1,5 @@
+from typing import Literal
+
 import autograd.numpy as anp
 import numpy as np
 import pandas as pd
@@ -1019,8 +1021,8 @@ class Fit_Weibull_Power:
         failure_stress = inputs.failure_stress_1
         right_censored = inputs.right_censored
         right_censored_stress = inputs.right_censored_stress_1
-        CI = inputs.CI
-        optimizer = inputs.optimizer
+        CI: float = inputs.CI
+        optimizer: None | str = inputs.optimizer
         use_level_stress = inputs.use_level_stress
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
@@ -1031,14 +1033,14 @@ class Fit_Weibull_Power:
         self.__stresses_for_groups = inputs.stresses_for_groups
 
         # obtain the initial guess for the life stress model and the life distribution
-        life_stress_guess = ALT_least_squares(model="Power", failures=failures, stress_1_array=failure_stress)
+        life_stress_guess: list[np.float64] = ALT_least_squares(model="Power", failures=failures, stress_1_array=failure_stress)
 
         # obtain the common shape parameter
         betas = []
         betas_for_change_df = []
         alphas_for_change_df = []
         for i in range(len(stresses_for_groups)):
-            f = failure_groups[i]
+            f: list[np.float64] = failure_groups[i]
             rc = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
@@ -1055,7 +1057,7 @@ class Fit_Weibull_Power:
                 betas_for_change_df.append(0)
                 alphas_for_change_df.append("")
 
-        common_beta = float(np.average(betas)) if len(betas) > 0 else 1  # guess in the absence of enough points
+        common_beta: float | Literal[1] = float(np.average(betas)) if len(betas) > 0 else 1  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [life_stress_guess[0], life_stress_guess[1], common_beta]  # a, n, beta
 
@@ -1071,15 +1073,15 @@ class Fit_Weibull_Power:
             right_censored=right_censored,
             right_censored_stress_1=right_censored_stress,
         )
-        self.a = MLE_results.a
-        self.n = MLE_results.n
-        self.beta = MLE_results.beta
-        self.success = MLE_results.success
-        self.optimizer = MLE_results.optimizer
+        self.a: np.float64 = MLE_results.a
+        self.n: np.float64  = MLE_results.n
+        self.beta: np.float64  = MLE_results.beta
+        self.success: bool = MLE_results.success
+        self.optimizer: str = MLE_results.optimizer
 
         # confidence interval estimates of parameters
-        Z = -ss.norm.ppf((1 - CI) / 2)
-        params = [self.a, self.n, self.beta]
+        Z: np.float64  = -ss.norm.ppf((1 - CI) / 2)
+        params: list[np.float64] = [self.a, self.n, self.beta]
         hessian_matrix = hessian(LL_func)(# type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
@@ -1143,11 +1145,11 @@ class Fit_Weibull_Power:
         )
 
         # goodness of fit dataframe
-        n = len(failures) + len(right_censored)
-        k = len(guess)
-        LL2 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
-        self.loglik2 = LL2
-        self.loglik = LL2 * -0.5
+        n: int = len(failures) + len(right_censored)
+        k: int = len(guess)
+        LL2: np.float64  = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
+        self.loglik2: np.float64  = LL2
+        self.loglik: np.float64  = LL2 * -0.5
         if n - k - 1 > 0:
             self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
@@ -1190,8 +1192,8 @@ class Fit_Weibull_Power:
                     beta_differences.append(str("+" + str(round(beta_diff * 100, 2)) + "%"))
                 else:
                     beta_differences.append(str(str(round(beta_diff * 100, 2)) + "%"))
-        self.__scale_for_change_df = alphas_for_change_df
-        self.__shape_for_change_df = betas_for_change_df
+        self.__scale_for_change_df: list[np.float64] = alphas_for_change_df
+        self.__shape_for_change_df: list[np.float64] = betas_for_change_df
 
         if use_level_stress is not None:
             change_of_parameters_data = {
@@ -1219,10 +1221,10 @@ class Fit_Weibull_Power:
 
         if print_results is True:
             n = len(failures) + len(right_censored)
-            CI_rounded = CI * 100
+            CI_rounded: float = CI * 100
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
-            frac_censored = len(right_censored) / n * 100
+            frac_censored: float = len(right_censored) / n * 100
             if frac_censored % 1 < 1e-10:
                 frac_censored = int(frac_censored)
             colorprint(

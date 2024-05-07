@@ -259,7 +259,7 @@ def ALT_prob_plot(
                 probplot(
                     failures=f,
                     right_censored=rc,
-                    __fitted_dist_params=fitted_dist_params,
+                    _fitted_dist_params=fitted_dist_params,
                     color=color_cycle[i],
                     label=round_and_string(stress),
                 )

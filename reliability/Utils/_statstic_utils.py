@@ -127,6 +127,19 @@ def least_squares(dist: str, failures: npt.NDArray[np.float64], right_censored: 
     return guess
 
 def Weibull_2P_guess(x, y, method, force_shape) -> list[np.float64]:
+    """
+    Calculates the initial guess for the parameters of a 2-parameter Weibull distribution.
+
+    Args:
+        x (array-like): The x-values of the data points.
+        y (array-like): The y-values of the data points.
+        method (str): The method used for regression. Can be "RRX" or "RRY".
+        force_shape (float or None): The shape parameter to be forced. If None, no shape parameter is forced.
+
+    Returns:
+        list[np.float64]: The initial guess for the parameters [alpha, beta] of the Weibull distribution.
+
+    """
     xlin: npt.NDArray[np.float64] = np.log(x)
     ylin: npt.NDArray[np.float64] = np.log(-np.log(1 - y))
     if force_shape is not None and method == "RRX":

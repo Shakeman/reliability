@@ -65,7 +65,7 @@ class Exponential_Distribution:
 
     """
 
-    def __init__(self, Lambda=None, gamma=0, **kwargs):
+    def __init__(self, Lambda=None, gamma: float | np.float64 = 0.0, **kwargs):
         self.name = "Exponential"
         if Lambda is None:
             raise ValueError("Parameter Lambda must be specified. Eg. Exponential_Distribution(Lambda=3)")
@@ -303,7 +303,7 @@ class Exponential_Distribution:
             xmin,
             xmax,
             show_plot,
-        )  # lgtm [py/mismatched-multiple-assignment]
+        )
 
         pdf = ss.expon.pdf(X, scale=1 / self.Lambda, loc=self.gamma)
         pdf = unpack_single_arrays(pdf)

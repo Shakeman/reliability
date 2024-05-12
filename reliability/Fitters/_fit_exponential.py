@@ -147,14 +147,10 @@ class Fit_Exponential_1P:
         self,
         failures: npt.NDArray[np.float64] | None =None,
         right_censored: npt.NDArray[np.float64] | None =None,
-        show_probability_plot=True,
-        print_results=True,
         CI=0.95,
         quantiles: bool | str | list | np.ndarray | None=None,
         method: str | None = "MLE",
         optimizer: str | None = None,
-        downsample_scatterplot=True,
-        **kwargs,
     ):
         inputs = fitters_input_checking(
             dist="Exponential_1P",
@@ -353,8 +349,16 @@ class Fit_Exponential_1P:
         Generates a probability plot for the fitted exponential distribution.
 
         Args:
-            downsample_scatterplot (bool, optional): Whether to downsample the scatterplot. Defaults to True.
-            **kwargs: Additional keyword arguments to be passed to the Exponential_probability_plot_Weibull_Scale function.
+            downsample_scatterplot : bool, int, optional
+                If True or None, and there are over 1000 points, then the scatterplot
+                will be downsampled by a factor. The default downsample factor will seek
+                to produce between 500 and 1000 points. If a number is specified, it
+                will be used as the downsample factor. Default is True. This
+                functionality makes plotting faster when there are very large numbers of
+                points. It only affects the scatterplot not the calculations.
+            kwargs
+                Plotting keywords that are passed directly to matplotlib for the
+                probability plot (e.g. color, label, linestyle)
 
         Returns:
             plt.Figure: The generated probability plot figure.
@@ -401,11 +405,6 @@ class Fit_Exponential_2P:
         The failure data. Must have at least 1 element.
     right_censored : array, list, optional
         The right censored data. Optional input. Default = None.
-    show_probability_plot : bool, optional
-        True or False. Default = True
-    print_results : bool, optional
-        Prints a dataframe of the point estimate, standard error, Lower CI and
-        Upper CI for the model's parameter. True or False. Default = True
     method : str, optional
         The method used to fit the distribution. Must be either 'MLE' (maximum
         likelihood estimation), 'LS' (least squares estimation), 'RRX' (Rank
@@ -432,16 +431,6 @@ class Fit_Exponential_2P:
         If an array or list is specified then it will be used instead of the
         default array. Any array or list specified must contain values between
         0 and 1.
-    downsample_scatterplot : bool, int, optional
-        If True or None, and there are over 1000 points, then the scatterplot
-        will be downsampled by a factor. The default downsample factor will seek
-        to produce between 500 and 1000 points. If a number is specified, it
-        will be used as the downsample factor. Default is True. This
-        functionality makes plotting faster when there are very large numbers of
-        points. It only affects the scatterplot not the calculations.
-    kwargs
-        Plotting keywords that are passed directly to matplotlib for the
-        probability plot (e.g. color, label, linestyle)
 
     Returns
     -------
@@ -515,14 +504,10 @@ class Fit_Exponential_2P:
         self,
         failures=None,
         right_censored=None,
-        show_probability_plot=True,
-        print_results=True,
         CI=0.95,
         quantiles=None,
         method: str | None="MLE",
         optimizer=None,
-        downsample_scatterplot=True,
-        **kwargs,
     ):
         # To obtain the confidence intervals of the parameters, the gamma parameter is estimated by optimizing the log-likelihood function but
         # it is assumed as fixed because the variance-covariance matrix of the estimated parameters cannot be determined numerically. By assuming
@@ -559,7 +544,7 @@ class Fit_Exponential_2P:
         # least squares method
         if method in ["LS", "RRX", "RRY"]:
             self.Lambda = LS_results.guess[0]
-            self.gamma = LS_results.guess[1]
+            self.gamma: np.float64 = LS_results.guess[1]
             self.method = str("Least Squares Estimation (" + LS_results.method + ")")
             self.optimizer = None
         # maximum likelihood method

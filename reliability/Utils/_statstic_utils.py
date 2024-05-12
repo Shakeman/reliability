@@ -10,7 +10,7 @@ from reliability.Utils._ancillary_utils import colorprint
 from reliability.Utils._plot_utils import linear_regression
 
 
-def least_squares(dist: str, failures: npt.NDArray[np.float64], right_censored: npt.NDArray[np.float64], method: str ="RRX", force_shape=None):
+def least_squares(dist: str, failures: npt.NDArray[np.float64], right_censored: npt.NDArray[np.float64], method: str ="RRX", force_shape=None) -> list[np.float64]:
     """Uses least squares or non-linear least squares estimation to fit the
     parameters of the distribution to the plotting positions.
 

@@ -90,30 +90,30 @@ class LS_optimization:
                 method="RRX",
                 force_shape=force_shape,
             )
-            if force_shape is not None:
+            if force_shape is not None and LL_func_force is not None:
                 loglik_RRX = -LL_func_force(guess_RRX, failures, right_censored, force_shape)
             else:
                 loglik_RRX = -LL_func(guess_RRX, failures, right_censored)
             # RRY
-            guess_RRY = least_squares(
+            guess_RRY: list[np.float64] = least_squares(
                 dist=func_name,
                 failures=failures,
                 right_censored=right_censored,
                 method="RRY",
                 force_shape=force_shape,
             )
-            if force_shape is not None:
+            if force_shape is not None and LL_func_force is not None:
                 loglik_RRY = -LL_func_force(guess_RRY, failures, right_censored, force_shape)
             else:
                 loglik_RRY = -LL_func(guess_RRY, failures, right_censored)
             # take the best one
             if abs(loglik_RRX) < abs(loglik_RRY):  # RRX is best
                 LS_method = "RRX"
-                guess = guess_RRX
+                guess: list[np.float64] = guess_RRX
             else:  # RRY is best
                 LS_method = "RRY"
                 guess = guess_RRY
-        self.guess = guess
+        self.guess: list[np.float64] = guess
         self.method = LS_method
 
 

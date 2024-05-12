@@ -67,7 +67,7 @@ class Weibull_Distribution:
 
     """
 
-    def __init__(self, alpha=None, beta=None, gamma=0, **kwargs):
+    def __init__(self, alpha=None, beta=None, gamma: float | np.float64 = 0.0, **kwargs):
         self.name = "Weibull"
         if alpha is None or beta is None:
             raise ValueError("Parameters alpha and beta must be specified. Eg. Weibull_Distribution(alpha=5,beta=2)")
@@ -826,7 +826,7 @@ class Weibull_Distribution:
         else:
             return chf
 
-    def quantile(self, q):
+    def quantile(self, q) -> np.float64 | npt.NDArray[np.float64]:
         """Quantile calculator
 
         Parameters

@@ -452,8 +452,6 @@ class Fit_Everything:
                 right_censored=right_censored,
                 method=method,
                 optimizer=optimizer,
-                show_probability_plot=False,
-                print_results=False,
             )
             self.Exponential_2P_lambda = self.__Exponential_2P_params.Lambda
             self.Exponential_2P_gamma = self.__Exponential_2P_params.gamma
@@ -929,8 +927,6 @@ class Fit_Everything:
                 right_censored=right_censored,
                 method=method,
                 optimizer=optimizer,
-                show_probability_plot=False,
-                print_results=False,
             )
             self.Exponential_1P_lambda = self.__Exponential_1P_params.Lambda
             self.Exponential_1P_gamma = 0

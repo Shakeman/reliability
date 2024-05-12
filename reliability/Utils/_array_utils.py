@@ -43,7 +43,7 @@ def anderson_darling(fitted_cdf, empirical_cdf) -> float:
     AD: float = n * ((A + B + C).sum())
     return AD
 
-def unpack_single_arrays(array):
+def unpack_single_arrays(array)-> np.float64 | npt.NDArray[np.float64]:
     """Unpacks arrays with a single element to return just that element
 
     Parameters

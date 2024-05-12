@@ -835,7 +835,7 @@ def __beta_2P_CDF(t, alpha, beta):
     cdf = betainc(alpha, beta, t)
     return cdf
 
-def ALT_least_squares(model, failures, stress_1_array, stress_2_array=None):
+def ALT_least_squares(model, failures, stress_1_array, stress_2_array=None)-> list[np.float64]:
     """Uses least squares estimation to fit the parameters of the ALT stress-life
     model to the time to failure data.
 
@@ -946,7 +946,7 @@ def non_invertable_handler(xx, yy, model) -> list[np.float64]:
             model_parameters = [np.float64(1), np.float64(2), np.float64(3)]  # return a dummy solution for MLE to deal with
     return model_parameters
 
-def exponential_ALT_least_squares(S1, L):
+def exponential_ALT_least_squares(S1, L) -> list[np.float64]:
     """
     Calculate the parameters of an exponential function under ALT condtions using the least squares method.
 
@@ -964,7 +964,7 @@ def exponential_ALT_least_squares(S1, L):
     output = [m, b]  # y=mx+b
     return output
 
-def eyring_ALT_least_squares(S1, L):
+def eyring_ALT_least_squares(S1, L) -> list[np.float64]:
         """
     Calculate the parameters of an eyring function under ALT condtions using the least squares method.
 
@@ -983,7 +983,7 @@ def eyring_ALT_least_squares(S1, L):
         output = [m, b]  # a,c
         return output
 
-def power_ALT_least_squares(S1, L):
+def power_ALT_least_squares(S1, L) -> list[np.float64]:
     """
     Calculate the parameters of an power function under ALT condtions using the least squares method.
 
@@ -999,7 +999,7 @@ def power_ALT_least_squares(S1, L):
     output = [np.exp(c), m]  # a,n
     return output
 
-def dual_exponential_ALT_least_squares(L, S1, S2, model):
+def dual_exponential_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
     """
     Calculate the parameters of a dual exponential model using the least squares method.
 
@@ -1023,7 +1023,7 @@ def dual_exponential_ALT_least_squares(L, S1, S2, model):
     output = [solution[1], solution[2], np.exp(solution[0])]  # a,b,c
     return output
 
-def power_exponential_ALT_least_squares(L, S1, S2, model):
+def power_exponential_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
     """
     Calculate the parameters of a power exponential model using the least squares method.
 
@@ -1049,7 +1049,7 @@ def power_exponential_ALT_least_squares(L, S1, S2, model):
     output = [solution[1], np.exp(solution[0]), solution[2]]  # a,c,n
     return output
 
-def dual_power_ALT_least_squares(L, S1, S2, model):
+def dual_power_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
     """
     Calculate the parameters of a dual power model using the least squares method.
 

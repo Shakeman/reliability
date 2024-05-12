@@ -56,7 +56,6 @@ def test_Loglogistic():
     Loglogistic_probability_plot(failures=data)
 
 
-@pytest.mark.flaky(reruns=3)
 def test_Exponential():
     data1 = Exponential_Distribution(Lambda=1 / 10).random_samples(
         50, seed=42,

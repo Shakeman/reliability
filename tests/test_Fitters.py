@@ -361,8 +361,6 @@ def test_Fit_Exponential_1P():
         failures=data.failures,
         right_censored=data.right_censored,
         method="MLE",
-        show_probability_plot=False,
-        print_results=False,
     )
     assert_allclose(MLE.Lambda, 6.101198944227536, rtol=rtol, atol=atol)
     assert_allclose(MLE.AICc, -22.032339191099148, rtol=rtol, atol=atol)
@@ -374,8 +372,6 @@ def test_Fit_Exponential_1P():
         failures=data.failures,
         right_censored=data.right_censored,
         method="LS",
-        show_probability_plot=False,
-        print_results=False,
     )
     assert_allclose(LS.Lambda, 5.776959885774546, rtol=rtol, atol=atol)
     assert_allclose(LS.AICc, -21.988412212242917, rtol=rtol, atol=atol)
@@ -395,8 +391,6 @@ def test_Fit_Exponential_2P():
         failures=data.failures,
         right_censored=data.right_censored,
         method="MLE",
-        show_probability_plot=False,
-        print_results=False,
     )
     assert_allclose(MLE.Lambda, 7.062867654421206, rtol=rtol, atol=atol)
     assert_allclose(MLE.gamma, 500.016737532126, rtol=rtol, atol=atol)
@@ -409,8 +403,6 @@ def test_Fit_Exponential_2P():
         failures=data.failures,
         right_censored=data.right_censored,
         method="LS",
-        show_probability_plot=False,
-        print_results=False,
     )
     assert_allclose(LS.Lambda, 6.4445633542175, rtol=rtol, atol=atol)
     assert_allclose(LS.gamma, 500.01368943066706, rtol=rtol, atol=atol)

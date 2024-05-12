@@ -741,8 +741,6 @@ def Exponential_probability_plot_Weibull_Scale(
                     failures=failures,
                     right_censored=right_censored,
                     CI=CI,
-                    show_probability_plot=False,
-                    print_results=False,
                 )
                 Lambda = fit.Lambda
                 Lambda_SE = fit.Lambda_SE
@@ -762,8 +760,6 @@ def Exponential_probability_plot_Weibull_Scale(
                     failures=failures,
                     right_censored=right_censored,
                     CI=CI,
-                    show_probability_plot=False,
-                    print_results=False,
                 )
                 Lambda = fit.Lambda
                 Lambda_SE = fit.Lambda_SE
@@ -1862,8 +1858,6 @@ def Exponential_probability_plot(
                     failures=failures,
                     right_censored=right_censored,
                     CI=CI,
-                    show_probability_plot=False,
-                    print_results=False,
                 )
                 Lambda = fit.Lambda
                 Lambda_SE = fit.Lambda_SE
@@ -1883,8 +1877,6 @@ def Exponential_probability_plot(
                     failures=failures,
                     right_censored=right_censored,
                     CI=CI,
-                    show_probability_plot=False,
-                    print_results=False,
                 )
                 Lambda = fit.Lambda
                 Lambda_SE = fit.Lambda_SE

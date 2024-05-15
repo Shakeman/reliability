@@ -3,6 +3,7 @@
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import scipy.stats as ss
 from autograd import jacobian as jac  # type: ignore
 from autograd_gamma import gammaincc as agammaincc
@@ -330,9 +331,9 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
     confidence bounds on reliability.
 
     """
+    if CI_y is not None and CI_x is not None:
+        raise ValueError("Both CI_x and CI_y have been provided. Please provide only one.")
     if dist.name == "Exponential":
-        if CI_y is not None and CI_x is not None:
-            raise ValueError("Both CI_x and CI_y have been provided. Please provide only one.")
         if CI_y is not None:
             if func == "SF":
                 q = np.asarray(CI_y)
@@ -342,10 +343,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                 q = np.exp(-np.asarray(CI_y))
             else:
                 raise ValueError("func must be CDF, SF, or CHF")
-            SF_time = distribution_confidence_intervals.exponential_CI(dist=dist, CI=CI, q=q)
+            SF_time: tuple[npt.NDArray[np.float64],npt.NDArray[np.float64]] = distribution_confidence_intervals.exponential_CI_only(dist=dist, CI=CI, q=q)
             lower, upper = SF_time[0], SF_time[1]
         elif CI_x is not None:
-            SF_rel = distribution_confidence_intervals.exponential_CI(dist=dist, CI=CI, x=CI_x)
+            SF_rel = distribution_confidence_intervals.exponential_CI_only(dist=dist, CI=CI, x=CI_x)
             if func == "SF":
                 lower, upper = SF_rel[1], SF_rel[0]
             elif func == "CDF":
@@ -357,20 +358,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
         else:
             lower, upper = None, None
     else:
-        if CI_y is not None and CI_x is not None:
-            raise ValueError("Both CI_x and CI_y have been provided. Please provide only one.")
         if CI_x is not None and CI_y is None and CI_type == "time":
-            colorprint(
-                'WARNING: If CI_type="time" then CI_y must be specified in order to extract the confidence bounds on time.',
-                text_color="red",
-            )
-            lower, upper = None, None
+            raise ValueError("WARNING: If CI_type=time then CI_y must be specified in order to extract the confidence bounds on time.")
         elif CI_y is not None and CI_x is None and CI_type == "reliability":
-            colorprint(
-                'WARNING: If CI_type="reliability" then CI_x must be specified in order to extract the confidence bounds on reliability.',
-                text_color="red",
-            )
-            lower, upper = None, None
+            raise ValueError("WARNING: If CI_type=reliability then CI_x must be specified in order to extract the confidence bounds on reliability.")
         elif (CI_y is not None and CI_type == "time") or (CI_x is not None and CI_type == "reliability"):
             if CI_type == "time":
                 if func == "SF":
@@ -383,10 +374,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                     raise ValueError("func must be CDF, SF, or CHF")
             if dist.name == "Weibull":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.weibull_CI(dist=dist, CI_type="time", CI=CI, q=q)
+                    SF_time = distribution_confidence_intervals.weibull_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
-                    SF_rel = distribution_confidence_intervals.weibull_CI(
+                    SF_rel = distribution_confidence_intervals.weibull_CI_only(
                         dist=dist,
                         CI_type="reliability",
                         CI=CI,
@@ -400,10 +391,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
             elif dist.name == "Normal":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.normal_CI(dist=dist, CI_type="time", CI=CI, q=q)
+                    SF_time = distribution_confidence_intervals.normal_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
-                    SF_rel = distribution_confidence_intervals.normal_CI(
+                    SF_rel = distribution_confidence_intervals.normal_CI_only(
                         dist=dist,
                         CI_type="reliability",
                         CI=CI,
@@ -417,10 +408,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[0]), -np.log(SF_rel[1])
             elif dist.name == "Lognormal":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.lognormal_CI(dist=dist, CI_type="time", CI=CI, q=q)
+                    SF_time = distribution_confidence_intervals.lognormal_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
-                    SF_rel = distribution_confidence_intervals.lognormal_CI(
+                    SF_rel = distribution_confidence_intervals.lognormal_CI_only(
                         dist=dist,
                         CI_type="reliability",
                         CI=CI,
@@ -434,10 +425,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[0]), -np.log(SF_rel[1])
             elif dist.name == "Gamma":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.gamma_CI(dist=dist, CI_type="time", CI=CI, q=q)
+                    SF_time = distribution_confidence_intervals.gamma_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
-                    SF_rel = distribution_confidence_intervals.gamma_CI(dist=dist, CI_type="reliability", CI=CI, x=CI_x)
+                    SF_rel = distribution_confidence_intervals.gamma_CI_only(dist=dist, CI_type="reliability", CI=CI, x=CI_x)
                     if func == "SF":
                         lower, upper = SF_rel[0], SF_rel[1]
                     elif func == "CDF":
@@ -446,10 +437,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
             elif dist.name == "Gumbel":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.gumbel_CI(dist=dist, CI_type="time", CI=CI, q=q)
+                    SF_time = distribution_confidence_intervals.gumbel_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
-                    SF_rel = distribution_confidence_intervals.gumbel_CI(
+                    SF_rel = distribution_confidence_intervals.gumbel_CI_only(
                         dist=dist,
                         CI_type="reliability",
                         CI=CI,
@@ -463,10 +454,10 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
             elif dist.name == "Loglogistic":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.loglogistic_CI(dist=dist, CI_type="time", CI=CI, q=q)
+                    SF_time = distribution_confidence_intervals.loglogistic_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
-                    SF_rel = distribution_confidence_intervals.loglogistic_CI(
+                    SF_rel = distribution_confidence_intervals.loglogistic_CI_only(
                         dist=dist,
                         CI_type="reliability",
                         CI=CI,
@@ -486,7 +477,7 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
         lower, upper = lower[0], upper[0]
     return lower, upper
 
-
+#TODO Implement confidence intervals as classes adn subclasses returning botht iem and reliability
 class distribution_confidence_intervals:
     """This class contains several subfunctions that provide all the confidence
     intervals for CDF, SF, CHF for each distribution for which it is
@@ -504,6 +495,116 @@ class distribution_confidence_intervals:
     None
 
     """
+    @staticmethod
+    def exponential_CI_only(
+        dist,
+        CI: float,
+        func="CDF",
+        q=None,
+        x=None,
+    ) -> tuple[npt.NDArray[np.float64] , npt.NDArray[np.float64]]:
+        """Generates the confidence intervals for CDF, SF, and CHF of the
+        Exponential distribution.
+
+        Parameters
+        ----------
+        dist : object
+            The distribution object
+        func : str
+            Must be either "CDF", "SF" or "CHF". Default is "CDF"
+        CI : float
+            The confidence interval. Must be between 0 and 1
+        q : array, list, optional
+            The quantiles to be calculated. Default is None.
+        x : array, list, optional
+            The x-values to be calculated. Default is None.
+
+        Returns
+        -------
+        t_lower : array
+            The lower bounds on time. Only returned if q is not None.
+        t_upper :array
+            The upper bounds on time. Only returned if q is not None.
+        Y_lower : array
+            The lower bounds on reliability. Only returned if x is not None.
+        Y_upper :array
+            The upper bounds on reliability. Only returned if x is not None.
+
+        Notes
+        -----
+        self must contain particular values for this function to work. These
+        include self.Lambda_SE and self.Z.
+
+        As a Utils function, there is very limited error checking done, as this
+        function is not intended for users to access directly.
+
+        For the Exponential distribution, the bounds on time and reliability are
+        the same.
+
+        For an explaination of how the confidence inervals are calculated,
+        please see the `documentation <https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html>`_.
+
+        """
+        points = 200
+
+        if dist.Lambda_SE is not None and dist.Z is not None and ( q is not None or x is not None):
+            if func not in ["CDF", "SF", "CHF"]:
+                raise ValueError("func must be either CDF, SF, or CHF")
+            if type(q) not in [list, np.ndarray, type(None)]:
+                raise ValueError("q must be a list or array of quantiles. Default is None")
+            if type(x) not in [list, np.ndarray, type(None)]:
+                raise ValueError("x must be a list or array of x-values. Default is None")
+            if q is not None:
+                q = np.asarray(q)
+            if x is not None:
+                x = np.asarray(x)
+
+            Z = -ss.norm.ppf((1 - CI) / 2)  # converts CI to Z
+
+            Lambda_upper: npt.NDArray[np.float64]  = dist.Lambda * (np.exp(Z * (dist.Lambda_SE / dist.Lambda)))
+            Lambda_lower: npt.NDArray[np.float64] = dist.Lambda * (np.exp(-Z * (dist.Lambda_SE / dist.Lambda)))
+
+            if x is not None:
+                t = x - dist.gamma
+            else:
+                t0 = dist.quantile(0.00001) - dist.gamma
+                if t0 <= 0:
+                    t0 = 0.0001
+                t = np.geomspace(
+                    t0,
+                    dist.quantile(0.99999) - dist.gamma,
+                    points,
+                )
+
+            # calculate the CIs using the formula for SF
+            Y_lower: npt.NDArray[np.float64]  = np.exp(-Lambda_lower * t)
+            Y_upper: npt.NDArray[np.float64]  = np.exp(-Lambda_upper * t)
+
+            # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
+            t, t, Y_lower, Y_upper = clean_CI_arrays(
+                xlower=t,
+                xupper=t,
+                ylower=Y_lower,
+                yupper=Y_upper,
+                plot_type=func,
+                q=q,
+                x=x,
+            )
+            # artificially correct for any reversals
+            if (x is None or q is None) and len(Y_lower) > 2 and len(Y_upper) > 2:
+                Y_lower = no_reverse(Y_lower, CI_type=None, plot_type=func)
+                Y_upper = no_reverse(Y_upper, CI_type=None, plot_type=func)
+
+            if q is not None:
+                t_lower: npt.NDArray[np.float64]  = -np.log(q) / Lambda_upper + dist.gamma
+                t_upper: npt.NDArray[np.float64]  = -np.log(q) / Lambda_lower + dist.gamma
+                return t_lower, t_upper
+            elif x is not None:
+                return Y_lower, Y_upper
+            else:
+             raise ValueError("q or x values must be provided in order to calculate the confidence intervals.")
+        else:
+            raise ValueError("The Exponential distribution object must contain Lambda_SE, Z, and q or x values in order to calculate the confidence intervals.")
 
     @staticmethod
     def exponential_CI(
@@ -515,7 +616,7 @@ class distribution_confidence_intervals:
         color=None,
         q=None,
         x=None,
-    ):
+    ) -> tuple[npt.NDArray[np.float64] , npt.NDArray[np.float64]] | None:
         """Generates the confidence intervals for CDF, SF, and CHF of the
         Exponential distribution.
 
@@ -594,8 +695,8 @@ class distribution_confidence_intervals:
                 plt.title(text_title)
                 plt.subplots_adjust(top=0.81)
 
-            Lambda_upper = dist.Lambda * (np.exp(Z * (dist.Lambda_SE / dist.Lambda)))
-            Lambda_lower = dist.Lambda * (np.exp(-Z * (dist.Lambda_SE / dist.Lambda)))
+            Lambda_upper: npt.NDArray[np.float64]  = dist.Lambda * (np.exp(Z * (dist.Lambda_SE / dist.Lambda)))
+            Lambda_lower: npt.NDArray[np.float64] = dist.Lambda * (np.exp(-Z * (dist.Lambda_SE / dist.Lambda)))
 
             if x is not None:
                 t = x - dist.gamma
@@ -610,8 +711,8 @@ class distribution_confidence_intervals:
                 )
 
             # calculate the CIs using the formula for SF
-            Y_lower = np.exp(-Lambda_lower * t)
-            Y_upper = np.exp(-Lambda_upper * t)
+            Y_lower: npt.NDArray[np.float64]  = np.exp(-Lambda_lower * t)
+            Y_upper: npt.NDArray[np.float64]  = np.exp(-Lambda_upper * t)
 
             # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
             t, t, Y_lower, Y_upper = clean_CI_arrays(
@@ -641,11 +742,205 @@ class distribution_confidence_intervals:
             if plot_CI is True:
                 CI_plot(x=t + dist.gamma, x_lower=t + dist.gamma, x_upper=t + dist.gamma,  yy_lower=yy_lower, yy_upper=yy_upper, color=color)
             if q is not None:
-                t_lower = -np.log(q) / Lambda_upper + dist.gamma
-                t_upper = -np.log(q) / Lambda_lower + dist.gamma
+                t_lower: npt.NDArray[np.float64]  = -np.log(q) / Lambda_upper + dist.gamma
+                t_upper: npt.NDArray[np.float64]  = -np.log(q) / Lambda_lower + dist.gamma
                 return t_lower, t_upper
             elif x is not None:
                 return Y_lower, Y_upper
+    @staticmethod
+    def weibull_CI_only(
+        dist,
+        CI_type: str,
+        CI: float,
+        func="CDF",
+        q=None,
+        x=None,
+    ) -> tuple[npt.NDArray[np.float64],npt.NDArray[np.float64]]:
+        """Generates the confidence intervals for CDF, SF, and CHF of the
+        Weibull distribution.
+
+        Parameters
+        ----------
+        dist : object
+            The distribution object
+        func : str
+            Must be either "CDF", "SF" or "CHF". Default is "CDF"
+        CI_type : str
+            Must be either "time" or "reliability"
+        CI : float
+            The confidence interval. Must be between 0 and 1
+        q : array, list, optional
+            The quantiles to be calculated. Default is None. Only used if
+            CI_type='time'.
+        x : array, list, optional
+            The x-values to be calculated. Default is None. Only used if
+            CI_type='reliability'.
+
+        Returns
+        -------
+        t_lower : array
+            The lower bounds on time. Only returned if CI_type is "time" and q
+            is not None.
+        t_upper :array
+            The upper bounds on time. Only returned if CI_type is "time" and q
+            is not None.
+        R_lower : array
+            The lower bounds on reliability. Only returned if CI_type is
+            "reliability" and x is not None.
+        R_upper :array
+            The upper bounds on reliability. Only returned if CI_type is
+            "reliability" and x is not None.
+
+        Notes
+        -----
+        self must contain particular values for this function to work. These
+        include self.alpha_SE, self.beta_SE, self.Cov_alpha_beta, self.Z.
+
+        As a Utils function, there is very limited error checking done, as this
+        function is not intended for users to access directly.
+
+        For an explaination of how the confidence inervals are calculated,
+        please see the `documentation <https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html>`_.
+
+        """
+        points = 200  # the number of data points in each confidence interval (upper and lower) line
+
+        # this determines if the user has specified for the CI bounds to be shown or hidden.
+        if (
+            validate_CI_params(dist.alpha_SE, dist.beta_SE, dist.Cov_alpha_beta, dist.Z) is True
+            and (q is not None or x is not None)
+            and CI_type is not None
+        ):
+            if CI_type in ["time", "t", "T", "TIME", "Time"]:
+                CI_type = "time"
+            elif CI_type in [
+                "reliability",
+                "r",
+                "R",
+                "RELIABILITY",
+                "rel",
+                "REL",
+                "Reliability",
+            ]:
+                CI_type = "reliability"
+            if func not in ["CDF", "SF", "CHF"]:
+                raise ValueError("func must be either CDF, SF, or CHF")
+            if type(q) not in [list, np.ndarray, type(None)]:
+                raise ValueError("q must be a list or array of quantiles. Default is None")
+            if type(x) not in [list, np.ndarray, type(None)]:
+                raise ValueError("x must be a list or array of x-values. Default is None")
+            if q is not None:
+                q = np.asarray(q)
+            if x is not None:
+                x = np.asarray(x)
+
+            Z = -ss.norm.ppf((1 - CI) / 2)  # converts CI to Z
+
+            def u(t, alpha, beta):  # u = ln(-ln(R))
+                return beta * (anp.log(t) - anp.log(alpha))  # weibull SF linearized
+
+            def v(R, alpha, beta):  # v = ln(t)
+                return (1 / beta) * anp.log(-anp.log(R)) + anp.log(alpha)  # weibull SF rearranged for t
+
+            du_da = jac(u, 1)  # derivative wrt alpha (bounds on reliability)
+            du_db = jac(u, 2)  # derivative wrt beta (bounds on reliability)
+            dv_da = jac(v, 1)  # derivative wrt alpha (bounds on time)
+            dv_db = jac(v, 2)  # derivative wrt beta (bounds on time)
+
+            def var_u(self, v):  # v is time
+                return (
+                    du_da(v, self.alpha, self.beta) ** 2 * self.alpha_SE**2
+                    + du_db(v, self.alpha, self.beta) ** 2 * self.beta_SE**2
+                    + 2 * du_da(v, self.alpha, self.beta) * du_db(v, self.alpha, self.beta) * self.Cov_alpha_beta
+                )
+
+            def var_v(self, u):  # u is reliability
+                return (
+                    dv_da(u, self.alpha, self.beta) ** 2 * self.alpha_SE**2
+                    + dv_db(u, self.alpha, self.beta) ** 2 * self.beta_SE**2
+                    + 2 * dv_da(u, self.alpha, self.beta) * dv_db(u, self.alpha, self.beta) * self.Cov_alpha_beta
+                )
+
+            # Confidence bounds on time (in terms of reliability)
+            if CI_type == "time":
+                # Y is reliability (R)
+                if func == "CHF":
+                    chf_array = np.geomspace(1e-8, dist._chf[-1] * 1.5, points)
+                    Y = np.exp(-chf_array)
+                elif q is not None:
+                    Y = q
+                else:
+                    Y = transform_spaced("weibull", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
+
+                # v is ln(t)
+                v_lower = v(Y, dist.alpha, dist.beta) - Z * (var_v(dist, Y) ** 0.5)
+                v_upper = v(Y, dist.alpha, dist.beta) + Z * (var_v(dist, Y) ** 0.5)
+
+                t_lower = np.exp(v_lower) + dist.gamma  # transform back from ln(t)
+                t_upper = np.exp(v_upper) + dist.gamma
+
+                # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
+                t_lower, t_upper, Y, Y = clean_CI_arrays(
+                    xlower=t_lower,
+                    xupper=t_upper,
+                    ylower=Y,
+                    yupper=Y,
+                    plot_type=func,
+                    q=q,
+                )
+                # artificially correct for any reversals
+                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                    t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
+                    t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
+
+                if q is not None:
+                    return t_lower, t_upper
+                else:
+                    raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+            # Confidence bounds on Reliability (in terms of time)
+            elif CI_type == "reliability":
+                if x is not None:
+                    t = x - dist.gamma
+                else:
+                    t0 = dist.quantile(0.00001) - dist.gamma
+                    if t0 <= 0:
+                        t0 = 0.0001
+                    t = np.geomspace(
+                        t0,
+                        dist.quantile(0.99999) - dist.gamma,
+                        points,
+                    )
+
+                # u is reliability ln(-ln(R))
+                u_lower = (
+                    u(t, dist.alpha, dist.beta) + Z * var_u(dist, t) ** 0.5
+                )  # note that gamma is incorporated into u but not in var_u. This is the same as just shifting a Weibull_2P across
+                u_upper = u(t, dist.alpha, dist.beta) - Z * var_u(dist, t) ** 0.5
+
+                Y_lower = np.exp(-np.exp(u_lower))  # transform back from ln(-ln(R))
+                Y_upper = np.exp(-np.exp(u_upper))
+
+                # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
+                t, t, Y_lower, Y_upper = clean_CI_arrays(
+                    xlower=t,
+                    xupper=t,
+                    ylower=Y_lower,
+                    yupper=Y_upper,
+                    plot_type=func,
+                    x=x,
+                )
+                # artificially correct for any reversals
+                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                    Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
+                    Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
+                if x is not None:
+                    return Y_lower, Y_upper
+                else:
+                    raise ValueError("x values must be provided in order to calculate the reliability confidence intervals.")
+            else:
+                raise ValueError("CI_type must be either 'time' or 'reliability'")
+        else:
+            raise ValueError("The Weibull distribution object must contain alpha_SE, beta_SE, Cov_alpha_beta, Z, and q or x values in order to calculate the confidence intervals.")
 
     @staticmethod
     def weibull_CI(
@@ -901,6 +1196,210 @@ class distribution_confidence_intervals:
                     CI_plot(x=t + dist.gamma, x_lower=t + dist.gamma, x_upper=t + dist.gamma,  yy_lower=yy_lower, yy_upper=yy_upper, color=color)
                 if x is not None:
                     return Y_lower, Y_upper
+
+    @staticmethod
+    def gamma_CI_only(
+        dist,
+        CI_type: str,
+        CI: float,
+        func="CDF",
+        q=None,
+        x=None,
+    ) -> tuple[npt.NDArray[np.float64],npt.NDArray[np.float64]]:
+        """Generates the confidence intervals for CDF, SF, and CHF of the
+        Gamma distribution.
+
+        Parameters
+        ----------
+        dist : object
+            The distribution object
+        func : str
+            Must be either "CDF", "SF" or "CHF". Default is "CDF".
+        CI_type : str
+            Must be either "time" or "reliability"
+        CI : float
+            The confidence interval. Must be between 0 and 1
+        q : array, list, optional
+            The quantiles to be calculated. Default is None. Only used if CI_type='time'.
+        x : array, list, optional
+            The x-values to be calculated. Default is None. Only used if CI_type='reliability'.
+
+        Returns
+        -------
+        t_lower : array
+            The lower bounds on time. Only returned if CI_type is "time" and q
+            is not None.
+        t_upper :array
+            The upper bounds on time. Only returned if CI_type is "time" and q
+            is not None.
+        R_lower : array
+            The lower bounds on reliability. Only returned if CI_type is
+            "reliability" and x is not None.
+        R_upper :array
+            The upper bounds on reliability. Only returned if CI_type is
+            "reliability" and x is not None.
+
+        Notes
+        -----
+        self must contain particular values for this function to work. These
+        include self.mu_SE, self.beta_SE, self.Cov_mu_beta, self.Z.
+
+        As a Utils function, there is very limited error checking done, as this
+        function is not intended for users to access directly.
+
+        For an explaination of how the confidence inervals are calculated,
+        please see the `documentation <https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html>`_.
+
+        """
+        points = 200  # the number of data points in each confidence interval (upper and lower) line
+
+        # this determines if the user has specified for the CI bounds to be shown or hidden.
+
+        if (
+            validate_CI_params(dist.mu_SE, dist.beta_SE, dist.Cov_mu_beta, dist.Z) is True
+            and (q is not None or x is not None)
+            and CI_type is not None
+        ):
+            if CI_type in ["time", "t", "T", "TIME", "Time"]:
+                CI_type = "time"
+            elif CI_type in [
+                "reliability",
+                "r",
+                "R",
+                "RELIABILITY",
+                "rel",
+                "REL",
+                "Reliability",
+            ]:
+                CI_type = "reliability"
+            if func not in ["CDF", "SF", "CHF"]:
+                raise ValueError("func must be either CDF, SF, or CHF")
+            if type(q) not in [list, np.ndarray, type(None)]:
+                raise ValueError("q must be a list or array of quantiles. Default is None")
+            if type(x) not in [list, np.ndarray, type(None)]:
+                raise ValueError("x must be a list or array of x-values. Default is None")
+            if q is not None:
+                q = np.asarray(q)
+            if x is not None:
+                x = np.asarray(x)
+
+            Z = -ss.norm.ppf((1 - CI) / 2)  # converts CI to Z
+
+            def u(t, mu, beta):  # u = R
+                return agammaincc(beta, t / anp.exp(mu))
+
+            def v(R, mu, beta):  # v = ln(t)
+                return anp.log(agammainccinv(beta, R)) + mu
+
+            du_dm = jac(u, 1)  # derivative wrt mu (bounds on reliability)
+            du_db = jac(u, 2)  # derivative wrt beta (bounds on reliability)
+            dv_dm = jac(v, 1)  # derivative wrt mu (bounds on time)
+            dv_db = jac(v, 2)  # derivative wrt beta (bounds on time)
+
+            def var_u(self, v):  # v is time
+                return (
+                    du_dm(v, self.mu, self.beta) ** 2 * self.mu_SE**2
+                    + du_db(v, self.mu, self.beta) ** 2 * self.beta_SE**2
+                    + 2 * du_dm(v, self.mu, self.beta) * du_db(v, self.mu, self.beta) * self.Cov_mu_beta
+                )
+
+            def var_v(self, u):  # u is reliability
+                return (
+                    dv_dm(u, self.mu, self.beta) ** 2 * self.mu_SE**2
+                    + dv_db(u, self.mu, self.beta) ** 2 * self.beta_SE**2
+                    + 2 * dv_dm(u, self.mu, self.beta) * dv_db(u, self.mu, self.beta) * self.Cov_mu_beta
+                )
+
+            # Confidence bounds on time (in terms of reliability)
+            if CI_type == "time":
+                # Y is reliability (R)
+                if func == "CHF":
+                    chf_array = np.geomspace(1e-8, dist._chf[-1] * 1.5, points)
+                    Y = np.exp(-chf_array)
+                elif q is not None:
+                    Y = q
+                elif dist.beta > 3:
+                    Y = transform_spaced(
+                        "gamma",
+                        y_lower=1e-8,
+                        y_upper=1 - 1e-8,
+                        beta=dist.beta,
+                        num=points,
+                    )
+                else:
+                    Y = np.linspace(1e-8, 1 - 1e-8, points)
+
+                # v is ln(t)
+                v_lower = v(Y, dist.mu, dist.beta) - Z * (var_v(dist, Y) ** 0.5)
+                v_upper = v(Y, dist.mu, dist.beta) + Z * (var_v(dist, Y) ** 0.5)
+
+                t_lower = np.exp(v_lower) + dist.gamma
+                t_upper = np.exp(v_upper) + dist.gamma
+
+                # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
+                t_lower, t_upper, Y, Y = clean_CI_arrays(
+                    xlower=t_lower,
+                    xupper=t_upper,
+                    ylower=Y,
+                    yupper=Y,
+                    plot_type=func,
+                    q=q,
+                )
+                # artificially correct for any reversals
+                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                    t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
+                    t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
+
+                if q is not None:
+                    return t_lower, t_upper
+                else:
+                    raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+
+            # Confidence bounds on Reliability (in terms of time)
+            elif CI_type == "reliability":
+                if x is not None:
+                    t = x - dist.gamma
+                else:
+                    t0 = 0.0001 if dist.gamma == 0 else dist.quantile(1e-07)
+                    t = np.linspace(
+                        t0 - dist.gamma,
+                        dist.quantile(0.99999) - dist.gamma,
+                        points,
+                    )
+
+                # u is reliability
+                # note that gamma is incorporated into u but not in var_u. This is the same as just shifting a Gamma_2P across
+                R = u(t, dist.mu, dist.beta)
+                varR = var_u(dist, t)
+                R_lower = R / (R + (1 - R) * np.exp((Z * varR**0.5) / (R * (1 - R))))
+                R_upper = R / (R + (1 - R) * np.exp((-Z * varR**0.5) / (R * (1 - R))))
+
+                # transform back from u = R
+                Y_lower = R_lower
+                Y_upper = R_upper
+
+                # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
+                t, t, Y_lower, Y_upper = clean_CI_arrays(
+                    xlower=t,
+                    xupper=t,
+                    ylower=Y_lower,
+                    yupper=Y_upper,
+                    plot_type=func,
+                    x=x,
+                )
+                # artificially correct for any reversals
+                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                    Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
+                    Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
+
+                if x is not None:
+                    return Y_lower, Y_upper
+                else:
+                    raise ValueError("x values must be provided in order to calculate the reliability confidence intervals.")
+            else:
+                raise ValueError("CI_type must be either 'time' or 'reliability'")
+        else:
+            raise ValueError("The Gamma distribution object must contain mu_SE, beta_SE, Cov_mu_beta, CI, and q or x values in order to calculate the confidence intervals.")
 
     @staticmethod
     def gamma_CI(
@@ -1160,7 +1659,190 @@ class distribution_confidence_intervals:
 
                 if plot_CI is True:
                     CI_plot(x=t + dist.gamma, x_lower=t + dist.gamma, x_upper=t + dist.gamma,  yy_lower=yy_lower, yy_upper=yy_upper, color=color)
+                if x is not None:
                     return Y_lower, Y_upper
+                else:
+                    raise ValueError("x values must be provided in order to calculate the reliability confidence intervals.")
+            else:
+                raise ValueError("CI_type must be either 'time' or 'reliability'")
+
+    @staticmethod
+    def normal_CI_only(
+        dist,
+        CI_type: str,
+        CI: float,
+        func="CDF",
+        q=None,
+        x=None,
+    ) -> tuple[npt.NDArray[np.float64],npt.NDArray[np.float64]]:
+        """Generates the confidence intervals for CDF, SF, and CHF of the
+        Normal distribution.
+
+        Parameters
+        ----------
+        self : object
+            The distribution object
+        func : str
+            Must be either "CDF", "SF" or "CHF". Default is "CDF".
+        CI_type : str
+            Must be either "time" or "reliability"
+        CI : float
+            The confidence interval. Must be between 0 and 1
+        q : array, list, optional
+            The quantiles to be calculated. Default is None. Only used if CI_type='time'.
+        x : array, list, optional
+            The x-values to be calculated. Default is None. Only used if CI_type='reliability'.
+
+        Returns
+        -------
+        t_lower : array
+            The lower bounds on time. Only returned if CI_type is "time" and q
+            is not None.
+        t_upper :array
+            The upper bounds on time. Only returned if CI_type is "time" and q
+            is not None.
+        R_lower : array
+            The lower bounds on reliability. Only returned if CI_type is
+            "reliability" and x is not None.
+        R_upper :array
+            The upper bounds on reliability. Only returned if CI_type is
+            "reliability" and x is not None.
+
+        Notes
+        -----
+        self must contain particular values for this function to work. These
+        include self.mu_SE, self.sigma_SE, self.Cov_mu_sigma, self.Z.
+
+        As a Utils function, there is very limited error checking done, as this
+        function is not intended for users to access directly.
+
+        For an explaination of how the confidence inervals are calculated,
+        please see the `documentation <https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html>`_.
+
+        """
+        points = 200  # the number of data points in each confidence interval (upper and lower) line
+
+        # this determines if the user has specified for the CI bounds to be shown or hidden.
+        if (
+            validate_CI_params(dist.mu_SE, dist.sigma_SE, dist.Cov_mu_sigma, dist.Z) is True
+            and (q is not None or x is not None)
+            and CI_type is not None
+        ):
+            if CI_type in ["time", "t", "T", "TIME", "Time"]:
+                CI_type = "time"
+            elif CI_type in [
+                "reliability",
+                "r",
+                "R",
+                "RELIABILITY",
+                "rel",
+                "REL",
+                "Reliability",
+            ]:
+                CI_type = "reliability"
+            if func not in ["CDF", "SF", "CHF"]:
+                raise ValueError("func must be either CDF, SF, or CHF")
+            if type(q) not in [list, np.ndarray, type(None)]:
+                raise ValueError("q must be a list or array of quantiles. Default is None")
+            if type(x) not in [list, np.ndarray, type(None)]:
+                raise ValueError("x must be a list or array of x-values. Default is None")
+            if q is not None:
+                q = np.asarray(q)
+            if x is not None:
+                x = np.asarray(x)
+
+            Z = -ss.norm.ppf((1 - CI) / 2)  # converts CI to Z
+
+            def u(t, mu, sigma):  # u = phiinv(R)
+                return (mu - t) / sigma  # normal SF linearlized
+
+            def v(R, mu, sigma):  # v = t
+                return mu - sigma * ss.norm.ppf(R)
+
+            # for consistency with other distributions, the derivatives are da for d_sigma and db for d_mu. Just think of a is first parameter and b is second parameter.
+            du_da = jac(u, 1)  # derivative wrt mu (bounds on reliability)
+            du_db = jac(u, 2)  # derivative wrt sigma (bounds on reliability)
+            dv_da = jac(v, 1)  # derivative wrt mu (bounds on time)
+            dv_db = jac(v, 2)  # derivative wrt sigma (bounds on time)
+
+            def var_u(self, v):  # v is time
+                return (
+                    du_da(v, self.mu, self.sigma) ** 2 * self.mu_SE**2
+                    + du_db(v, self.mu, self.sigma) ** 2 * self.sigma_SE**2
+                    + 2 * du_da(v, self.mu, self.sigma) * du_db(v, self.mu, self.sigma) * self.Cov_mu_sigma
+                )
+
+            def var_v(self, u):  # u is reliability
+                return (
+                    dv_da(u, self.mu, self.sigma) ** 2 * self.mu_SE**2
+                    + dv_db(u, self.mu, self.sigma) ** 2 * self.sigma_SE**2
+                    + 2 * dv_da(u, self.mu, self.sigma) * dv_db(u, self.mu, self.sigma) * self.Cov_mu_sigma
+                )
+
+            # Confidence bounds on time (in terms of reliability)
+            if CI_type == "time":
+                # Y is reliability (R)
+                if func == "CHF":
+                    chf_array = np.geomspace(1e-8, dist._chf[-1] * 1.5, points)
+                    Y = np.exp(-chf_array)
+                else:  # CDF and SF
+                    Y = q if q is not None else transform_spaced("normal", y_lower=1e-08, y_upper=1 - 1e-08, num=points)
+
+                # v is t
+                t_lower = v(Y, dist.mu, dist.sigma) - Z * (var_v(dist, Y) ** 0.5)
+                t_upper = v(Y, dist.mu, dist.sigma) + Z * (var_v(dist, Y) ** 0.5)
+
+                # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
+                t_lower, t_upper, Y, Y = clean_CI_arrays(
+                    xlower=t_lower,
+                    xupper=t_upper,
+                    ylower=Y,
+                    yupper=Y,
+                    plot_type=func,
+                    q=q,
+                )
+                # artificially correct for any reversals
+                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                    t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
+                    t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
+
+                if q is not None:
+                    return t_lower, t_upper
+                else:
+                    raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+            # Confidence bounds on Reliability (in terms of time)
+            elif CI_type == "reliability":
+                t = x if x is not None else np.linspace(dist.quantile(1e-05), dist.quantile(0.99999), points)
+
+                # u is reliability u = phiinv(R)
+                u_lower = u(t, dist.mu, dist.sigma) + Z * var_u(dist, t) ** 0.5
+                u_upper = u(t, dist.mu, dist.sigma) - Z * var_u(dist, t) ** 0.5
+
+                Y_lower = ss.norm.cdf(u_lower)  # transform back from u = phiinv(R)
+                Y_upper = ss.norm.cdf(u_upper)
+
+                # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
+                t, t, Y_lower, Y_upper = clean_CI_arrays(
+                    xlower=t,
+                    xupper=t,
+                    ylower=Y_lower,
+                    yupper=Y_upper,
+                    plot_type=func,
+                    x=x,
+                )
+                # artificially correct for any reversals
+                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                    Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
+                    Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
+
+                if x is not None:
+                    return Y_lower, Y_upper
+                else:
+                    raise ValueError("x values must be provided in order to calculate the reliability confidence intervals.")
+            else:
+                raise ValueError("The confidence intervals cannot be calculated. Pleasesupply CI Type of time or reliability.")
+        else:
+            raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
 
     @staticmethod
     def normal_CI(
@@ -1397,6 +2079,199 @@ class distribution_confidence_intervals:
                     CI_plot(x=t, x_lower=t, x_upper=t, yy_lower=yy_lower, yy_upper=yy_upper, color=color)
                 if x is not None:
                     return Y_lower, Y_upper
+
+    @staticmethod
+    def lognormal_CI_only(
+        dist,
+        CI_type: str,
+        CI: float,
+        func="CDF",
+        q=None,
+        x=None,
+    ) -> tuple[npt.NDArray[np.float64],npt.NDArray[np.float64]]:
+        """Generates the confidence intervals for CDF, SF, and CHF of the
+        Lognormal distribution.
+
+        Parameters
+        ----------
+        dist : object
+            The distribution object
+        func : str
+            Must be either "CDF", "SF" or "CHF". Default is "CDF".
+        CI_type : str
+            Must be either "time" or "reliability"
+        CI : float
+            The confidence interval. Must be between 0 and 1
+        q : array, list, optional
+            The quantiles to be calculated. Default is None. Only used if CI_type='time'.
+        x : array, list, optional
+            The x-values to be calculated. Default is None. Only used if CI_type='reliability'.
+
+        Returns
+        -------
+        t_lower : array
+            The lower bounds on time. Only returned if CI_type is "time" and q
+            is not None.
+        t_upper :array
+            The upper bounds on time. Only returned if CI_type is "time" and q
+            is not None.
+        R_lower : array
+            The lower bounds on reliability. Only returned if CI_type is
+            "reliability" and x is not None.
+        R_upper :array
+            The upper bounds on reliability. Only returned if CI_type is
+            "reliability" and x is not None.
+
+        Notes
+        -----
+        self must contain particular values for this function to work. These
+        include self.mu_SE, self.sigma_SE, self.Cov_mu_sigma, self.Z.
+
+        As a Utils function, there is very limited error checking done, as this
+        function is not intended for users to access directly.
+
+        For an explaination of how the confidence inervals are calculated,
+        please see the `documentation <https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html>`_.
+
+        """
+        points = 200  # the number of data points in each confidence interval (upper and lower) line
+
+        # this determines if the user has specified for the CI bounds to be shown or hidden.
+        if (
+            validate_CI_params(dist.mu_SE, dist.sigma_SE, dist.Cov_mu_sigma, dist.Z) is True
+            and (q is not None or x is not None)
+            and CI_type is not None
+        ):
+            if CI_type in ["time", "t", "T", "TIME", "Time"]:
+                CI_type = "time"
+            elif CI_type in [
+                "reliability",
+                "r",
+                "R",
+                "RELIABILITY",
+                "rel",
+                "REL",
+                "Reliability",
+            ]:
+                CI_type = "reliability"
+            if func not in ["CDF", "SF", "CHF"]:
+                raise ValueError("func must be either CDF, SF, or CHF")
+            if type(q) not in [list, np.ndarray, type(None)]:
+                raise ValueError("q must be a list or array of quantiles. Default is None")
+            if type(x) not in [list, np.ndarray, type(None)]:
+                raise ValueError("x must be a list or array of x-values. Default is None")
+
+            if q is not None:
+                q = np.asarray(q)
+            if x is not None:
+                x = np.asarray(x)
+
+            Z = -ss.norm.ppf((1 - CI) / 2)  # converts CI to Z
+
+            def u(t, mu, sigma):  # u = phiinv(R)
+                return (mu - np.log(t)) / sigma  # lognormal SF linearlized
+
+            def v(R, mu, sigma):  # v = ln(t)
+                return mu - sigma * ss.norm.ppf(R)
+
+            # for consistency with other distributions, the derivatives are da for d_sigma and db for d_mu. Just think of a is first parameter and b is second parameter.
+            du_da = jac(u, 1)  # derivative wrt mu (bounds on reliability)
+            du_db = jac(u, 2)  # derivative wrt sigma (bounds on reliability)
+            dv_da = jac(v, 1)  # derivative wrt mu (bounds on time)
+            dv_db = jac(v, 2)  # derivative wrt sigma (bounds on time)
+
+            def var_u(self, v):  # v is time
+                return (
+                    du_da(v, self.mu, self.sigma) ** 2 * self.mu_SE**2
+                    + du_db(v, self.mu, self.sigma) ** 2 * self.sigma_SE**2
+                    + 2 * du_da(v, self.mu, self.sigma) * du_db(v, self.mu, self.sigma) * self.Cov_mu_sigma
+                )
+
+            def var_v(self, u):  # u is reliability
+                return (
+                    dv_da(u, self.mu, self.sigma) ** 2 * self.mu_SE**2
+                    + dv_db(u, self.mu, self.sigma) ** 2 * self.sigma_SE**2
+                    + 2 * dv_da(u, self.mu, self.sigma) * dv_db(u, self.mu, self.sigma) * self.Cov_mu_sigma
+                )
+
+            if CI_type == "time":
+                # Confidence bounds on time (in terms of reliability)
+                # Y is reliability (R)
+                if func == "CHF":
+                    chf_array = np.geomspace(1e-8, dist._chf[-1] * 1.5, points)
+                    Y = np.exp(-chf_array)
+                else:  # CDF and SF
+                    Y = q if q is not None else transform_spaced("normal", y_lower=1e-08, y_upper=1 - 1e-08, num=points)
+
+                # v is ln(t)
+                v_lower = v(Y, dist.mu, dist.sigma) - Z * (var_v(dist, Y) ** 0.5)
+                v_upper = v(Y, dist.mu, dist.sigma) + Z * (var_v(dist, Y) ** 0.5)
+
+                t_lower = np.exp(v_lower) + dist.gamma
+                t_upper = np.exp(v_upper) + dist.gamma
+
+                # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
+                t_lower, t_upper, Y, Y = clean_CI_arrays(
+                    xlower=t_lower,
+                    xupper=t_upper,
+                    ylower=Y,
+                    yupper=Y,
+                    plot_type=func,
+                    q=q,
+                )
+                # artificially correct for any reversals
+                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                    t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
+                    t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
+
+                if q is not None:
+                    return t_lower, t_upper
+                else:
+                    raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+
+            elif CI_type == "reliability":
+                # Confidence bounds on Reliability (in terms of time)
+                if x is not None:
+                    t = x - dist.gamma
+                else:
+                    t0 = dist.quantile(0.00001) - dist.gamma
+                    if t0 <= 0:
+                        t0 = 0.0001
+                    t = np.geomspace(
+                        t0,
+                        dist.quantile(0.99999) - dist.gamma,
+                        points,
+                    )
+
+                # u is reliability u = phiinv(R)
+                u_lower = u(t, dist.mu, dist.sigma) + Z * var_u(dist, t) ** 0.5
+                u_upper = u(t, dist.mu, dist.sigma) - Z * var_u(dist, t) ** 0.5
+
+                Y_lower = ss.norm.cdf(u_lower)  # transform back from u = phiinv(R)
+                Y_upper = ss.norm.cdf(u_upper)
+
+                # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
+                t, t, Y_lower, Y_upper = clean_CI_arrays(
+                    xlower=t,
+                    xupper=t,
+                    ylower=Y_lower,
+                    yupper=Y_upper,
+                    plot_type=func,
+                    x=x,
+                )
+                # artificially correct for any reversals
+                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                    Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
+                    Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
+
+                if x is not None:
+                    return Y_lower, Y_upper
+                else:
+                    raise ValueError("x values must be provided in order to calculate the reliability confidence intervals.")
+            else:
+                raise ValueError("The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.")
+        else:
+            raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
 
     @staticmethod
     def lognormal_CI(
@@ -1649,6 +2524,199 @@ class distribution_confidence_intervals:
                     return Y_lower, Y_upper
 
     @staticmethod
+    def loglogistic_CI_only(
+        dist,
+        CI_type: str,
+        CI: float,
+        func="CDF",
+        q=None,
+        x=None,
+    ) -> tuple[npt.NDArray[np.float64],npt.NDArray[np.float64]]:
+        """Generates the confidence intervals for CDF, SF, and CHF of the
+        Loglogistic distribution.
+
+        Parameters
+        ----------
+        dist : object
+            The distribution object
+        func : str
+            Must be either "CDF", "SF" or "CHF". Default is "CDF".
+        CI_type : str
+            Must be either "time" or "reliability"
+        CI : float
+            The confidence interval. Must be between 0 and 1
+        q : array, list, optional
+            The quantiles to be calculated. Default is None. Only used if CI_type='time'.
+        x : array, list, optional
+            The x-values to be calculated. Default is None. Only used if CI_type='reliability'.
+
+        Returns
+        -------
+        t_lower : array
+            The lower bounds on time. Only returned if CI_type is "time" and q
+            is not None.
+        t_upper :array
+            The upper bounds on time. Only returned if CI_type is "time" and q
+            is not None.
+        R_lower : array
+            The lower bounds on reliability. Only returned if CI_type is
+            "reliability" and x is not None.
+        R_upper :array
+            The upper bounds on reliability. Only returned if CI_type is
+            "reliability" and x is not None.
+
+        Notes
+        -----
+        self must contain particular values for this function to work. These
+        include self.alpha_SE, self.beta_SE, self.Cov_alpha_beta, self.Z.
+
+        As a Utils function, there is very limited error checking done, as this
+        function is not intended for users to access directly.
+
+        For an explaination of how the confidence inervals are calculated,
+        please see the `documentation <https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html>`_.
+
+        """
+        points = 200  # the number of data points in each confidence interval (upper and lower) line
+
+        # this determines if the user has specified for the CI bounds to be shown or hidden.
+        if (
+            validate_CI_params(dist.alpha_SE, dist.beta_SE, dist.Cov_alpha_beta, dist.Z) is True
+            and (q is not None or x is not None)
+            and CI_type is not None
+        ):
+            if CI_type in ["time", "t", "T", "TIME", "Time"]:
+                CI_type = "time"
+            elif CI_type in [
+                "reliability",
+                "r",
+                "R",
+                "RELIABILITY",
+                "rel",
+                "REL",
+                "Reliability",
+            ]:
+                CI_type = "reliability"
+            if func not in ["CDF", "SF", "CHF"]:
+                raise ValueError("func must be either CDF, SF, or CHF")
+            if type(q) not in [list, np.ndarray, type(None)]:
+                raise ValueError("q must be a list or array of quantiles. Default is None")
+            if type(x) not in [list, np.ndarray, type(None)]:
+                raise ValueError("x must be a list or array of x-values. Default is None")
+            if q is not None:
+                q = np.asarray(q)
+            if x is not None:
+                x = np.asarray(x)
+
+            Z = -ss.norm.ppf((1 - CI) / 2)  # converts CI to Z
+
+            def u(t, alpha, beta):  # u = ln(1/R - 1)
+                return beta * (anp.log(t) - anp.log(alpha))  # loglogistic SF linearized
+
+            def v(R, alpha, beta):  # v = ln(t)
+                return (1 / beta) * anp.log(1 / R - 1) + anp.log(alpha)  # loglogistic SF rearranged for t
+
+            du_da = jac(u, 1)  # derivative wrt alpha (bounds on reliability)
+            du_db = jac(u, 2)  # derivative wrt beta (bounds on reliability)
+            dv_da = jac(v, 1)  # derivative wrt alpha (bounds on time)
+            dv_db = jac(v, 2)  # derivative wrt beta (bounds on time)
+
+            def var_u(self, v):  # v is time
+                return (
+                    du_da(v, self.alpha, self.beta) ** 2 * self.alpha_SE**2
+                    + du_db(v, self.alpha, self.beta) ** 2 * self.beta_SE**2
+                    + 2 * du_da(v, self.alpha, self.beta) * du_db(v, self.alpha, self.beta) * self.Cov_alpha_beta
+                )
+
+            def var_v(self, u):  # u is reliability
+                return (
+                    dv_da(u, self.alpha, self.beta) ** 2 * self.alpha_SE**2
+                    + dv_db(u, self.alpha, self.beta) ** 2 * self.beta_SE**2
+                    + 2 * dv_da(u, self.alpha, self.beta) * dv_db(u, self.alpha, self.beta) * self.Cov_alpha_beta
+                )
+
+            if CI_type == "time":  # Confidence bounds on time (in terms of reliability)
+                # Y is reliability (R)
+                if func == "CHF":
+                    chf_array = np.geomspace(1e-8, dist._chf[-1] * 1.5, points)
+                    Y = np.exp(-chf_array)
+                elif q is not None:
+                    Y = q
+                else:
+                    Y = transform_spaced("loglogistic", y_lower=1e-8, y_upper=1 - 1e-8, num=points)
+
+                # v is ln(t)
+                v_lower = v(Y, dist.alpha, dist.beta) - Z * (var_v(dist, Y) ** 0.5)
+                v_upper = v(Y, dist.alpha, dist.beta) + Z * (var_v(dist, Y) ** 0.5)
+
+                t_lower = np.exp(v_lower) + dist.gamma  # transform back from ln(t)
+                t_upper = np.exp(v_upper) + dist.gamma
+
+                # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
+                t_lower, t_upper, Y, Y = clean_CI_arrays(
+                    xlower=t_lower,
+                    xupper=t_upper,
+                    ylower=Y,
+                    yupper=Y,
+                    plot_type=func,
+                    q=q,
+                )
+                # artificially correct for any reversals
+                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                    t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
+                    t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
+
+                if q is not None:
+                    return t_lower, t_upper
+                else:
+                    raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+
+            elif CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
+                if x is not None:
+                    t = x - dist.gamma
+                else:
+                    t0 = dist.quantile(0.00001) - dist.gamma
+                    if t0 <= 0:
+                        t0 = 0.0001
+                    t = np.geomspace(
+                        t0,
+                        dist.quantile(0.99999) - dist.gamma,
+                        points,
+                    )
+
+                # u is reliability ln(1/R - 1)
+                u_lower = (
+                    u(t, dist.alpha, dist.beta) + Z * var_u(dist, t) ** 0.5
+                )  # note that gamma is incorporated into u but not in var_u. This is the same as just shifting a Weibull_2P across
+                u_upper = u(t, dist.alpha, dist.beta) - Z * var_u(dist, t) ** 0.5
+
+                Y_lower = 1 / (np.exp(u_lower) + 1)  # transform back from ln(1/R - 1)
+                Y_upper = 1 / (np.exp(u_upper) + 1)
+
+                # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
+                t, t, Y_lower, Y_upper = clean_CI_arrays(
+                    xlower=t,
+                    xupper=t,
+                    ylower=Y_lower,
+                    yupper=Y_upper,
+                    plot_type=func,
+                    x=x,
+                )
+                # artificially correct for any reversals
+                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                    Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
+                    Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
+
+                if x is not None:
+                    return Y_lower, Y_upper
+                else:
+                    raise ValueError("x values must be provided in order to calculate the reliability confidence intervals.")
+            else:
+                raise ValueError("The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.")
+        else:
+            raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
+
+    @staticmethod
     def loglogistic_CI(
         dist,
         CI_type: str,
@@ -1665,7 +2733,7 @@ class distribution_confidence_intervals:
 
         Parameters
         ----------
-        sedistlf : object
+        dist : object
             The distribution object
         func : str
             Must be either "CDF", "SF" or "CHF". Default is "CDF".
@@ -1899,6 +2967,183 @@ class distribution_confidence_intervals:
                     CI_plot(x=t + dist.gamma, x_lower=t + dist.gamma, x_upper=t + dist.gamma,  yy_lower=yy_lower, yy_upper=yy_upper, color=color)
                 if x is not None:
                     return Y_lower, Y_upper
+
+    @staticmethod
+    def gumbel_CI_only(
+        dist,
+        CI_type: str,
+        CI: float,
+        func="CDF",
+        q=None,
+        x=None,
+    ) -> tuple[npt.NDArray[np.float64],npt.NDArray[np.float64]]:
+        """Generates the confidence intervals for CDF, SF, and CHF of the
+        Gumbel distribution.
+
+        Parameters
+        ----------
+        dist : object
+            The distribution object
+        func : str
+            Must be either "CDF", "SF" or "CHF". Default is "CDF".
+        CI_type : str
+            Must be either "time" or "reliability"
+        CI : float
+            The confidence interval. Must be between 0 and 1
+        q : array, list, optional
+            The quantiles to be calculated. Default is None. Only used if CI_type='time'.
+        x : array, list, optional
+            The x-values to be calculated. Default is None. Only used if CI_type='reliability'.
+
+        Returns
+        -------
+        t_lower : array
+            The lower bounds on time. Only returned if CI_type is "time" and q
+            is not None.
+        t_upper :array
+            The upper bounds on time. Only returned if CI_type is "time" and q
+            is not None.
+        R_lower : array
+            The lower bounds on reliability. Only returned if CI_type is
+            "reliability" and x is not None.
+        R_upper :array
+            The upper bounds on reliability. Only returned if CI_type is
+            "reliability" and x is not None.
+
+        Notes
+        -----
+        self must contain particular values for this function to work. These
+        include self.mu_SE, self.sigma_SE, self.Cov_mu_sigma, self.Z.
+
+        As a Utils function, there is very limited error checking done, as this
+        function is not intended for users to access directly.
+
+        For an explaination of how the confidence inervals are calculated,
+        please see the `documentation <https://reliability.readthedocs.io/en/latest/How%20are%20the%20confidence%20intervals%20calculated.html>`_.
+
+        """
+        points = 200  # the number of data points in each confidence interval (upper and lower) line
+
+        # this determines if the user has specified for the CI bounds to be shown or hidden.
+        if (
+            validate_CI_params(dist.mu_SE, dist.sigma_SE, dist.Cov_mu_sigma, dist.Z) is True
+            and (q is not None or x is not None)
+            and CI_type is not None
+        ):
+            if CI_type in ["time", "t", "T", "TIME", "Time"]:
+                CI_type = "time"
+            elif CI_type in [
+                "reliability",
+                "r",
+                "R",
+                "RELIABILITY",
+                "rel",
+                "REL",
+                "Reliability",
+            ]:
+                CI_type = "reliability"
+            if func not in ["CDF", "SF", "CHF"]:
+                raise ValueError("func must be either CDF, SF, or CHF")
+            if type(q) not in [list, np.ndarray, type(None)]:
+                raise ValueError("q must be a list or array of quantiles. Default is None")
+            if type(x) not in [list, np.ndarray, type(None)]:
+                raise ValueError("x must be a list or array of x-values. Default is None")
+            if q is not None:
+                q = np.asarray(q)
+            if x is not None:
+                x = np.asarray(x)
+
+            Z = -ss.norm.ppf((1 - CI) / 2)  # converts CI to Z
+
+            def u(t, mu, sigma):  # u = ln(-ln(R))
+                return (t - mu) / sigma  # gumbel SF linearlized
+
+            def v(R, mu, sigma):  # v = t
+                return mu + sigma * anp.log(-anp.log(R))  # Gumbel SF rearranged for t
+
+            # for consistency with other distributions, the derivatives are da for d_sigma and db for d_mu. Just think of a is first parameter and b is second parameter.
+            du_da = jac(u, 1)  # derivative wrt mu (bounds on reliability)
+            du_db = jac(u, 2)  # derivative wrt sigma (bounds on reliability)
+            dv_da = jac(v, 1)  # derivative wrt mu (bounds on time)
+            dv_db = jac(v, 2)  # derivative wrt sigma (bounds on time)
+
+            def var_u(self, v):  # v is time
+                return (
+                    du_da(v, self.mu, self.sigma) ** 2 * self.mu_SE**2
+                    + du_db(v, self.mu, self.sigma) ** 2 * self.sigma_SE**2
+                    + 2 * du_da(v, self.mu, self.sigma) * du_db(v, self.mu, self.sigma) * self.Cov_mu_sigma
+                )
+
+            def var_v(self, u):  # u is reliability
+                return (
+                    dv_da(u, self.mu, self.sigma) ** 2 * self.mu_SE**2
+                    + dv_db(u, self.mu, self.sigma) ** 2 * self.sigma_SE**2
+                    + 2 * dv_da(u, self.mu, self.sigma) * dv_db(u, self.mu, self.sigma) * self.Cov_mu_sigma
+                )
+
+            if CI_type == "time":  # Confidence bounds on time (in terms of reliability)
+                # Y is reliability (R)
+                if func == "CHF":
+                    chf_array = np.geomspace(1e-8, dist._chf[-1] * 1.5, points)
+                    Y = np.exp(-chf_array)
+                else:  # CDF and SF
+                    Y = q if q is not None else transform_spaced("gumbel", y_lower=1e-08, y_upper=1 - 1e-08, num=points)
+
+                # v is t
+                t_lower = v(Y, dist.mu, dist.sigma) - Z * (var_v(dist, Y) ** 0.5)
+                t_upper = v(Y, dist.mu, dist.sigma) + Z * (var_v(dist, Y) ** 0.5)
+
+                # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
+                t_lower, t_upper, Y, Y = clean_CI_arrays(
+                    xlower=t_lower,
+                    xupper=t_upper,
+                    ylower=Y,
+                    yupper=Y,
+                    plot_type=func,
+                    q=q,
+                )
+                # artificially correct for any reversals
+                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                    t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
+                    t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
+
+                if q is not None:
+                    return t_lower, t_upper
+                else:
+                    raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+
+            elif CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
+                t = x if x is not None else np.linspace(dist.quantile(1e-05), dist.quantile(0.99999), points)
+
+                # u is reliability u = ln(-ln(R))
+                u_lower = u(t, dist.mu, dist.sigma) + Z * var_u(dist, t) ** 0.5
+                u_upper = u(t, dist.mu, dist.sigma) - Z * var_u(dist, t) ** 0.5
+
+                Y_lower = np.exp(-np.exp(u_lower))  # transform back from ln(-ln(R))
+                Y_upper = np.exp(-np.exp(u_upper))
+
+                # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
+                t, t, Y_lower, Y_upper = clean_CI_arrays(
+                    xlower=t,
+                    xupper=t,
+                    ylower=Y_lower,
+                    yupper=Y_upper,
+                    plot_type=func,
+                    x=x,
+                )
+                # artificially correct for any reversals
+                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                    Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
+                    Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
+
+                if x is not None:
+                    return Y_lower, Y_upper
+                else:
+                    raise ValueError("x values must be provided in order to calculate the reliability confidence intervals.")
+            else:
+                raise ValueError("The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.")
+        else:
+            raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
 
     @staticmethod
     def gumbel_CI(

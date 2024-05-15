@@ -497,7 +497,7 @@ def zeroise_below_gamma(X, Y, gamma):
             Y[0 : (np.where(gamma < X)[0][0])] = 0  # zeroize below X=gamma
     return Y
 
-def no_reverse(x, CI_type, plot_type):
+def no_reverse(x, CI_type, plot_type)-> npt.NDArray[np.float64] :
     """This is used to convert an array that decreases and then increases into an
     array that decreases then is constant at its minimum.
 

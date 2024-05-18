@@ -336,8 +336,8 @@ class DSZI_Model:
             X = generate_X_array(dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax)
 
         pdf0: npt.NDArray[np.float64] = self.__base_distribution.PDF(xvals=X, show_plot=False)
-        pdf: npt.NDArray[np.float64] = pdf0 * (self.DS - self.ZI)  # the DSZI formula for the PDF
-        pdf: npt.NDArray[np.float64] = unpack_single_arrays(pdf)
+        pdf = pdf0 * (self.DS - self.ZI)  # the DSZI formula for the PDF
+        pdf = unpack_single_arrays(pdf)
 
         if show_plot is True and X is not None:
             limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits
@@ -402,8 +402,8 @@ class DSZI_Model:
             X = generate_X_array(dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax)
 
         cdf0: npt.NDArray[np.float64] = self.__base_distribution.CDF(xvals=X, show_plot=False)
-        cdf: npt.NDArray[np.float64] = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
-        cdf: npt.NDArray[np.float64] = unpack_single_arrays(cdf)
+        cdf = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
+        cdf = unpack_single_arrays(cdf)
 
         if show_plot is True and X is not None:
             limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits
@@ -469,8 +469,8 @@ class DSZI_Model:
 
         cdf0: npt.NDArray[np.float64] = self.__base_distribution.CDF(xvals=X, show_plot=False)
         cdf: npt.NDArray[np.float64] = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
-        sf: npt.NDArray[np.float64] = 1 - cdf
-        sf: npt.NDArray[np.float64] = unpack_single_arrays(sf)
+        sf = 1 - cdf
+        sf = unpack_single_arrays(sf)
 
         if show_plot is True and X is not None:
             limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits
@@ -538,8 +538,8 @@ class DSZI_Model:
         pdf: npt.NDArray[np.float64] = pdf0 * (self.DS - self.ZI)  # the DSZI formula for the PDF
         cdf0: npt.NDArray[np.float64] = self.__base_distribution.CDF(xvals=X, show_plot=False)
         cdf: npt.NDArray[np.float64] = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
-        hf: npt.NDArray[np.float64] = pdf / (1 - cdf)  # pdf/sf
-        hf: npt.NDArray[np.float64] = unpack_single_arrays(hf)
+        hf = pdf / (1 - cdf)  # pdf/sf
+        hf = unpack_single_arrays(hf)
 
         if show_plot is True and X is not None:
             limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits
@@ -605,8 +605,8 @@ class DSZI_Model:
 
         cdf0: npt.NDArray[np.float64] = self.__base_distribution.CDF(xvals=X, show_plot=False)
         cdf: npt.NDArray[np.float64] = cdf0 * (self.DS - self.ZI) + self.ZI  # the DSZI formula for the CDF
-        chf: npt.NDArray[np.float64] = -np.log(1 - cdf)  # -ln(sf)
-        chf: npt.NDArray[np.float64] = unpack_single_arrays(chf)
+        chf = -np.log(1 - cdf)  # -ln(sf)
+        chf = unpack_single_arrays(chf)
 
         if show_plot is True and X is not None:
             limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits

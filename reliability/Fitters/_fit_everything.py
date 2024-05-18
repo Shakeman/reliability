@@ -5,6 +5,7 @@ import contextlib
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 
 from reliability.Distributions import (
@@ -368,7 +369,7 @@ class Fit_Everything:
             self.Weibull_3P_AICc = self.__Weibull_3P_params.AICc
             self.Weibull_3P_AD = self.__Weibull_3P_params.AD
             self.Weibull_3P_optimizer = self.__Weibull_3P_params.optimizer
-            self._parametric_CDF_Weibull_3P = self.__Weibull_3P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Weibull_3P: npt.NDArray[np.float64] = self.__Weibull_3P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -416,7 +417,7 @@ class Fit_Everything:
             self.Gamma_3P_AICc = self.__Gamma_3P_params.AICc
             self.Gamma_3P_AD = self.__Gamma_3P_params.AD
             self.Gamma_3P_optimizer = self.__Gamma_3P_params.optimizer
-            self._parametric_CDF_Gamma_3P = self.__Gamma_3P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Gamma_3P: npt.NDArray[np.float64] = self.__Gamma_3P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -460,7 +461,7 @@ class Fit_Everything:
             self.Exponential_2P_AICc = self.__Exponential_2P_params.AICc
             self.Exponential_2P_AD = self.__Exponential_2P_params.AD
             self.Exponential_2P_optimizer = self.__Exponential_2P_params.optimizer
-            self._parametric_CDF_Exponential_2P = self.__Exponential_2P_params.distribution.CDF(
+            self._parametric_CDF_Exponential_2P: npt.NDArray[np.float64] = self.__Exponential_2P_params.distribution.CDF(
                 xvals=d,
                 show_plot=False,
             )
@@ -510,7 +511,7 @@ class Fit_Everything:
             self.Lognormal_3P_AICc = self.__Lognormal_3P_params.AICc
             self.Lognormal_3P_AD = self.__Lognormal_3P_params.AD
             self.Lognormal_3P_optimizer = self.__Lognormal_3P_params.optimizer
-            self._parametric_CDF_Lognormal_3P = self.__Lognormal_3P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Lognormal_3P: npt.NDArray[np.float64] = self.__Lognormal_3P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -556,7 +557,7 @@ class Fit_Everything:
             self.Normal_2P_AICc = self.__Normal_2P_params.AICc
             self.Normal_2P_AD = self.__Normal_2P_params.AD
             self.Normal_2P_optimizer = self.__Normal_2P_params.optimizer
-            self._parametric_CDF_Normal_2P = self.__Normal_2P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Normal_2P: npt.NDArray[np.float64] = self.__Normal_2P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -603,7 +604,7 @@ class Fit_Everything:
             self.Lognormal_2P_AICc = self.__Lognormal_2P_params.AICc
             self.Lognormal_2P_AD = self.__Lognormal_2P_params.AD
             self.Lognormal_2P_optimizer = self.__Lognormal_2P_params.optimizer
-            self._parametric_CDF_Lognormal_2P = self.__Lognormal_2P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Lognormal_2P: npt.NDArray[np.float64] = self.__Lognormal_2P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -649,7 +650,7 @@ class Fit_Everything:
             self.Gumbel_2P_AICc = self.__Gumbel_2P_params.AICc
             self.Gumbel_2P_AD = self.__Gumbel_2P_params.AD
             self.Gumbel_2P_optimizer = self.__Gumbel_2P_params.optimizer
-            self._parametric_CDF_Gumbel_2P = self.__Gumbel_2P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Gumbel_2P: npt.NDArray[np.float64] = self.__Gumbel_2P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -696,7 +697,7 @@ class Fit_Everything:
             self.Weibull_2P_AICc = self.__Weibull_2P_params.AICc
             self.Weibull_2P_AD = self.__Weibull_2P_params.AD
             self.Weibull_2P_optimizer = self.__Weibull_2P_params.optimizer
-            self._parametric_CDF_Weibull_2P = self.__Weibull_2P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Weibull_2P: npt.NDArray[np.float64] = self.__Weibull_2P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -745,7 +746,7 @@ class Fit_Everything:
             self.Weibull_Mixture_AICc = self.__Weibull_Mixture_params.AICc
             self.Weibull_Mixture_AD = self.__Weibull_Mixture_params.AD
             self.Weibull_Mixture_optimizer = self.__Weibull_Mixture_params.optimizer
-            self._parametric_CDF_Weibull_Mixture = self.__Weibull_Mixture_params.distribution.CDF(
+            self._parametric_CDF_Weibull_Mixture: npt.NDArray[np.float64] = self.__Weibull_Mixture_params.distribution.CDF(
                 xvals=d,
                 show_plot=False,
             )
@@ -796,7 +797,7 @@ class Fit_Everything:
             self.Weibull_CR_AICc = self.__Weibull_CR_params.AICc
             self.Weibull_CR_AD = self.__Weibull_CR_params.AD
             self.Weibull_CR_optimizer = self.__Weibull_CR_params.optimizer
-            self._parametric_CDF_Weibull_CR = self.__Weibull_CR_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Weibull_CR: npt.NDArray[np.float64] = self.__Weibull_CR_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -843,7 +844,7 @@ class Fit_Everything:
             self.Weibull_DS_AICc = self.__Weibull_DS_params.AICc
             self.Weibull_DS_AD = self.__Weibull_DS_params.AD
             self.Weibull_DS_optimizer = self.__Weibull_DS_params.optimizer
-            self._parametric_CDF_Weibull_DS = self.__Weibull_DS_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Weibull_DS: npt.NDArray[np.float64] = self.__Weibull_DS_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -891,7 +892,7 @@ class Fit_Everything:
             self.Gamma_2P_AICc = self.__Gamma_2P_params.AICc
             self.Gamma_2P_AD = self.__Gamma_2P_params.AD
             self.Gamma_2P_optimizer = self.__Gamma_2P_params.optimizer
-            self._parametric_CDF_Gamma_2P = self.__Gamma_2P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Gamma_2P: npt.NDArray[np.float64] = self.__Gamma_2P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -935,7 +936,7 @@ class Fit_Everything:
             self.Exponential_1P_AICc = self.__Exponential_1P_params.AICc
             self.Exponential_1P_AD = self.__Exponential_1P_params.AD
             self.Exponential_1P_optimizer = self.__Exponential_1P_params.optimizer
-            self._parametric_CDF_Exponential_1P = self.__Exponential_1P_params.distribution.CDF(
+            self._parametric_CDF_Exponential_1P: npt.NDArray[np.float64] = self.__Exponential_1P_params.distribution.CDF(
                 xvals=d,
                 show_plot=False,
             )
@@ -985,7 +986,7 @@ class Fit_Everything:
             self.Loglogistic_2P_AICc = self.__Loglogistic_2P_params.AICc
             self.Loglogistic_2P_AD = self.__Loglogistic_2P_params.AD
             self.Loglogistic_2P_optimizer = self.__Loglogistic_2P_params.optimizer
-            self._parametric_CDF_Loglogistic_2P = self.__Loglogistic_2P_params.distribution.CDF(
+            self._parametric_CDF_Loglogistic_2P: npt.NDArray[np.float64] = self.__Loglogistic_2P_params.distribution.CDF(
                 xvals=d,
                 show_plot=False,
             )
@@ -1035,7 +1036,7 @@ class Fit_Everything:
             self.Loglogistic_3P_AICc = self.__Loglogistic_3P_params.AICc
             self.Loglogistic_3P_AD = self.__Loglogistic_3P_params.AD
             self.Loglogistic_3P_optimizer = self.__Loglogistic_3P_params.optimizer
-            self._parametric_CDF_Loglogistic_3P = self.__Loglogistic_3P_params.distribution.CDF(
+            self._parametric_CDF_Loglogistic_3P: npt.NDArray[np.float64] = self.__Loglogistic_3P_params.distribution.CDF(
                 xvals=d,
                 show_plot=False,
             )
@@ -1084,7 +1085,7 @@ class Fit_Everything:
             self.Beta_2P_AICc = self.__Beta_2P_params.AICc
             self.Beta_2P_AD = self.__Beta_2P_params.AD
             self.Beta_2P_optimizer = self.__Beta_2P_params.optimizer
-            self._parametric_CDF_Beta_2P = self.__Beta_2P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Beta_2P: npt.NDArray[np.float64] = self.__Beta_2P_params.distribution.CDF(xvals=d, show_plot=False)
             df = pd.concat(
                 [
                     df,
@@ -1519,7 +1520,7 @@ class Fit_Everything:
             xx = nonparametric_CDF
             plotlim = max(xx)
             if item == "Exponential_1P":
-                yy = self._parametric_CDF_Exponential_1P
+                yy: npt.NDArray[np.float64] = self._parametric_CDF_Exponential_1P
                 max_yy = max(yy)
                 if max_yy > plotlim:
                     plotlim = max_yy

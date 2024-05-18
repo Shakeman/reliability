@@ -1,5 +1,4 @@
 
-from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -342,7 +341,7 @@ class Exponential_Distribution:
         CI_y=None,
         CI_x=None,
         **kwargs,
-    ) -> tuple[Any, Any | npt.NDArray, Any] | np.float64 | npt.NDArray[np.float64]:
+    ):
         """Plots the CDF (cumulative distribution function)
 
         Parameters
@@ -415,8 +414,7 @@ class Exponential_Distribution:
         ) = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x)
 
         cdf = ss.expon.cdf(X, scale=1 / self.Lambda, loc=self.gamma)
-        cdf: np.float64 | npt.NDArray[np.float64] = unpack_single_arrays(cdf)
-
+        cdf = unpack_single_arrays(cdf)
         if show_plot is True:
             limits = get_axes_limits()
 

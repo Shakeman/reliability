@@ -627,7 +627,7 @@ class ALT_MLE_optimization:
         dist,
         LL_func,
         initial_guess,
-        optimizer,
+        optimizer: str | None,
         failures,
         failure_stress_1,
         failure_stress_2=None,
@@ -923,7 +923,7 @@ class ALT_MLE_optimization:
                     ALL_opt_names.pop(i)
             idx_best = ALL_loglik.index(min(ALL_loglik))
             params = ALL_results[idx_best]
-            self.optimizer = ALL_opt_names[idx_best]
+            self.optimizer: str = ALL_opt_names[idx_best]
             self.success = True
 
             if model == "Exponential":

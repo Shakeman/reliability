@@ -2,6 +2,7 @@ from typing import Literal
 
 import autograd.numpy as anp
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import scipy.stats as ss
 from autograd.differential_operators import hessian
@@ -145,7 +146,7 @@ class Fit_Weibull_Exponential:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress=None,
+        use_level_stress: float | None =None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -575,7 +576,7 @@ class Fit_Weibull_Eyring:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress=None,
+        use_level_stress: float | None=None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -829,7 +830,7 @@ class Fit_Weibull_Eyring:
                 )
             print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
-            if use_level_stress is not None:
+            if isinstance(use_level_stress, float):
                 print(
                     str(
                         "At the use level stress of "
@@ -999,9 +1000,9 @@ class Fit_Weibull_Power:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress=None,
-        CI=0.95,
-        optimizer=None,
+        use_level_stress: float | None=None,
+        CI: float =0.95,
+        optimizer: None | str =None,
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
@@ -1021,8 +1022,8 @@ class Fit_Weibull_Power:
         failure_stress = inputs.failure_stress_1
         right_censored = inputs.right_censored
         right_censored_stress = inputs.right_censored_stress_1
-        CI: float = inputs.CI
-        optimizer: None | str = inputs.optimizer
+        CI= inputs.CI
+        optimizer = inputs.optimizer
         use_level_stress = inputs.use_level_stress
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
@@ -1446,7 +1447,7 @@ class Fit_Weibull_Dual_Exponential:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress=None,
+        use_level_stress: npt.NDArray[np.float64] | None=None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -1934,7 +1935,7 @@ class Fit_Weibull_Power_Exponential:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress=None,
+        use_level_stress: npt.NDArray[np.float64] | None =None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -2435,7 +2436,7 @@ class Fit_Weibull_Dual_Power:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress=None,
+        use_level_stress: npt.NDArray[np.float64] | None =None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,

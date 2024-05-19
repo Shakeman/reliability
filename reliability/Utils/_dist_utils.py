@@ -29,7 +29,7 @@ def life_stress_plot(
     life_func,
     failure_groups: list[list[float]],
     stresses_for_groups: list[float],
-    use_level_stress: float | None =None,
+    use_level_stress: float | npt.NDArray[np.float64] | None =None,
     ax: bool =True,
 ):
     """Generates a life stress plot using the inputs provided. The life stress plot

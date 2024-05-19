@@ -1,5 +1,6 @@
 import autograd.numpy as anp
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import scipy.stats as ss
 from autograd.differential_operators import hessian
@@ -137,7 +138,7 @@ class Fit_Exponential_Exponential:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress=None,
+        use_level_stress: float | None =None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -218,7 +219,7 @@ class Fit_Exponential_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.b]
-        hessian_matrix = hessian(LL_func)(
+        hessian_matrix = hessian(LL_func)( # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -550,7 +551,7 @@ class Fit_Exponential_Eyring:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress=None,
+        use_level_stress: float | None =None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -631,7 +632,7 @@ class Fit_Exponential_Eyring:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.c]
-        hessian_matrix = hessian(LL_func)(
+        hessian_matrix = hessian(LL_func)( # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -957,7 +958,7 @@ class Fit_Exponential_Power:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress=None,
+        use_level_stress: float | None =None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -1038,7 +1039,7 @@ class Fit_Exponential_Power:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.n]
-        hessian_matrix = hessian(LL_func)(
+        hessian_matrix = hessian(LL_func)( # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1387,7 +1388,7 @@ class Fit_Exponential_Dual_Exponential:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress=None,
+        use_level_stress: npt.NDArray[np.float64] | None =None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -1484,7 +1485,7 @@ class Fit_Exponential_Dual_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.b, self.c]
-        hessian_matrix = hessian(LL_func)(
+        hessian_matrix = hessian(LL_func)( # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1857,7 +1858,7 @@ class Fit_Exponential_Power_Exponential:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress=None,
+        use_level_stress: npt.NDArray[np.float64] | None =None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -1954,7 +1955,7 @@ class Fit_Exponential_Power_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.c, self.n]
-        hessian_matrix = hessian(LL_func)(
+        hessian_matrix = hessian(LL_func)( # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -2324,7 +2325,7 @@ class Fit_Exponential_Dual_Power:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress=None,
+        use_level_stress: npt.NDArray[np.float64] | None =None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -2421,7 +2422,7 @@ class Fit_Exponential_Dual_Power:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.c, self.m, self.n]
-        hessian_matrix = hessian(LL_func)(
+        hessian_matrix = hessian(LL_func)( # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),

@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 
 from reliability.ALT_Fitters._fit_exponential_alt import (
@@ -193,7 +194,7 @@ class Fit_Everything_ALT:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress=None,
+        use_level_stress: float | npt.NDArray[np.float64] | None =None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,

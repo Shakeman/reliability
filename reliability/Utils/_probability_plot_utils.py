@@ -95,7 +95,7 @@ def ALT_prob_plot(
     scale_for_change_df,
     shape_for_change_df,
     use_level_stress=None,
-    ax=True,
+    ax: _axes.Axes | bool | None=True,
 ):
     """Generates an ALT probability plot using the inputs provided.
 

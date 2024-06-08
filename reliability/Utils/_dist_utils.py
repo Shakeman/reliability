@@ -1,5 +1,3 @@
-
-
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,9 +26,9 @@ def life_stress_plot(
     dist: str,
     life_func,
     failure_groups: list[list[float]],
-    stresses_for_groups: list[float],
-    use_level_stress: float | npt.NDArray[np.float64] | None =None,
-    ax: bool =True,
+    stresses_for_groups: list[list[float]] | list[float],
+    use_level_stress: float | npt.NDArray[np.float64] | None = None,
+    ax: bool = True,
 ):
     """Generates a life stress plot using the inputs provided. The life stress plot
     is an output from each of the ALT_fitters.
@@ -343,7 +341,9 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                 q = np.exp(-np.asarray(CI_y))
             else:
                 raise ValueError("func must be CDF, SF, or CHF")
-            SF_time: tuple[npt.NDArray[np.float64],npt.NDArray[np.float64]] = distribution_confidence_intervals.exponential_CI_only(dist=dist, CI=CI, q=q)
+            SF_time: tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]] = (
+                distribution_confidence_intervals.exponential_CI_only(dist=dist, CI=CI, q=q)
+            )
             lower, upper = SF_time[0], SF_time[1]
         elif CI_x is not None:
             SF_rel = distribution_confidence_intervals.exponential_CI_only(dist=dist, CI=CI, x=CI_x)
@@ -359,9 +359,13 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
             lower, upper = None, None
     else:
         if CI_x is not None and CI_y is None and CI_type == "time":
-            raise ValueError("WARNING: If CI_type=time then CI_y must be specified in order to extract the confidence bounds on time.")
+            raise ValueError(
+                "WARNING: If CI_type=time then CI_y must be specified in order to extract the confidence bounds on time.",
+            )
         elif CI_y is not None and CI_x is None and CI_type == "reliability":
-            raise ValueError("WARNING: If CI_type=reliability then CI_x must be specified in order to extract the confidence bounds on reliability.")
+            raise ValueError(
+                "WARNING: If CI_type=reliability then CI_x must be specified in order to extract the confidence bounds on reliability.",
+            )
         elif (CI_y is not None and CI_type == "time") or (CI_x is not None and CI_type == "reliability"):
             if CI_type == "time":
                 if func == "SF":
@@ -428,7 +432,12 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                     SF_time = distribution_confidence_intervals.gamma_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
-                    SF_rel = distribution_confidence_intervals.gamma_CI_only(dist=dist, CI_type="reliability", CI=CI, x=CI_x)
+                    SF_rel = distribution_confidence_intervals.gamma_CI_only(
+                        dist=dist,
+                        CI_type="reliability",
+                        CI=CI,
+                        x=CI_x,
+                    )
                     if func == "SF":
                         lower, upper = SF_rel[0], SF_rel[1]
                     elif func == "CDF":
@@ -454,7 +463,12 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                         lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
             elif dist.name == "Loglogistic":
                 if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.loglogistic_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
+                    SF_time = distribution_confidence_intervals.loglogistic_CI_only(
+                        dist=dist,
+                        CI_type="time",
+                        CI=CI,
+                        q=q,
+                    )
                     lower, upper = SF_time[0], SF_time[1]
                 elif CI_type == "reliability":
                     SF_rel = distribution_confidence_intervals.loglogistic_CI_only(
@@ -477,7 +491,8 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
         lower, upper = lower[0], upper[0]
     return lower, upper
 
-#TODO Implement confidence intervals as classes adn subclasses returning botht iem and reliability
+
+# TODO Implement confidence intervals as classes adn subclasses returning botht iem and reliability
 class distribution_confidence_intervals:
     """This class contains several subfunctions that provide all the confidence
     intervals for CDF, SF, CHF for each distribution for which it is
@@ -495,6 +510,7 @@ class distribution_confidence_intervals:
     None
 
     """
+
     @staticmethod
     def exponential_CI_only(
         dist,
@@ -502,7 +518,7 @@ class distribution_confidence_intervals:
         func="CDF",
         q=None,
         x=None,
-    ) -> tuple[npt.NDArray[np.float64] , npt.NDArray[np.float64]]:
+    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Generates the confidence intervals for CDF, SF, and CHF of the
         Exponential distribution.
 
@@ -547,7 +563,7 @@ class distribution_confidence_intervals:
         """
         points = 200
 
-        if dist.Lambda_SE is not None and dist.Z is not None and ( q is not None or x is not None):
+        if dist.Lambda_SE is not None and dist.Z is not None and (q is not None or x is not None):
             if func not in ["CDF", "SF", "CHF"]:
                 raise ValueError("func must be either CDF, SF, or CHF")
             if type(q) not in [list, np.ndarray, type(None)]:
@@ -561,7 +577,7 @@ class distribution_confidence_intervals:
 
             Z = -ss.norm.ppf((1 - CI) / 2)  # converts CI to Z
 
-            Lambda_upper: npt.NDArray[np.float64]  = dist.Lambda * (np.exp(Z * (dist.Lambda_SE / dist.Lambda)))
+            Lambda_upper: npt.NDArray[np.float64] = dist.Lambda * (np.exp(Z * (dist.Lambda_SE / dist.Lambda)))
             Lambda_lower: npt.NDArray[np.float64] = dist.Lambda * (np.exp(-Z * (dist.Lambda_SE / dist.Lambda)))
 
             if x is not None:
@@ -577,8 +593,8 @@ class distribution_confidence_intervals:
                 )
 
             # calculate the CIs using the formula for SF
-            Y_lower: npt.NDArray[np.float64]  = np.exp(-Lambda_lower * t)
-            Y_upper: npt.NDArray[np.float64]  = np.exp(-Lambda_upper * t)
+            Y_lower: npt.NDArray[np.float64] = np.exp(-Lambda_lower * t)
+            Y_upper: npt.NDArray[np.float64] = np.exp(-Lambda_upper * t)
 
             # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
             t, t, Y_lower, Y_upper = clean_CI_arrays(
@@ -596,15 +612,17 @@ class distribution_confidence_intervals:
                 Y_upper = no_reverse(Y_upper, CI_type=None, plot_type=func)
 
             if q is not None:
-                t_lower: npt.NDArray[np.float64]  = -np.log(q) / Lambda_upper + dist.gamma
-                t_upper: npt.NDArray[np.float64]  = -np.log(q) / Lambda_lower + dist.gamma
+                t_lower: npt.NDArray[np.float64] = -np.log(q) / Lambda_upper + dist.gamma
+                t_upper: npt.NDArray[np.float64] = -np.log(q) / Lambda_lower + dist.gamma
                 return t_lower, t_upper
             elif x is not None:
                 return Y_lower, Y_upper
             else:
-             raise ValueError("q or x values must be provided in order to calculate the confidence intervals.")
+                raise ValueError("q or x values must be provided in order to calculate the confidence intervals.")
         else:
-            raise ValueError("The Exponential distribution object must contain Lambda_SE, Z, and q or x values in order to calculate the confidence intervals.")
+            raise ValueError(
+                "The Exponential distribution object must contain Lambda_SE, Z, and q or x values in order to calculate the confidence intervals.",
+            )
 
     @staticmethod
     def exponential_CI(
@@ -616,7 +634,7 @@ class distribution_confidence_intervals:
         color=None,
         q=None,
         x=None,
-    ) -> tuple[npt.NDArray[np.float64] , npt.NDArray[np.float64]] | None:
+    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]] | None:
         """Generates the confidence intervals for CDF, SF, and CHF of the
         Exponential distribution.
 
@@ -695,7 +713,7 @@ class distribution_confidence_intervals:
                 plt.title(text_title)
                 plt.subplots_adjust(top=0.81)
 
-            Lambda_upper: npt.NDArray[np.float64]  = dist.Lambda * (np.exp(Z * (dist.Lambda_SE / dist.Lambda)))
+            Lambda_upper: npt.NDArray[np.float64] = dist.Lambda * (np.exp(Z * (dist.Lambda_SE / dist.Lambda)))
             Lambda_lower: npt.NDArray[np.float64] = dist.Lambda * (np.exp(-Z * (dist.Lambda_SE / dist.Lambda)))
 
             if x is not None:
@@ -711,8 +729,8 @@ class distribution_confidence_intervals:
                 )
 
             # calculate the CIs using the formula for SF
-            Y_lower: npt.NDArray[np.float64]  = np.exp(-Lambda_lower * t)
-            Y_upper: npt.NDArray[np.float64]  = np.exp(-Lambda_upper * t)
+            Y_lower: npt.NDArray[np.float64] = np.exp(-Lambda_lower * t)
+            Y_upper: npt.NDArray[np.float64] = np.exp(-Lambda_upper * t)
 
             # clean the arrays of illegal values (<=0, nans, >=1 (if CDF or SF))
             t, t, Y_lower, Y_upper = clean_CI_arrays(
@@ -740,13 +758,21 @@ class distribution_confidence_intervals:
                 yy_lower = -np.log(Y_lower)
 
             if plot_CI is True:
-                CI_plot(x=t + dist.gamma, x_lower=t + dist.gamma, x_upper=t + dist.gamma,  yy_lower=yy_lower, yy_upper=yy_upper, color=color)
+                CI_plot(
+                    x=t + dist.gamma,
+                    x_lower=t + dist.gamma,
+                    x_upper=t + dist.gamma,
+                    yy_lower=yy_lower,
+                    yy_upper=yy_upper,
+                    color=color,
+                )
             if q is not None:
-                t_lower: npt.NDArray[np.float64]  = -np.log(q) / Lambda_upper + dist.gamma
-                t_upper: npt.NDArray[np.float64]  = -np.log(q) / Lambda_lower + dist.gamma
+                t_lower: npt.NDArray[np.float64] = -np.log(q) / Lambda_upper + dist.gamma
+                t_upper: npt.NDArray[np.float64] = -np.log(q) / Lambda_lower + dist.gamma
                 return t_lower, t_upper
             elif x is not None:
                 return Y_lower, Y_upper
+
     @staticmethod
     def weibull_CI_only(
         dist,
@@ -755,7 +781,7 @@ class distribution_confidence_intervals:
         func="CDF",
         q=None,
         x=None,
-    ) -> tuple[npt.NDArray[np.float64],npt.NDArray[np.float64]]:
+    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Generates the confidence intervals for CDF, SF, and CHF of the
         Weibull distribution.
 
@@ -936,11 +962,15 @@ class distribution_confidence_intervals:
                 if x is not None:
                     return Y_lower, Y_upper
                 else:
-                    raise ValueError("x values must be provided in order to calculate the reliability confidence intervals.")
+                    raise ValueError(
+                        "x values must be provided in order to calculate the reliability confidence intervals.",
+                    )
             else:
                 raise ValueError("CI_type must be either 'time' or 'reliability'")
         else:
-            raise ValueError("The Weibull distribution object must contain alpha_SE, beta_SE, Cov_alpha_beta, Z, and q or x values in order to calculate the confidence intervals.")
+            raise ValueError(
+                "The Weibull distribution object must contain alpha_SE, beta_SE, Cov_alpha_beta, Z, and q or x values in order to calculate the confidence intervals.",
+            )
 
     @staticmethod
     def weibull_CI(
@@ -1193,7 +1223,14 @@ class distribution_confidence_intervals:
                     yy_upper = -np.log(Y_upper)
 
                 if plot_CI is True:
-                    CI_plot(x=t + dist.gamma, x_lower=t + dist.gamma, x_upper=t + dist.gamma,  yy_lower=yy_lower, yy_upper=yy_upper, color=color)
+                    CI_plot(
+                        x=t + dist.gamma,
+                        x_lower=t + dist.gamma,
+                        x_upper=t + dist.gamma,
+                        yy_lower=yy_lower,
+                        yy_upper=yy_upper,
+                        color=color,
+                    )
                 if x is not None:
                     return Y_lower, Y_upper
 
@@ -1205,7 +1242,7 @@ class distribution_confidence_intervals:
         func="CDF",
         q=None,
         x=None,
-    ) -> tuple[npt.NDArray[np.float64],npt.NDArray[np.float64]]:
+    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Generates the confidence intervals for CDF, SF, and CHF of the
         Gamma distribution.
 
@@ -1395,11 +1432,15 @@ class distribution_confidence_intervals:
                 if x is not None:
                     return Y_lower, Y_upper
                 else:
-                    raise ValueError("x values must be provided in order to calculate the reliability confidence intervals.")
+                    raise ValueError(
+                        "x values must be provided in order to calculate the reliability confidence intervals.",
+                    )
             else:
                 raise ValueError("CI_type must be either 'time' or 'reliability'")
         else:
-            raise ValueError("The Gamma distribution object must contain mu_SE, beta_SE, Cov_mu_beta, CI, and q or x values in order to calculate the confidence intervals.")
+            raise ValueError(
+                "The Gamma distribution object must contain mu_SE, beta_SE, Cov_mu_beta, CI, and q or x values in order to calculate the confidence intervals.",
+            )
 
     @staticmethod
     def gamma_CI(
@@ -1658,11 +1699,20 @@ class distribution_confidence_intervals:
                     yy_upper = -np.log(Y_upper)
 
                 if plot_CI is True:
-                    CI_plot(x=t + dist.gamma, x_lower=t + dist.gamma, x_upper=t + dist.gamma,  yy_lower=yy_lower, yy_upper=yy_upper, color=color)
+                    CI_plot(
+                        x=t + dist.gamma,
+                        x_lower=t + dist.gamma,
+                        x_upper=t + dist.gamma,
+                        yy_lower=yy_lower,
+                        yy_upper=yy_upper,
+                        color=color,
+                    )
                 if x is not None:
                     return Y_lower, Y_upper
                 else:
-                    raise ValueError("x values must be provided in order to calculate the reliability confidence intervals.")
+                    raise ValueError(
+                        "x values must be provided in order to calculate the reliability confidence intervals.",
+                    )
             else:
                 raise ValueError("CI_type must be either 'time' or 'reliability'")
 
@@ -1674,7 +1724,7 @@ class distribution_confidence_intervals:
         func="CDF",
         q=None,
         x=None,
-    ) -> tuple[npt.NDArray[np.float64],npt.NDArray[np.float64]]:
+    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Generates the confidence intervals for CDF, SF, and CHF of the
         Normal distribution.
 
@@ -1838,9 +1888,13 @@ class distribution_confidence_intervals:
                 if x is not None:
                     return Y_lower, Y_upper
                 else:
-                    raise ValueError("x values must be provided in order to calculate the reliability confidence intervals.")
+                    raise ValueError(
+                        "x values must be provided in order to calculate the reliability confidence intervals.",
+                    )
             else:
-                raise ValueError("The confidence intervals cannot be calculated. Pleasesupply CI Type of time or reliability.")
+                raise ValueError(
+                    "The confidence intervals cannot be calculated. Pleasesupply CI Type of time or reliability.",
+                )
         else:
             raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
 
@@ -2088,7 +2142,7 @@ class distribution_confidence_intervals:
         func="CDF",
         q=None,
         x=None,
-    ) -> tuple[npt.NDArray[np.float64],npt.NDArray[np.float64]]:
+    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Generates the confidence intervals for CDF, SF, and CHF of the
         Lognormal distribution.
 
@@ -2267,9 +2321,13 @@ class distribution_confidence_intervals:
                 if x is not None:
                     return Y_lower, Y_upper
                 else:
-                    raise ValueError("x values must be provided in order to calculate the reliability confidence intervals.")
+                    raise ValueError(
+                        "x values must be provided in order to calculate the reliability confidence intervals.",
+                    )
             else:
-                raise ValueError("The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.")
+                raise ValueError(
+                    "The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.",
+                )
         else:
             raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
 
@@ -2519,7 +2577,14 @@ class distribution_confidence_intervals:
                     yy_upper = -np.log(Y_upper)
 
                 if plot_CI is True:
-                    CI_plot(x=t + dist.gamma, x_lower=t + dist.gamma, x_upper=t + dist.gamma,  yy_lower=yy_lower, yy_upper=yy_upper, color=color)
+                    CI_plot(
+                        x=t + dist.gamma,
+                        x_lower=t + dist.gamma,
+                        x_upper=t + dist.gamma,
+                        yy_lower=yy_lower,
+                        yy_upper=yy_upper,
+                        color=color,
+                    )
                 if x is not None:
                     return Y_lower, Y_upper
 
@@ -2531,7 +2596,7 @@ class distribution_confidence_intervals:
         func="CDF",
         q=None,
         x=None,
-    ) -> tuple[npt.NDArray[np.float64],npt.NDArray[np.float64]]:
+    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Generates the confidence intervals for CDF, SF, and CHF of the
         Loglogistic distribution.
 
@@ -2710,9 +2775,13 @@ class distribution_confidence_intervals:
                 if x is not None:
                     return Y_lower, Y_upper
                 else:
-                    raise ValueError("x values must be provided in order to calculate the reliability confidence intervals.")
+                    raise ValueError(
+                        "x values must be provided in order to calculate the reliability confidence intervals.",
+                    )
             else:
-                raise ValueError("The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.")
+                raise ValueError(
+                    "The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.",
+                )
         else:
             raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
 
@@ -2964,7 +3033,14 @@ class distribution_confidence_intervals:
                         yy_upper = -np.log(Y_upper)
 
                 if plot_CI is True:
-                    CI_plot(x=t + dist.gamma, x_lower=t + dist.gamma, x_upper=t + dist.gamma,  yy_lower=yy_lower, yy_upper=yy_upper, color=color)
+                    CI_plot(
+                        x=t + dist.gamma,
+                        x_lower=t + dist.gamma,
+                        x_upper=t + dist.gamma,
+                        yy_lower=yy_lower,
+                        yy_upper=yy_upper,
+                        color=color,
+                    )
                 if x is not None:
                     return Y_lower, Y_upper
 
@@ -2976,7 +3052,7 @@ class distribution_confidence_intervals:
         func="CDF",
         q=None,
         x=None,
-    ) -> tuple[npt.NDArray[np.float64],npt.NDArray[np.float64]]:
+    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Generates the confidence intervals for CDF, SF, and CHF of the
         Gumbel distribution.
 
@@ -3139,9 +3215,13 @@ class distribution_confidence_intervals:
                 if x is not None:
                     return Y_lower, Y_upper
                 else:
-                    raise ValueError("x values must be provided in order to calculate the reliability confidence intervals.")
+                    raise ValueError(
+                        "x values must be provided in order to calculate the reliability confidence intervals.",
+                    )
             else:
-                raise ValueError("The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.")
+                raise ValueError(
+                    "The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.",
+                )
         else:
             raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
 
@@ -3381,7 +3461,8 @@ class distribution_confidence_intervals:
                 if x is not None:
                     return Y_lower, Y_upper
 
-def CI_plot(x, x_lower, x_upper,  yy_lower, yy_upper, color) -> None:
+
+def CI_plot(x, x_lower, x_upper, yy_lower, yy_upper, color) -> None:
     fill_no_autoscale(
         xlower=x_lower,
         xupper=x_upper,

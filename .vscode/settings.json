@@ -5,4 +5,6 @@
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
+    "python.testing.pytestPath": "pytest",
+    "python.pythonPath": "venv/bin/python"
 }

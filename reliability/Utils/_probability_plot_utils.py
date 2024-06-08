@@ -1,5 +1,3 @@
-
-
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as ss
@@ -95,7 +93,7 @@ def ALT_prob_plot(
     scale_for_change_df,
     shape_for_change_df,
     use_level_stress=None,
-    ax: _axes.Axes | bool | None=True,
+    ax: _axes.Axes | bool | None = True,
 ):
     """Generates an ALT probability plot using the inputs provided.
 
@@ -195,7 +193,7 @@ def ALT_prob_plot(
                 probplot(
                     failures=f,
                     right_censored=rc,
-                    __fitted_dist_params=fitted_dist_params,
+                    _fitted_dist_params=fitted_dist_params,
                     color=color_cycle[i],
                     label=str(round_and_string(stress[0]) + ", " + round_and_string(stress[1])),
                 )
@@ -303,6 +301,7 @@ def ALT_prob_plot(
         plt.title("Probability plot\n" + dist + "_" + model + " Model")
         plt.tight_layout()
         return plt.gca()
+
 
 class axes_transforms:
     """Custom scale functions used in Probability_plotting

@@ -1,18 +1,18 @@
-
 {
-    "version": "0.2.0",
     "configurations": [
         {
             "name": "Python: Debug Tests",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "purpose": ["debug-test"],
             "console": "integratedTerminal",
-            "env": {
-                "PYTEST_ADDOPTS": "--no-cov"
-            },
-            "justMyCode": false
-        }
-    ]
+            "justMyCode": true,
+            "stopOnEntry": false,
+            "autoReload": {
+                "enable": true
+              }
+        },
+    ],
+    "version": "0.2.0"
 }

@@ -25,6 +25,7 @@ pd.set_option("display.width", 200)  # prevents wrapping after default 80 charac
 pd.set_option("display.max_columns", 9)  # shows the dataframe without ... truncation
 shape_change_threshold = 0.5
 
+
 class Fit_Normal_Exponential:
     """This function will Fit the Normal-Exponential life-stress model to the data
     provided. Please see the online documentation for the equations of this
@@ -145,9 +146,9 @@ class Fit_Normal_Exponential:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress: float | None =None,
+        use_level_stress: float | None = None,
         CI=0.95,
-        optimizer: str | None =None,
+        optimizer: str | None = None,
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
@@ -232,7 +233,7 @@ class Fit_Normal_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.b, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -579,7 +580,7 @@ class Fit_Normal_Eyring:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress: float | None =None,
+        use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -666,7 +667,7 @@ class Fit_Normal_Eyring:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.c, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1007,9 +1008,9 @@ class Fit_Normal_Power:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress: float | None =None,
+        use_level_stress: float | None = None,
         CI=0.95,
-        optimizer: str | None =None,
+        optimizer: str | None = None,
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
@@ -1094,7 +1095,7 @@ class Fit_Normal_Power:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.n, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1458,7 +1459,7 @@ class Fit_Normal_Dual_Exponential:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: npt.NDArray[np.float64] | None =None,
+        use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -1558,7 +1559,7 @@ class Fit_Normal_Dual_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.b, self.c, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1762,30 +1763,35 @@ class Fit_Normal_Dual_Exponential:
                         + "\n",
                     ),
                 )
+        if show_probability_plot:
+            self.probability_plot = ALT_prob_plot(
+                dist="Normal",
+                model="Dual_Exponential",
+                stresses_for_groups=stresses_for_groups,
+                failure_groups=failure_groups,
+                right_censored_groups=right_censored_groups,
+                life_func=life_func,
+                shape=self.sigma,
+                scale_for_change_df=mus_for_change_df,
+                shape_for_change_df=sigmas_for_change_df,
+                use_level_stress=use_level_stress,
+                ax=show_probability_plot,
+            )
+        else:
+            self.probability_plot = None
 
-        self.probability_plot = ALT_prob_plot(
-            dist="Normal",
-            model="Dual_Exponential",
-            stresses_for_groups=stresses_for_groups,
-            failure_groups=failure_groups,
-            right_censored_groups=right_censored_groups,
-            life_func=life_func,
-            shape=self.sigma,
-            scale_for_change_df=mus_for_change_df,
-            shape_for_change_df=sigmas_for_change_df,
-            use_level_stress=use_level_stress,
-            ax=show_probability_plot,
-        )
-
-        self.life_stress_plot = life_stress_plot(
-            dist="Normal",
-            model="Dual_Exponential",
-            life_func=life_func,
-            failure_groups=failure_groups,
-            stresses_for_groups=stresses_for_groups,
-            use_level_stress=use_level_stress,
-            ax=show_life_stress_plot,
-        )
+        if show_life_stress_plot:
+            self.life_stress_plot = life_stress_plot(
+                dist="Normal",
+                model="Dual_Exponential",
+                life_func=life_func,
+                failure_groups=failure_groups,
+                stresses_for_groups=stresses_for_groups,
+                use_level_stress=use_level_stress,
+                ax=show_life_stress_plot,
+            )
+        else:
+            self.life_stress_plot = None
 
     @staticmethod
     def logf(t, S1, S2, a, b, c, sigma):  # Log PDF
@@ -1946,7 +1952,7 @@ class Fit_Normal_Power_Exponential:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: npt.NDArray[np.float64] | None =None,
+        use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -2046,7 +2052,7 @@ class Fit_Normal_Power_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.c, self.n, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -2431,7 +2437,7 @@ class Fit_Normal_Dual_Power:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: npt.NDArray[np.float64] | None =None,
+        use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -2530,7 +2536,7 @@ class Fit_Normal_Dual_Power:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.c, self.m, self.n, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),

@@ -7,8 +7,10 @@ from reliability.Distributions import (
 atol = 1e-8
 rtol = 1e-7
 
+
 def test_Exponential_Distribution():
     dist = Exponential_Distribution(Lambda=0.2, gamma=10)
+    dist.stats()
     assert_allclose(dist.mean, 15, rtol=rtol, atol=atol)
     assert_allclose(dist.standard_deviation, 5, rtol=rtol, atol=atol)
     assert_allclose(dist.variance, 25, rtol=rtol, atol=atol)
@@ -28,20 +30,26 @@ def test_Exponential_Distribution():
         dist.quantile(0.999),
     ]
     assert_allclose(
-        dist.PDF(xvals=xvals, show_plot=False),
+        dist.PDF(xvals=xvals, show_plot=True),
         [0.0, 0.19980000000000003, 0.198, 0.18, 0.019999999999999997, 0.002000000000000001, 0.0002000000000000004],
         rtol=rtol,
         atol=atol,
     )
     assert_allclose(
-        dist.CDF(xvals=xvals, show_plot=False), [0.0, 0.001, 0.01, 0.1, 0.9, 0.99, 0.999], rtol=rtol, atol=atol,
+        dist.CDF(xvals=xvals, show_plot=True),
+        [0.0, 0.001, 0.01, 0.1, 0.9, 0.99, 0.999],
+        rtol=rtol,
+        atol=atol,
     )
     assert_allclose(
-        actual=dist.SF(xvals=xvals, show_plot=False), desired=[1.0, 0.999, 0.99, 0.9, 0.1, 0.01, 0.001], rtol=rtol, atol=atol,
+        actual=dist.SF(xvals=xvals, show_plot=True),
+        desired=[1.0, 0.999, 0.99, 0.9, 0.1, 0.01, 0.001],
+        rtol=rtol,
+        atol=atol,
     )
-    assert_allclose(dist.HF(xvals=xvals, show_plot=False), [0.0, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2], rtol=rtol, atol=atol)
+    assert_allclose(dist.HF(xvals=xvals, show_plot=True), [0.0, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2], rtol=rtol, atol=atol)
     assert_allclose(
-        dist.CHF(xvals=xvals, show_plot=False),
+        dist.CHF(xvals=xvals, show_plot=True),
         [
             0.0,
             0.0010005003335834318,

@@ -31,8 +31,13 @@ def test_Fit_Everything():
         show_histogram_plot=True,
         show_PP_plot=True,
         show_best_distribution_probability_plot=True,
-        print_results=False,
+        print_results=True,
     )
+    MLE.print_results()
+    MLE.histogram_plot()
+    MLE.p_p_plot()
+    MLE.probability_plot()
+
     LS = Fit_Everything(
         failures=data.failures,
         right_censored=data.right_censored,
@@ -43,6 +48,7 @@ def test_Fit_Everything():
         show_best_distribution_probability_plot=True,
         print_results=True,
     )
+    LS.print_results()
 
     assert_allclose(
         MLE.best_distribution.alpha,

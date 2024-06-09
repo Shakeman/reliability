@@ -4,10 +4,11 @@ import numpy as np
 import pytest
 from numpy.testing import assert_allclose
 
-from reliability.Datasets import defective_sample
+from reliability.Datasets import defective_sample, electronics
 from reliability.Distributions import Competing_Risks_Model, DSZI_Model, Mixture_Model, Weibull_Distribution
 from reliability.Fitters import (
     Fit_Weibull_2P,
+    Fit_Weibull_2P_grouped,
     Fit_Weibull_3P,
     Fit_Weibull_CR,
     Fit_Weibull_DS,
@@ -222,3 +223,13 @@ def test_Fit_Weibull_DS_init():
     # Test case with invalid input
     with pytest.raises(ValueError):
         Fit_Weibull_DS(failures=[], right_censored=[4, 5])
+
+
+def test_Fit_Weibull_2P_Grouped():
+    fit = Fit_Weibull_2P_grouped(dataframe=electronics().dataframe)
+    assert_allclose(actual=fit.alpha, desired=6.191922756866386e21, rtol=rtol, atol=atol)
+    assert_allclose(fit.beta, 0.15374388796935232, rtol=rtol, atol=atol)
+    assert_allclose(fit.AICc, 293.2364591402575, rtol=rtol, atol=atol)
+    # Test case with invalid input
+    with pytest.raises(ValueError):
+        Fit_Weibull_2P_grouped(None)

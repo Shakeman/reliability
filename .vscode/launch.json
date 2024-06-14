@@ -9,6 +9,7 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "stopOnEntry": false,
+            "args": ["--no-cov"],
             "autoReload": {
                 "enable": true
               }

@@ -5,6 +5,7 @@ from numpy.testing import assert_allclose
 
 from reliability.ALT_Fitters import (
     Fit_Normal_Dual_Exponential,
+    Fit_Normal_Dual_Power,
     Fit_Normal_Exponential,
     Fit_Normal_Eyring,
     Fit_Normal_Power,
@@ -124,6 +125,47 @@ def test_Fit_Normal_Power():
     assert_allclose(model.AICc, 3670.0660652180977, rtol=rtol, atol=atol)
     assert_allclose(model.BIC, 3681.096331560985, rtol=rtol, atol=atol)
     assert_allclose(model.loglik, -1831.9924920685082, rtol=rtol, atol=atol)
+
+
+def test_Fit_Normal_Dual_Power():
+    # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
+    warnings.filterwarnings(action="ignore", category=RuntimeWarning)
+    c = 1e15
+    m = -4
+    n = -2
+    data = make_ALT_data(
+        distribution="Normal",
+        life_stress_model="Dual_Power",
+        c=1e15,
+        m=-4,
+        n=-2,
+        sigma=300,
+        stress_1=[500, 400, 350, 300, 200, 180, 390, 250, 540],
+        stress_2=[0.9, 0.8, 0.7, 0.6, 0.3, 0.3, 0.2, 0.7, 0.5],
+        number_of_samples=100,
+        fraction_censored=0.5,
+        seed=1,
+    )
+    model = Fit_Normal_Dual_Power(
+        failures=data.failures,
+        failure_stress_1=data.failure_stresses_1,
+        failure_stress_2=data.failure_stresses_2,
+        right_censored=data.right_censored,
+        right_censored_stress_1=data.right_censored_stresses_1,
+        right_censored_stress_2=data.right_censored_stresses_2,
+        use_level_stress=[100, 0.2],
+        show_life_stress_plot=True,
+        show_probability_plot=True,
+        print_results=True,
+    )
+    plt.close("all")
+    assert_allclose(model.c, c, rtol=rtol, atol=atol)
+    assert_allclose(model.n, n, rtol=rtol, atol=atol)
+    assert_allclose(model.m, m, rtol=rtol, atol=atol)
+    assert_allclose(model.sigma, 278.58120575, rtol=rtol, atol=atol)
+    assert_allclose(model.AICc, 6494.966403925203, rtol=rtol, atol=atol)
+    assert_allclose(model.BIC, 6514.13129024107, rtol=rtol, atol=atol)
+    assert_allclose(model.loglik, -3243.460855593886, rtol=rtol, atol=atol)
 
 
 def test_Fit_Normal_Dual_Exponential():

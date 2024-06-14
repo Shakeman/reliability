@@ -14,6 +14,7 @@ rtol = 1e-7
 def test_Competing_Risks_Model():
     distributions = [Weibull_Distribution(alpha=30, beta=2), Normal_Distribution(mu=35, sigma=5)]
     dist = Competing_Risks_Model(distributions=distributions)
+    dist.plot()
     assert_allclose(dist.mean, 23.707625152181073, rtol=rtol, atol=atol)
     assert_allclose(dist.standard_deviation, 9.832880925543204, rtol=rtol, atol=atol)
     assert_allclose(dist.variance, 96.68554729591138, rtol=rtol, atol=atol)
@@ -66,6 +67,7 @@ def test_Competing_Risks_Model():
 def test_Mixture_Model():
     distributions = [Weibull_Distribution(alpha=30, beta=2), Normal_Distribution(mu=35, sigma=5)]
     dist = Mixture_Model(distributions=distributions, proportions=[0.6, 0.4])
+    dist.plot()
     assert_allclose(dist.mean, 29.952084649328917, rtol=rtol, atol=atol)
     assert_allclose(dist.standard_deviation, 11.95293368817564, rtol=rtol, atol=atol)
     assert_allclose(dist.variance, 142.87262375392413, rtol=rtol, atol=atol)

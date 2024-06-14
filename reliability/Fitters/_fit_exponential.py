@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import autograd.numpy as anp
@@ -32,6 +31,7 @@ pd.options.display.float_format = "{:g}".format  # improves formatting of number
 pd.options.display.max_columns = 9  # shows the dataframe without ... truncation
 pd.options.display.width = 200  # prevents wrapping after default 80 characters
 
+
 class Fit_Exponential_1P:
     """Fits a one parameter Exponential distribution (Lambda) to the data provided.
 
@@ -41,11 +41,6 @@ class Fit_Exponential_1P:
         The failure data. Must have at least 1 element.
     right_censored : array, list, optional
         The right censored data. Optional input. Default = None.
-    show_probability_plot : bool, optional
-        True or False. Default = True
-    print_results : bool, optional
-        Prints a dataframe of the point estimate, standard error, Lower CI and
-        Upper CI for the model's parameter. True or False. Default = True
     method : str
         The method used to fit the distribution. Must be either 'MLE' (maximum
         likelihood estimation), 'LS' (least squares estimation), 'RRX' (Rank
@@ -72,16 +67,6 @@ class Fit_Exponential_1P:
         If an array or list is specified then it will be used instead of the
         default array. Any array or list specified must contain values between
         0 and 1.
-    downsample_scatterplot : bool, int, optional
-        If True or None, and there are over 1000 points, then the scatterplot
-        will be downsampled by a factor. The default downsample factor will seek
-        to produce between 500 and 1000 points. If a number is specified, it
-        will be used as the downsample factor. Default is True. This
-        functionality makes plotting faster when there are very large numbers of
-        points. It only affects the scatterplot not the calculations.
-    kwargs
-        Plotting keywords that are passed directly to matplotlib for the
-        probability plot (e.g. color, label, linestyle)
 
     Returns
     -------
@@ -145,10 +130,10 @@ class Fit_Exponential_1P:
 
     def __init__(
         self,
-        failures: npt.NDArray[np.float64] | None =None,
-        right_censored: npt.NDArray[np.float64] | None =None,
+        failures: npt.NDArray[np.float64] | None = None,
+        right_censored: npt.NDArray[np.float64] | None = None,
         CI=0.95,
-        quantiles: bool | str | list | np.ndarray | None=None,
+        quantiles: bool | str | list | np.ndarray | None = None,
         method: str | None = "MLE",
         optimizer: str | None = None,
     ):
@@ -165,7 +150,7 @@ class Fit_Exponential_1P:
         right_censored = inputs.right_censored
         CI = inputs.CI
         method = inputs.method
-        optimizer= inputs.optimizer
+        optimizer = inputs.optimizer
         quantiles = inputs.quantiles
         self.gamma = 0
 
@@ -196,12 +181,12 @@ class Fit_Exponential_1P:
             )
             self.Lambda = MLE_results.scale
             self.method = "Maximum Likelihood Estimation (MLE)"
-            self.optimizer: str | None  = MLE_results.optimizer
+            self.optimizer: str | None = MLE_results.optimizer
 
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.Lambda]
-        hessian_matrix = hessian(Fit_Exponential_1P.LL)( # type: ignore
+        hessian_matrix = hessian(Fit_Exponential_1P.LL)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -289,7 +274,7 @@ class Fit_Exponential_1P:
         if n - k - 1 > 0:
             self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
@@ -377,7 +362,6 @@ class Fit_Exponential_1P:
             **kwargs,
         )
         return plt.gcf()
-
 
     @staticmethod
     def logf(t, L):  # Log PDF (1 parameter Expon)
@@ -506,7 +490,7 @@ class Fit_Exponential_2P:
         right_censored=None,
         CI=0.95,
         quantiles=None,
-        method: str | None="MLE",
+        method: str | None = "MLE",
         optimizer=None,
     ):
         # To obtain the confidence intervals of the parameters, the gamma parameter is estimated by optimizing the log-likelihood function but
@@ -573,13 +557,13 @@ class Fit_Exponential_2P:
                 self.Lambda = MLE_results.scale
             self.gamma = MLE_results.gamma
             self.method = "Maximum Likelihood Estimation (MLE)"
-            self.optimizer: str | None  = MLE_results.optimizer
+            self.optimizer: str | None = MLE_results.optimizer
 
         # confidence interval estimates of parameters. Uses Exponential_1P because gamma (while optimized) cannot be used in the MLE solution as the solution is unbounded. This is why there are no CI limits on gamma.
         Z = -ss.norm.ppf((1 - CI) / 2)
         params_1P = [self.Lambda]
         params_2P = [self.Lambda, self.gamma]
-        hessian_matrix = hessian(Fit_Exponential_1P.LL)( # type: ignore
+        hessian_matrix = hessian(Fit_Exponential_1P.LL)(  # type: ignore
             np.array(tuple(params_1P)),
             np.array(tuple(failures - self.gamma)),
             np.array(tuple(right_censored - self.gamma)),
@@ -679,7 +663,7 @@ class Fit_Exponential_2P:
         if n - k - 1 > 0:
             self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)

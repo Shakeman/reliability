@@ -30,6 +30,8 @@ def test_Fit_Exponential_1P():
         right_censored=data.right_censored,
         method="MLE",
     )
+    MLE.print_results()
+    MLE.plot()
     assert_allclose(MLE.Lambda, 6.101198944227536, rtol=rtol, atol=atol)
     assert_allclose(MLE.AICc, -22.032339191099148, rtol=rtol, atol=atol)
     assert_allclose(MLE.BIC, -21.25882913976738, rtol=rtol, atol=atol)
@@ -60,6 +62,8 @@ def test_Fit_Exponential_2P():
         right_censored=data.right_censored,
         method="MLE",
     )
+    MLE.print_results()
+    MLE.plot()
     assert_allclose(MLE.Lambda, 7.062867654421206, rtol=rtol, atol=atol)
     assert_allclose(MLE.gamma, 500.016737532126, rtol=rtol, atol=atol)
     assert_allclose(MLE.AICc, -23.939665128347745, rtol=rtol, atol=atol)

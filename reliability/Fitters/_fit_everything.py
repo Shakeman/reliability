@@ -150,13 +150,14 @@ class Fit_Everything:
         print('Weibull Alpha =',output.Weibull_2P_alpha)
 
     """
+
     def __init__(
         self,
-        failures =None,
+        failures=None,
         right_censored=None,
         exclude=None,
         sort_by="BIC",
-        method: str | None ="MLE",
+        method: str | None = "MLE",
         optimizer=None,
         print_results=True,
         show_histogram_plot=True,
@@ -353,6 +354,7 @@ class Fit_Everything:
         # Fit the parametric models and extract the fitted parameters
         if "Weibull_3P" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Weibull_3P
+
             self.__Weibull_3P_params = Fit_Weibull_3P(
                 failures=failures,
                 right_censored=right_censored,
@@ -369,7 +371,9 @@ class Fit_Everything:
             self.Weibull_3P_AICc = self.__Weibull_3P_params.AICc
             self.Weibull_3P_AD = self.__Weibull_3P_params.AD
             self.Weibull_3P_optimizer = self.__Weibull_3P_params.optimizer
-            self._parametric_CDF_Weibull_3P: npt.NDArray[np.float64] = self.__Weibull_3P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Weibull_3P: npt.NDArray[np.float64] = self.__Weibull_3P_params.distribution.CDF(
+                xvals=d, show_plot=False
+            )
             df = pd.concat(
                 [
                     df,
@@ -400,6 +404,7 @@ class Fit_Everything:
 
         if "Gamma_3P" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Gamma_3P
+
             self.__Gamma_3P_params = Fit_Gamma_3P(
                 failures=failures,
                 right_censored=right_censored,
@@ -417,7 +422,9 @@ class Fit_Everything:
             self.Gamma_3P_AICc = self.__Gamma_3P_params.AICc
             self.Gamma_3P_AD = self.__Gamma_3P_params.AD
             self.Gamma_3P_optimizer = self.__Gamma_3P_params.optimizer
-            self._parametric_CDF_Gamma_3P: npt.NDArray[np.float64] = self.__Gamma_3P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Gamma_3P: npt.NDArray[np.float64] = self.__Gamma_3P_params.distribution.CDF(
+                xvals=d, show_plot=False
+            )
             df = pd.concat(
                 [
                     df,
@@ -448,6 +455,7 @@ class Fit_Everything:
 
         if "Exponential_2P" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Exponential_2P
+
             self.__Exponential_2P_params = Fit_Exponential_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -461,9 +469,11 @@ class Fit_Everything:
             self.Exponential_2P_AICc = self.__Exponential_2P_params.AICc
             self.Exponential_2P_AD = self.__Exponential_2P_params.AD
             self.Exponential_2P_optimizer = self.__Exponential_2P_params.optimizer
-            self._parametric_CDF_Exponential_2P: npt.NDArray[np.float64] = self.__Exponential_2P_params.distribution.CDF(
-                xvals=d,
-                show_plot=False,
+            self._parametric_CDF_Exponential_2P: npt.NDArray[np.float64] = (
+                self.__Exponential_2P_params.distribution.CDF(
+                    xvals=d,
+                    show_plot=False,
+                )
             )
             df = pd.concat(
                 [
@@ -495,6 +505,7 @@ class Fit_Everything:
 
         if "Lognormal_3P" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Lognormal_3P
+
             self.__Lognormal_3P_params = Fit_Lognormal_3P(
                 failures=failures,
                 right_censored=right_censored,
@@ -511,7 +522,9 @@ class Fit_Everything:
             self.Lognormal_3P_AICc = self.__Lognormal_3P_params.AICc
             self.Lognormal_3P_AD = self.__Lognormal_3P_params.AD
             self.Lognormal_3P_optimizer = self.__Lognormal_3P_params.optimizer
-            self._parametric_CDF_Lognormal_3P: npt.NDArray[np.float64] = self.__Lognormal_3P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Lognormal_3P: npt.NDArray[np.float64] = self.__Lognormal_3P_params.distribution.CDF(
+                xvals=d, show_plot=False
+            )
             df = pd.concat(
                 [
                     df,
@@ -542,6 +555,7 @@ class Fit_Everything:
 
         if "Normal_2P" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Normal_2P
+
             self.__Normal_2P_params = Fit_Normal_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -557,7 +571,9 @@ class Fit_Everything:
             self.Normal_2P_AICc = self.__Normal_2P_params.AICc
             self.Normal_2P_AD = self.__Normal_2P_params.AD
             self.Normal_2P_optimizer = self.__Normal_2P_params.optimizer
-            self._parametric_CDF_Normal_2P: npt.NDArray[np.float64] = self.__Normal_2P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Normal_2P: npt.NDArray[np.float64] = self.__Normal_2P_params.distribution.CDF(
+                xvals=d, show_plot=False
+            )
             df = pd.concat(
                 [
                     df,
@@ -588,6 +604,7 @@ class Fit_Everything:
 
         if "Lognormal_2P" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Lognormal_2P
+
             self.__Lognormal_2P_params = Fit_Lognormal_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -604,7 +621,9 @@ class Fit_Everything:
             self.Lognormal_2P_AICc = self.__Lognormal_2P_params.AICc
             self.Lognormal_2P_AD = self.__Lognormal_2P_params.AD
             self.Lognormal_2P_optimizer = self.__Lognormal_2P_params.optimizer
-            self._parametric_CDF_Lognormal_2P: npt.NDArray[np.float64] = self.__Lognormal_2P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Lognormal_2P: npt.NDArray[np.float64] = self.__Lognormal_2P_params.distribution.CDF(
+                xvals=d, show_plot=False
+            )
             df = pd.concat(
                 [
                     df,
@@ -635,6 +654,7 @@ class Fit_Everything:
 
         if "Gumbel_2P" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Gumbel_2P
+
             self.__Gumbel_2P_params = Fit_Gumbel_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -650,7 +670,9 @@ class Fit_Everything:
             self.Gumbel_2P_AICc = self.__Gumbel_2P_params.AICc
             self.Gumbel_2P_AD = self.__Gumbel_2P_params.AD
             self.Gumbel_2P_optimizer = self.__Gumbel_2P_params.optimizer
-            self._parametric_CDF_Gumbel_2P: npt.NDArray[np.float64] = self.__Gumbel_2P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Gumbel_2P: npt.NDArray[np.float64] = self.__Gumbel_2P_params.distribution.CDF(
+                xvals=d, show_plot=False
+            )
             df = pd.concat(
                 [
                     df,
@@ -681,6 +703,7 @@ class Fit_Everything:
 
         if "Weibull_2P" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Weibull_2P
+
             self.__Weibull_2P_params = Fit_Weibull_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -697,7 +720,9 @@ class Fit_Everything:
             self.Weibull_2P_AICc = self.__Weibull_2P_params.AICc
             self.Weibull_2P_AD = self.__Weibull_2P_params.AD
             self.Weibull_2P_optimizer = self.__Weibull_2P_params.optimizer
-            self._parametric_CDF_Weibull_2P: npt.NDArray[np.float64] = self.__Weibull_2P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Weibull_2P: npt.NDArray[np.float64] = self.__Weibull_2P_params.distribution.CDF(
+                xvals=d, show_plot=False
+            )
             df = pd.concat(
                 [
                     df,
@@ -728,6 +753,7 @@ class Fit_Everything:
 
         if "Weibull_Mixture" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Weibull_Mixture
+
             self.__Weibull_Mixture_params = Fit_Weibull_Mixture(
                 failures=failures,
                 right_censored=right_censored,
@@ -746,9 +772,11 @@ class Fit_Everything:
             self.Weibull_Mixture_AICc = self.__Weibull_Mixture_params.AICc
             self.Weibull_Mixture_AD = self.__Weibull_Mixture_params.AD
             self.Weibull_Mixture_optimizer = self.__Weibull_Mixture_params.optimizer
-            self._parametric_CDF_Weibull_Mixture: npt.NDArray[np.float64] = self.__Weibull_Mixture_params.distribution.CDF(
-                xvals=d,
-                show_plot=False,
+            self._parametric_CDF_Weibull_Mixture: npt.NDArray[np.float64] = (
+                self.__Weibull_Mixture_params.distribution.CDF(
+                    xvals=d,
+                    show_plot=False,
+                )
             )
             df = pd.concat(
                 [
@@ -780,6 +808,7 @@ class Fit_Everything:
 
         if "Weibull_CR" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Weibull_CR
+
             self.__Weibull_CR_params = Fit_Weibull_CR(
                 failures=failures,
                 right_censored=right_censored,
@@ -797,7 +826,9 @@ class Fit_Everything:
             self.Weibull_CR_AICc = self.__Weibull_CR_params.AICc
             self.Weibull_CR_AD = self.__Weibull_CR_params.AD
             self.Weibull_CR_optimizer = self.__Weibull_CR_params.optimizer
-            self._parametric_CDF_Weibull_CR: npt.NDArray[np.float64] = self.__Weibull_CR_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Weibull_CR: npt.NDArray[np.float64] = self.__Weibull_CR_params.distribution.CDF(
+                xvals=d, show_plot=False
+            )
             df = pd.concat(
                 [
                     df,
@@ -828,6 +859,7 @@ class Fit_Everything:
 
         if "Weibull_DS" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Weibull_DS
+
             self.__Weibull_DS_params = Fit_Weibull_DS(
                 failures=failures,
                 right_censored=right_censored,
@@ -844,7 +876,9 @@ class Fit_Everything:
             self.Weibull_DS_AICc = self.__Weibull_DS_params.AICc
             self.Weibull_DS_AD = self.__Weibull_DS_params.AD
             self.Weibull_DS_optimizer = self.__Weibull_DS_params.optimizer
-            self._parametric_CDF_Weibull_DS: npt.NDArray[np.float64] = self.__Weibull_DS_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Weibull_DS: npt.NDArray[np.float64] = self.__Weibull_DS_params.distribution.CDF(
+                xvals=d, show_plot=False
+            )
             df = pd.concat(
                 [
                     df,
@@ -875,6 +909,7 @@ class Fit_Everything:
 
         if "Gamma_2P" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Gamma_2P
+
             self.__Gamma_2P_params = Fit_Gamma_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -892,7 +927,9 @@ class Fit_Everything:
             self.Gamma_2P_AICc = self.__Gamma_2P_params.AICc
             self.Gamma_2P_AD = self.__Gamma_2P_params.AD
             self.Gamma_2P_optimizer = self.__Gamma_2P_params.optimizer
-            self._parametric_CDF_Gamma_2P: npt.NDArray[np.float64] = self.__Gamma_2P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Gamma_2P: npt.NDArray[np.float64] = self.__Gamma_2P_params.distribution.CDF(
+                xvals=d, show_plot=False
+            )
             df = pd.concat(
                 [
                     df,
@@ -923,6 +960,7 @@ class Fit_Everything:
 
         if "Exponential_1P" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Exponential_1P
+
             self.__Exponential_1P_params = Fit_Exponential_1P(
                 failures=failures,
                 right_censored=right_censored,
@@ -936,9 +974,11 @@ class Fit_Everything:
             self.Exponential_1P_AICc = self.__Exponential_1P_params.AICc
             self.Exponential_1P_AD = self.__Exponential_1P_params.AD
             self.Exponential_1P_optimizer = self.__Exponential_1P_params.optimizer
-            self._parametric_CDF_Exponential_1P: npt.NDArray[np.float64] = self.__Exponential_1P_params.distribution.CDF(
-                xvals=d,
-                show_plot=False,
+            self._parametric_CDF_Exponential_1P: npt.NDArray[np.float64] = (
+                self.__Exponential_1P_params.distribution.CDF(
+                    xvals=d,
+                    show_plot=False,
+                )
             )
             df = pd.concat(
                 [
@@ -970,6 +1010,7 @@ class Fit_Everything:
 
         if "Loglogistic_2P" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Loglogistic_2P
+
             self.__Loglogistic_2P_params = Fit_Loglogistic_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -986,9 +1027,11 @@ class Fit_Everything:
             self.Loglogistic_2P_AICc = self.__Loglogistic_2P_params.AICc
             self.Loglogistic_2P_AD = self.__Loglogistic_2P_params.AD
             self.Loglogistic_2P_optimizer = self.__Loglogistic_2P_params.optimizer
-            self._parametric_CDF_Loglogistic_2P: npt.NDArray[np.float64] = self.__Loglogistic_2P_params.distribution.CDF(
-                xvals=d,
-                show_plot=False,
+            self._parametric_CDF_Loglogistic_2P: npt.NDArray[np.float64] = (
+                self.__Loglogistic_2P_params.distribution.CDF(
+                    xvals=d,
+                    show_plot=False,
+                )
             )
             df = pd.concat(
                 [
@@ -1020,6 +1063,7 @@ class Fit_Everything:
 
         if "Loglogistic_3P" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Loglogistic_3P
+
             self.__Loglogistic_3P_params = Fit_Loglogistic_3P(
                 failures=failures,
                 right_censored=right_censored,
@@ -1036,9 +1080,11 @@ class Fit_Everything:
             self.Loglogistic_3P_AICc = self.__Loglogistic_3P_params.AICc
             self.Loglogistic_3P_AD = self.__Loglogistic_3P_params.AD
             self.Loglogistic_3P_optimizer = self.__Loglogistic_3P_params.optimizer
-            self._parametric_CDF_Loglogistic_3P: npt.NDArray[np.float64] = self.__Loglogistic_3P_params.distribution.CDF(
-                xvals=d,
-                show_plot=False,
+            self._parametric_CDF_Loglogistic_3P: npt.NDArray[np.float64] = (
+                self.__Loglogistic_3P_params.distribution.CDF(
+                    xvals=d,
+                    show_plot=False,
+                )
             )
             df = pd.concat(
                 [
@@ -1070,6 +1116,7 @@ class Fit_Everything:
 
         if "Beta_2P" not in self.excluded_distributions:
             from reliability.Fitters import Fit_Beta_2P
+
             self.__Beta_2P_params = Fit_Beta_2P(
                 failures=failures,
                 right_censored=right_censored,
@@ -1085,7 +1132,9 @@ class Fit_Everything:
             self.Beta_2P_AICc = self.__Beta_2P_params.AICc
             self.Beta_2P_AD = self.__Beta_2P_params.AD
             self.Beta_2P_optimizer = self.__Beta_2P_params.optimizer
-            self._parametric_CDF_Beta_2P: npt.NDArray[np.float64] = self.__Beta_2P_params.distribution.CDF(xvals=d, show_plot=False)
+            self._parametric_CDF_Beta_2P: npt.NDArray[np.float64] = self.__Beta_2P_params.distribution.CDF(
+                xvals=d, show_plot=False
+            )
             df = pd.concat(
                 [
                     df,
@@ -1220,27 +1269,27 @@ class Fit_Everything:
         self.__right_censored = right_censored
 
         # print the results
+
     def print_results(self) -> None:
-            """
-            Prints the results from the Fit_Everything analysis.
+        """
+        Prints the results from the Fit_Everything analysis.
 
-            The method prints the analysis method used, the number of failures and right censored data points,
-            and the results table.
+        The method prints the analysis method used, the number of failures and right censored data points,
+        and the results table.
 
-            Returns:
-                None
-            """
-            frac_censored = self._frac_cens * 100
-            colorprint("Results from Fit_Everything:", bold=True, underline=True)
-            print("Analysis method:", self.__method)
-            print(
-                "Failures / Right censored:",
-                str(str(len(self.__failures)) + "/" + str(len(self.__right_censored))),
-                str("(" + round_and_string(frac_censored) + "% right censored)"),
-                "\n",
-            )
-            print(self.results.to_string(index=False), "\n")
-
+        Returns:
+            None
+        """
+        frac_censored = self._frac_cens * 100
+        colorprint("Results from Fit_Everything:", bold=True, underline=True)
+        print("Analysis method:", self.__method)
+        print(
+            "Failures / Right censored:",
+            str(str(len(self.__failures)) + "/" + str(len(self.__right_censored))),
+            str("(" + round_and_string(frac_censored) + "% right censored)"),
+            "\n",
+        )
+        print(self.results.to_string(index=False), "\n")
 
     def __probplot_layout(self):
         """Internal function to provide layout formatting of the plots.
@@ -1501,8 +1550,6 @@ class Fit_Everything:
         nonparametric = KaplanMeier(
             failures=self.failures,
             right_censored=self.right_censored,
-            print_results=False,
-            show_plot=False,
         )
         nonparametric_CDF = 1 - nonparametric.KM  # change SF into CDF
 

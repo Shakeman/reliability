@@ -66,7 +66,9 @@ np.seterr("ignore")
 dec = 3  # number of decimals to use when rounding fitted parameters in labels
 
 
-def plotting_positions(failures=None, right_censored=None, a: float | None =None, sort: bool =False) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+def plotting_positions(
+    failures=None, right_censored=None, a: float | None = None, sort: bool = False
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """Calculates the plotting positions for plotting on probability paper.
 
     Parameters
@@ -177,7 +179,7 @@ def Weibull_probability_plot(
     _fitted_dist_params=None,
     a=None,
     CI=0.95,
-    CI_type: str | None="time",
+    CI_type: str | None = "time",
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
@@ -398,7 +400,7 @@ def Loglogistic_probability_plot(
     _fitted_dist_params=None,
     a=None,
     CI=0.95,
-    CI_type: str | None ="time",
+    CI_type: str | None = "time",
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
@@ -819,11 +821,11 @@ def Gumbel_probability_plot(
     right_censored=None,
     _fitted_dist_params=None,
     a=None,
-    CI: float=0.95,
-    CI_type: str | None="time",
-    show_fitted_distribution: bool=True,
-    show_scatter_points: bool=True,
-    downsample_scatterplot: bool=False,
+    CI: float = 0.95,
+    CI_type: str | None = "time",
+    show_fitted_distribution: bool = True,
+    show_scatter_points: bool = True,
+    downsample_scatterplot: bool = False,
     **kwargs,
 ):
     """Generates a probability plot on Gumbel scaled probability paper so that the
@@ -984,7 +986,7 @@ def Normal_probability_plot(
     _fitted_dist_params=None,
     a=None,
     CI=0.95,
-    CI_type: str | None ="time",
+    CI_type: str | None = "time",
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
@@ -1147,7 +1149,7 @@ def Lognormal_probability_plot(
     _fitted_dist_params=None,
     a=None,
     CI=0.95,
-    CI_type: str | None ="time",
+    CI_type: str | None = "time",
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
@@ -1509,7 +1511,7 @@ def Gamma_probability_plot(
     _fitted_dist_params=None,
     a=None,
     CI=0.95,
-    CI_type: str | None="time",
+    CI_type: str | None = "time",
     show_fitted_distribution=True,
     show_scatter_points=True,
     downsample_scatterplot=False,
@@ -2344,8 +2346,6 @@ def PP_plot_semiparametric(
         KM = KaplanMeier(
             failures=X_data_failures,
             right_censored=X_data_right_censored,
-            show_plot=False,
-            print_results=False,
         )
         df = KM.results
         failure_rows = df.loc[df["Censoring code (censored=0)"] == 1.0]
@@ -2355,8 +2355,6 @@ def PP_plot_semiparametric(
         NA = NelsonAalen(
             failures=X_data_failures,
             right_censored=X_data_right_censored,
-            show_plot=False,
-            print_results=False,
         )
         df = NA.results
         failure_rows = df.loc[df["Censoring code (censored=0)"] == 1.0]
@@ -2366,8 +2364,6 @@ def PP_plot_semiparametric(
         RA = RankAdjustment(
             failures=X_data_failures,
             right_censored=X_data_right_censored,
-            show_plot=False,
-            print_results=False,
             a=a,
         )
         df = RA.results
@@ -2522,8 +2518,6 @@ def QQ_plot_semiparametric(
         KM = KaplanMeier(
             failures=X_data_failures,
             right_censored=X_data_right_censored,
-            show_plot=False,
-            print_results=False,
         )
         df = KM.results
         failure_rows = df.loc[df["Censoring code (censored=0)"] == 1.0]
@@ -2533,8 +2527,6 @@ def QQ_plot_semiparametric(
         NA = NelsonAalen(
             failures=X_data_failures,
             right_censored=X_data_right_censored,
-            show_plot=False,
-            print_results=False,
         )
         df = NA.results
         failure_rows = df.loc[df["Censoring code (censored=0)"] == 1.0]
@@ -2544,8 +2536,6 @@ def QQ_plot_semiparametric(
         RA = RankAdjustment(
             failures=X_data_failures,
             right_censored=X_data_right_censored,
-            show_plot=False,
-            print_results=False,
             a=a,
         )
         df = RA.results

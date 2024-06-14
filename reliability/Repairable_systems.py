@@ -30,6 +30,8 @@ from reliability.Utils import colorprint, round_and_string
 
 if TYPE_CHECKING:
     import numpy.typing as npt
+
+
 class reliability_growth:
     """Fits a reliability growth model tos failure data using either the Duane
     model or the Crow-AMSAA model.
@@ -86,7 +88,7 @@ class reliability_growth:
 
     def __init__(
         self,
-        times: npt.NDArray[np.float64] | list[int] | None =None,
+        times: npt.NDArray[np.float64] | list[int] | None = None,
         target_MTBF=None,
         model="Duane",
     ) -> None:
@@ -401,29 +403,29 @@ class optimal_replacement_time:
         self.__cost_PM = cost_PM
 
     def print_results(self) -> None:
-            """
-            Prints the results from the optimal_replacement_time calculation.
+        """
+        Prints the results from the optimal_replacement_time calculation.
 
-            The method prints the cost model assumption and the minimum cost per unit time
-            along with the optimal replacement time.
+        The method prints the cost model assumption and the minimum cost per unit time
+        along with the optimal replacement time.
 
-            Parameters:
-                None
+        Parameters:
+            None
 
-            Returns:
-                None
-            """
-            colorprint("Results from optimal_replacement_time:", bold=True, underline=True)
-            if self.__q == 0:
-                print("Cost model assuming as good as new replacement (q=0):")
-            else:
-                print("Cost model assuming as good as old replacement (q=1):")
-            print(
-                "The minimum cost per unit time is",
-                self.__min_cost_rounded,
-                "\nThe optimal replacement time is",
-                self.__ORT_rounded,
-            )
+        Returns:
+            None
+        """
+        colorprint("Results from optimal_replacement_time:", bold=True, underline=True)
+        if self.__q == 0:
+            print("Cost model assuming as good as new replacement (q=0):")
+        else:
+            print("Cost model assuming as good as old replacement (q=1):")
+        print(
+            "The minimum cost per unit time is",
+            self.__min_cost_rounded,
+            "\nThe optimal replacement time is",
+            self.__ORT_rounded,
+        )
 
     def show_time_plot(self, subplot=None, **kwargs):
         """
@@ -491,7 +493,9 @@ class optimal_replacement_time:
 
         def calc_ORT(x):
             if self.__q == 1:
-                return self.__weibull_alpha * (x / (self.__cost_PM * (self.__weibull_beta - 1))) ** (1 / self.__weibull_beta)
+                return self.__weibull_alpha * (x / (self.__cost_PM * (self.__weibull_beta - 1))) ** (
+                    1 / self.__weibull_beta
+                )
 
             else:  # q = 0
                 return self.__t[np.argmin((self.__cost_PM * self.__sf + x * (1 - self.__sf)) / self.__integral)]
@@ -755,7 +759,7 @@ class ROCOF:
         ls = kwargs.pop("linestyle") if "linestyle" in kwargs else "--"
         label_1 = kwargs.pop("label") if "label" in kwargs else "Failure interarrival times"
         plt.plot(self.__x_to_plot, self.__MTBF, linestyle=ls, label="MTBF")
-        plt.scatter(self.__x , self.__ti, label=label_1, **kwargs)
+        plt.scatter(self.__x, self.__ti, label=label_1, **kwargs)
         plt.ylabel("Times between failures")
         plt.xlabel("Failure number")
         title_str = str(
@@ -1005,26 +1009,26 @@ class MCF_nonparametric:
         self.CI_rounded = CI_rounded
 
     def print_results(self) -> None:
-            """
-            Prints the Mean Cumulative Function results with confidence interval.
+        """
+        Prints the Mean Cumulative Function results with confidence interval.
 
-            This method sets display options for pandas dataframe to prevent wrapping and truncation,
-            and then prints the results with a header indicating the confidence interval.
+        This method sets display options for pandas dataframe to prevent wrapping and truncation,
+        and then prints the results with a header indicating the confidence interval.
 
-            Args:
-                None
+        Args:
+            None
 
-            Returns:
-                None
-            """
-            pd.set_option("display.width", 200)  # prevents wrapping after default 80 characters
-            pd.set_option("display.max_columns", 9)  # shows the dataframe without ... truncation
-            colorprint(
-                str("Mean Cumulative Function results (" + str(self.CI_rounded) + "% CI):"),
-                bold=True,
-                underline=True,
-            )
-            print(self.results.to_string(index=False), "\n")
+        Returns:
+            None
+        """
+        pd.set_option("display.width", 200)  # prevents wrapping after default 80 characters
+        pd.set_option("display.max_columns", 9)  # shows the dataframe without ... truncation
+        colorprint(
+            str("Mean Cumulative Function results (" + str(self.CI_rounded) + "% CI):"),
+            bold=True,
+            underline=True,
+        )
+        print(self.results.to_string(index=False), "\n")
 
     def plot(self, plot_CI=True, **kwargs) -> plt.Axes:
         """
@@ -1042,7 +1046,7 @@ class MCF_nonparametric:
 
         Example:
             To plot the MCF with confidence interval bounds:
-            >>> repairable_system.plot(plot_CI=True, color='red')
+            >>> repairable_system.plot(plot_CI=True, color="red")
 
         """
         x_MCF = [0, self.time[0]]
@@ -1052,21 +1056,21 @@ class MCF_nonparametric:
         x_MCF.append(self.time[0])
         y_MCF.append(self.MCF[0])
         y_upper.append(self.upper[0])
-        y_lower.append(self.lower [0])
+        y_lower.append(self.lower[0])
         for i, _ in enumerate(self.time):
             if i > 0:
                 x_MCF.append(self.time[i])
                 y_MCF.append(self.MCF[i - 1])
                 y_upper.append(self.upper[i - 1])
-                y_lower.append(self.lower [i - 1])
+                y_lower.append(self.lower[i - 1])
                 x_MCF.append(self.time[i])
                 y_MCF.append(self.MCF[i])
                 y_upper.append(self.upper[i])
-                y_lower.append(self.lower [i])
+                y_lower.append(self.lower[i])
         x_MCF.append(self.last_time)  # add the last horizontal line
         y_MCF.append(self.MCF[-1])
         y_upper.append(self.upper[-1])
-        y_lower.append(self.lower [-1])
+        y_lower.append(self.lower[-1])
         title_str = "Non-parametric estimate of the Mean Cumulative Function"
 
         col = kwargs.pop("color") if "color" in kwargs else "steelblue"
@@ -1220,6 +1224,8 @@ class MCF_parametric:
         self.beta_lower = self.beta * (np.exp(-Z * (self.beta_SE / self.beta)))
         self.CI = CI
         self.Z = Z
+        self.__var_alpha = var_alpha
+        self.__var_beta = var_beta
         Data = {
             "Parameter": ["Alpha", "Beta"],
             "Point Estimate": [self.alpha, self.beta],
@@ -1295,7 +1301,7 @@ class MCF_parametric:
         if plot_CI is True:
             p1 = -(self.beta / self.alpha) * (x_line / self.alpha) ** self.beta
             p2 = ((x_line / self.alpha) ** self.beta) * np.log(x_line / self.alpha)
-            var = self.var_alpha * p1**2 + self.var_beta * p2**2 + 2 * p1 * p2 * self.cov_alpha_beta
+            var = self.__var_alpha * p1**2 + self.__var_beta * p2**2 + 2 * p1 * p2 * self.cov_alpha_beta
             SD = var**0.5
             y_line_lower = y_line * np.exp((-self.Z * SD) / y_line)
             y_line_upper = y_line * np.exp((self.Z * SD) / y_line)

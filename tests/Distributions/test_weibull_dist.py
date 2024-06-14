@@ -10,6 +10,8 @@ rtol = 1e-7
 
 def test_Weibull_Distribution():
     dist = Weibull_Distribution(alpha=5, beta=2, gamma=10)
+    dist.plot()
+    dist.stats()
     assert_allclose(dist.mean, 14.4311346272637895, rtol=rtol, atol=atol)
     assert_allclose(dist.standard_deviation, 2.316256875880522, rtol=rtol, atol=atol)
     assert_allclose(dist.variance, 5.365045915063796, rtol=rtol, atol=atol)

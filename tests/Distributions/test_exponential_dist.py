@@ -10,6 +10,7 @@ rtol = 1e-7
 
 def test_Exponential_Distribution():
     dist = Exponential_Distribution(Lambda=0.2, gamma=10)
+    dist.plot()
     dist.stats()
     assert_allclose(dist.mean, 15, rtol=rtol, atol=atol)
     assert_allclose(dist.standard_deviation, 5, rtol=rtol, atol=atol)

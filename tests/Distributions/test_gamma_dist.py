@@ -10,6 +10,8 @@ rtol = 1e-7
 
 def test_Gamma_Distribution():
     dist = Gamma_Distribution(alpha=5, beta=2, gamma=10)
+    dist.plot()
+    dist.stats()
     assert_allclose(dist.mean, 20, rtol=rtol, atol=atol)
     assert_allclose(dist.standard_deviation, 7.0710678118654755, rtol=rtol, atol=atol)
     assert_allclose(dist.variance, 50, rtol=rtol, atol=atol)

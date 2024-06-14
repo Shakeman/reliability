@@ -10,6 +10,8 @@ rtol = 1e-7
 
 def test_Lognormal_Distribution():
     dist = Lognormal_Distribution(mu=2, sigma=0.8, gamma=10)
+    dist.plot()
+    dist.stats()
     assert_allclose(dist.mean, 20.175674306073336, rtol=rtol, atol=atol)
     assert_allclose(dist.standard_deviation, 9.634600550542682, rtol=rtol, atol=atol)
     assert_allclose(dist.variance, 92.82552776851736, rtol=rtol, atol=atol)

@@ -10,6 +10,8 @@ rtol = 1e-7
 
 def test_Beta_Distribution():
     dist = Beta_Distribution(alpha=5, beta=2)
+    dist.plot()
+    dist.stats()
     assert_allclose(dist.mean, 0.7142857142857143, rtol=rtol, atol=atol)
     assert_allclose(dist.standard_deviation, 0.15971914124998499, rtol=rtol, atol=atol)
     assert_allclose(dist.variance, 0.025510204081632654, rtol=rtol, atol=atol)

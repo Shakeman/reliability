@@ -10,6 +10,8 @@ rtol = 1e-7
 
 def test_Gumbel_Distribution():
     dist = Gumbel_Distribution(mu=15, sigma=2)
+    dist.plot()
+    dist.stats()
     assert_allclose(dist.mean, 13.845568670196934, rtol=rtol, atol=atol)
     assert_allclose(dist.standard_deviation, 2.565099660323728, rtol=rtol, atol=atol)
     assert_allclose(dist.variance, 6.579736267392906, rtol=rtol, atol=atol)

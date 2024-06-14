@@ -10,6 +10,8 @@ rtol = 1e-7
 
 def test_Loglogistic_Distribution():
     dist = Loglogistic_Distribution(alpha=50, beta=8, gamma=10)
+    dist.plot()
+    dist.stats()
     assert_allclose(dist.mean, 61.308607648851535, rtol=rtol, atol=atol)
     assert_allclose(dist.standard_deviation, 12.009521950735257, rtol=rtol, atol=atol)
     assert_allclose(dist.variance, 144.228617485192, rtol=rtol, atol=atol)

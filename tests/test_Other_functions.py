@@ -24,14 +24,14 @@ rtol_big = 1e-3
 def test_stress_strength():
     stress = Weibull_Distribution(alpha=40, beta=4)
     strength = Lognormal_Distribution(mu=1.8, sigma=0.25, gamma=50)
-    result = stress_strength(stress=stress, strength=strength, print_results=False, show_plot=False)
+    result = stress_strength(stress=stress, strength=strength, print_results=True, show_plot=True)
     assert_allclose(result, 0.021559141113795574, rtol=rtol, atol=atol)
 
 
 def test_stress_strength_normal():
     stress = Normal_Distribution(mu=50, sigma=5)
     strength = Normal_Distribution(mu=80, sigma=7)
-    result = stress_strength_normal(stress=stress, strength=strength, print_results=False, show_plot=False)
+    result = stress_strength_normal(stress=stress, strength=strength, print_results=True, show_plot=True)
     assert_allclose(result, 0.00024384404803800858, rtol=rtol, atol=atol)
 
 
@@ -40,7 +40,10 @@ def test_similar_distributions():
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     dist = Weibull_Distribution(alpha=50, beta=3.3)
     results = similar_distributions(
-        distribution=dist, include_location_shifted=True, show_plot=False, print_results=False,
+        distribution=dist,
+        include_location_shifted=True,
+        show_plot=True,
+        print_results=True,
     )
     assert_allclose(results.results[0].alpha, 49.22622520639563, rtol=rtol_big, atol=atol_big)
     assert_allclose(results.results[0].beta, 3.2573074120881964, rtol=rtol_big, atol=atol_big)
@@ -56,7 +59,10 @@ def test_make_right_censored_data():
     results = make_right_censored_data(data=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], fraction_censored=0.5, seed=1)
     assert_allclose(results.failures, [4, 2, 8, 9, 6], rtol=rtol, atol=atol)
     assert_allclose(
-        results.right_censored, [1.16373222, 6.69746037, 6.5487735, 4.23155458, 0.31327352], rtol=rtol, atol=atol,
+        results.right_censored,
+        [1.16373222, 6.69746037, 6.5487735, 4.23155458, 0.31327352],
+        rtol=rtol,
+        atol=atol,
     )
 
 
@@ -67,14 +73,16 @@ def test_crosshairs():
     plt.close()
     plt.ioff()
 
-@pytest.mark.filterwarnings('ignore::UserWarning')
+
+@pytest.mark.filterwarnings("ignore::UserWarning")
 def test_distribution_explorer():
     plt.ion()
     distribution_explorer()
     plt.close()
     plt.ioff()
 
-@pytest.mark.filterwarnings('ignore::UserWarning')
+
+@pytest.mark.filterwarnings("ignore::UserWarning")
 def test_histogram():
     plt.ion()
     dist = Weibull_Distribution(alpha=30, beta=4)

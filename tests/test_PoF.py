@@ -40,9 +40,12 @@ def test_stress_strain_diagram():
     stress_data = [650, 625, 555, 480, 395, 330]
     cycles_data = [200, 350, 1100, 4600, 26000, 560000]
     params = stress_strain_life_parameters_from_data(
-        stress=stress_data, strain=strain_data, cycles=cycles_data, E=216000, show_plot=False, print_results=False,
+        stress=stress_data, strain=strain_data, cycles=cycles_data, E=216000
     )
+    params.plot()
+    params.print_results()
     stress_strain = stress_strain_diagram(E=216000, n=params.n, K=params.K, max_strain=0.006)
+    stress_strain.print_results()
     assert_allclose(stress_strain.max_strain, 0.006, rtol=rtol, atol=atol)
     assert_allclose(stress_strain.min_strain, -0.006, rtol=rtol, atol=atol)
     assert_allclose(stress_strain.max_stress, 483.8581623940639, rtol=rtol, atol=atol)
@@ -51,7 +54,15 @@ def test_stress_strain_diagram():
 
 def test_strain_life_diagram():
     results = strain_life_diagram(
-        E=210000, sigma_f=1000, epsilon_f=1.1, b=-0.1, c=-0.6, K=1200, n=0.2, max_strain=0.0049, min_strain=-0.0029,
+        E=210000,
+        sigma_f=1000,
+        epsilon_f=1.1,
+        b=-0.1,
+        c=-0.6,
+        K=1200,
+        n=0.2,
+        max_strain=0.0049,
+        min_strain=-0.0029,
     )
     assert_allclose(results.cycles_to_failure, 13771.39230726717, rtol=rtol, atol=atol)
     assert_allclose(results.max_strain, 0.0049, rtol=rtol, atol=atol)
@@ -76,6 +87,7 @@ def test_fracture_mechanics_crack_initiation():
         epsilon_f=1.1,
         mean_stress_correction_method="SWT",
     )
+    results.print_results()
     assert_allclose(results.cycles_to_failure, 2919.911371962644, rtol=rtol, atol=atol)
     assert_allclose(results.epsilon_max, 0.007547514721969089, rtol=rtol, atol=atol)
     assert_allclose(results.epsilon_mean, 8.673617379884035e-19, rtol=rtol, atol=atol)
@@ -84,9 +96,12 @@ def test_fracture_mechanics_crack_initiation():
     assert_allclose(results.sigma_mean, -5.684341886080802e-14, rtol=rtol, atol=atol)
     assert_allclose(results.sigma_min, -506.7290859876518, rtol=rtol, atol=atol)
 
-@pytest.mark.filterwarnings('ignore::UserWarning')
+
+@pytest.mark.filterwarnings("ignore::UserWarning")
 def test_fracture_mechanics():
     results = fracture_mechanics_crack_growth(Kc=66, C=6.91 * 10**-12, m=3, P=0.15, W=100, t=5, Kt=2.41, D=10)
+    results.print_results()
+    results.plot()
     assert_allclose(results.Nf_stage_1_iterative, 7576, rtol=rtol, atol=atol)
     assert_allclose(results.Nf_stage_1_simplified, 6802.128636224042, rtol=rtol, atol=atol)
     assert_allclose(results.Nf_stage_2_iterative, 671, rtol=rtol, atol=atol)
@@ -98,7 +113,8 @@ def test_fracture_mechanics():
     assert_allclose(results.transition_length_iterative, 2.4520443881041274, rtol=rtol, atol=atol)
     assert_allclose(results.transition_length_simplified, 2.0798236309560947, rtol=rtol, atol=atol)
 
-@pytest.mark.filterwarnings('ignore::UserWarning')
+
+@pytest.mark.filterwarnings("ignore::UserWarning")
 def test_creep():
     TEMP = [
         900,
@@ -157,14 +173,16 @@ def test_creep():
 
 
 def test_creep_failure_time():
-    results = creep_failure_time(temp_low=900, temp_high=1100, time_low=9878)
+    results = creep_failure_time(temp_low=900, temp_high=1100, time_low=9878, print_results=True)
     assert_allclose(results, 8.27520045913433, rtol=rtol, atol=atol)
 
 
 def test_palmgren_miner_linear_damage():
     stress = [1, 2, 4]
     results = palmgren_miner_linear_damage(
-        rated_life=[50000, 6500, 1000], time_at_stress=[40 / 60, 15 / 60, 5 / 60], stress=stress,
+        rated_life=[50000, 6500, 1000],
+        time_at_stress=[40 / 60, 15 / 60, 5 / 60],
+        stress=stress,
     )
     assert_allclose(results[0], 0.00013512820512820512, rtol=rtol, atol=atol)
     assert_allclose(results[1], 7400.379506641367, rtol=rtol, atol=atol)
@@ -174,6 +192,7 @@ def test_palmgren_miner_linear_damage():
 
 def test_acceleration_factor():
     results = acceleration_factor(T_use=60, T_acc=100, Ea=1.2)
+    results.print_results()
     assert_allclose(results.AF, 88.29574588463338, rtol=rtol, atol=atol)
     assert_allclose(results.Ea, 1.2, rtol=rtol, atol=atol)
     assert_allclose(results.T_acc, 100, rtol=rtol, atol=atol)

@@ -315,11 +315,6 @@ class stress_strain_life_parameters_from_data:
     cycles : array, list, optional
         The number of cycles to failure. Optional input. This is required if you
         want to obtain the parameters sigma_f, epsilon_f, b, c
-    print_results : bool, optional
-        If True the results will be printed to console. Default is True.
-    show_plot : bool, optional
-        If True the stress strain diagram will be produced. Default is True. Use
-        plt.show() to show it.
 
     Returns
     -------
@@ -342,7 +337,7 @@ class stress_strain_life_parameters_from_data:
 
     """
 
-    def __init__(self, strain, stress, E, cycles=None, print_results=True, show_plot=True):
+    def __init__(self, strain, stress, E, cycles=None):
         # note that strain is the total strain (elastic strain + plastic strain)
         if type(stress) == np.ndarray:
             pass
@@ -370,41 +365,9 @@ class stress_strain_life_parameters_from_data:
         fit = np.polyfit(np.log10(plastic_strain), np.log10(stress), deg=1)
         self.K = 10 ** fit[1]
         self.n = fit[0]
-
-        # plot the data and fitted curve
-        if show_plot is True:
-            plt.figure()
-            stress_array = np.linspace(0, max(stress), 10000)
-            strain_array = stress_array / E + (stress_array / self.K) ** (1 / self.n)
-            plt.plot(
-                strain_array,
-                stress_array,
-                color="red",
-                label=str(
-                    r"$\epsilon_{tot} = \frac{\sigma}{"
-                    + str(round(E, 4))
-                    + r"} + (\frac{\sigma}{"
-                    + str(round(self.K, 4))
-                    + r"})^{\frac{1}{"
-                    + str(round(self.n, 4))
-                    + "}}$",
-                ),
-            )
-            plt.scatter(strain, stress, marker=".", color="k", label="Stress-Strain data")
-            plt.xlabel(r"Strain $(\epsilon_{tot})$")
-            plt.ylabel(r"Stress $(\sigma)$")
-            plt.title("Stress-Strain diagram")
-            xmax = max(strain) * 1.2
-            ymax = max(stress) * 1.2
-            plt.xlim([0, xmax])
-            plt.ylim([0, ymax])
-            plt.grid(True)
-            leg = plt.legend()
-            # this is to make the first legend entry (the equation) bigger
-            legend_texts = leg.get_texts()
-            legend_texts[0]._fontproperties = legend_texts[1]._fontproperties.copy()
-            legend_texts[0].set_size(15)
-
+        self.__stress = stress
+        self.__E = E
+        self.__strain = strain
         # STRAIN-LIFE
         if cycles is not None:
             fit2 = np.polyfit(np.log10(cycles_2Nf), np.log10(elastic_strain), deg=1)
@@ -414,96 +377,154 @@ class stress_strain_life_parameters_from_data:
             fit3 = np.polyfit(np.log10(cycles_2Nf), np.log10(plastic_strain), deg=1)
             self.epsilon_f = 10 ** fit3[1]
             self.c = fit3[0]
+            self.__cycles = cycles
+            self.__cycles_2Nf = cycles_2Nf
 
-            # STRAIN-LIFE plot
-            if show_plot is True:
-                plt.figure()
-                cycles_2Nt = (self.epsilon_f * E / self.sigma_f) ** (1 / (self.b - self.c))
-                plt.scatter(cycles_2Nf, strain, marker=".", color="k", label="Stress-Life data")
-                cycles_2Nf_array = np.logspace(1, 8, 1000)
-                epsilon_total = (
-                    self.sigma_f / E
-                ) * cycles_2Nf_array**self.b + self.epsilon_f * cycles_2Nf_array**self.c
-                epsilon_total_at_cycles_2Nt = (
-                    self.sigma_f / E
-                ) * cycles_2Nt**self.b + self.epsilon_f * cycles_2Nt**self.c
-                plt.loglog(
-                    cycles_2Nf_array,
-                    epsilon_total,
-                    color="red",
-                    alpha=0.8,
-                    label=str(
-                        r"$\epsilon_{tot} = \frac{"
-                        + str(round(self.sigma_f, 4))
-                        + "}{"
-                        + str(round(E, 4))
-                        + "}(2N_f)^{"
-                        + str(round(self.b, 4))
-                        + "} + "
-                        + str(round(self.epsilon_f, 4))
-                        + "(2N_f)^{"
-                        + str(round(self.c, 4))
-                        + "}$",
-                    ),
-                )
-                plt.plot(
-                    [cycles_2Nt, cycles_2Nt],
-                    [10**-6, epsilon_total_at_cycles_2Nt],
-                    "red",
-                    linestyle="--",
-                    alpha=0.5,
-                )
-                plastic_strain_line = self.epsilon_f * cycles_2Nf_array**self.c
-                elastic_strain_line = self.sigma_f / E * cycles_2Nf_array**self.b
-                plt.plot(
-                    cycles_2Nf_array,
-                    plastic_strain_line,
-                    "orange",
-                    alpha=0.7,
-                    label="plastic strain",
-                )
-                plt.plot(
-                    cycles_2Nf_array,
-                    elastic_strain_line,
-                    "steelblue",
-                    alpha=0.8,
-                    label="elastic strain",
-                )
-                plt.xlabel(r"Reversals to failure $(2N_f)$")
-                plt.ylabel(r"Strain amplitude $(\epsilon_a)$")
-                plt.title("Strain-Life diagram")
-                cycles_min_log = 10 ** (int(np.floor(np.log10(min(cycles_2Nf)))) - 1)
-                cycles_max_log = 10 ** (int(np.ceil(np.log10(max(cycles_2Nf)))) + 1)
-                strain_min_log = 10 ** (int(np.floor(np.log10(min(strain)))) - 1)
-                strain_max_log = 10 ** (int(np.ceil(np.log10(max(strain)))) + 1)
-                plt.text(
-                    cycles_2Nt,
-                    strain_min_log,
-                    str(r"$2N_t = $" + str(int(cycles_2Nt))),
-                    verticalalignment="bottom",
-                )
-                plt.xlim(cycles_min_log, cycles_max_log)
-                plt.ylim(strain_min_log, strain_max_log)
-                plt.grid(True)
-                leg2 = plt.legend()
-                # this is to make the first legend entry (the equation) bigger
-                legend_texts2 = leg2.get_texts()
-                legend_texts2[0]._fontproperties = legend_texts2[1]._fontproperties.copy()
-                legend_texts2[0].set_size(13)
+    def plot(self):
+        """
+        Plot stress-strain and strain-life diagrams.
 
-        if print_results is True:
-            colorprint(
-                "Results from stress_strain_life_parameters_from_data:",
-                bold=True,
-                underline=True,
+        This method plots the stress-strain diagram and strain-life diagram based on the provided data.
+
+        Returns:
+            None
+        """
+        plt.figure()
+        stress_array = np.linspace(0, max(self.__stress), 10000)
+        strain_array = stress_array / self.__E + (stress_array / self.K) ** (1 / self.n)
+        plt.plot(
+            strain_array,
+            stress_array,
+            color="red",
+            label=str(
+                r"$\epsilon_{tot} = \frac{\sigma}{"
+                + str(round(self.__E, 4))
+                + r"} + (\frac{\sigma}{"
+                + str(round(self.K, 4))
+                + r"})^{\frac{1}{"
+                + str(round(self.n, 4))
+                + "}}$",
+            ),
+        )
+        plt.scatter(self.__strain, self.__stress, marker=".", color="k", label="Stress-Strain data")
+        plt.xlabel(r"Strain $(\epsilon_{tot})$")
+        plt.ylabel(r"Stress $(\sigma)$")
+        plt.title("Stress-Strain diagram")
+        xmax = max(self.__strain) * 1.2
+        ymax = max(self.__stress) * 1.2
+        plt.xlim([0, xmax])
+        plt.ylim([0, ymax])
+        plt.grid(True)
+        leg = plt.legend()
+        # this is to make the first legend entry (the equation) bigger
+        legend_texts = leg.get_texts()
+        legend_texts[0]._fontproperties = legend_texts[1]._fontproperties.copy()
+        legend_texts[0].set_size(15)
+
+        # STRAIN-LIFE plot
+        if self.__cycles is not None:
+            plt.figure()
+            cycles_2Nt = (self.epsilon_f * self.__E / self.sigma_f) ** (1 / (self.b - self.c))
+            plt.scatter(self.__cycles_2Nf, self.__strain, marker=".", color="k", label="Stress-Life data")
+            cycles_2Nf_array = np.logspace(1, 8, 1000)
+            epsilon_total = (
+                self.sigma_f / self.__E
+            ) * cycles_2Nf_array**self.b + self.epsilon_f * cycles_2Nf_array**self.c
+            epsilon_total_at_cycles_2Nt = (
+                self.sigma_f / self.__E
+            ) * cycles_2Nt**self.b + self.epsilon_f * cycles_2Nt**self.c
+            plt.loglog(
+                cycles_2Nf_array,
+                epsilon_total,
+                color="red",
+                alpha=0.8,
+                label=str(
+                    r"$\epsilon_{tot} = \frac{"
+                    + str(round(self.sigma_f, 4))
+                    + "}{"
+                    + str(round(self.__E, 4))
+                    + "}(2N_f)^{"
+                    + str(round(self.b, 4))
+                    + "} + "
+                    + str(round(self.epsilon_f, 4))
+                    + "(2N_f)^{"
+                    + str(round(self.c, 4))
+                    + "}$",
+                ),
             )
-            print("K (cyclic strength coefficient):", self.K)
-            print("n (strain hardening exponent):", self.n)
-            if cycles is not None:
-                print("sigma_f (fatigue strength coefficient):", self.sigma_f)
-                print("epsilon_f (fatigue strain coefficient):", self.epsilon_f)
-                print("b (elastic strain exponent):", self.b)
-                print("c (plastic strain exponent):", self.c)
+            plt.plot(
+                [cycles_2Nt, cycles_2Nt],
+                [10**-6, epsilon_total_at_cycles_2Nt],
+                "red",
+                linestyle="--",
+                alpha=0.5,
+            )
+            plastic_strain_line = self.epsilon_f * cycles_2Nf_array**self.c
+            elastic_strain_line = self.sigma_f / self.__E * cycles_2Nf_array**self.b
+            plt.plot(
+                cycles_2Nf_array,
+                plastic_strain_line,
+                "orange",
+                alpha=0.7,
+                label="plastic strain",
+            )
+            plt.plot(
+                cycles_2Nf_array,
+                elastic_strain_line,
+                "steelblue",
+                alpha=0.8,
+                label="elastic strain",
+            )
+            plt.xlabel(r"Reversals to failure $(2N_f)$")
+            plt.ylabel(r"Strain amplitude $(\epsilon_a)$")
+            plt.title("Strain-Life diagram")
+            cycles_min_log = 10 ** (int(np.floor(np.log10(min(self.__cycles_2Nf)))) - 1)
+            cycles_max_log = 10 ** (int(np.ceil(np.log10(max(self.__cycles_2Nf)))) + 1)
+            strain_min_log = 10 ** (int(np.floor(np.log10(min(self.__strain)))) - 1)
+            strain_max_log = 10 ** (int(np.ceil(np.log10(max(self.__strain)))) + 1)
+            plt.text(
+                cycles_2Nt,
+                strain_min_log,
+                str(r"$2N_t = $" + str(int(cycles_2Nt))),
+                verticalalignment="bottom",
+            )
+            plt.xlim(cycles_min_log, cycles_max_log)
+            plt.ylim(strain_min_log, strain_max_log)
+            plt.grid(True)
+            leg2 = plt.legend()
+            # this is to make the first legend entry (the equation) bigger
+            legend_texts2 = leg2.get_texts()
+            legend_texts2[0]._fontproperties = legend_texts2[1]._fontproperties.copy()
+            legend_texts2[0].set_size(13)
+
+    def print_results(self):
+        """
+        Print the results from stress_strain_life_parameters_from_data.
+
+        This method prints the calculated values of various parameters obtained from the
+        stress_strain_life_parameters_from_data method. It includes the cyclic strength
+        coefficient (K), strain hardening exponent (n), fatigue strength coefficient (sigma_f),
+        fatigue strain coefficient (epsilon_f), elastic strain exponent (b), and plastic strain
+        exponent (c).
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        colorprint(
+            "Results from stress_strain_life_parameters_from_data:",
+            bold=True,
+            underline=True,
+        )
+        print("K (cyclic strength coefficient):", self.K)
+        print("n (strain hardening exponent):", self.n)
+        if self.__cycles is not None:
+            print("sigma_f (fatigue strength coefficient):", self.sigma_f)
+            print("epsilon_f (fatigue strain coefficient):", self.epsilon_f)
+            print("b (elastic strain exponent):", self.b)
+            print("c (plastic strain exponent):", self.c)
 
 
 class stress_strain_diagram:
@@ -557,7 +578,6 @@ class stress_strain_diagram:
         max_stress=None,
         min_stress=None,
         min_strain=None,
-        print_results=True,
         initial_load_direction="tension",
     ):
         if max_stress is not None and max_strain is not None:
@@ -741,12 +761,23 @@ class stress_strain_diagram:
         plt.legend(loc="upper left")
         plt.gcf().set_size_inches(10, 7)
 
-        if print_results is True:
-            colorprint("Results from stress_strain_diagram:", bold=True, underline=True)
-            print("Max stress:", self.max_stress)
-            print("Min stress:", self.min_stress)
-            print("Max strain:", self.max_strain)
-            print("Min strain:", self.min_strain)
+    def print_results(self):
+        """
+        Prints the results from the stress-strain diagram.
+
+        This method prints the maximum and minimum stress values, as well as the maximum and minimum strain values.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        colorprint("Results from stress_strain_diagram:", bold=True, underline=True)
+        print("Max stress:", self.max_stress)
+        print("Min stress:", self.min_stress)
+        print("Max strain:", self.max_strain)
+        print("Min strain:", self.min_strain)
 
 
 class strain_life_diagram:
@@ -941,12 +972,8 @@ class strain_life_diagram:
 
                 use_cycles_2Nf = fsolve(fun_m, np.array(10))
                 cycles_2Nt = (epsilon_f * E / (sigma_f - mean_stress)) ** (1 / (b - c))
-                epsilon_total = (
-                    (sigma_f - mean_stress) / E
-                ) * cycles_2Nf_array**b + epsilon_f * cycles_2Nf_array**c
-                epsilon_total_at_cycles_2Nt = (
-                    (sigma_f - mean_stress) / E
-                ) * cycles_2Nt**b + epsilon_f * cycles_2Nt**c
+                epsilon_total = ((sigma_f - mean_stress) / E) * cycles_2Nf_array**b + epsilon_f * cycles_2Nf_array**c
+                epsilon_total_at_cycles_2Nt = ((sigma_f - mean_stress) / E) * cycles_2Nt**b + epsilon_f * cycles_2Nt**c
                 equation_str = str(
                     r"$\epsilon_{tot} = \frac{"
                     + str(round(sigma_f, 4))
@@ -1026,9 +1053,7 @@ class strain_life_diagram:
                     + str(round(c, 4))
                     + "}$",
                 )
-                plastic_strain_line = (
-                    epsilon_f * ((sigma_f - mean_stress) / sigma_f) ** (c / b) * cycles_2Nf_array**c
-                )
+                plastic_strain_line = epsilon_f * ((sigma_f - mean_stress) / sigma_f) ** (c / b) * cycles_2Nf_array**c
                 elastic_strain_line = ((sigma_f - mean_stress) / E) * cycles_2Nf_array**b
             elif mean_stress_correction_method == "SWT":
 
@@ -1052,8 +1077,7 @@ class strain_life_diagram:
                 use_cycles_2Nf = fsolve(fun_swt, np.array(10))
                 cycles_2Nt = (epsilon_f * E / sigma_f) ** (1 / (b - c))
                 epsilon_total = (
-                    (sigma_f**2 / E) * cycles_2Nf_array ** (2 * b)
-                    + sigma_f * epsilon_f * cycles_2Nf_array ** (b + c)
+                    (sigma_f**2 / E) * cycles_2Nf_array ** (2 * b) + sigma_f * epsilon_f * cycles_2Nf_array ** (b + c)
                 ) / self.max_stress
                 epsilon_total_at_cycles_2Nt = (
                     (sigma_f**2 / E) * cycles_2Nt ** (2 * b) + sigma_f * epsilon_f * cycles_2Nt ** (b + c)
@@ -1384,8 +1408,6 @@ class fracture_mechanics_crack_initiation:
         Must be either ‘morrow’, ’modified_morrow’, or ‘SWT'. Default is
         'modified_morrow' as this is the same as the uncorrected Coffin-Manson
         relationship when mean stress is zero.
-    print_results : bool, optional
-        The results will be printed to the console if print_results is True.
 
     Returns
     -------
@@ -1438,7 +1460,6 @@ class fracture_mechanics_crack_initiation:
         Kt=1.0,
         q=1.0,
         mean_stress_correction_method="modified_morrow",
-        print_results=True,
     ):
         if mean_stress_correction_method not in ["morrow", "modified_morrow", "SWT"]:
             raise ValueError(
@@ -1448,6 +1469,7 @@ class fracture_mechanics_crack_initiation:
         Kf = 1 + q * (Kt - 1)
         sigma_epsilon = ((Kf * S_net) ** 2) / E
         delta_epsilon_delta_sigma = ((Kf * S_net * 2) ** 2) / E
+        self.__mean_stress_correction_method = mean_stress_correction_method
         if Kt * S_net > Sy:  # elastic and plastic (monotonic load model)
 
             def ramberg_osgood(sigma_epsilon, sigma, E, K, n):
@@ -1579,36 +1601,37 @@ class fracture_mechanics_crack_initiation:
                 Nf2 = fsolve(SWT_2Nf, x0=1000)[0]
         Nf = Nf2 / 2
         self.cycles_to_failure = Nf
-        if print_results is True:
-            colorprint(
-                "Results from fracture_mechanics_crack_initiation:",
-                bold=True,
-                underline=True,
-            )
-            print(
-                "A crack of 1 mm will be formed after:",
-                round(self.cycles_to_failure, 2),
-                str("cycles (" + str(round(self.cycles_to_failure * 2, 2))),
-                "reversals).",
-            )
-            print(
-                "Stresses in the component: Min =",
-                round(self.sigma_min, 4),
-                "MPa , Max =",
-                round(self.sigma_max, 4),
-                "MPa , Mean =",
-                self.sigma_mean,
-                "MPa.",
-            )
-            print(
-                "Strains in the component: Min =",
-                round(self.epsilon_min, 4),
-                ", Max =",
-                round(self.epsilon_max, 4),
-                ", Mean =",
-                self.epsilon_mean,
-            )
-            print("Mean stress correction method used:", mean_stress_correction_method)
+
+    def print_results(self):
+        colorprint(
+            "Results from fracture_mechanics_crack_initiation:",
+            bold=True,
+            underline=True,
+        )
+        print(
+            "A crack of 1 mm will be formed after:",
+            round(self.cycles_to_failure, 2),
+            str("cycles (" + str(round(self.cycles_to_failure * 2, 2))),
+            "reversals).",
+        )
+        print(
+            "Stresses in the component: Min =",
+            round(self.sigma_min, 4),
+            "MPa , Max =",
+            round(self.sigma_max, 4),
+            "MPa , Mean =",
+            self.sigma_mean,
+            "MPa.",
+        )
+        print(
+            "Strains in the component: Min =",
+            round(self.epsilon_min, 4),
+            ", Max =",
+            round(self.epsilon_max, 4),
+            ", Mean =",
+            self.epsilon_mean,
+        )
+        print("Mean stress correction method used:", self.__mean_stress_correction_method)
 
 
 class fracture_mechanics_crack_growth:
@@ -1675,11 +1698,6 @@ class fracture_mechanics_crack_growth:
         factor used for each of these in the simplified method is 1.12 for edge
         and 1.0 for center. The iterative method calculates these values exactly
         using a_initial and W (plate width).
-    print_results : bool, optional
-        Default is True. If True, the results will be printed to the console.
-    show_plot : bool, optional
-        Default is True. If True the iterative method's crack growth will be
-        plotted.
 
     Returns
     -------
@@ -1760,8 +1778,6 @@ class fracture_mechanics_crack_growth:
         D=None,
         a_final=None,
         crack_type="edge",
-        print_results=True,
-        show_plot=True,
     ):
         if m == 2:
             raise ValueError("m can not be 2")
@@ -1821,58 +1837,6 @@ class fracture_mechanics_crack_growth:
         self.Nf_total_simplified = Nf_tot
         self.final_crack_length_simplified = a_f * 1000 - d
         self.transition_length_simplified = lt * 1000
-        if print_results is True:
-            colorprint(
-                "Results from fracture_mechanics_crack_growth:",
-                bold=True,
-                underline=True,
-            )
-            print("SIMPLIFIED METHOD (keeping f(g), S_max, and a_crit as constant):")
-            if Nf_1 == 0:
-                print(
-                    "Crack growth was found in a single stage since the transition length (",
-                    round(self.transition_length_simplified, 2),
-                    "mm ) was less than the initial crack length",
-                    round(a_initial, 2),
-                    "mm.",
-                )
-            else:
-                print(
-                    "Crack growth was found in two stages since the transition length (",
-                    round(self.transition_length_simplified, 2),
-                    "mm ) due to the notch, was greater than the initial crack length (",
-                    round(a_initial, 2),
-                    "mm ).",
-                )
-                print(
-                    "Stage 1 (a_initial to transition length):",
-                    int(np.floor(self.Nf_stage_1_simplified)),
-                    "cycles",
-                )
-                print(
-                    "Stage 2 (transition length to a_final):",
-                    int(np.floor(self.Nf_stage_2_simplified)),
-                    "cycles",
-                )
-            if a_final is None or a_final >= a_crit * 1000 - d:
-                print(
-                    "Total cycles to failure:",
-                    int(np.floor(self.Nf_total_simplified)),
-                    "cycles.",
-                )
-                print(
-                    "Critical crack length to cause failure was found to be:",
-                    round(self.final_crack_length_simplified, 2),
-                    "mm.",
-                )
-            else:
-                print(
-                    "Total cycles to reach a_final:",
-                    int(np.floor(self.Nf_total_simplified)),
-                    "cycles.",
-                )
-                print("Note that a_final will not result in failure. To find cycles to failure, leave a_final as None.")
-            print("")
 
         # Iterative method (recalculating fg, S_max, af at each iteration)
         a = a_initial
@@ -1929,7 +1893,7 @@ class fracture_mechanics_crack_growth:
         self.Nf_total_iterative = N
         self.final_crack_length_iterative = a_crit * 1000 - d
         self.Nf_stage_2_iterative = N - self.Nf_stage_1_iterative
-        if a_final is not None and a_final > a_crit * 1000 - d:
+        if a_final is not None and a_final > self.final_crack_length_iterative:
             colorprint(
                 str(
                     "WARNING: During the iterative method, the specified a_final ("
@@ -1940,76 +1904,158 @@ class fracture_mechanics_crack_growth:
                 ),
                 text_color="red",
             )
-        if print_results is True:
-            print("ITERATIVE METHOD (recalculating f(g), S_max, and a_crit for each cycle):")
-            if a_initial > lt2:
-                print(
-                    "Crack growth was found in a single stage since the transition length (",
-                    round(self.transition_length_iterative, 2),
-                    "mm ) was less than the initial crack length",
-                    round(a_initial, 2),
-                    "mm.",
-                )
-            else:
-                print(
-                    "Crack growth was found in two stages since the transition length (",
-                    round(self.transition_length_iterative, 2),
-                    "mm ) due to the notch, was greater than the initial crack length (",
-                    round(a_initial, 2),
-                    "mm ).",
-                )
-                print(
-                    "Stage 1 (a_initial to transition length):",
-                    round(self.Nf_stage_1_iterative, 2),
-                    "cycles",
-                )
-                print(
-                    "Stage 2 (transition length to a_final):",
-                    round(self.Nf_stage_2_iterative, 2),
-                    "cycles",
-                )
-            if a_final is None or a_final >= a_crit * 1000 - d:
-                print(
-                    "Total cycles to failure:",
-                    round(self.Nf_total_iterative, 2),
-                    "cycles.",
-                )
-                print(
-                    "Critical crack length to cause failure was found to be:",
-                    round(self.final_crack_length_iterative, 2),
-                    "mm.",
-                )
-            else:
-                print(
-                    "Total cycles to reach a_final:",
-                    round(self.Nf_total_iterative, 2),
-                    "cycles.",
-                )
-                print("Note that a_final will not result in failure. To find cycles to failure, leave a_final as None.")
+        self.__Nf_1 = Nf_1
+        self.__a_initial = a_initial
+        self.__a_final = a_final
+        self.__N_array = N_array
+        self.__a_crit_array = a_crit_array
+        self.__a_array = a_array
+        self.__N = N
 
-        if show_plot is True:
-            plt.plot(N_array, a_crit_array, label="Critical crack length", color="darkorange")
-            plt.plot(N_array, a_array, label="Crack length", color="steelblue")
-            plt.xlabel("Cycles")
-            plt.ylabel("Crack length (mm)")
-            plt.ylim(0, max(a_crit_array) * 1.2)
-            plt.xlim(0, N * 1.1)
-            plt.plot(
-                [0, N, N],
-                [max(a_array), max(a_array), 0],
-                linestyle="--",
-                linewidth=1,
-                color="k",
+    def plot(self):
+        """
+        Plots the crack growth using an iterative method.
+
+        This method plots the critical crack length and crack length against the number of cycles.
+        It also adds labels, limits, and annotations to the plot.
+
+        Returns:
+            None
+        """
+        plt.plot(self.__N_array, self.__a_crit_array, label="Critical crack length", color="darkorange")
+        plt.plot(self.__N_array, self.__a_array, label="Crack length", color="steelblue")
+        plt.xlabel("Cycles")
+        plt.ylabel("Crack length (mm)")
+        plt.ylim(0, max(self.__a_crit_array) * 1.2)
+        plt.xlim(0, self.__N * 1.1)
+        plt.plot(
+            [0, self.__N, self.__N],
+            [max(self.__a_array), max(self.__a_array), 0],
+            linestyle="--",
+            linewidth=1,
+            color="k",
+        )
+        plt.text(
+            0,
+            max(self.__a_array),
+            str(" " + str(round(max(self.__a_array), 2)) + " mm"),
+            va="bottom",
+        )
+        plt.text(self.__N, 0, str(str(self.__N) + " cycles "), ha="right", va="bottom")
+        plt.legend(loc="upper right")
+        plt.title("Crack growth using iterative method")
+
+    def print_results(self):
+        """
+        Prints the results from the fracture_mechanics_crack_growth analysis.
+
+        This method prints the results obtained from the fracture mechanics crack growth analysis.
+        It displays the results for both the simplified method and the iterative method.
+        The results include information about the stages of crack growth, total cycles to failure,
+        and critical crack length.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        colorprint(
+            "Results from fracture_mechanics_crack_growth:",
+            bold=True,
+            underline=True,
+        )
+        print("SIMPLIFIED METHOD (keeping f(g), S_max, and a_crit as constant):")
+        if self.__Nf_1 == 0:
+            print(
+                "Crack growth was found in a single stage since the transition length (",
+                round(self.transition_length_simplified, 2),
+                "mm ) was less than the initial crack length",
+                round(self.__a_initial, 2),
+                "mm.",
             )
-            plt.text(
-                0,
-                max(a_array),
-                str(" " + str(round(max(a_array), 2)) + " mm"),
-                va="bottom",
+        else:
+            print(
+                "Crack growth was found in two stages since the transition length (",
+                round(self.transition_length_simplified, 2),
+                "mm ) due to the notch, was greater than the initial crack length (",
+                round(self.__a_initial, 2),
+                "mm ).",
             )
-            plt.text(N, 0, str(str(N) + " cycles "), ha="right", va="bottom")
-            plt.legend(loc="upper right")
-            plt.title("Crack growth using iterative method")
+            print(
+                "Stage 1 (a_initial to transition length):",
+                int(np.floor(self.Nf_stage_1_simplified)),
+                "cycles",
+            )
+            print(
+                "Stage 2 (transition length to a_final):",
+                int(np.floor(self.Nf_stage_2_simplified)),
+                "cycles",
+            )
+        if self.__a_final is None or self.__a_final >= self.final_crack_length_iterative:
+            print(
+                "Total cycles to failure:",
+                int(np.floor(self.Nf_total_simplified)),
+                "cycles.",
+            )
+            print(
+                "Critical crack length to cause failure was found to be:",
+                round(self.final_crack_length_simplified, 2),
+                "mm.",
+            )
+        else:
+            print(
+                "Total cycles to reach a_final:",
+                int(np.floor(self.Nf_total_simplified)),
+                "cycles.",
+            )
+            print("Note that a_final will not result in failure. To find cycles to failure, leave a_final as None.")
+        print("")
+        print("ITERATIVE METHOD (recalculating f(g), S_max, and a_crit for each cycle):")
+        if self.__a_initial > self.transition_length_iterative:
+            print(
+                "Crack growth was found in a single stage since the transition length (",
+                round(self.transition_length_iterative, 2),
+                "mm ) was less than the initial crack length",
+                round(self.__a_initial, 2),
+                "mm.",
+            )
+        else:
+            print(
+                "Crack growth was found in two stages since the transition length (",
+                round(self.transition_length_iterative, 2),
+                "mm ) due to the notch, was greater than the initial crack length (",
+                round(self.__a_initial, 2),
+                "mm ).",
+            )
+            print(
+                "Stage 1 (a_initial to transition length):",
+                round(self.Nf_stage_1_iterative, 2),
+                "cycles",
+            )
+            print(
+                "Stage 2 (transition length to a_final):",
+                round(self.Nf_stage_2_iterative, 2),
+                "cycles",
+            )
+        if self.__a_final is None or self.__a_final >= self.final_crack_length_iterative:
+            print(
+                "Total cycles to failure:",
+                round(self.Nf_total_iterative, 2),
+                "cycles.",
+            )
+            print(
+                "Critical crack length to cause failure was found to be:",
+                round(self.final_crack_length_iterative, 2),
+                "mm.",
+            )
+        else:
+            print(
+                "Total cycles to reach a_final:",
+                round(self.Nf_total_iterative, 2),
+                "cycles.",
+            )
+            print("Note that a_final will not result in failure. To find cycles to failure, leave a_final as None.")
 
 
 def creep_rupture_curves(temp_array, stress_array, TTF_array, stress_trace=None, temp_trace=None):
@@ -2178,8 +2224,6 @@ class acceleration_factor:
         Activation energy (eV)
     AF : float, int, optional
         Acceleration factor
-    print_results : bool, optional
-        Default is True. If True the results will be printed to the console.
 
     Returns
     -------
@@ -2199,7 +2243,7 @@ class acceleration_factor:
 
     """
 
-    def __init__(self, AF=None, T_use=None, T_acc=None, Ea=None, print_results=True):
+    def __init__(self, AF=None, T_use=None, T_acc=None, Ea=None):
         if T_use is None:
             raise ValueError("T_use must be specified")
         args = [AF, T_acc, Ea]
@@ -2212,7 +2256,7 @@ class acceleration_factor:
                 "You must specify two out of three of the optional inputs (T_acc, AF, Ea) and the third one will be found.",
             )
 
-        if AF is None:
+        if AF is None and Ea is not None and T_acc is not None:
             a = Ea / (8.617333262145 * 10**-5)
             AF = np.exp(a / (T_use + 273.15) - a / (T_acc + 273.15))
             self.AF = AF
@@ -2220,23 +2264,30 @@ class acceleration_factor:
             self.T_acc = T_acc
             self.T_use = T_use
 
-        if Ea is None:
+        elif Ea is None and AF is not None and T_acc is not None:
             Ea = np.log(AF) * (8.617333262145 * 10**-5) / (1 / (T_use + 273.15) - 1 / (T_acc + 273.15))
             self.AF = AF
             self.Ea = Ea
             self.T_acc = T_acc
             self.T_use = T_use
 
-        if T_acc is None:
+        elif T_acc is None and AF is not None and Ea is not None:
             T_acc = (1 / (1 / (T_use + 273.15) - np.log(AF) * (8.617333262145 * 10**-5) / Ea)) - 273.15
             self.AF = AF
             self.Ea = Ea
             self.T_acc = T_acc
             self.T_use = T_use
+        elif T_acc is not None and AF is not None and Ea is not None:
+            self.AF = AF
+            self.Ea = Ea
+            self.T_acc = T_acc
+            self.T_use = T_use
+        else:
+            raise ValueError("Two of the three optional inputs must be specified")
 
-        if print_results is True:
-            colorprint("Results from acceleration_factor:", bold=True, underline=True)
-            print("Acceleration Factor:", self.AF)
-            print("Use Temperature:", self.T_use, "°C")
-            print("Accelerated Temperature:", self.T_acc, "°C")
-            print("Activation Energy:", self.Ea, "eV")
+    def print_results(self):
+        colorprint("Results from acceleration_factor:", bold=True, underline=True)
+        print("Acceleration Factor:", self.AF)
+        print("Use Temperature:", self.T_use, "°C")
+        print("Accelerated Temperature:", self.T_acc, "°C")
+        print("Activation Energy:", self.Ea, "eV")

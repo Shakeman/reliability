@@ -28,6 +28,7 @@ import time
 
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import scipy.stats as ss
 
@@ -865,11 +866,6 @@ class chi2test:
         'auto'. For more information on these methods, see the numpy
         documentation:
         https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html
-    print_results : bool, optional
-        If True the results will be printed. Default = True
-    show_plot : bool, optional
-        If True a plot of the distribution and histogram will be generated.
-        Default = True.
 
     Returns
     -------
@@ -896,11 +892,9 @@ class chi2test:
     def __init__(
         self,
         distribution,
-        data,
+        data: list[float] | npt.NDArray[np.float64],
         significance=0.05,
         bins=None,
-        print_results=True,
-        show_plot=True,
     ):
         # ensure the input is a distribution object
         standard_distributions = [
@@ -923,7 +917,10 @@ class chi2test:
             raise ValueError(
                 "distribution must be a probability distribution object from the reliability.Distributions module. First define the distribution using reliability.Distributions.___",
             )
-
+        if type(distribution) in special_distributions:
+            self.__dist_title = distribution.name2
+        else:
+            self.__dist_title = distribution.param_title_long
         # ensure data is a list or array
         if type(data) not in [list, np.ndarray]:
             raise ValueError("data must be a list or array")
@@ -944,7 +941,9 @@ class chi2test:
             raise ValueError(
                 "bins must be a list or array of the bin edges OR a string for the bin edge method from numpy. String options are auto, fd, doane, scott, stone, rice, sturges, or sqrt. For more information see the numpy documentation on numpy.histogram_bin_edges",
             )
-
+        self.__distribution = distribution
+        self.__significance = significance
+        self.__data: list[float] | npt.NDArray[np.float64] = data
         observed, bin_edges = np.histogram(
             data,
             bins=bins,
@@ -1006,7 +1005,7 @@ class chi2test:
                 ),
             )
 
-        self.bin_edges = bin_edges
+        self.bin_edges: npt.NDArray[np.float64] = bin_edges
         self.chisquared_statistic, _ = ss.chisquare(f_obs=observed, f_exp=expected, ddof=k)
         self.chisquared_critical_value = ss.chi2.ppf(1 - significance, df=n - k - 1)
         if self.chisquared_statistic < self.chisquared_critical_value:
@@ -1014,51 +1013,74 @@ class chi2test:
         else:
             self.hypothesis = "REJECT"
 
-        if print_results is True:
-            colorprint("Results from Chi-squared test:", bold=True, underline=True)
-            print("Chi-squared statistic:", self.chisquared_statistic)
-            print("Chi-squared critical value:", self.chisquared_critical_value)
+    def print_results(self):
+        """
+        Prints the results from the Chi-squared test.
 
-            if type(distribution) in special_distributions:
-                dist_title = distribution.name2
-            else:
-                dist_title = distribution.param_title_long
-            print(
-                "At the",
-                significance,
-                "significance level, we can",
-                self.hypothesis,
-                "the hypothesis that the data comes from a",
-                dist_title.lower(),
-            )
+        This method prints the Chi-squared statistic, Chi-squared critical value,
+        and the conclusion about the hypothesis based on the significance level.
 
-        if show_plot is True:
-            bin_edges_to_plot = np.nan_to_num(x=bin_edges, posinf=max(data) * 1000, neginf=min(data))
-            plt.hist(
-                x=data,
-                bins=bin_edges_to_plot,
-                density=True,
-                cumulative=True,
-                color="lightgrey",
-                edgecolor="k",
-                linewidth=0.5,
-                label="Cumulative Histogram",
-            )
-            distribution.CDF(label=dist_title)
-            plt.title("Chi-squared test\nHypothesised distribution CDF vs cumulative histogram of data")
-            if type(distribution) == DSZI_Model:
-                xmax = max(data) * 1.1
-                xmin = min(data)
-            else:
-                xmax = max(distribution.quantile(0.9999), max(data))
-                xmin = min(distribution.quantile(0.0001), min(data))
+        Parameters:
+            None
 
-            if xmin > 0 and xmin / (xmax - xmin) < 0.05:  # if xmin is near zero then set it to zero
-                xmin = 0
-            plt.xlim(xmin, xmax)
-            plt.ylim(0, 1.1)
-            plt.legend(loc="upper left")
-            plt.subplots_adjust(top=0.9)
+        Returns:
+            None
+        """
+        colorprint("Results from Chi-squared test:", bold=True, underline=True)
+        print("Chi-squared statistic:", self.chisquared_statistic)
+        print("Chi-squared critical value:", self.chisquared_critical_value)
+        print(
+            "At the",
+            self.__significance,
+            "significance level, we can",
+            self.hypothesis,
+            "the hypothesis that the data comes from a",
+            self.__dist_title.lower(),
+        )
+
+    def plot(self):
+        """
+        Plots a cumulative histogram of the data and compares it with the hypothesized distribution's cumulative distribution function (CDF).
+
+        This method uses the matplotlib library to create a histogram of the data, with the bin edges determined by the `bin_edges` attribute.
+        The histogram is plotted as a cumulative histogram with the `density` parameter set to True.
+        The color, edgecolor, and linewidth of the histogram are customized.
+        The method also calls the `CDF` method of the `__distribution` attribute to plot the CDF of the hypothesized distribution.
+        The title of the plot is set to "Chi-squared test\nHypothesized distribution CDF vs cumulative histogram of data".
+        The x-axis limits are determined based on the type of distribution and the data.
+        The y-axis limits are set to 0 and 1.1.
+        A legend is added to the plot and the layout is adjusted.
+
+        Returns:
+            None
+        """
+        bin_edges_to_plot = np.nan_to_num(x=self.bin_edges, posinf=max(self.__data) * 1000, neginf=min(self.__data))
+        bin_edges_to_plot = bin_edges_to_plot.tolist()
+        plt.hist(
+            x=self.__data,
+            bins=bin_edges_to_plot,
+            density=True,
+            cumulative=True,
+            color="lightgrey",
+            edgecolor="k",
+            linewidth=0.5,
+            label="Cumulative Histogram",
+        )
+        self.__distribution.CDF(label=self.__dist_title)
+        plt.title("Chi-squared test\nHypothesized distribution CDF vs cumulative histogram of data")
+        if type(self.__distribution) == DSZI_Model:
+            xmax = max(self.__data) * 1.1
+            xmin = min(self.__data)
+        else:
+            xmax = max(self.__distribution.quantile(0.9999), max(self.__data))  # type: ignore
+            xmin = min(self.__distribution.quantile(0.0001), min(self.__data))  # type: ignore
+
+        if xmin > 0 and xmin / (xmax - xmin) < 0.05:  # if xmin is near zero then set it to zero
+            xmin = 0
+        plt.xlim(xmin, xmax)
+        plt.ylim(0, 1.1)
+        plt.legend(loc="upper left")
+        plt.subplots_adjust(top=0.9)
 
 
 class KStest:
@@ -1080,11 +1102,6 @@ class KStest:
     significance : float
         This is the complement of confidence. 0.05 significance is the same as
         95% confidence. Must be between 0 and 0.5. Default = 0.05.
-    print_results : bool, optional
-        If True the results will be printed. Default = True
-    show_plot : bool, optional
-        If True a plot of the distribution CDF and empirical CDF will be
-        generated. Default = True.
 
     Returns
     -------
@@ -1098,7 +1115,7 @@ class KStest:
 
     """
 
-    def __init__(self, distribution, data, significance=0.05, print_results=True, show_plot=True):
+    def __init__(self, distribution, data, significance=0.05):
         # ensure the input is a distribution object
         standard_distributions = [
             Weibull_Distribution,
@@ -1139,8 +1156,16 @@ class KStest:
             data = np.sort(data)
         else:
             raise ValueError("data must be an array or list")
-
-        n = len(data)
+        self.__distribution = distribution
+        self.__significance: float = significance
+        self.__data: list[float] | npt.NDArray[np.float64] = data
+        if type(distribution) in special_distributions:
+            dist_title = distribution.name2
+        else:
+            dist_title = distribution.param_title_long
+        self.__dist_title = dist_title
+        n: int = len(data)
+        self.__n = n
         fitted_cdf = distribution.CDF(xvals=data, show_plot=False)
 
         i_array = np.arange(1, n + 1)  # array of 1 to n
@@ -1150,60 +1175,89 @@ class KStest:
             np.hstack([abs(fitted_cdf - Sn), abs(fitted_cdf - Sn_1)]),
         )  # Kolmogorov-Smirnov test statistic
         self.KS_critical_value = ss.kstwo.ppf(q=1 - significance, n=n)
-
+        self.__Sn_1 = Sn_1
         if self.KS_statistic < self.KS_critical_value:
             self.hypothesis = "ACCEPT"
         else:
             self.hypothesis = "REJECT"
 
-        if print_results is True:
-            if type(distribution) in special_distributions:
-                dist_title = distribution.name2
-            else:
-                dist_title = distribution.param_title_long
+    def print_results(self):
+        """
+        Print the results from the Kolmogorov-Smirnov test.
 
-            colorprint("Results from Kolmogorov-Smirnov test:", bold=True, underline=True)
-            print("Kolmogorov-Smirnov statistic:", self.KS_statistic)
-            print("Kolmogorov-Smirnov critical value:", self.KS_critical_value)
+        This method prints the Kolmogorov-Smirnov statistic, the Kolmogorov-Smirnov critical value,
+        and the conclusion about the hypothesis based on the significance level and distribution.
 
-            print(
-                "At the",
-                significance,
-                "significance level, we can",
-                self.hypothesis,
-                "the hypothesis that the data comes from a",
-                dist_title.lower(),
-            )
+        Parameters:
+            None
 
-        if show_plot is True:
-            Sn_all = np.hstack([Sn_1, 1])
-            SN_plot_x = [0]
-            SN_plot_y = [0]
-            for idx in np.arange(n):  # build the step plot
-                SN_plot_x.extend((data[idx], data[idx]))
-                SN_plot_y.extend((Sn_all[idx], Sn_all[idx + 1]))
-            SN_plot_x.append(max(data) * 1000)
-            SN_plot_y.append(1)
-            distribution.CDF(label=dist_title)
-            plt.plot(SN_plot_x, SN_plot_y, label="Empirical CDF")
+        Returns:
+            None
+        """
+        colorprint("Results from Kolmogorov-Smirnov test:", bold=True, underline=True)
+        print("Kolmogorov-Smirnov statistic:", self.KS_statistic)
+        print("Kolmogorov-Smirnov critical value:", self.KS_critical_value)
 
-            if type(distribution) == DSZI_Model:
-                xmax = max(data) * 1.2
-                xmin = min(data)
-            else:
-                xmax = max(distribution.quantile(0.9999), max(data))
-                xmin = min(distribution.quantile(0.0001), min(data))
+        print(
+            "At the",
+            self.__significance,
+            "significance level, we can",
+            self.hypothesis,
+            "the hypothesis that the data comes from a",
+            self.__dist_title.lower(),
+        )
 
-            if xmin > 0 and xmin / (xmax - xmin) < 0.05:  # if xmin is near zero then set it to zero
-                xmin = 0
-            plt.xlim(xmin, xmax)
-            plt.ylim(0, 1.1)
-            plt.title("Kolmogorov-Smirnov test\nHypothesised distribution CDF vs empirical CDF of data")
-            plt.legend(loc="upper left")
-            plt.subplots_adjust(top=0.9)
+    def plot(self):
+        """
+        Plots the empirical cumulative distribution function (CDF) of data against the hypothesized distribution CDF.
+
+        This method builds a step plot by iterating over the data and the corresponding Sn_all values. It then adds the
+        maximum data value multiplied by 1000 and 1 to the plot. The x-axis limits are determined based on the type of
+        distribution. If the minimum x-value is near zero, it is set to zero. The plot is then displayed with the title
+        "Kolmogorov-Smirnov test\nHypothesized distribution CDF vs empirical CDF of data" and a legend in the upper left
+        corner.
+
+        Note: This method assumes that the __data, __SSn_1, __n, __distribution, and __dist_title attributes have been
+        properly initialized.
+
+        Returns:
+            None
+        """
+        Sn_all = np.hstack([self.__Sn_1, 1])
+        SN_plot_x = [0]
+        SN_plot_y = [0]
+        for idx in np.arange(self.__n):  # build the step plot
+            SN_plot_x.extend((self.__data[idx], self.__data[idx]))  # type: ignore
+            SN_plot_y.extend((Sn_all[idx], Sn_all[idx + 1]))  # type: ignore
+        SN_plot_x.append(max(self.__data) * 1000)  # type: ignore
+        SN_plot_y.append(1)
+        self.__distribution.CDF(label=self.__dist_title)
+        plt.plot(SN_plot_x, SN_plot_y, label="Empirical CDF")
+
+        if type(self.__distribution) == DSZI_Model:
+            xmax = max(self.__data) * 1.2
+            xmin = min(self.__data)
+        else:
+            xmax = max(self.__distribution.quantile(0.9999), max(self.__data))
+            xmin = min(self.__distribution.quantile(0.0001), min(self.__data))
+
+        if xmin > 0 and xmin / (xmax - xmin) < 0.05:  # if xmin is near zero then set it to zero
+            xmin = 0
+        plt.xlim(xmin, xmax)
+        plt.ylim(0, 1.1)
+        plt.title("Kolmogorov-Smirnov test\nHypothesized distribution CDF vs empirical CDF of data")
+        plt.legend(loc="upper left")
+        plt.subplots_adjust(top=0.9)
 
 
-def likelihood_plot(distribution, failures, right_censored=None, CI: float | list[float]|None =0.95, method="MLE", color=None):
+def likelihood_plot(
+    distribution,
+    failures,
+    right_censored=None,
+    CI: float | list[float] | npt.NDArray[np.float64] = 0.95,
+    method="MLE",
+    color=None,
+):
     """Generates a likelihood contour plot. This is used for comparing distributions for statistically significant
     differences.
 

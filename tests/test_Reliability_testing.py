@@ -62,7 +62,7 @@ def test_reliability_test_duration():
 
 
 def test_chi2test():
-    data = mileage().failures
+    data = np.asarray(mileage().failures)
     dist = Normal_Distribution(mu=30011, sigma=10472)
     bins = [
         0,
@@ -76,7 +76,9 @@ def test_chi2test():
         46226,
         np.inf,
     ]  # it is not necessary to specify the bins and leaving them unspecified is usually best
-    chisq = chi2test(distribution=dist, data=data, bins=bins, show_plot=True, print_results=True)
+    chisq = chi2test(distribution=dist, data=data, bins=bins)
+    chisq.print_results()
+    chisq.plot()
     assert_allclose(chisq.chisquared_critical_value, 12.591587243743977, rtol=rtol, atol=atol)
     assert_allclose(chisq.chisquared_statistic, 3.1294947845652, rtol=rtol, atol=atol)
     assert chisq.hypothesis == "ACCEPT"
@@ -85,7 +87,9 @@ def test_chi2test():
 def test_KStest():
     data = mileage().failures
     dist = Normal_Distribution(mu=30011, sigma=10472)
-    results = KStest(distribution=dist, data=data, print_results=True, show_plot=True)
+    results = KStest(distribution=dist, data=data)
+    results.print_results()
+    results.plot()
     assert_allclose(results.KS_critical_value, 0.13402791648569978, rtol=rtol, atol=atol)
     assert_allclose(results.KS_statistic, 0.07162465859560846, rtol=rtol, atol=atol)
     assert results.hypothesis == "ACCEPT"

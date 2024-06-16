@@ -1,4 +1,3 @@
-
 from typing import Any
 
 import matplotlib.pyplot as plt
@@ -20,6 +19,7 @@ from reliability.Utils import (
 
 dec = 4  # number of decimals to use when rounding descriptive statistics and parameter titles
 np.seterr(divide="ignore", invalid="ignore")  # ignore the divide by zero warnings
+
 
 class Normal_Distribution:
     """Normal probability distribution. Creates a probability distribution object.
@@ -261,7 +261,7 @@ class Normal_Distribution:
         plt.subplots_adjust(hspace=0.3, top=0.84)
         plt.show()
 
-    def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
+    def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs) -> npt.NDArray[np.float64]:
         """Plots the PDF (probability density function)
 
         Parameters
@@ -302,8 +302,7 @@ class Normal_Distribution:
             show_plot,
         )  # lgtm [py/mismatched-multiple-assignment]
 
-        pdf = ss.norm.pdf(X, self.mu, self.sigma)
-        pdf = unpack_single_arrays(pdf)
+        pdf: npt.NDArray[np.float64] = ss.norm.pdf(X, self.mu, self.sigma)
 
         if show_plot is True:
             limits = get_axes_limits()  # get the previous axes limits
@@ -340,7 +339,7 @@ class Normal_Distribution:
         CI_y=None,
         CI_x=None,
         **kwargs,
-    ) -> tuple[Any, Any | npt.NDArray, Any] | Any :
+    ) -> tuple[Any, Any | npt.NDArray, Any] | Any:
         """Plots the CDF (cumulative distribution function)
 
         Parameters
@@ -796,7 +795,7 @@ class Normal_Distribution:
         else:
             raise ValueError("Quantile must be of type float, list, array")
         ppf = ss.norm.ppf(q, loc=self.mu, scale=self.sigma)
-        return unpack_single_arrays(ppf)
+        return ppf
 
     def inverse_SF(self, q):
         """Inverse survival function calculator
@@ -821,7 +820,7 @@ class Normal_Distribution:
         else:
             raise ValueError("Quantile must be of type float, list, array")
         isf = ss.norm.isf(q, loc=self.mu, scale=self.sigma)
-        return unpack_single_arrays(isf)
+        return isf
 
     def mean_residual_life(self, t):
         """Mean Residual Life calculator
@@ -879,7 +878,7 @@ class Normal_Distribution:
         print("Skewness =", self.skewness)
         print("Excess kurtosis =", self.excess_kurtosis)
 
-    def random_samples(self, number_of_samples: int, seed: int | None =None) -> npt.NDArray[np.float64]:
+    def random_samples(self, number_of_samples: int, seed: int | None = None) -> npt.NDArray[np.float64]:
         """Draws random samples from the probability distribution
 
         Parameters

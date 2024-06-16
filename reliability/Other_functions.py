@@ -130,17 +130,20 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
         )
 
     trapezoids = 1000000  # the number of trapezoids used in the integration
-    x = np.linspace(
+    x: npt.NDArray[np.float64] = np.linspace(
         min(stress.quantile(1e-8), strength.quantile(1e-8)),
         max(strength.quantile(1 - 1e-8), stress.quantile(1 - 1e-8)),
         trapezoids,
     )  # we take the min and max here since there may be cases when stress > strength
 
-    prob_of_failure = np.trapz(strength.PDF(x, show_plot=False) * stress.SF(x, show_plot=False), x)
+    prob_of_failure = np.trapz(strength.PDF(x, show_plot=False) * stress.SF(x, show_plot=False), x)  # type: ignore
     if prob_of_failure > 1:
         colorprint(
             "WARNING: The probability of failure is wrong. One of the distributions likely has an asymptote where the values along the y-axis approach infinity which has caused the integration to fail. There is no solution to this other than to use a distribution that does not have an asymptote.",
             text_color="red",
+        )
+        raise ValueError(
+            "The probability of failure is greater than 1. This is likely due to an asymptote in one of the distributions."
         )
 
     if show_plot is True:
@@ -184,7 +187,7 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
             xvals,
             stress_PDF,
             strength_PDF,
-            where=mask,
+            where=mask,  # type: ignore
             color="steelblue",
             alpha=0.3,
             linewidth=0,
@@ -194,7 +197,7 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
             xvals,
             stress_PDF,
             strength_PDF,
-            where=~mask,
+            where=~mask,  # type: ignore
             color="darkorange",
             alpha=0.3,
             linewidth=0,
@@ -316,7 +319,7 @@ def stress_strength_normal(stress, strength, show_plot=True, print_results=True,
             xvals,
             stress_PDF,
             strength_PDF,
-            where=mask,
+            where=mask,  # type: ignore
             color="steelblue",
             alpha=0.3,
             linewidth=0,
@@ -326,7 +329,7 @@ def stress_strength_normal(stress, strength, show_plot=True, print_results=True,
             xvals,
             stress_PDF,
             strength_PDF,
-            where=~mask,
+            where=~mask,  # type: ignore
             color="darkorange",
             alpha=0.3,
             linewidth=0,
@@ -841,9 +844,9 @@ def histogram(data, white_above=None, bins=None, density=True, cumulative=False,
     )  # plots the histogram of the data
 
     if white_above is not None:
-        for i in range(np.argmin(abs(np.array(bins_out) - white_above)), len(patches)):
+        for i in range(np.argmin(abs(np.array(bins_out) - white_above)), len(patches)):  # type: ignore
             # this is to shade part of the histogram as white
-            patches[i].set_facecolor("white")
+            patches[i].set_facecolor("white")  # type: ignore
 
 
 class make_right_censored_data:
@@ -889,7 +892,7 @@ class make_right_censored_data:
 
     """
 
-    def __init__(self, data: npt.NDArray[np.float64], threshold=None, fraction_censored=None, seed=None):
+    def __init__(self, data: npt.NDArray[np.float64] | list[int], threshold=None, fraction_censored=None, seed=None):
         if type(data) not in [list, np.ndarray]:
             raise ValueError("data must be a list or array")
         data = np.asarray(data)
@@ -902,7 +905,7 @@ class make_right_censored_data:
             fraction_censored = 0.5  # default to 50% multiply censored
 
         # multiply censored
-        if threshold is None:
+        if threshold is None and fraction_censored is not None:
             if seed is not None:
                 np.random.seed(seed)
             # randomize the order of the data in case it was ordered
@@ -921,9 +924,11 @@ class make_right_censored_data:
             self.failures = data[number_of_items_to_censor:]
 
         # singly censored
-        else:
+        elif threshold is not None and fraction_censored is None:
             self.failures = data[data <= threshold]
             self.right_censored = np.ones_like(data[data > threshold]) * threshold
+        else:
+            raise ValueError("An error occurred. Please check the inputs to make_right_censored_data")
 
 
 class make_ALT_data:
@@ -1088,13 +1093,13 @@ class make_ALT_data:
             if c <= 0:
                 raise ValueError("c must be positive")
             life_model = c * np.exp(a / stress_1 + b / stress_2)
-        elif life_stress_model == "Power_Exponential":
+        elif life_stress_model == "Power_Exponential" and stress_2 is not None:
             if a is None or c is None or n is None:
                 raise ValueError("a, c, and n must be specified for the Power_Exponential life-stress model")
             if c <= 0:
                 raise ValueError("c must be positive")
             life_model = c * (stress_2 ** float(n)) * np.exp(a / stress_1)
-        elif life_stress_model == "Dual_Power":
+        elif life_stress_model == "Dual_Power" and stress_2 is not None:
             if c is None or n is None or m is None:
                 raise ValueError("c, n, and m must be specified for the Dual_Power life-stress model")
             if c <= 0:
@@ -1147,7 +1152,7 @@ class make_ALT_data:
             if fraction_censored == 0:
                 failures.extend(raw_data)
                 failure_stresses_1.extend(list(np.ones_like(raw_data) * stress_1[i]))
-                if dual_stress is True:
+                if dual_stress is True and stress_2 is not None:
                     failure_stresses_2.extend(list(np.ones_like(raw_data) * stress_2[i]))
             else:
                 data = make_right_censored_data(raw_data, fraction_censored=fraction_censored, seed=seeds[i])
@@ -1155,7 +1160,7 @@ class make_ALT_data:
                 right_censored.extend(data.right_censored)
                 failure_stresses_1.extend(list(np.ones_like(data.failures) * stress_1[i]))
                 right_censored_stresses_1.extend(list(np.ones_like(data.right_censored) * stress_1[i]))
-                if dual_stress is True:
+                if dual_stress is True and stress_2 is not None:
                     failure_stresses_2.extend(list(np.ones_like(data.failures) * stress_2[i]))
                     right_censored_stresses_2.extend(list(np.ones_like(data.right_censored) * stress_2[i]))
 
@@ -1446,9 +1451,9 @@ class distribution_explorer:
         height = 0.03
         self.active_color = "steelblue"
         self.background_color = "whitesmoke"
-        self.ax0 = plt.axes([x0, 0.15, width, height], facecolor=self.background_color)
-        self.ax1 = plt.axes([x0, 0.1, width, height], facecolor=self.background_color)
-        self.ax2 = plt.axes([x0, 0.05, width, height], facecolor=self.background_color)
+        self.ax0 = plt.axes((x0, 0.15, width, height), facecolor=self.background_color)
+        self.ax1 = plt.axes((x0, 0.1, width, height), facecolor=self.background_color)
+        self.ax2 = plt.axes((x0, 0.05, width, height), facecolor=self.background_color)
         self.s0 = Slider(
             self.ax0,
             "Alpha",
@@ -1476,7 +1481,7 @@ class distribution_explorer:
         plt.subplots_adjust(left=0.07, right=0.98, top=0.9, bottom=0.25, wspace=0.18, hspace=0.30)
 
         # initialise the radio button
-        radio_ax = plt.axes([0.708, 0.25, 0.27, 0.28], facecolor=self.background_color)
+        radio_ax = plt.axes((0.708, 0.25, 0.27, 0.28), facecolor=self.background_color)
         radio_ax.set_title("Distribution")
         self.radio = RadioButtons(
             radio_ax,

@@ -35,6 +35,8 @@ dec = 3  # number of decimals to use when rounding fitted parameters in labels
 pd.options.display.float_format = "{:g}".format  # improves formatting of numbers in dataframe
 pd.options.display.max_columns = 9  # shows the dataframe without ... truncation
 pd.options.display.width = 200  # prevents wrapping after default 80 characters
+
+
 class Fit_Weibull_2P:
     """Fits a two parameter Weibull distribution (alpha,beta) to the data provided.
 
@@ -160,8 +162,8 @@ class Fit_Weibull_2P:
         print_results=True,
         CI=0.95,
         quantiles=None,
-        CI_type: str | None ="time",
-        method: str | None="MLE",
+        CI_type: str | None = "time",
+        method: str | None = "MLE",
         optimizer=None,
         force_beta=None,
         downsample_scatterplot=True,
@@ -227,7 +229,7 @@ class Fit_Weibull_2P:
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.alpha, self.beta]
         if force_beta is None:
-            hessian_matrix = hessian(Fit_Weibull_2P.LL)( # type: ignore
+            hessian_matrix = hessian(Fit_Weibull_2P.LL)(  # type: ignore
                 np.array(tuple(params)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
@@ -262,7 +264,7 @@ class Fit_Weibull_2P:
                 self.beta_lower = self.beta
 
         else:  # this is for when force beta is specified
-            hessian_matrix = hessian(Fit_Weibull_2P.LL_fb)( # type: ignore
+            hessian_matrix = hessian(Fit_Weibull_2P.LL_fb)(  # type: ignore
                 np.array((self.alpha,)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
@@ -360,9 +362,9 @@ class Fit_Weibull_2P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
+            self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
@@ -851,7 +853,7 @@ class Fit_Weibull_2P_grouped:
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.alpha, self.beta]
         if force_beta is None:
-            hessian_matrix = hessian(Fit_Weibull_2P_grouped.LL)( # type: ignore
+            hessian_matrix = hessian(Fit_Weibull_2P_grouped.LL)(  # type: ignore
                 np.array(tuple(params)),
                 np.array(tuple(failure_times)),
                 np.array(tuple(right_censored_times)),
@@ -888,7 +890,7 @@ class Fit_Weibull_2P_grouped:
                 self.beta_lower = self.beta
 
         else:  # this is for when force beta is specified
-            hessian_matrix = hessian(Fit_Weibull_2P_grouped.LL_fb)( # type: ignore
+            hessian_matrix = hessian(Fit_Weibull_2P_grouped.LL_fb)(  # type: ignore
                 np.array((self.alpha,)),
                 np.array(tuple(failure_times)),
                 np.array(tuple(right_censored_times)),
@@ -1214,7 +1216,7 @@ class Fit_Weibull_3P:
         quantiles=None,
         CI_type="time",
         optimizer=None,
-        method: str | None="MLE",
+        method: str | None = "MLE",
         downsample_scatterplot=True,
         **kwargs,
     ):
@@ -1304,7 +1306,7 @@ class Fit_Weibull_3P:
             params_2P = [self.alpha, self.beta]
             params_3P = [self.alpha, self.beta, self.gamma]
             # here we need to get alpha_SE and beta_SE from the Weibull_2P by providing an adjusted dataset (adjusted for gamma)
-            hessian_matrix = hessian(Fit_Weibull_2P.LL)( # type: ignore
+            hessian_matrix = hessian(Fit_Weibull_2P.LL)(  # type: ignore
                 np.array(tuple(params_2P)),
                 np.array(tuple(failures - self.gamma)),
                 np.array(tuple(right_censored - self.gamma)),
@@ -1312,7 +1314,7 @@ class Fit_Weibull_3P:
             try:
                 covariance_matrix = np.linalg.inv(hessian_matrix)
                 # this is to get the gamma_SE. Unfortunately this approach for alpha_SE and beta_SE give SE values that are very large resulting in incorrect CI plots. This is the same method used by Reliasoft
-                hessian_matrix_for_gamma = hessian(Fit_Weibull_3P.LL)( # type: ignore
+                hessian_matrix_for_gamma = hessian(Fit_Weibull_3P.LL)(  # type: ignore
                     np.array(tuple(params_3P)),
                     np.array(tuple(failures)),
                     np.array(tuple(right_censored)),
@@ -1798,7 +1800,7 @@ class Fit_Weibull_Mixture:
 
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
-        hessian_matrix = hessian(Fit_Weibull_Mixture.LL)( # type: ignore
+        hessian_matrix = hessian(Fit_Weibull_Mixture.LL)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -2239,7 +2241,7 @@ class Fit_Weibull_CR:
 
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
-        hessian_matrix = hessian(Fit_Weibull_CR.LL)( # type: ignore
+        hessian_matrix = hessian(Fit_Weibull_CR.LL)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -2558,7 +2560,7 @@ class Fit_Weibull_DSZI:
         # confidence interval estimates of parameters. This uses the Fisher Matrix so it can be applied to both MLE and LS estimates.
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.alpha, self.beta, self.DS, self.ZI]
-        hessian_matrix = hessian(Fit_Weibull_DSZI.LL)( # type: ignore
+        hessian_matrix = hessian(Fit_Weibull_DSZI.LL)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures_zeros)),
             np.array(tuple(failures_no_zeros)),
@@ -2900,7 +2902,7 @@ class Fit_Weibull_DS:
         # confidence interval estimates of parameters. This uses the Fisher Matrix so it can be applied to both MLE and LS estimates.
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.alpha, self.beta, self.DS]
-        hessian_matrix = hessian(Fit_Weibull_DS.LL)( # type: ignore
+        hessian_matrix = hessian(Fit_Weibull_DS.LL)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -2966,9 +2968,9 @@ class Fit_Weibull_DS:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
+            self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
@@ -3201,7 +3203,7 @@ class Fit_Weibull_ZI:
         # confidence interval estimates of parameters. This uses the Fisher Matrix so it can be applied to both MLE and LS estimates.
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.alpha, self.beta, self.ZI]
-        hessian_matrix = hessian(Fit_Weibull_ZI.LL)( # type: ignore
+        hessian_matrix = hessian(Fit_Weibull_ZI.LL)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures_zeros)),
             np.array(tuple(failures_no_zeros)),
@@ -3290,38 +3292,38 @@ class Fit_Weibull_ZI:
         self.__n = n
 
     def print_results(self) -> None:
-            """
-            Prints the results of the Weibull fitting analysis.
+        """
+        Prints the results of the Weibull fitting analysis.
 
-            This method prints various statistics and results obtained from the Weibull fitting analysis,
-            including the confidence interval, analysis method, optimizer used, number of failures and right censored data points,
-            as well as the results and goodness of fit statistics.
+        This method prints various statistics and results obtained from the Weibull fitting analysis,
+        including the confidence interval, analysis method, optimizer used, number of failures and right censored data points,
+        as well as the results and goodness of fit statistics.
 
-            Returns:
-                None
-            """
-            CI_rounded = self.__CI * 100
-            if CI_rounded % 1 == 0:
-                CI_rounded = int(self.__CI * 100)
-            frac_censored = len(self.__right_censored) / self.__n * 100
-            if frac_censored % 1 < 1e-10:
-                frac_censored = int(frac_censored)
-            colorprint(
-                str("Results from Fit_Weibull_ZI (" + str(CI_rounded) + "% CI):"),
-                bold=True,
-                underline=True,
-            )
-            print("Analysis method:", self.method)
-            if self.optimizer is not None:
-                print("Optimizer:", self.optimizer)
-            print(
-                "Failures / Right censored:",
-                str(str(len(self.__failures)) + "/" + str(len(self.__right_censored))),
-                str("(" + round_and_string(frac_censored) + "% right censored)"),
-                "\n",
-            )
-            print(self.results.to_string(index=False), "\n")
-            print(self.goodness_of_fit.to_string(index=False), "\n")
+        Returns:
+            None
+        """
+        CI_rounded = self.__CI * 100
+        if CI_rounded % 1 == 0:
+            CI_rounded = int(self.__CI * 100)
+        frac_censored = len(self.__right_censored) / self.__n * 100
+        if frac_censored % 1 < 1e-10:
+            frac_censored = int(frac_censored)
+        colorprint(
+            str("Results from Fit_Weibull_ZI (" + str(CI_rounded) + "% CI):"),
+            bold=True,
+            underline=True,
+        )
+        print("Analysis method:", self.method)
+        if self.optimizer is not None:
+            print("Optimizer:", self.optimizer)
+        print(
+            "Failures / Right censored:",
+            str(str(len(self.__failures)) + "/" + str(len(self.__right_censored))),
+            str("(" + round_and_string(frac_censored) + "% right censored)"),
+            "\n",
+        )
+        print(self.results.to_string(index=False), "\n")
+        print(self.goodness_of_fit.to_string(index=False), "\n")
 
     def plot(self, downsample_scatterplot=True, **kwargs):
         """

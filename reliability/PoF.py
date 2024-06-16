@@ -18,6 +18,7 @@ import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import scipy.stats as ss
 from scipy.optimize import fsolve
 
@@ -25,16 +26,16 @@ from reliability.Utils import colorprint, round_and_string
 
 
 def SN_diagram(
-    stress,
-    cycles,
-    stress_runout=None,
-    cycles_runout=None,
-    xscale="log",
-    stress_trace=None,
-    cycles_trace=None,
+    stress: list[float] | list[int] | npt.NDArray[np.float64],
+    cycles: list[float] | list[int] | npt.NDArray[np.float64],
+    stress_runout: list[float] | list[int] | npt.NDArray[np.float64],
+    cycles_runout: list[float] | list[int] | npt.NDArray[np.float64],
+    stress_trace: list[float] | list[int] | npt.NDArray[np.float64],
+    cycles_trace: list[float] | list[int] | npt.NDArray[np.float64],
+    xscale: str = "log",
     show_endurance_limit=None,
     method_for_bounds="statistical",
-    CI=0.95,
+    CI: float = 0.95,
     **kwargs,
 ):
     """This function will plot the stress vs number of cycles (S-N) diagram when
@@ -180,7 +181,7 @@ def SN_diagram(
         label = str(r"$σ_a = " + str(round(c, 3)) + " - " + str(round(m * -1, 3)) + r"\times log_{10}(N_f)$")
     color = kwargs.pop("color") if "color" in kwargs else "steelblue"
 
-    if show_endurance_limit is True:
+    if stress_runout is not None and show_endurance_limit is True:
         endurance_limit = np.average(stress_runout)  # endurance limit is predicted as the average of the runout values
         y[y < endurance_limit] = endurance_limit
         y_upper = m * np.log10(xvals) + c + residual
@@ -241,7 +242,7 @@ def SN_diagram(
             plt.scatter(
                 np.ones_like(cycles_runout) * cycles_max_log,
                 stress_runout,
-                marker=5,
+                marker=5,  # type: ignore
                 color="k",
                 label="Runout data",
             )
@@ -251,7 +252,7 @@ def SN_diagram(
             plt.scatter(
                 np.ones_like(cycles_runout) * max(cycles) * 1.2,
                 stress_runout,
-                marker=5,
+                marker=5,  # type: ignore
                 color="k",
                 label="Runout data",
             )
@@ -571,10 +572,10 @@ class stress_strain_diagram:
 
     def __init__(
         self,
-        K,
-        n,
+        K: float,
+        n: float,
         E,
-        max_strain=None,
+        max_strain: float,
         max_stress=None,
         min_stress=None,
         min_strain=None,
@@ -607,7 +608,7 @@ class stress_strain_diagram:
         def ramberg_osgood_delta(delta_epsilon, delta_sigma, E, K, n):
             return (delta_sigma / E) + 2 * (delta_sigma / (2 * K)) ** (1 / n) - delta_epsilon
 
-        if max_strain is None:
+        if max_strain is None and max_stress is not None:
             self.max_strain = (max_stress / E) + ((max_stress / K) ** (1 / n))
         else:
             self.max_strain = max_strain
@@ -884,19 +885,19 @@ class strain_life_diagram:
             raise ValueError("mean_stress_correction_method must be either 'morrow', 'modified_morrow', or 'SWT'")
 
         if max_strain is not None or max_stress is not None:
-            if max_stress is not None:  # we have stress. Need to find strain
-                self.max_stress = max_stress
-                self.max_strain = max_stress / E + (max_stress / K) ** (1 / n)
+            if max_stress is not None and n is not None:  # we have stress. Need to find strain
+                self.max_stress: float = max_stress
+                self.max_strain: float = max_stress / E + (max_stress / K) ** (1 / n)
                 if min_stress is None:
-                    self.min_stress = -self.max_stress
-                    self.min_strain = -self.max_strain
+                    self.min_stress: float = -self.max_stress
+                    self.min_strain: float = -self.max_strain
                 else:
                     self.min_stress = min_stress
                     self.min_strain = min_stress / E + (min_stress / K) ** (1 / n)
             else:  # we have strain. Need to find stress
                 self.max_strain = max_strain
-                if min_strain is None:
-                    self.min_strain = -self.max_strain
+                if min_strain is None and max_strain is not None:
+                    self.min_strain = -max_strain
                 else:
                     self.min_strain = min_strain
 
@@ -1105,7 +1106,7 @@ class strain_life_diagram:
                 plastic_strain_line = (sigma_f * epsilon_f * cycles_2Nf_array ** (b + c)) / self.max_stress
                 elastic_strain_line = ((sigma_f**2 / E) * cycles_2Nf_array ** (2 * b)) / self.max_stress
 
-            self.cycles_to_failure = use_cycles_2Nf[0] / 2
+            self.cycles_to_failure: float = use_cycles_2Nf[0] / 2
 
             if print_results is True:
                 colorprint("Results from strain_life_diagram:", underline=True, bold=True)
@@ -1472,26 +1473,26 @@ class fracture_mechanics_crack_initiation:
         self.__mean_stress_correction_method = mean_stress_correction_method
         if Kt * S_net > Sy:  # elastic and plastic (monotonic load model)
 
-            def ramberg_osgood(sigma_epsilon, sigma, E, K, n):
+            def monotonic_ramberg_osgood(sigma_epsilon, sigma, E, K, n):
                 return sigma / E + (sigma / K) ** (1 / n) - sigma_epsilon / sigma
 
-            def massing(delta_sigma_delta_epsilon, delta_sigma, E, K, n):
+            def monotonic_massing(delta_sigma_delta_epsilon, delta_sigma, E, K, n):
                 return (
                     delta_sigma / (2 * E)
                     + (delta_sigma / (2 * K)) ** (1 / n)
                     - delta_sigma_delta_epsilon / (2 * delta_sigma)
                 )
 
-            def ramberg_osgood_sigma(x):
-                return ramberg_osgood(sigma_epsilon, x, E, K, n)
+            def monotonic_ramberg_osgood_sigma(x):
+                return monotonic_ramberg_osgood(sigma_epsilon, x, E, K, n)
 
-            sigma = fsolve(ramberg_osgood_sigma, x0=100)[0]
+            sigma = fsolve(monotonic_ramberg_osgood_sigma, x0=100)[0]
             epsilon = sigma_epsilon / sigma
 
-            def massing_delta_sigma(x):
-                return massing(delta_epsilon_delta_sigma, x, E, K, n)
+            def monotonic_massing_delta_sigma(x):
+                return monotonic_massing(delta_epsilon_delta_sigma, x, E, K, n)
 
-            delta_sigma = fsolve(massing_delta_sigma, x0=100)[0]
+            delta_sigma = fsolve(monotonic_massing_delta_sigma, x0=100)[0]
             delta_epsilon = delta_epsilon_delta_sigma / delta_sigma
 
             if delta_epsilon > 1:  # this checks that the delta_epsilon that was found is realistic
@@ -1508,59 +1509,59 @@ class fracture_mechanics_crack_initiation:
 
             if mean_stress_correction_method == "morrow":
 
-                def morrow(delta_epsilon, sigma_f, sigma_mean, E, Nf2, b, epsilon_f, c):
+                def monotonic_morrow(delta_epsilon, sigma_f, sigma_mean, E, Nf2, b, epsilon_f, c):
                     return ((sigma_f - sigma_mean) / E) * Nf2**b + epsilon_f * Nf2**c - delta_epsilon * 0.5
 
-                def morrow_2Nf(x):
-                    return morrow(delta_epsilon, sigma_f, self.sigma_mean, E, x, b, epsilon_f, c)
+                def monotonic_morrow_2Nf(x):
+                    return monotonic_morrow(delta_epsilon, sigma_f, self.sigma_mean, E, x, b, epsilon_f, c)
 
-                Nf2 = fsolve(morrow_2Nf, x0=np.array([100]))[0]
+                Nf2 = fsolve(monotonic_morrow_2Nf, x0=np.array([100]))[0]
 
             elif mean_stress_correction_method == "modified_morrow":
 
-                def modified_morrow(delta_epsilon, sigma_f, sigma_mean, E, Nf2, b, epsilon_f, c):
+                def monotonic_modified_morrow(delta_epsilon, sigma_f, sigma_mean, E, Nf2, b, epsilon_f, c):
                     return (
                         ((sigma_f - sigma_mean) / E) * Nf2**b
                         + epsilon_f * ((sigma_f - sigma_mean) / sigma_f) ** (c / b) * Nf2**c
                         - delta_epsilon * 0.5
                     )
 
-                def modified_morrow_2Nf(x):
-                    return modified_morrow(delta_epsilon, sigma_f, self.sigma_mean, E, x, b, epsilon_f, c)
+                def monotonic_modified_morrow_2Nf(x):
+                    return monotonic_modified_morrow(delta_epsilon, sigma_f, self.sigma_mean, E, x, b, epsilon_f, c)
 
-                Nf2 = fsolve(modified_morrow_2Nf, x0=np.array([100]))[0]
+                Nf2 = fsolve(monotonic_modified_morrow_2Nf, x0=np.array([100]))[0]
 
             elif mean_stress_correction_method == "SWT":
 
-                def SWT(sigma, delta_epsilon, sigma_f, E, Nf2, b, epsilon_f, c):
+                def monotonic_SWT(sigma, delta_epsilon, sigma_f, E, Nf2, b, epsilon_f, c):
                     return (
                         ((sigma_f**2) / E) * Nf2 ** (2 * b)
                         + sigma_f * epsilon_f * Nf2 ** (b + c)
                         - sigma * delta_epsilon * 0.5
                     )
 
-                def SWT_2Nf(x):
-                    return SWT(sigma, delta_epsilon, sigma_f, E, x, b, epsilon_f, c)
+                def monotonic_SWT_2Nf(x):
+                    return monotonic_SWT(sigma, delta_epsilon, sigma_f, E, x, b, epsilon_f, c)
 
-                Nf2 = fsolve(SWT_2Nf, x0=np.array([100]))[0]
+                Nf2 = fsolve(monotonic_SWT_2Nf, x0=np.array([100]))[0]
         else:  # fully elastic model
 
-            def ramberg_osgood(sigma_epsilon, sigma, E):
+            def fully_elastic_ramberg_osgood(sigma_epsilon, sigma, E):
                 return sigma / E - sigma_epsilon / sigma
 
-            def massing(delta_sigma_delta_epsilon, delta_sigma, E):
+            def fully_elastic_massing(delta_sigma_delta_epsilon, delta_sigma, E):
                 return delta_sigma / (2 * E) - delta_sigma_delta_epsilon / (2 * delta_sigma)
 
-            def ramberg_osgood_sigma(x):
-                return ramberg_osgood(sigma_epsilon, x, E)
+            def fully_elastic_ramberg_osgood_sigma(x):
+                return fully_elastic_ramberg_osgood(sigma_epsilon, x, E)
 
-            sigma = fsolve(ramberg_osgood_sigma, x0=100)[0]
+            sigma = fsolve(fully_elastic_ramberg_osgood_sigma, x0=100)[0]
             epsilon = sigma_epsilon / sigma
 
-            def massing_delta_sigma(x):
-                return massing(delta_epsilon_delta_sigma, x, E)
+            def fully_elastic_massing_delta_sigma(x):
+                return fully_elastic_massing(delta_epsilon_delta_sigma, x, E)
 
-            delta_sigma = fsolve(massing_delta_sigma, x0=100)[0]
+            delta_sigma = fsolve(fully_elastic_massing_delta_sigma, x0=100)[0]
             delta_epsilon = delta_epsilon_delta_sigma / delta_sigma
 
             self.sigma_min = sigma - delta_sigma
@@ -1572,33 +1573,33 @@ class fracture_mechanics_crack_initiation:
 
             if mean_stress_correction_method == "morrow":
 
-                def morrow(delta_epsilon, sigma_f, sigma_mean, E, Nf2, b):
+                def fully_elastic_morrow(delta_epsilon, sigma_f, sigma_mean, E, Nf2, b):
                     return ((sigma_f - sigma_mean) / E) * Nf2**b - delta_epsilon * 0.5
 
-                def morrow_2Nf(x):
-                    return morrow(delta_epsilon, sigma_f, self.sigma_mean, E, x, b)
+                def fully_elastic_morrow_2Nf(x):
+                    return fully_elastic_morrow(delta_epsilon, sigma_f, self.sigma_mean, E, x, b)
 
-                Nf2 = fsolve(morrow_2Nf, x0=1000)[0]
+                Nf2 = fsolve(fully_elastic_morrow_2Nf, x0=1000)[0]
 
             elif mean_stress_correction_method == "modified_morrow":
 
-                def modified_morrow(delta_epsilon, sigma_f, sigma_mean, E, Nf2, b):
+                def fully_elastic_modified_morrow(delta_epsilon, sigma_f, sigma_mean, E, Nf2, b):
                     return ((sigma_f - sigma_mean) / E) * Nf2**b - delta_epsilon * 0.5
 
-                def modified_morrow_2Nf(x):
-                    return modified_morrow(delta_epsilon, sigma_f, self.sigma_mean, E, x, b)
+                def fully_elastic_modified_morrow_2Nf(x):
+                    return fully_elastic_modified_morrow(delta_epsilon, sigma_f, self.sigma_mean, E, x, b)
 
-                Nf2 = fsolve(modified_morrow_2Nf, x0=1000)[0]
+                Nf2 = fsolve(fully_elastic_modified_morrow_2Nf, x0=1000)[0]
 
             elif mean_stress_correction_method == "SWT":
 
-                def SWT(sigma, delta_epsilon, sigma_f, E, Nf2, b):
+                def fully_elastic_SWT(sigma, delta_epsilon, sigma_f, E, Nf2, b):
                     return ((sigma_f**2) / E) * Nf2 ** (2 * b) - sigma * delta_epsilon * 0.5
 
-                def SWT_2Nf(x):
-                    return SWT(sigma, delta_epsilon, sigma_f, E, x, b)
+                def fully_elastic_SWT_2Nf(x):
+                    return fully_elastic_SWT(sigma, delta_epsilon, sigma_f, E, x, b)
 
-                Nf2 = fsolve(SWT_2Nf, x0=1000)[0]
+                Nf2 = fsolve(fully_elastic_SWT_2Nf, x0=1000)[0]
         Nf = Nf2 / 2
         self.cycles_to_failure = Nf
 

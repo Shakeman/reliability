@@ -26,6 +26,7 @@ pd.set_option("display.width", 200)  # prevents wrapping after default 80 charac
 pd.set_option("display.max_columns", 9)  # shows the dataframe without ... truncation
 shape_change_threshold = 0.5
 
+
 class Fit_Weibull_Exponential:
     """This function will fit the Weibull-Exponential life-stress model to the data
     provided. Please see the online documentation for the equations of this
@@ -146,7 +147,7 @@ class Fit_Weibull_Exponential:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress: float | None =None,
+        use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -229,7 +230,7 @@ class Fit_Weibull_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.b, self.beta]
-        hessian_matrix = hessian(LL_func)(# type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -298,10 +299,10 @@ class Fit_Weibull_Exponential:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
+            self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
-        self.BIC = np.log(n) * k + LL2
+            self.AICc = np.inf
+        self.BIC: np.float64 = np.log(n) * k + LL2
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
@@ -576,7 +577,7 @@ class Fit_Weibull_Eyring:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress: float | None=None,
+        use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -659,7 +660,7 @@ class Fit_Weibull_Eyring:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.c, self.beta]
-        hessian_matrix = hessian(LL_func)(# type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1000,9 +1001,9 @@ class Fit_Weibull_Power:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress: float | None=None,
-        CI: float =0.95,
-        optimizer: None | str =None,
+        use_level_stress: float | None = None,
+        CI: float = 0.95,
+        optimizer: None | str = None,
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
@@ -1022,7 +1023,7 @@ class Fit_Weibull_Power:
         failure_stress = inputs.failure_stress_1
         right_censored = inputs.right_censored
         right_censored_stress = inputs.right_censored_stress_1
-        CI= inputs.CI
+        CI = inputs.CI
         optimizer = inputs.optimizer
         use_level_stress = inputs.use_level_stress
         failure_groups = inputs.failure_groups
@@ -1034,7 +1035,9 @@ class Fit_Weibull_Power:
         self.__stresses_for_groups = inputs.stresses_for_groups
 
         # obtain the initial guess for the life stress model and the life distribution
-        life_stress_guess: list[np.float64] = ALT_least_squares(model="Power", failures=failures, stress_1_array=failure_stress)
+        life_stress_guess: list[np.float64] = ALT_least_squares(
+            model="Power", failures=failures, stress_1_array=failure_stress
+        )
 
         # obtain the common shape parameter
         betas = []
@@ -1058,7 +1061,9 @@ class Fit_Weibull_Power:
                 betas_for_change_df.append(0)
                 alphas_for_change_df.append("")
 
-        common_beta: float | Literal[1] = float(np.average(betas)) if len(betas) > 0 else 1  # guess in the absence of enough points
+        common_beta: float | Literal[1] = (
+            float(np.average(betas)) if len(betas) > 0 else 1
+        )  # guess in the absence of enough points
         # compile the guess for the MLE method
         guess = [life_stress_guess[0], life_stress_guess[1], common_beta]  # a, n, beta
 
@@ -1075,15 +1080,15 @@ class Fit_Weibull_Power:
             right_censored_stress_1=right_censored_stress,
         )
         self.a: np.float64 = MLE_results.a
-        self.n: np.float64  = MLE_results.n
-        self.beta: np.float64  = MLE_results.beta
+        self.n: np.float64 = MLE_results.n
+        self.beta: np.float64 = MLE_results.beta
         self.success: bool = MLE_results.success
         self.optimizer: str = MLE_results.optimizer
 
         # confidence interval estimates of parameters
-        Z: np.float64  = -ss.norm.ppf((1 - CI) / 2)
+        Z: np.float64 = -ss.norm.ppf((1 - CI) / 2)
         params: list[np.float64] = [self.a, self.n, self.beta]
-        hessian_matrix = hessian(LL_func)(# type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1148,9 +1153,9 @@ class Fit_Weibull_Power:
         # goodness of fit dataframe
         n: int = len(failures) + len(right_censored)
         k: int = len(guess)
-        LL2: np.float64  = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
-        self.loglik2: np.float64  = LL2
-        self.loglik: np.float64  = LL2 * -0.5
+        LL2: np.float64 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
+        self.loglik2: np.float64 = LL2
+        self.loglik: np.float64 = LL2 * -0.5
         if n - k - 1 > 0:
             self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
@@ -1447,7 +1452,7 @@ class Fit_Weibull_Dual_Exponential:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: npt.NDArray[np.float64] | None=None,
+        use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -1547,7 +1552,7 @@ class Fit_Weibull_Dual_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.b, self.c, self.beta]
-        hessian_matrix = hessian(LL_func)(# type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1935,7 +1940,7 @@ class Fit_Weibull_Power_Exponential:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: npt.NDArray[np.float64] | None =None,
+        use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -2035,7 +2040,7 @@ class Fit_Weibull_Power_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.c, self.n, self.beta]
-        hessian_matrix = hessian(LL_func)(# type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -2436,7 +2441,7 @@ class Fit_Weibull_Dual_Power:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: npt.NDArray[np.float64] | None =None,
+        use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -2536,7 +2541,7 @@ class Fit_Weibull_Dual_Power:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.c, self.m, self.n, self.beta]
-        hessian_matrix = hessian(LL_func)(# type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),

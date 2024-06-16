@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import autograd.numpy as anp
@@ -163,12 +162,12 @@ class Fit_Normal_2P:
         right_censored=None,
         show_probability_plot=True,
         print_results=True,
-        CI: float=0.95,
+        CI: float = 0.95,
         quantiles=None,
-        optimizer: str | None =None,
-        CI_type: str | None ="time",
-        method: str | None ="MLE",
-        force_sigma: float | None =None,
+        optimizer: str | None = None,
+        CI_type: str | None = "time",
+        method: str | None = "MLE",
+        force_sigma: float | None = None,
         downsample_scatterplot=True,
         **kwargs,
     ):
@@ -187,10 +186,10 @@ class Fit_Normal_2P:
         right_censored = inputs.right_censored
         CI = inputs.CI
         method = inputs.method
-        optimizer= inputs.optimizer
+        optimizer = inputs.optimizer
         quantiles = inputs.quantiles
         force_sigma = inputs.force_sigma
-        CI_type= inputs.CI_type
+        CI_type = inputs.CI_type
 
         # Obtain least squares estimates
         LS_method = "LS" if method == "MLE" else method
@@ -231,7 +230,7 @@ class Fit_Normal_2P:
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.mu, self.sigma]
         if force_sigma is None:
-            hessian_matrix = hessian(Fit_Normal_2P.LL)( # type: ignore
+            hessian_matrix = hessian(Fit_Normal_2P.LL)(  # type: ignore
                 np.array(tuple(params)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
@@ -266,7 +265,7 @@ class Fit_Normal_2P:
                 self.sigma_lower = self.sigma
 
         else:
-            hessian_matrix = hessian(Fit_Normal_2P.LL_fs)( # type: ignore
+            hessian_matrix = hessian(Fit_Normal_2P.LL_fs)(  # type: ignore
                 np.array((self.mu,)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
@@ -364,9 +363,9 @@ class Fit_Normal_2P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
+            self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
@@ -568,8 +567,8 @@ class Fit_Gumbel_2P:
         print_results=True,
         CI=0.95,
         quantiles=None,
-        CI_type: str | None="time",
-        method: str | None="MLE",
+        CI_type: str | None = "time",
+        method: str | None = "MLE",
         optimizer=None,
         downsample_scatterplot=True,
         **kwargs,
@@ -626,7 +625,7 @@ class Fit_Gumbel_2P:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.mu, self.sigma]
-        hessian_matrix = hessian(Fit_Gumbel_2P.LL)( # type: ignore
+        hessian_matrix = hessian(Fit_Gumbel_2P.LL)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -720,10 +719,10 @@ class Fit_Gumbel_2P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
+            self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
-        self.BIC = np.log(n) * k + LL2
+            self.AICc = np.inf
+        self.BIC: np.float64 = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
         self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
@@ -909,7 +908,7 @@ class Fit_Beta_2P:
         print_results=True,
         CI=0.95,
         quantiles=None,
-        method: str | None="MLE",
+        method: str | None = "MLE",
         optimizer=None,
         downsample_scatterplot=True,
         **kwargs,
@@ -965,7 +964,7 @@ class Fit_Beta_2P:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.alpha, self.beta]
-        hessian_matrix = hessian(Fit_Beta_2P.LL)( # type: ignore
+        hessian_matrix = hessian(Fit_Beta_2P.LL)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1043,10 +1042,10 @@ class Fit_Beta_2P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
+            self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
-        self.BIC = np.log(n) * k + LL2
+            self.AICc = np.inf
+        self.BIC: np.float64 = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
         self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)

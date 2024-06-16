@@ -31,6 +31,7 @@ pd.options.display.float_format = "{:g}".format  # improves formatting of number
 pd.options.display.max_columns = 9  # shows the dataframe without ... truncation
 pd.options.display.width = 200  # prevents wrapping after default 80 characters
 
+
 class Fit_Lognormal_2P:
     """Fits a two parameter Lognormal distribution (mu,sigma) to the data provided.
 
@@ -157,8 +158,8 @@ class Fit_Lognormal_2P:
         CI=0.95,
         quantiles=None,
         optimizer=None,
-        CI_type: str | None ="time",
-        method: str | None="MLE",
+        CI_type: str | None = "time",
+        method: str | None = "MLE",
         force_sigma=None,
         downsample_scatterplot=True,
         **kwargs,
@@ -223,7 +224,7 @@ class Fit_Lognormal_2P:
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.mu, self.sigma]
         if force_sigma is None:
-            hessian_matrix = hessian(Fit_Lognormal_2P.LL)( # type: ignore
+            hessian_matrix = hessian(Fit_Lognormal_2P.LL)(  # type: ignore
                 np.array(tuple(params)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
@@ -257,7 +258,7 @@ class Fit_Lognormal_2P:
                 self.sigma_upper = self.sigma
                 self.sigma_lower = self.sigma
         else:
-            hessian_matrix = hessian(Fit_Lognormal_2P.LL_fs)( # type: ignore
+            hessian_matrix = hessian(Fit_Lognormal_2P.LL_fs)(  # type: ignore
                 np.array((self.mu,)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
@@ -355,9 +356,9 @@ class Fit_Lognormal_2P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
+            self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
@@ -566,9 +567,9 @@ class Fit_Lognormal_3P:
         print_results=True,
         CI=0.95,
         quantiles=None,
-        CI_type: str | None="time",
+        CI_type: str | None = "time",
         optimizer=None,
-        method: str | None="MLE",
+        method: str | None = "MLE",
         downsample_scatterplot=True,
         **kwargs,
     ):
@@ -658,7 +659,7 @@ class Fit_Lognormal_3P:
             params_2P = [self.mu, self.sigma]
             params_3P = [self.mu, self.sigma, self.gamma]
             # here we need to get mu_SE and sigma_SE from the Lognormal_2P by providing an adjusted dataset (adjusted for gamma)
-            hessian_matrix = hessian(Fit_Lognormal_2P.LL)( # type: ignore
+            hessian_matrix = hessian(Fit_Lognormal_2P.LL)(  # type: ignore
                 np.array(tuple(params_2P)),
                 np.array(tuple(failures - self.gamma)),
                 np.array(tuple(right_censored - self.gamma)),
@@ -666,7 +667,7 @@ class Fit_Lognormal_3P:
             try:
                 covariance_matrix = np.linalg.inv(hessian_matrix)
                 # this is to get the gamma_SE. Unfortunately this approach for mu_SE and sigma_SE give SE values that are very large resulting in incorrect CI plots. This is the same method used by Reliasoft
-                hessian_matrix_for_gamma = hessian(Fit_Lognormal_3P.LL)( # type: ignore
+                hessian_matrix_for_gamma = hessian(Fit_Lognormal_3P.LL)(  # type: ignore
                     np.array(tuple(params_3P)),
                     np.array(tuple(failures)),
                     np.array(tuple(right_censored)),
@@ -767,9 +768,9 @@ class Fit_Lognormal_3P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
+            self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)

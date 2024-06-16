@@ -30,6 +30,7 @@ pd.options.display.float_format = "{:g}".format  # improves formatting of number
 pd.options.display.max_columns = 9  # shows the dataframe without ... truncation
 pd.options.display.width = 200  # prevents wrapping after default 80 characters
 
+
 class Fit_Loglogistic_2P:
     """Fits a two parameter Loglogistic distribution (alpha,beta) to the data
     provided.
@@ -151,8 +152,8 @@ class Fit_Loglogistic_2P:
         print_results=True,
         CI=0.95,
         quantiles=None,
-        CI_type: str | None ="time",
-        method: str | None ="MLE",
+        CI_type: str | None = "time",
+        method: str | None = "MLE",
         optimizer=None,
         downsample_scatterplot=True,
         **kwargs,
@@ -210,7 +211,7 @@ class Fit_Loglogistic_2P:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.alpha, self.beta]
-        hessian_matrix = hessian(Fit_Loglogistic_2P.LL)( # type: ignore
+        hessian_matrix = hessian(Fit_Loglogistic_2P.LL)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -304,9 +305,9 @@ class Fit_Loglogistic_2P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
+            self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
@@ -507,9 +508,9 @@ class Fit_Loglogistic_3P:
         show_probability_plot=True,
         print_results=True,
         CI=0.95,
-        CI_type: str | None="time",
+        CI_type: str | None = "time",
         optimizer=None,
-        method: str | None="MLE",
+        method: str | None = "MLE",
         quantiles=None,
         downsample_scatterplot=True,
         **kwargs,
@@ -535,6 +536,7 @@ class Fit_Loglogistic_3P:
         # Obtain least squares estimates
         LS_method = "LS" if method == "MLE" else method
         from reliability.Fitters import Fit_Lognormal_3P
+
         LS_results = LS_optimization(
             func_name="Loglogistic_3P",
             LL_func=Fit_Lognormal_3P.LL,
@@ -600,7 +602,7 @@ class Fit_Loglogistic_3P:
             params_2P = [self.alpha, self.beta]
             params_3P = [self.alpha, self.beta, self.gamma]
             # here we need to get alpha_SE and beta_SE from the Loglogistic_2P by providing an adjusted dataset (adjusted for gamma)
-            hessian_matrix = hessian(Fit_Loglogistic_2P.LL)( # type: ignore
+            hessian_matrix = hessian(Fit_Loglogistic_2P.LL)(  # type: ignore
                 np.array(tuple(params_2P)),
                 np.array(tuple(failures - self.gamma)),
                 np.array(tuple(right_censored - self.gamma)),
@@ -608,7 +610,7 @@ class Fit_Loglogistic_3P:
             try:
                 covariance_matrix = np.linalg.inv(hessian_matrix)
                 # this is to get the gamma_SE. Unfortunately this approach for alpha_SE and beta_SE give SE values that are very large resulting in incorrect CI plots. This is the same method used by Reliasoft
-                hessian_matrix_for_gamma = hessian(Fit_Loglogistic_3P.LL)( # type: ignore
+                hessian_matrix_for_gamma = hessian(Fit_Loglogistic_3P.LL)(  # type: ignore
                     np.array(tuple(params_3P)),
                     np.array(tuple(failures)),
                     np.array(tuple(right_censored)),
@@ -710,9 +712,9 @@ class Fit_Loglogistic_3P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
+            self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)

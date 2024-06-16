@@ -33,6 +33,7 @@ pd.options.display.float_format = "{:g}".format  # improves formatting of number
 pd.options.display.max_columns = 9  # shows the dataframe without ... truncation
 pd.options.display.width = 200  # prevents wrapping after default 80 characters
 
+
 class Fit_Gamma_2P:
     """Fits a two parameter Gamma distribution (alpha,beta) to the data provided.
 
@@ -174,10 +175,10 @@ class Fit_Gamma_2P:
         show_probability_plot=True,
         print_results=True,
         CI=0.95,
-        method: str | None="MLE",
+        method: str | None = "MLE",
         optimizer=None,
         quantiles=None,
-        CI_type: str | None="time",
+        CI_type: str | None = "time",
         downsample_scatterplot=True,
         **kwargs,
     ):
@@ -237,7 +238,7 @@ class Fit_Gamma_2P:
         # and mu beta (mb) parametrisation
         Z = -ss.norm.ppf((1 - CI) / 2)
         params_ab = [self.alpha, self.beta]
-        hessian_matrix_ab = hessian(Fit_Gamma_2P.LL_ab)( # type: ignore
+        hessian_matrix_ab = hessian(Fit_Gamma_2P.LL_ab)(  # type: ignore
             np.array(tuple(params_ab)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -253,7 +254,7 @@ class Fit_Gamma_2P:
             self.beta_lower = self.beta * (np.exp(-Z * (self.beta_SE / self.beta)))
 
             params_mb = [self.mu, self.beta]
-            hessian_matrix_mb = hessian(Fit_Gamma_2P.LL_mb)( # type: ignore
+            hessian_matrix_mb = hessian(Fit_Gamma_2P.LL_mb)(  # type: ignore
                 np.array(tuple(params_mb)),
                 np.array(tuple(failures)),
                 np.array(tuple(right_censored)),
@@ -350,10 +351,10 @@ class Fit_Gamma_2P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
+            self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
-        self.BIC = np.log(n) * k + LL2
+            self.AICc = np.inf
+        self.BIC: np.float64 = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
         self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
@@ -592,7 +593,7 @@ class Fit_Gamma_3P:
         print_results=True,
         CI=0.95,
         optimizer=None,
-        method: str | None="MLE",
+        method: str | None = "MLE",
         quantiles=None,
         CI_type="time",
         downsample_scatterplot=True,
@@ -691,14 +692,14 @@ class Fit_Gamma_3P:
             params_2P_mb = [self.mu, self.beta]
             params_3P_abg = [self.alpha, self.beta, self.gamma]
             # here we need to get alpha_SE and beta_SE from the Gamma_2P by providing an adjusted dataset (adjusted for gamma)
-            hessian_matrix_ab = hessian(Fit_Gamma_2P.LL_ab)( # type: ignore
+            hessian_matrix_ab = hessian(Fit_Gamma_2P.LL_ab)(  # type: ignore
                 np.array(tuple(params_2P_ab)),
                 np.array(tuple(failures - self.gamma)),
                 np.array(tuple(right_censored - self.gamma)),
             )
             try:
                 covariance_matrix_ab = np.linalg.inv(hessian_matrix_ab)
-                hessian_matrix_mb = hessian(Fit_Gamma_2P.LL_mb)( # type: ignore
+                hessian_matrix_mb = hessian(Fit_Gamma_2P.LL_mb)(  # type: ignore
                     np.array(tuple(params_2P_mb)),
                     np.array(tuple(failures - self.gamma)),
                     np.array(tuple(right_censored - self.gamma)),
@@ -706,7 +707,7 @@ class Fit_Gamma_3P:
                 covariance_matrix_mb = np.linalg.inv(hessian_matrix_mb)
 
                 # this is to get the gamma_SE. Unfortunately this approach for alpha_SE and beta_SE give SE values that are very large resulting in incorrect CI plots. This is the same method used by Reliasoft
-                hessian_matrix_for_gamma = hessian(Fit_Gamma_3P.LL_abg)( # type: ignore
+                hessian_matrix_for_gamma = hessian(Fit_Gamma_3P.LL_abg)(  # type: ignore
                     np.array(tuple(params_3P_abg)),
                     np.array(tuple(failures)),
                     np.array(tuple(right_censored)),
@@ -818,10 +819,10 @@ class Fit_Gamma_3P:
         self.loglik2 = LL2
         self.loglik = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
+            self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
-        self.BIC = np.log(n) * k + LL2
+            self.AICc = np.inf
+        self.BIC: np.float64 = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
         self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)

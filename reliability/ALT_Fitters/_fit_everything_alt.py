@@ -115,7 +115,7 @@ class Fit_Everything_ALT:
         `documentation <https://reliability.readthedocs.io/en/latest/Optimizers.html>`_.
     sort_by : str, optional
         Goodness of fit test to sort results by. Must be 'BIC','AICc', or
-        'Log-likelihood'. Default is 'BIC'.
+        'Log-likelihood'. Default is 'AICc'.
     exclude : list, array, optional
         A list or array of strings specifying which distributions to exclude.
         Default is None. Options are: Weibull_Exponential, Weibull_Eyring,
@@ -194,14 +194,14 @@ class Fit_Everything_ALT:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: float | npt.NDArray[np.float64] | None =None,
+        use_level_stress: float | npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
         show_best_distribution_probability_plot=True,
         print_results=True,
         exclude=None,
-        sort_by="BIC",
+        sort_by="AICc",
         **kwargs,
     ):
         # check kwargs for failure_stress and right_censored_stress
@@ -2074,7 +2074,6 @@ class Fit_Everything_ALT:
                     use_level_stress=use_level_stress,
                     ax=ax,
                 )
-
             elif item == "Weibull_Dual_Exponential":
 
                 def life_func(S1, S2):
@@ -2100,7 +2099,6 @@ class Fit_Everything_ALT:
                     use_level_stress=use_level_stress,
                     ax=ax,
                 )
-
             elif item == "Weibull_Power_Exponential":
 
                 def life_func(S1, S2):
@@ -2128,7 +2126,6 @@ class Fit_Everything_ALT:
                     use_level_stress=use_level_stress,
                     ax=ax,
                 )
-
             elif item == "Weibull_Dual_Power":
 
                 def life_func(S1, S2):
@@ -2162,7 +2159,6 @@ class Fit_Everything_ALT:
                     use_level_stress=use_level_stress,
                     ax=ax,
                 )
-
             elif item == "Lognormal_Dual_Exponential":
 
                 def life_func(S1, S2):
@@ -2188,7 +2184,6 @@ class Fit_Everything_ALT:
                     use_level_stress=use_level_stress,
                     ax=ax,
                 )
-
             elif item == "Lognormal_Power_Exponential":
 
                 def life_func(S1, S2):
@@ -2216,7 +2211,6 @@ class Fit_Everything_ALT:
                     use_level_stress=use_level_stress,
                     ax=ax,
                 )
-
             elif item == "Lognormal_Dual_Power":
 
                 def life_func(S1, S2):

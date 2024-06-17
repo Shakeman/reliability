@@ -25,6 +25,7 @@ pd.set_option("display.width", 200)  # prevents wrapping after default 80 charac
 pd.set_option("display.max_columns", 9)  # shows the dataframe without ... truncation
 shape_change_threshold = 0.5
 
+
 class Fit_Lognormal_Exponential:
     """This function will Fit the Lognormal-Exponential life-stress model to the
     data provided. Please see the online documentation for the equations of this
@@ -145,7 +146,7 @@ class Fit_Lognormal_Exponential:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress: float | None =None,
+        use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -169,7 +170,10 @@ class Fit_Lognormal_Exponential:
         right_censored_stress = inputs.right_censored_stress_1
         CI = inputs.CI
         optimizer = inputs.optimizer
-        use_level_stress = inputs.use_level_stress
+        if isinstance(inputs.use_level_stress, float):
+            use_level_stress = inputs.use_level_stress
+        else:
+            raise ValueError("use_level_stress must be a float")
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups
@@ -233,7 +237,7 @@ class Fit_Lognormal_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.b, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -582,7 +586,7 @@ class Fit_Lognormal_Eyring:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress: float | None =None,
+        use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -606,7 +610,10 @@ class Fit_Lognormal_Eyring:
         right_censored_stress = inputs.right_censored_stress_1
         CI = inputs.CI
         optimizer = inputs.optimizer
-        use_level_stress = inputs.use_level_stress
+        if isinstance(inputs.use_level_stress, float):
+            use_level_stress = inputs.use_level_stress
+        else:
+            raise ValueError("use_level_stress must be a float")
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups
@@ -669,7 +676,7 @@ class Fit_Lognormal_Eyring:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.c, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1012,7 +1019,7 @@ class Fit_Lognormal_Power:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress: float | None =None,
+        use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -1036,7 +1043,10 @@ class Fit_Lognormal_Power:
         right_censored_stress = inputs.right_censored_stress_1
         CI = inputs.CI
         optimizer = inputs.optimizer
-        use_level_stress = inputs.use_level_stress
+        if isinstance(inputs.use_level_stress, float):
+            use_level_stress = inputs.use_level_stress
+        else:
+            raise ValueError("use_level_stress must be a float")
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups
@@ -1099,7 +1109,7 @@ class Fit_Lognormal_Power:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.n, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1465,7 +1475,7 @@ class Fit_Lognormal_Dual_Exponential:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: npt.NDArray[np.float64] | None =None,
+        use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -1493,7 +1503,10 @@ class Fit_Lognormal_Dual_Exponential:
         right_censored_stress_2 = inputs.right_censored_stress_2
         CI = inputs.CI
         optimizer = inputs.optimizer
-        use_level_stress = inputs.use_level_stress
+        if isinstance(inputs.use_level_stress, np.ndarray):
+            use_level_stress = inputs.use_level_stress
+        else:
+            raise ValueError("use_level_stress must be a array")
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups
@@ -1565,7 +1578,7 @@ class Fit_Lognormal_Dual_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.b, self.c, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1969,7 +1982,7 @@ class Fit_Lognormal_Power_Exponential:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: npt.NDArray[np.float64] | None =None,
+        use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -1997,7 +2010,10 @@ class Fit_Lognormal_Power_Exponential:
         right_censored_stress_2 = inputs.right_censored_stress_2
         CI = inputs.CI
         optimizer = inputs.optimizer
-        use_level_stress = inputs.use_level_stress
+        if isinstance(inputs.use_level_stress, np.ndarray):
+            use_level_stress = inputs.use_level_stress
+        else:
+            raise ValueError("use_level_stress must be a array")
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups
@@ -2069,7 +2085,7 @@ class Fit_Lognormal_Power_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.c, self.n, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -2470,7 +2486,7 @@ class Fit_Lognormal_Dual_Power:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: npt.NDArray[np.float64] | None =None,
+        use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -2498,7 +2514,10 @@ class Fit_Lognormal_Dual_Power:
         right_censored_stress_2 = inputs.right_censored_stress_2
         CI = inputs.CI
         optimizer = inputs.optimizer
-        use_level_stress = inputs.use_level_stress
+        if isinstance(inputs.use_level_stress, np.ndarray):
+            use_level_stress = inputs.use_level_stress
+        else:
+            raise ValueError("use_level_stress must be a array")
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups
@@ -2570,7 +2589,7 @@ class Fit_Lognormal_Dual_Power:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.c, self.m, self.n, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),

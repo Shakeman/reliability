@@ -382,13 +382,14 @@ class stress_strain_life_parameters_from_data:
             self.__cycles_2Nf = cycles_2Nf
 
     def plot(self):
-        """
-        Plot stress-strain and strain-life diagrams.
+        """Plot stress-strain and strain-life diagrams.
 
         This method plots the stress-strain diagram and strain-life diagram based on the provided data.
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         plt.figure()
         stress_array = np.linspace(0, max(self.__stress), 10000)
@@ -499,8 +500,7 @@ class stress_strain_life_parameters_from_data:
             legend_texts2[0].set_size(13)
 
     def print_results(self):
-        """
-        Print the results from stress_strain_life_parameters_from_data.
+        """Print the results from stress_strain_life_parameters_from_data.
 
         This method prints the calculated values of various parameters obtained from the
         stress_strain_life_parameters_from_data method. It includes the cyclic strength
@@ -509,10 +509,13 @@ class stress_strain_life_parameters_from_data:
         exponent (c).
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
+
         """
         colorprint(
             "Results from stress_strain_life_parameters_from_data:",
@@ -763,16 +766,18 @@ class stress_strain_diagram:
         plt.gcf().set_size_inches(10, 7)
 
     def print_results(self):
-        """
-        Prints the results from the stress-strain diagram.
+        """Prints the results from the stress-strain diagram.
 
         This method prints the maximum and minimum stress values, as well as the maximum and minimum strain values.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
+
         """
         colorprint("Results from stress_strain_diagram:", bold=True, underline=True)
         print("Max stress:", self.max_stress)
@@ -1914,14 +1919,15 @@ class fracture_mechanics_crack_growth:
         self.__N = N
 
     def plot(self):
-        """
-        Plots the crack growth using an iterative method.
+        """Plots the crack growth using an iterative method.
 
         This method plots the critical crack length and crack length against the number of cycles.
         It also adds labels, limits, and annotations to the plot.
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         plt.plot(self.__N_array, self.__a_crit_array, label="Critical crack length", color="darkorange")
         plt.plot(self.__N_array, self.__a_array, label="Crack length", color="steelblue")
@@ -1947,8 +1953,7 @@ class fracture_mechanics_crack_growth:
         plt.title("Crack growth using iterative method")
 
     def print_results(self):
-        """
-        Prints the results from the fracture_mechanics_crack_growth analysis.
+        """Prints the results from the fracture_mechanics_crack_growth analysis.
 
         This method prints the results obtained from the fracture mechanics crack growth analysis.
         It displays the results for both the simplified method and the iterative method.
@@ -1956,10 +1961,13 @@ class fracture_mechanics_crack_growth:
         and critical crack length.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
+
         """
         colorprint(
             "Results from fracture_mechanics_crack_growth:",

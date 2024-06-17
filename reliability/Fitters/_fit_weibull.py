@@ -3292,15 +3292,16 @@ class Fit_Weibull_ZI:
         self.__n = n
 
     def print_results(self) -> None:
-        """
-        Prints the results of the Weibull fitting analysis.
+        """Prints the results of the Weibull fitting analysis.
 
         This method prints various statistics and results obtained from the Weibull fitting analysis,
         including the confidence interval, analysis method, optimizer used, number of failures and right censored data points,
         as well as the results and goodness of fit statistics.
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         CI_rounded = self.__CI * 100
         if CI_rounded % 1 == 0:
@@ -3326,14 +3327,15 @@ class Fit_Weibull_ZI:
         print(self.goodness_of_fit.to_string(index=False), "\n")
 
     def plot(self, downsample_scatterplot=True, **kwargs):
-        """
-        Plots the Weibull probability plot and scatter points.
+        """Plots the Weibull probability plot and scatter points.
 
         Args:
+        ----
             downsample_scatterplot (bool, optional): Whether to downsample the scatter plot. Defaults to True.
             **kwargs: Additional keyword arguments to be passed to the plotting functions.
 
         Returns:
+        -------
             matplotlib.axes.Axes: The current axes instance.
 
         """

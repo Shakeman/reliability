@@ -5,30 +5,34 @@ import numpy as np
 
 
 def is_allowed_character(character: str) -> bool:
-    """
-    Checks if a character is allowed.
+    """Checks if a character is allowed.
 
     Args:
+    ----
         character (str): The character to check.
 
     Returns:
+    -------
         bool: True if the character is allowed, False otherwise.
+
     """
-    return character in 'YN'
+    return character in "YN"
 
 
 def validate_yes_no_prompt(prompt_msg) -> str:
-    """
-    Validates a yes/no prompt input and returns the choice.
+    """Validates a yes/no prompt input and returns the choice.
 
     Args:
+    ----
         prompt_msg (str): The message to display as the prompt.
 
     Returns:
+    -------
         str: The validated choice, either 'Y' or 'N'.
+
     """
     bad_input_msg = "Invalid choice. Please specify Y or N"
-    prompts = chain([prompt_msg], repeat('\n'.join([bad_input_msg, prompt_msg])))
+    prompts = chain([prompt_msg], repeat("\n".join([bad_input_msg, prompt_msg])))
     replies = map(input, prompts)
     uppercased_replies = map(str.upper, replies)
     stripped_replies = map(str.strip, uppercased_replies)
@@ -37,13 +41,14 @@ def validate_yes_no_prompt(prompt_msg) -> str:
 
 
 def update_path(path: str) -> str:
-    """
-    Update the given path by adding '(new)' to the filename if it already exists.
+    """Update the given path by adding '(new)' to the filename if it already exists.
 
     Args:
+    ----
         path (str): The original path.
 
     Returns:
+    -------
         str: The updated path with '(new)' added to the filename.
 
     """
@@ -89,7 +94,7 @@ def write_df_to_xlsx(df, path: str, **kwargs) -> None:
         choice: str = validate_yes_no_prompt(prompt_msg)
         if choice == "N":
             write_df_to_xlsx(df, update_path(path))
-            return None
+            return
     # this section does the writing
     keys = kwargs.keys()
     if "excel_writer" in keys:
@@ -99,7 +104,8 @@ def write_df_to_xlsx(df, path: str, **kwargs) -> None:
         )
         kwargs.pop("excel_writer")
     write_index = kwargs.pop("index") if "index" in keys else False
-    df.to_excel(path, index=write_index, engine='xlsxwriter', **kwargs)
+    df.to_excel(path, index=write_index, engine="xlsxwriter", **kwargs)
+
 
 def round_and_string(
     number: np.float64 | float,
@@ -179,6 +185,7 @@ def round_and_string(
     else:  # NaN
         out = number
     return str(out)
+
 
 def colorprint(
     string,

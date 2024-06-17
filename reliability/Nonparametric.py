@@ -246,21 +246,24 @@ class KaplanMeier:
         self.__xmax = max(times)
 
     def plot(self, plot_type="SF", plot_CI=True, **kwargs):
-        """
-        Plot the Kaplan-Meier estimate for the specified plot type.
+        """Plot the Kaplan-Meier estimate for the specified plot type.
 
-        Parameters:
+        Parameters
+        ----------
             plot_type (str): The type of plot to generate. Valid options are "SF" (Survival Function),
                 "CDF" (Cumulative Density Function), or "CHF" (Cumulative Hazard Function). Default is SF
             plot_CI (bool, optional): Whether to plot the confidence bounds. Defaults to True.
             **kwargs: Plotting keywords that are passed directly to matplotlib for the
                 plot (e.g. color, label, linestyle)
 
-        Raises:
+        Raises
+        ------
             ValueError: If the `plot_type` is not one of the valid options.
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         xlim_upper = plt.xlim(auto=None)[1]
         if plot_type not in ["CDF", "SF", "CHF", "cdf", "sf", "chf"]:
@@ -332,17 +335,19 @@ class KaplanMeier:
             raise ValueError("plot_type must be CDF, SF, CHF")
 
     def print_results(self):
-        """
-        Prints the results from KaplanMeier analysis with confidence interval.
+        """Prints the results from KaplanMeier analysis with confidence interval.
 
         This method prints the results of the KaplanMeier analysis, including the confidence interval,
         in a formatted manner.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
+
         """
         colorprint(
             str("Results from KaplanMeier (" + str(self.__CI_rounded) + "% CI):"),
@@ -563,21 +568,24 @@ class NelsonAalen:
         self.__xmax = max(times)
 
     def plot(self, plot_type="SF", plot_CI=True, **kwargs):
-        """
-        Plot the Nelson-Aalen estimate for the specified plot type.
+        """Plot the Nelson-Aalen estimate for the specified plot type.
 
-        Parameters:
+        Parameters
+        ----------
             plot_type (str): The type of plot to generate. Valid options are "SF" (Survival Function),
                 "CDF" (Cumulative Density Function), or "CHF" (Cumulative Hazard Function). Default is SF
             plot_CI (bool, optional): Whether to plot the confidence bounds. Defaults to True.
             **kwargs: Plotting keywords that are passed directly to matplotlib for the
                 plot (e.g. color, label, linestyle)
 
-        Raises:
+        Raises
+        ------
             ValueError: If the `plot_type` is not one of the valid options.
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         if plot_type not in ["CDF", "SF", "CHF", "cdf", "sf", "chf"]:
             raise ValueError("plot_type must be CDF, SF, or CHF. Default is SF.")
@@ -649,17 +657,19 @@ class NelsonAalen:
             raise ValueError("plot_type must be CDF, SF, CHF")
 
     def print_results(self):
-        """
-        Prints the results from NelsonAalen analysis with confidence interval.
+        """Prints the results from NelsonAalen analysis with confidence interval.
 
         This method prints the results of the NelsonAalen analysis, including the confidence interval,
         in a formatted manner.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
+
         """
         colorprint(
             str("Results from NelsonAalen (" + str(self.__CI_rounded) + "% CI):"),
@@ -894,21 +904,24 @@ class RankAdjustment:
         self.__xmax = max(d)
 
     def plot(self, plot_type="SF", plot_CI=True, **kwargs):
-        """
-        Plot the Rank-Adjustment  estimate for the specified plot type.
+        """Plot the Rank-Adjustment  estimate for the specified plot type.
 
-        Parameters:
+        Parameters
+        ----------
             plot_type (str): The type of plot to generate. Valid options are "SF" (Survival Function),
                 "CDF" (Cumulative Density Function), or "CHF" (Cumulative Hazard Function). Default is SF
             plot_CI (bool, optional): Whether to plot the confidence bounds. Defaults to True.
             **kwargs: Plotting keywords that are passed directly to matplotlib for the
                 plot (e.g. color, label, linestyle)
 
-        Raises:
+        Raises
+        ------
             ValueError: If the `plot_type` is not one of the valid options.
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         if plot_type not in ["CDF", "SF", "CHF", "cdf", "sf", "chf"]:
             raise ValueError("plot_type must be CDF, SF, or CHF. Default is SF.")
@@ -984,17 +997,19 @@ class RankAdjustment:
             raise ValueError("plot_type must be CDF, SF, CHF")
 
     def print_results(self):
-        """
-        Prints the results from RankAdjustment analysis with confidence interval.
+        """Prints the results from RankAdjustment analysis with confidence interval.
 
         This method prints the results of the KaplanMeier analysis, including the confidence interval,
         in a formatted manner.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
+
         """
         colorprint(
             str("Results from RankAdjustment (" + str(self.__CI_rounded) + "% CI):"),

@@ -291,16 +291,17 @@ class Fit_Exponential_1P:
         self.__quantiles = quantiles
 
     def print_results(self) -> None:
-        """
-        Prints the results of the exponential fitting analysis.
+        """Prints the results of the exponential fitting analysis.
 
         This method prints various results and statistics obtained from the exponential fitting analysis.
         It includes the confidence interval, analysis method, optimizer used (if applicable),
         number of failures and right censored data points, the results table, goodness of fit statistics,
         and the table of quantiles (if available).
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         CI_rounded = self.__CI * 100
         if CI_rounded % 1 == 0:
@@ -330,10 +331,10 @@ class Fit_Exponential_1P:
             print(self.quantiles.to_string(index=False), "\n")
 
     def plot(self, downsample_scatterplot=True, **kwargs) -> plt.Figure:
-        """
-        Generates a probability plot for the fitted exponential distribution.
+        """Generates a probability plot for the fitted exponential distribution.
 
         Args:
+        ----
             downsample_scatterplot : bool, int, optional
                 If True or None, and there are over 1000 points, then the scatterplot
                 will be downsampled by a factor. The default downsample factor will seek
@@ -346,7 +347,9 @@ class Fit_Exponential_1P:
                 probability plot (e.g. color, label, linestyle)
 
         Returns:
+        -------
             plt.Figure: The generated probability plot figure.
+
         """
         from reliability.Probability_plotting import (
             Exponential_probability_plot_Weibull_Scale,
@@ -680,8 +683,7 @@ class Fit_Exponential_2P:
         self.__quantiles = quantiles
 
     def print_results(self) -> None:
-        """
-        Prints the results of the exponential fitting analysis.
+        """Prints the results of the exponential fitting analysis.
 
         This method prints various statistics and results obtained from the exponential fitting analysis.
         It includes the confidence interval, analysis method, optimizer (if applicable), number of failures
@@ -689,8 +691,10 @@ class Fit_Exponential_2P:
 
         If quantiles are available, it also prints a table of quantiles with the confidence interval bounds.
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         CI_rounded = self.__CI * 100
         if CI_rounded % 1 == 0:
@@ -720,15 +724,17 @@ class Fit_Exponential_2P:
             print(self.quantiles.to_string(index=False), "\n")
 
     def plot(self, downsample_scatterplot=True, **kwargs) -> plt.Figure:
-        """
-        Plots the Exponential probability plot on a Weibull Scale.
+        """Plots the Exponential probability plot on a Weibull Scale.
 
         Args:
+        ----
             downsample_scatterplot (bool, optional): Whether to downsample the scatterplot. Defaults to True.
             **kwargs: Additional keyword arguments to be passed to the Exponential_probability_plot_Weibull_Scale function.
 
         Returns:
+        -------
             plt.Figure: The matplotlib Figure object containing the plot.
+
         """
         from reliability.Probability_plotting import (
             Exponential_probability_plot_Weibull_Scale,

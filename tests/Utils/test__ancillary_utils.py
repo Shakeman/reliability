@@ -16,162 +16,160 @@ from reliability.Utils._ancillary_utils import (
 
 
 def test_is_allowed_character():
-    assert is_allowed_character('Y') is True
-    assert is_allowed_character('N') is True
-    assert is_allowed_character('A') is False
-    assert is_allowed_character('B') is False
-    assert is_allowed_character('Z') is False
+    assert is_allowed_character("Y") is True
+    assert is_allowed_character("N") is True
+    assert is_allowed_character("A") is False
+    assert is_allowed_character("B") is False
+    assert is_allowed_character("Z") is False
 
 
 def test_validate_yes_no_prompt(monkeypatch: MonkeyPatch):
     # Test valid input 'Y'
-    monkeypatch.setattr('builtins.input', lambda _: 'Y')
-    assert validate_yes_no_prompt('Are you sure?') == 'Y'
+    monkeypatch.setattr("builtins.input", lambda _: "Y")
+    assert validate_yes_no_prompt("Are you sure?") == "Y"
 
     # Test valid input 'N'
-    monkeypatch.setattr('builtins.input', lambda _: 'N')
-    assert validate_yes_no_prompt('Are you sure?') == 'N'
+    monkeypatch.setattr("builtins.input", lambda _: "N")
+    assert validate_yes_no_prompt("Are you sure?") == "N"
 
     # Test invalid input 'A' followed by valid input 'Y'
-    responses: Iterator[str] = iter(['A', 'Y'])
-    monkeypatch.setattr('builtins.input', lambda _: next(responses))
-    assert validate_yes_no_prompt('Are you sure?') == 'Y'
+    responses: Iterator[str] = iter(["A", "Y"])
+    monkeypatch.setattr("builtins.input", lambda _: next(responses))
+    assert validate_yes_no_prompt("Are you sure?") == "Y"
 
     # Test invalid input 'B' followed by valid input 'N'
-    responses: Iterator[str] = iter(['B', 'N'])
-    monkeypatch.setattr('builtins.input', lambda _: next(responses))
-    assert validate_yes_no_prompt('Are you sure?') == 'N'
+    responses: Iterator[str] = iter(["B", "N"])
+    monkeypatch.setattr("builtins.input", lambda _: next(responses))
+    assert validate_yes_no_prompt("Are you sure?") == "N"
 
 
 def test_update_path():
     # Test case: (new) added to file name
-    path = 'C:\\Users\\Current User\\Desktop\\XCN.xlsx'
-    expected_result = 'C:\\Users\\Current User\\Desktop\\XCN(new).xlsx'
+    path = "C:\\Users\\Current User\\Desktop\\XCN.xlsx"
+    expected_result = "C:\\Users\\Current User\\Desktop\\XCN(new).xlsx"
     assert update_path(path) == expected_result
-
-
 
 
 def test_round_and_string():
     # Test case: number = 0
-    assert round_and_string(0) == '0'
+    assert round_and_string(0) == "0"
 
     # Test case: number = 10.0
-    assert round_and_string(10.0) == '10'
+    assert round_and_string(10.0) == "10"
 
     # Test case: number = -5.4857485e-05
-    assert round_and_string(-5.4857485e-05) == '-5.48575e-05'
+    assert round_and_string(-5.4857485e-05) == "-5.48575e-05"
 
     # Test case: number = 2.54875415e-16
-    assert round_and_string(2.54875415e-16) == '2.54875e-16'
+    assert round_and_string(2.54875415e-16) == "2.54875e-16"
 
     # Test case: number = -1e+20
-    assert round_and_string(-1e+20) == '-1e+20'
+    assert round_and_string(-1e20) == "-1e+20"
 
     # Test case: number = 1e+20
-    assert round_and_string(1e+20) == '1e+20'
+    assert round_and_string(1e20) == "1e+20"
 
     # Test case: number = -2.54875415e-16
-    assert round_and_string(-2.54875415e-16) == '-2.54875e-16'
+    assert round_and_string(-2.54875415e-16) == "-2.54875e-16"
 
     # Test case: number = 5.4857485e-05
-    assert round_and_string(5.4857485e-05) == '5.48575e-05'
+    assert round_and_string(5.4857485e-05) == "5.48575e-05"
 
     # Test case: number = -10.0
-    assert round_and_string(-10.0) == '-10'
+    assert round_and_string(-10.0) == "-10"
 
     # Test case: number = -5.4857485e-05, decimals = 3
-    assert round_and_string(-5.4857485e-05, decimals=3) == '-5.486e-05'
+    assert round_and_string(-5.4857485e-05, decimals=3) == "-5.486e-05"
 
     # Test case: number = 10.0, decimals = 3
-    assert round_and_string(10.0, decimals=3) == '10'
+    assert round_and_string(10.0, decimals=3) == "10"
 
     # Test case: number = -2.54875415e-16, decimals = 3
-    assert round_and_string(-2.54875415e-16, decimals=3) == '-2.549e-16'
+    assert round_and_string(-2.54875415e-16, decimals=3) == "-2.549e-16"
 
     # Test case: number = 5.4857485e-05, decimals = 3
-    assert round_and_string(5.4857485e-05, decimals=3) == '5.486e-05'
+    assert round_and_string(5.4857485e-05, decimals=3) == "5.486e-05"
 
     # Test case: number = -1e+20, decimals = 3
-    assert round_and_string(-1e+20, decimals=3) == '-1e+20'
+    assert round_and_string(-1e20, decimals=3) == "-1e+20"
 
     # Test case: number = 1e+20, decimals = 3
-    assert round_and_string(1e+20, decimals=3) == '1e+20'
+    assert round_and_string(1e20, decimals=3) == "1e+20"
 
     # Test case: number = 0.123456789, decimals = 8
-    assert round_and_string(0.123456789, decimals=8) == '0.12345679'
+    assert round_and_string(0.123456789, decimals=8) == "0.12345679"
 
     # Test case: number = 0.123456789, decimals = 0
-    assert round_and_string(0.123456789, decimals=0) == '0'
+    assert round_and_string(0.123456789, decimals=0) == "0"
 
     # Test case: number = np.nan
-    assert round_and_string(np.nan) == 'nan'
+    assert round_and_string(np.nan) == "nan"
 
     # Test case: number = np.inf
-    assert round_and_string(np.inf) == 'inf'
+    assert round_and_string(np.inf) == "inf"
 
     # Test case: number = -np.inf
-    assert round_and_string(-np.inf) == '-inf'
+    assert round_and_string(-np.inf) == "-inf"
 
     # Test case: number = 0, integer_floats_to_ints = False
-    assert round_and_string(0, integer_floats_to_ints=False) == '0'
+    assert round_and_string(0, integer_floats_to_ints=False) == "0"
 
     # Test case: number = 10.0, integer_floats_to_ints = False
-    assert round_and_string(10.0, integer_floats_to_ints=False) == '10.0'
+    assert round_and_string(10.0, integer_floats_to_ints=False) == "10.0"
 
     # Test case: number = -5.4857485e-05, integer_floats_to_ints = False
-    assert round_and_string(-5.4857485e-05, integer_floats_to_ints=False) == '-5.48575e-05'
+    assert round_and_string(-5.4857485e-05, integer_floats_to_ints=False) == "-5.48575e-05"
 
     # Test case: number = 2.54875415e-16, integer_floats_to_ints = False
-    assert round_and_string(2.54875415e-16, integer_floats_to_ints=False) == '2.54875e-16'
+    assert round_and_string(2.54875415e-16, integer_floats_to_ints=False) == "2.54875e-16"
 
     # Test case: number = -1e+20, integer_floats_to_ints = False
-    assert round_and_string(-1e+20, integer_floats_to_ints=False) == '-1e+20'
+    assert round_and_string(-1e20, integer_floats_to_ints=False) == "-1e+20"
 
     # Test case: number = 1e+20, integer_floats_to_ints = False
-    assert round_and_string(1e+20, integer_floats_to_ints=False) == '1e+20'
+    assert round_and_string(1e20, integer_floats_to_ints=False) == "1e+20"
 
     # Test case: number = -2.54875415e-16, integer_floats_to_ints = False
-    assert round_and_string(-2.54875415e-16, integer_floats_to_ints=False) == '-2.54875e-16'
+    assert round_and_string(-2.54875415e-16, integer_floats_to_ints=False) == "-2.54875e-16"
 
     # Test case: number = 5.4857485e-05, integer_floats_to_ints = False
-    assert round_and_string(5.4857485e-05, integer_floats_to_ints=False) == '5.48575e-05'
+    assert round_and_string(5.4857485e-05, integer_floats_to_ints=False) == "5.48575e-05"
 
     # Test case: number = -10.0, integer_floats_to_ints = False
-    assert round_and_string(-10.0, integer_floats_to_ints=False) == '-10.0'
+    assert round_and_string(-10.0, integer_floats_to_ints=False) == "-10.0"
 
     # Test case: number = -5.4857485e-05, decimals = 3, integer_floats_to_ints = False
-    assert round_and_string(-5.4857485e-05, decimals=3, integer_floats_to_ints=False) == '-5.486e-05'
+    assert round_and_string(-5.4857485e-05, decimals=3, integer_floats_to_ints=False) == "-5.486e-05"
 
     # Test case: number = 10.0, decimals = 3, integer_floats_to_ints = False
-    assert round_and_string(10.0, decimals=3, integer_floats_to_ints=False) == '10.0'
+    assert round_and_string(10.0, decimals=3, integer_floats_to_ints=False) == "10.0"
 
     # Test case: number = -2.54875415e-16, decimals = 3, integer_floats_to_ints = False
-    assert round_and_string(-2.54875415e-16, decimals=3, integer_floats_to_ints=False) == '-2.549e-16'
+    assert round_and_string(-2.54875415e-16, decimals=3, integer_floats_to_ints=False) == "-2.549e-16"
 
     # Test case: number = 5.4857485e-05, decimals = 3, integer_floats_to_ints = False
-    assert round_and_string(5.4857485e-05, decimals=3, integer_floats_to_ints=False) == '5.486e-05'
+    assert round_and_string(5.4857485e-05, decimals=3, integer_floats_to_ints=False) == "5.486e-05"
 
     # Test case: number = -1e+20, decimals = 3, integer_floats_to_ints = False
-    assert round_and_string(-1e+20, decimals=3, integer_floats_to_ints=False) == '-1e+20'
+    assert round_and_string(-1e20, decimals=3, integer_floats_to_ints=False) == "-1e+20"
 
     # Test case: number = 1e+20, decimals = 3, integer_floats_to_ints = False
-    assert round_and_string(1e+20, decimals=3, integer_floats_to_ints=False) == '1e+20'
+    assert round_and_string(1e20, decimals=3, integer_floats_to_ints=False) == "1e+20"
 
     # Test case: number = 0.123456789, decimals = 8, integer_floats_to_ints = False
-    assert round_and_string(0.123456789, decimals=8, integer_floats_to_ints=False) == '0.12345679'
+    assert round_and_string(0.123456789, decimals=8, integer_floats_to_ints=False) == "0.12345679"
 
     # Test case: number = 0.123456789, decimals = 0, integer_floats_to_ints = False
-    assert round_and_string(0.123456789, decimals=0, integer_floats_to_ints=False) == '0'
+    assert round_and_string(0.123456789, decimals=0, integer_floats_to_ints=False) == "0"
 
     # Test case: number = np.nan, integer_floats_to_ints = False
-    assert round_and_string(np.nan, integer_floats_to_ints=False) == 'nan'
+    assert round_and_string(np.nan, integer_floats_to_ints=False) == "nan"
 
     # Test case: number = np.inf, integer_floats_to_ints = False
-    assert round_and_string(np.inf, integer_floats_to_ints=False) == 'inf'
+    assert round_and_string(np.inf, integer_floats_to_ints=False) == "inf"
 
     # Test case: number = -np.inf, integer_floats_to_ints = False
-    assert round_and_string(-np.inf, integer_floats_to_ints=False) == '-inf'
+    assert round_and_string(-np.inf, integer_floats_to_ints=False) == "-inf"
 
 
 def test_colorprint():
@@ -199,32 +197,33 @@ def test_colorprint():
     except ValueError as e:
         assert str(e) == "Unknown text_color. Options are grey, red, green, yellow, blue, pink, turquoise."
 
+
 def test_write_df_to_xlsx(monkeypatch: MonkeyPatch):
     current_path: str = os.getcwd()
-    folder_path: str = os.path.join(current_path, 'tests')
-    folder_path: str = os.path.join(folder_path, '_excel_files')
-    path: str = os.path.join(folder_path, 'test.xlsx')
-    new_path: str = os.path.join(folder_path, 'test(new).xlsx')
-    df = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
+    folder_path: str = os.path.join(current_path, "tests")
+    folder_path: str = os.path.join(folder_path, "_excel_files")
+    path: str = os.path.join(folder_path, "test.xlsx")
+    new_path: str = os.path.join(folder_path, "test(new).xlsx")
+    df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
 
     # Test case: Writing dataframe to xlsx file
     write_df_to_xlsx(df, path)
     assert os.path.exists(path)
 
     # Test case: Writing dataframe to existing xlsx file and choosing not to overwrite
-    monkeypatch.setattr('builtins.input', lambda _: 'N')
+    monkeypatch.setattr("builtins.input", lambda _: "N")
     write_df_to_xlsx(df, path)
     assert os.path.exists(new_path)
 
     # Test case: Writing dataframe to existing xlsx file and choosing to overwrite
-    monkeypatch.setattr('builtins.input', lambda _: 'Y')
+    monkeypatch.setattr("builtins.input", lambda _: "Y")
     write_df_to_xlsx(df, path)
     assert os.path.exists(path)
 
     os.remove(path)
 
     # Test case: Writing dataframe to xlsx file with additional kwargs
-    kwargs = {'sheet_name': 'Sheet1', 'header': False}
+    kwargs = {"sheet_name": "Sheet1", "header": False}
     write_df_to_xlsx(df, path, **kwargs)
     assert os.path.exists(path)
 

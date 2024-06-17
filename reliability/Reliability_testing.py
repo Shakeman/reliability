@@ -1014,17 +1014,19 @@ class chi2test:
             self.hypothesis = "REJECT"
 
     def print_results(self):
-        """
-        Prints the results from the Chi-squared test.
+        """Prints the results from the Chi-squared test.
 
         This method prints the Chi-squared statistic, Chi-squared critical value,
         and the conclusion about the hypothesis based on the significance level.
 
-        Parameters:
+        Parameters
+        ----------
             None
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         colorprint("Results from Chi-squared test:", bold=True, underline=True)
         print("Chi-squared statistic:", self.chisquared_statistic)
@@ -1039,8 +1041,7 @@ class chi2test:
         )
 
     def plot(self):
-        """
-        Plots a cumulative histogram of the data and compares it with the hypothesized distribution's cumulative distribution function (CDF).
+        """Plots a cumulative histogram of the data and compares it with the hypothesized distribution's cumulative distribution function (CDF).
 
         This method uses the matplotlib library to create a histogram of the data, with the bin edges determined by the `bin_edges` attribute.
         The histogram is plotted as a cumulative histogram with the `density` parameter set to True.
@@ -1051,8 +1052,10 @@ class chi2test:
         The y-axis limits are set to 0 and 1.1.
         A legend is added to the plot and the layout is adjusted.
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         bin_edges_to_plot = np.nan_to_num(x=self.bin_edges, posinf=max(self.__data) * 1000, neginf=min(self.__data))
         bin_edges_to_plot = bin_edges_to_plot.tolist()
@@ -1182,17 +1185,19 @@ class KStest:
             self.hypothesis = "REJECT"
 
     def print_results(self):
-        """
-        Print the results from the Kolmogorov-Smirnov test.
+        """Print the results from the Kolmogorov-Smirnov test.
 
         This method prints the Kolmogorov-Smirnov statistic, the Kolmogorov-Smirnov critical value,
         and the conclusion about the hypothesis based on the significance level and distribution.
 
-        Parameters:
+        Parameters
+        ----------
             None
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         colorprint("Results from Kolmogorov-Smirnov test:", bold=True, underline=True)
         print("Kolmogorov-Smirnov statistic:", self.KS_statistic)
@@ -1208,8 +1213,7 @@ class KStest:
         )
 
     def plot(self):
-        """
-        Plots the empirical cumulative distribution function (CDF) of data against the hypothesized distribution CDF.
+        """Plots the empirical cumulative distribution function (CDF) of data against the hypothesized distribution CDF.
 
         This method builds a step plot by iterating over the data and the corresponding Sn_all values. It then adds the
         maximum data value multiplied by 1000 and 1 to the plot. The x-axis limits are determined based on the type of
@@ -1220,8 +1224,10 @@ class KStest:
         Note: This method assumes that the __data, __SSn_1, __n, __distribution, and __dist_title attributes have been
         properly initialized.
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         Sn_all = np.hstack([self.__Sn_1, 1])
         SN_plot_x = [0]

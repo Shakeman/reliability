@@ -357,136 +357,135 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                 raise ValueError("func must be CDF, SF, or CHF")
         else:
             lower, upper = None, None
-    else:
-        if CI_x is not None and CI_y is None and CI_type == "time":
-            raise ValueError(
-                "WARNING: If CI_type=time then CI_y must be specified in order to extract the confidence bounds on time.",
-            )
-        elif CI_y is not None and CI_x is None and CI_type == "reliability":
-            raise ValueError(
-                "WARNING: If CI_type=reliability then CI_x must be specified in order to extract the confidence bounds on reliability.",
-            )
-        elif (CI_y is not None and CI_type == "time") or (CI_x is not None and CI_type == "reliability"):
-            if CI_type == "time":
-                if func == "SF":
-                    q = np.asarray(CI_y)
-                elif func == "CDF":
-                    q = 1 - np.asarray(CI_y)
-                elif func == "CHF":
-                    q = np.exp(-np.asarray(CI_y))
-                else:
-                    raise ValueError("func must be CDF, SF, or CHF")
-            if dist.name == "Weibull":
-                if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.weibull_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
-                    lower, upper = SF_time[0], SF_time[1]
-                elif CI_type == "reliability":
-                    SF_rel = distribution_confidence_intervals.weibull_CI_only(
-                        dist=dist,
-                        CI_type="reliability",
-                        CI=CI,
-                        x=CI_x,
-                    )
-                    if func == "SF":
-                        lower, upper = SF_rel[0], SF_rel[1]
-                    elif func == "CDF":
-                        lower, upper = 1 - SF_rel[1], 1 - SF_rel[0]
-                    elif func == "CHF":
-                        lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
-            elif dist.name == "Normal":
-                if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.normal_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
-                    lower, upper = SF_time[0], SF_time[1]
-                elif CI_type == "reliability":
-                    SF_rel = distribution_confidence_intervals.normal_CI_only(
-                        dist=dist,
-                        CI_type="reliability",
-                        CI=CI,
-                        x=CI_x,
-                    )
-                    if func == "SF":
-                        lower, upper = SF_rel[1], SF_rel[0]
-                    elif func == "CDF":
-                        lower, upper = 1 - SF_rel[0], 1 - SF_rel[1]
-                    elif func == "CHF":
-                        lower, upper = -np.log(SF_rel[0]), -np.log(SF_rel[1])
-            elif dist.name == "Lognormal":
-                if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.lognormal_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
-                    lower, upper = SF_time[0], SF_time[1]
-                elif CI_type == "reliability":
-                    SF_rel = distribution_confidence_intervals.lognormal_CI_only(
-                        dist=dist,
-                        CI_type="reliability",
-                        CI=CI,
-                        x=CI_x,
-                    )
-                    if func == "SF":
-                        lower, upper = SF_rel[1], SF_rel[0]
-                    elif func == "CDF":
-                        lower, upper = 1 - SF_rel[0], 1 - SF_rel[1]
-                    elif func == "CHF":
-                        lower, upper = -np.log(SF_rel[0]), -np.log(SF_rel[1])
-            elif dist.name == "Gamma":
-                if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.gamma_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
-                    lower, upper = SF_time[0], SF_time[1]
-                elif CI_type == "reliability":
-                    SF_rel = distribution_confidence_intervals.gamma_CI_only(
-                        dist=dist,
-                        CI_type="reliability",
-                        CI=CI,
-                        x=CI_x,
-                    )
-                    if func == "SF":
-                        lower, upper = SF_rel[0], SF_rel[1]
-                    elif func == "CDF":
-                        lower, upper = 1 - SF_rel[1], 1 - SF_rel[0]
-                    elif func == "CHF":
-                        lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
-            elif dist.name == "Gumbel":
-                if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.gumbel_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
-                    lower, upper = SF_time[0], SF_time[1]
-                elif CI_type == "reliability":
-                    SF_rel = distribution_confidence_intervals.gumbel_CI_only(
-                        dist=dist,
-                        CI_type="reliability",
-                        CI=CI,
-                        x=CI_x,
-                    )
-                    if func == "SF":
-                        lower, upper = SF_rel[0], SF_rel[1]
-                    elif func == "CDF":
-                        lower, upper = 1 - SF_rel[1], 1 - SF_rel[0]
-                    elif func == "CHF":
-                        lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
-            elif dist.name == "Loglogistic":
-                if CI_type == "time":
-                    SF_time = distribution_confidence_intervals.loglogistic_CI_only(
-                        dist=dist,
-                        CI_type="time",
-                        CI=CI,
-                        q=q,
-                    )
-                    lower, upper = SF_time[0], SF_time[1]
-                elif CI_type == "reliability":
-                    SF_rel = distribution_confidence_intervals.loglogistic_CI_only(
-                        dist=dist,
-                        CI_type="reliability",
-                        CI=CI,
-                        x=CI_x,
-                    )
-                    if func == "SF":
-                        lower, upper = SF_rel[0], SF_rel[1]
-                    elif func == "CDF":
-                        lower, upper = 1 - SF_rel[1], 1 - SF_rel[0]
-                    elif func == "CHF":
-                        lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
+    elif CI_x is not None and CI_y is None and CI_type == "time":
+        raise ValueError(
+            "WARNING: If CI_type=time then CI_y must be specified in order to extract the confidence bounds on time.",
+        )
+    elif CI_y is not None and CI_x is None and CI_type == "reliability":
+        raise ValueError(
+            "WARNING: If CI_type=reliability then CI_x must be specified in order to extract the confidence bounds on reliability.",
+        )
+    elif (CI_y is not None and CI_type == "time") or (CI_x is not None and CI_type == "reliability"):
+        if CI_type == "time":
+            if func == "SF":
+                q = np.asarray(CI_y)
+            elif func == "CDF":
+                q = 1 - np.asarray(CI_y)
+            elif func == "CHF":
+                q = np.exp(-np.asarray(CI_y))
             else:
-                raise ValueError("Unknown distribution")
+                raise ValueError("func must be CDF, SF, or CHF")
+        if dist.name == "Weibull":
+            if CI_type == "time":
+                SF_time = distribution_confidence_intervals.weibull_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
+                lower, upper = SF_time[0], SF_time[1]
+            elif CI_type == "reliability":
+                SF_rel = distribution_confidence_intervals.weibull_CI_only(
+                    dist=dist,
+                    CI_type="reliability",
+                    CI=CI,
+                    x=CI_x,
+                )
+                if func == "SF":
+                    lower, upper = SF_rel[0], SF_rel[1]
+                elif func == "CDF":
+                    lower, upper = 1 - SF_rel[1], 1 - SF_rel[0]
+                elif func == "CHF":
+                    lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
+        elif dist.name == "Normal":
+            if CI_type == "time":
+                SF_time = distribution_confidence_intervals.normal_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
+                lower, upper = SF_time[0], SF_time[1]
+            elif CI_type == "reliability":
+                SF_rel = distribution_confidence_intervals.normal_CI_only(
+                    dist=dist,
+                    CI_type="reliability",
+                    CI=CI,
+                    x=CI_x,
+                )
+                if func == "SF":
+                    lower, upper = SF_rel[1], SF_rel[0]
+                elif func == "CDF":
+                    lower, upper = 1 - SF_rel[0], 1 - SF_rel[1]
+                elif func == "CHF":
+                    lower, upper = -np.log(SF_rel[0]), -np.log(SF_rel[1])
+        elif dist.name == "Lognormal":
+            if CI_type == "time":
+                SF_time = distribution_confidence_intervals.lognormal_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
+                lower, upper = SF_time[0], SF_time[1]
+            elif CI_type == "reliability":
+                SF_rel = distribution_confidence_intervals.lognormal_CI_only(
+                    dist=dist,
+                    CI_type="reliability",
+                    CI=CI,
+                    x=CI_x,
+                )
+                if func == "SF":
+                    lower, upper = SF_rel[1], SF_rel[0]
+                elif func == "CDF":
+                    lower, upper = 1 - SF_rel[0], 1 - SF_rel[1]
+                elif func == "CHF":
+                    lower, upper = -np.log(SF_rel[0]), -np.log(SF_rel[1])
+        elif dist.name == "Gamma":
+            if CI_type == "time":
+                SF_time = distribution_confidence_intervals.gamma_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
+                lower, upper = SF_time[0], SF_time[1]
+            elif CI_type == "reliability":
+                SF_rel = distribution_confidence_intervals.gamma_CI_only(
+                    dist=dist,
+                    CI_type="reliability",
+                    CI=CI,
+                    x=CI_x,
+                )
+                if func == "SF":
+                    lower, upper = SF_rel[0], SF_rel[1]
+                elif func == "CDF":
+                    lower, upper = 1 - SF_rel[1], 1 - SF_rel[0]
+                elif func == "CHF":
+                    lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
+        elif dist.name == "Gumbel":
+            if CI_type == "time":
+                SF_time = distribution_confidence_intervals.gumbel_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
+                lower, upper = SF_time[0], SF_time[1]
+            elif CI_type == "reliability":
+                SF_rel = distribution_confidence_intervals.gumbel_CI_only(
+                    dist=dist,
+                    CI_type="reliability",
+                    CI=CI,
+                    x=CI_x,
+                )
+                if func == "SF":
+                    lower, upper = SF_rel[0], SF_rel[1]
+                elif func == "CDF":
+                    lower, upper = 1 - SF_rel[1], 1 - SF_rel[0]
+                elif func == "CHF":
+                    lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
+        elif dist.name == "Loglogistic":
+            if CI_type == "time":
+                SF_time = distribution_confidence_intervals.loglogistic_CI_only(
+                    dist=dist,
+                    CI_type="time",
+                    CI=CI,
+                    q=q,
+                )
+                lower, upper = SF_time[0], SF_time[1]
+            elif CI_type == "reliability":
+                SF_rel = distribution_confidence_intervals.loglogistic_CI_only(
+                    dist=dist,
+                    CI_type="reliability",
+                    CI=CI,
+                    x=CI_x,
+                )
+                if func == "SF":
+                    lower, upper = SF_rel[0], SF_rel[1]
+                elif func == "CDF":
+                    lower, upper = 1 - SF_rel[1], 1 - SF_rel[0]
+                elif func == "CHF":
+                    lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
         else:
-            lower, upper = None, None
+            raise ValueError("Unknown distribution")
+    else:
+        lower, upper = None, None
     if type(lower) is not type(None) and len(lower) == 1:  # unpack arrays of length 1
         lower, upper = lower[0], upper[0]
     return lower, upper

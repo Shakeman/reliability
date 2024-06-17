@@ -1271,14 +1271,15 @@ class Fit_Everything:
         # print the results
 
     def print_results(self) -> None:
-        """
-        Prints the results from the Fit_Everything analysis.
+        """Prints the results from the Fit_Everything analysis.
 
         The method prints the analysis method used, the number of failures and right censored data points,
         and the results table.
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         frac_censored = self._frac_cens * 100
         colorprint("Results from Fit_Everything:", bold=True, underline=True)
@@ -1294,9 +1295,11 @@ class Fit_Everything:
     def __probplot_layout(self):
         """Internal function to provide layout formatting of the plots.
 
-        Returns:
+        Returns
+        -------
             Tuple: A tuple containing the number of columns, number of rows,
                     figure size for the plots, and figure size for the plots in pixels.
+
         """
         items = len(self.results.index.values)  # number of items fitted
         xx1, yy1 = 2.5, 2  # multipliers for easy adjustment of window sizes
@@ -1373,8 +1376,10 @@ class Fit_Everything:
         This method generates a histogram plot of the Probability Density Function (PDF) and Cumulative Distribution Function (CDF)
         of the fitted distributions. It uses the failures data provided to calculate the necessary parameters for plotting.
 
-        Returns:
+        Returns
+        -------
             matplotlib.figure.Figure: The generated histogram plot figure.
+
         """
         X = self.failures
         # define plotting limits
@@ -1539,12 +1544,13 @@ class Fit_Everything:
         return plt.gcf()
 
     def p_p_plot(self) -> plt.Figure:
-        """
-        Generates a subplot of Probability-Probability plots to compare the
+        """Generates a subplot of Probability-Probability plots to compare the
         parametric vs non-parametric plots of the fitted distributions.
 
-        Returns:
+        Returns
+        -------
             matplotlib.figure.Figure: The generated figure object.
+
         """
         # Kaplan-Meier estimate of quantiles. Used in P-P plot.
         nonparametric = KaplanMeier(
@@ -1663,15 +1669,17 @@ class Fit_Everything:
         return plt.gcf()
 
     def probability_plot(self, best_only=False):
-        """
-        Generates a subplot of all the probability plots.
+        """Generates a subplot of all the probability plots.
 
-        Parameters:
+        Parameters
+        ----------
             best_only (bool): If True, only the probability plot of the best fitted distribution will be shown.
                               If False, probability plots of all fitted distributions will be shown.
 
-        Returns:
+        Returns
+        -------
             matplotlib.figure.Figure: The generated figure object containing the probability plots.
+
         """
         from reliability.Probability_plotting import (
             Beta_probability_plot,

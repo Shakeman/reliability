@@ -41,6 +41,7 @@ line-length = 120
 exclude = ["tests", "docs/conf.py"]
 
 select = [
+    #"ALL",  # enable all rules
     "F",  # pyflakes
     "E",  # pycodestyle errors (settings from FastAPI, thanks, @tiangolo!)
     "W",  # pycodestyle warnings

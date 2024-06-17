@@ -1,4 +1,3 @@
-
 import numpy as np
 import numpy.typing as npt
 import scipy.stats as ss
@@ -10,7 +9,13 @@ from reliability.Utils._ancillary_utils import colorprint
 from reliability.Utils._plot_utils import linear_regression
 
 
-def least_squares(dist: str, failures: npt.NDArray[np.float64], right_censored: npt.NDArray[np.float64], method: str ="RRX", force_shape=None) -> list[np.float64]:
+def least_squares(
+    dist: str,
+    failures: npt.NDArray[np.float64],
+    right_censored: npt.NDArray[np.float64],
+    method: str = "RRX",
+    force_shape=None,
+) -> list[np.float64]:
     """Uses least squares or non-linear least squares estimation to fit the
     parameters of the distribution to the plotting positions.
 
@@ -85,7 +90,7 @@ def least_squares(dist: str, failures: npt.NDArray[np.float64], right_censored: 
         gamma0 = np.float64(0.0)
 
     if dist == "Weibull_2P":
-        guess: list[np.float64]  = Weibull_2P_guess(x, y, method, force_shape)
+        guess: list[np.float64] = Weibull_2P_guess(x, y, method, force_shape)
 
     elif dist == "Weibull_3P":
         guess = Weibull_3P_guess(x, y, method, gamma0, failures, force_shape)
@@ -106,7 +111,7 @@ def least_squares(dist: str, failures: npt.NDArray[np.float64], right_censored: 
         guess = Lognormal_2P_guess(x, y, method, force_shape)
 
     elif dist == "Lognormal_3P":
-        guess = Lognormal_3P_guess(x,y, gamma0, failures)
+        guess = Lognormal_3P_guess(x, y, gamma0, failures)
 
     elif dist == "Loglogistic_2P":
         guess = Loglogistic_2P_guess(x, y, method)
@@ -126,17 +131,19 @@ def least_squares(dist: str, failures: npt.NDArray[np.float64], right_censored: 
         raise ValueError('Unknown dist. Use the correct name. eg. "Weibull_2P"')
     return guess
 
+
 def Weibull_2P_guess(x, y, method, force_shape) -> list[np.float64]:
-    """
-    Calculates the initial guess for the parameters of a 2-parameter Weibull distribution.
+    """Calculates the initial guess for the parameters of a 2-parameter Weibull distribution.
 
     Args:
+    ----
         x (array-like): The x-values of the data points.
         y (array-like): The y-values of the data points.
         method (str): The method used for regression. Can be "RRX" or "RRY".
         force_shape (float or None): The shape parameter to be forced. If None, no shape parameter is forced.
 
     Returns:
+    -------
         list[np.float64]: The initial guess for the parameters [alpha, beta] of the Weibull distribution.
 
     """
@@ -150,11 +157,12 @@ def Weibull_2P_guess(x, y, method, force_shape) -> list[np.float64]:
     guess = [LS_alpha, LS_beta]
     return guess
 
+
 def Weibull_3P_guess(x, y, method, gamma0, failures, force_shape) -> list[np.float64]:
-    """
-    Estimates the parameters for a 3-parameter Weibull distribution based on the given data.
+    """Estimates the parameters for a 3-parameter Weibull distribution based on the given data.
 
     Args:
+    ----
         x (array-like): The x-values of the data points.
         y (array-like): The y-values of the data points.
         method (str): The method used for estimation.
@@ -163,20 +171,23 @@ def Weibull_3P_guess(x, y, method, gamma0, failures, force_shape) -> list[np.flo
         force_shape (bool): Whether to force the shape parameter to be positive.
 
     Returns:
+    -------
         list[np.float64]: The estimated parameters [alpha, beta, gamma] for the 3-parameter Weibull distribution.
 
     Raises:
+    ------
         ValueError: If the estimation fails due to invalid input.
         LinAlgError: If the estimation fails due to linear algebra error.
         RuntimeError: If the estimation fails due to a runtime error.
 
     Note:
+    ----
         This function uses the Weibull_2P_guess function to create an initial guess for the 3-parameter Weibull distribution.
         It then performs a non-linear least squares estimation using the curve_fit function.
 
     """
     # Weibull_2P estimate to create the guess for Weibull_3P
-    guess_x =  x - gamma0
+    guess_x = x - gamma0
     guess_2P = Weibull_2P_guess(x=guess_x, y=y, method=method, force_shape=force_shape)
     LS_alpha = guess_2P[0]
     LS_beta = guess_2P[1]
@@ -212,19 +223,22 @@ def Weibull_3P_guess(x, y, method, gamma0, failures, force_shape) -> list[np.flo
         guess = [LS_alpha, LS_beta, gamma0]
     return guess
 
+
 def Exponential_1P_guess(x, y, method) -> list[np.float64]:
-    """
-    Calculates the guess value for the Exponential_1P model.
+    """Calculates the guess value for the Exponential_1P model.
 
     Args:
+    ----
         x (array-like): The x-values of the data points.
         y (array-like): The y-values of the data points.
         method (str): The method to use for the guess calculation. Can be "RRY" or "RRX".
 
     Returns:
+    -------
         list[np.float64]: The guess value for the Exponential_1P model.
 
     Raises:
+    ------
         None
 
     """
@@ -247,11 +261,12 @@ def Exponential_1P_guess(x, y, method) -> list[np.float64]:
     guess: list[np.float64] = [LS_Lambda]
     return guess
 
+
 def Exponential_2P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
-    """
-    Estimate the parameters for a two-parameter exponential distribution.
+    """Estimate the parameters for a two-parameter exponential distribution.
 
     Args:
+    ----
         x (array-like): The input data representing the time-to-failure values.
         y (array-like): The input data representing the cumulative probability of failure.
         method (str): The method used for estimation.
@@ -259,18 +274,23 @@ def Exponential_2P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
         failures (array-like): The input data representing the failure times.
 
     Returns:
+    -------
         list[np.float64]: A list containing the estimated parameters [Lambda, gamma].
 
     Raises:
+    ------
         ValueError: If the estimation fails due to invalid input data.
         LinAlgError: If the estimation fails due to linear algebra errors.
         RuntimeError: If the estimation fails due to other runtime errors.
 
     Note:
+    ----
         This function uses a two-step estimation process. First, it estimates the parameters using ordinary least squares (OLS) regression. Then, it uses non-linear least squares (NLLS) regression to refine the estimates. If the NLLS estimation fails, the function falls back to the OLS estimates.
 
     Warning:
+    -------
         If the NLLS estimation fails, the result returned is an estimate that is likely to be incorrect.
+
     """
     # Exponential_1P estimate to create the guess for Exponential_2P
     # while it is mathematically possible to use ordinary least squares (y=mx+c) for this, the LS method does not allow bounds on gamma. This can result in gamma > min(data) which should be impossible and will cause other errors.
@@ -309,17 +329,19 @@ def Exponential_2P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
         guess = [LS_Lambda, gamma0]
     return guess
 
+
 def Normal_2P_guess(x, y, method, force_shape) -> list[np.float64]:
-    """
-    Calculates the initial guess for the parameters of a 2-parameter Normal distribution.
+    """Calculates the initial guess for the parameters of a 2-parameter Normal distribution.
 
     Args:
+    ----
         x (array-like): The x-values of the data points.
         y (array-like): The y-values of the data points.
         method (str): The method used for regression ("RRX" or "RRY").
         force_shape (float or None): The shape parameter to be forced (if any).
 
     Returns:
+    -------
         list[np.float64]: The initial guess for the parameters mu and sigma.
 
     """
@@ -332,17 +354,20 @@ def Normal_2P_guess(x, y, method, force_shape) -> list[np.float64]:
     guess = [LS_mu, LS_sigma]
     return guess
 
-def Gumbel_2P_guess(x, y, method) -> list[np.float64]:
-    """
-    Calculates the initial guess for the parameters of a 2-parameter Gumbel distribution.
 
-    Parameters:
+def Gumbel_2P_guess(x, y, method) -> list[np.float64]:
+    """Calculates the initial guess for the parameters of a 2-parameter Gumbel distribution.
+
+    Parameters
+    ----------
         x (array-like): The x-values of the data points.
         y (array-like): The y-values of the data points.
         method (str): The method to use for linear regression.
 
-    Returns:
+    Returns
+    -------
         list[np.float64]: The initial guess for the parameters [mu, sigma].
+
     """
     ylin = np.log(-np.log(1 - y))
     slope, intercept = linear_regression(x, ylin, RRX_or_RRY=method)
@@ -351,17 +376,19 @@ def Gumbel_2P_guess(x, y, method) -> list[np.float64]:
     guess = [LS_mu, LS_sigma]
     return guess
 
+
 def Lognormal_2P_guess(x, y, method, force_shape) -> list[np.float64]:
-    """
-    Calculates the initial guess for the parameters of a 2-parameter lognormal distribution.
+    """Calculates the initial guess for the parameters of a 2-parameter lognormal distribution.
 
     Args:
+    ----
         x (array-like): The x-values of the data points.
         y (array-like): The y-values of the data points.
         method (str): The method used for regression ("RRX" or "RRY").
         force_shape (float or None): The shape parameter to be forced, or None if no shape parameter is forced.
 
     Returns:
+    -------
         list[np.float64]: The initial guess for the parameters [mu, sigma] of the lognormal distribution.
 
     """
@@ -375,18 +402,21 @@ def Lognormal_2P_guess(x, y, method, force_shape) -> list[np.float64]:
     guess = [LS_mu, LS_sigma]
     return guess
 
+
 def Lognormal_3P_guess(x, y, gamma0, failures) -> list[np.float64]:
-    """
-    Calculates the initial guess for the parameters of a 3-parameter lognormal distribution.
+    """Calculates the initial guess for the parameters of a 3-parameter lognormal distribution.
 
     Args:
+    ----
         x (array-like): The x-values of the data.
         y (array-like): The y-values of the data.
         gamma0 (float): The initial guess for the gamma parameter.
         failures (array-like): The failure data.
 
     Returns:
+    -------
         list[np.float64]: The initial guess for the parameters [mu, sigma, gamma] of the lognormal distribution.
+
     """
     # uses least squares to fit a normal distribution to the log of the data and minimizes the correlation coefficient (1 - R^2)
     res = minimize(
@@ -424,11 +454,12 @@ def Lognormal_3P_guess(x, y, gamma0, failures) -> list[np.float64]:
         guess = [np.mean(np.log(x - gamma)), np.std(np.log(x - gamma)), gamma]
     return guess
 
-def Loglogistic_2P_guess(x, y, method) -> list[np.float64]:
-    """
-    Calculates the initial guess for the parameters of a 2-parameter log-logistic distribution.
 
-    Parameters:
+def Loglogistic_2P_guess(x, y, method) -> list[np.float64]:
+    """Calculates the initial guess for the parameters of a 2-parameter log-logistic distribution.
+
+    Parameters
+    ----------
     - x: array-like
         The x-values of the data points.
     - y: array-like
@@ -436,9 +467,11 @@ def Loglogistic_2P_guess(x, y, method) -> list[np.float64]:
     - method: str
         The method used for linear regression.
 
-    Returns:
+    Returns
+    -------
     - guess: list[np.float64]
         The initial guess for the parameters [alpha, beta] of the log-logistic distribution.
+
     """
     xlin: np.float64 = np.log(x)
     ylin: np.float64 = np.log(1 / y - 1)
@@ -448,24 +481,28 @@ def Loglogistic_2P_guess(x, y, method) -> list[np.float64]:
     guess: list[np.float64] = [LS_alpha, LS_beta]
     return guess
 
-def Loglogistic_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
-    """
-    Estimate the parameters for a 3-parameter Loglogistic distribution based on the given data.
 
-    Parameters:
+def Loglogistic_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
+    """Estimate the parameters for a 3-parameter Loglogistic distribution based on the given data.
+
+    Parameters
+    ----------
     - x (array-like): The x-values of the data points.
     - y (array-like): The y-values of the data points.
     - method (str): The method used for linear regression.
     - gamma0 (float): The location parameter.
     - failures (array-like): The failure data.
 
-    Returns:
+    Returns
+    -------
     - guess (list): The estimated parameters [alpha, beta, gamma] for the Loglogistic distribution.
 
-    Raises:
+    Raises
+    ------
     - ValueError: If the non-linear least squares method fails.
     - LinAlgError: If a linear algebra error occurs during linear regression.
     - RuntimeError: If a runtime error occurs during the non-linear least squares method.
+
     """
     # Loglogistic_2P estimate to create the guess for Loglogistic_3P
     xlin = np.log(x - gamma0)
@@ -502,25 +539,29 @@ def Loglogistic_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
         guess = [LS_alpha, LS_beta, gamma0]
     return guess
 
+
 def Gamma_2P_guess(x, y, method, failures) -> list[np.float64]:
-    """
-    Estimates the initial guess for the parameters of a Gamma distribution based on the given data.
+    """Estimates the initial guess for the parameters of a Gamma distribution based on the given data.
 
     Args:
+    ----
         x (array-like): The input values.
         y (array-like): The corresponding probabilities.
         method (str): The method used for linear regression.
         failures (array-like): The failure data.
 
     Returns:
+    -------
         list[np.float64]: The initial guess for the parameters of the Gamma distribution.
 
     Raises:
+    ------
         ValueError: If the curve fitting fails.
         LinAlgError: If a linear algebra operation fails.
         RuntimeError: If a runtime error occurs.
 
     Note:
+    ----
         This function estimates the initial guess for the parameters of a Gamma distribution by first estimating the parameters of a Weibull distribution
         and then converting them to the parameters of a Gamma distribution. The conversion is based on an approximate model.
 
@@ -575,23 +616,26 @@ def Gamma_2P_guess(x, y, method, failures) -> list[np.float64]:
             guess = [alpha_guess, beta_guess]
     return guess
 
-def Gamma_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
-    """
-    Estimate the parameters for a three-parameter Gamma distribution based on given data.
 
-    Parameters:
+def Gamma_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
+    """Estimate the parameters for a three-parameter Gamma distribution based on given data.
+
+    Parameters
+    ----------
     - x: The input values.
     - y: The corresponding probabilities.
     - method: The method used for regression analysis.
     - gamma0: The value of the gamma parameter.
     - failures: The number of failures.
 
-    Returns:
+    Returns
+    -------
     - guess: A list of estimated parameters for the three-parameter Gamma distribution.
 
     Note:
     This function uses a combination of linear regression and non-linear least squares optimization to estimate the parameters.
     If the optimization fails, a warning message is printed and an estimate based on initial guesses is returned.
+
     """
     # Weibull_2P estimate which is converted to a Gamma_2P initial guess
     xlin = np.log(x - gamma0 * 0.98)
@@ -603,7 +647,8 @@ def Gamma_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
     # conversion of weibull parameters to gamma parameters. These values were found empirically and the relationship is only an approximate model
     beta_guess = abs(0.6932 * LS_beta**2 - 0.0908 * LS_beta + 0.2804)
     alpha_guess = abs(LS_alpha / (-0.00095 * beta_guess**2 + 1.1119 * beta_guess))
-    #TODO: Move curve fit to its own function
+
+    # TODO: Move curve fit to its own function
     def __perform_curve_fit_gamma_2P():  # separated out for repeated use
         curve_fit_bounds = (
             [0, 0],
@@ -686,30 +731,34 @@ def Gamma_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
             guess = [alpha_guess, beta_guess, gamma0 * 0.98]
     return guess
 
+
 def Beta_2P_guess(x, y, failures) -> list[np.float64]:
-    """
-    Estimates the parameters alpha and beta for a 2-parameter Beta distribution using non-linear least squares method.
+    """Estimates the parameters alpha and beta for a 2-parameter Beta distribution using non-linear least squares method.
 
     Args:
+    ----
         x (array-like): The x-values of the data points.
         y (array-like): The y-values of the data points.
         method (str): The method used for curve fitting.
         failures (list): List of failure data.
 
     Returns:
+    -------
         list[np.float64]: A list containing the estimated values of alpha and beta.
 
     Raises:
+    ------
         ValueError: If the curve fitting fails.
         LinAlgError: If there is a linear algebra error.
         RuntimeError: If there is a runtime error.
 
     Note:
+    ----
         This function uses the `curve_fit` function from the `scipy.optimize` module to perform the non-linear least squares fitting.
         The initial guess for the parameters is set to [2, 1].
         If the fitting fails, a warning message is printed and an estimate of [2.0, 1.0] is returned.
-    """
 
+    """
     try:
         curve_fit_bounds = (
             [0, 0],
@@ -736,16 +785,18 @@ def Beta_2P_guess(x, y, failures) -> list[np.float64]:
         guess = [np.float64(2.0), np.float64(1.0)]
     return guess
 
-def __gamma_optimizer(gamma_guess, x, y):
-    """
-    Optimizes the gamma parameter by performing a linear regression on transformed data.
 
-    Parameters:
+def __gamma_optimizer(gamma_guess, x, y):
+    """Optimizes the gamma parameter by performing a linear regression on transformed data.
+
+    Parameters
+    ----------
     gamma_guess (float): The initial guess for the gamma parameter.
     x (array-like): The input data.
     y (array-like): The target data.
 
-    Returns:
+    Returns
+    -------
     float: The optimized gamma parameter.
 
     """
@@ -755,87 +806,100 @@ def __gamma_optimizer(gamma_guess, x, y):
     opt_gamma = 1 - (r**2)
     return opt_gamma
 
-def __normal_2P_CDF(t, mu, sigma):
-    """
-    Calculate the cumulative distribution function (CDF) for a two-parameter normal distribution.
 
-    Parameters:
+def __normal_2P_CDF(t, mu, sigma):
+    """Calculate the cumulative distribution function (CDF) for a two-parameter normal distribution.
+
+    Parameters
+    ----------
     - t (float): The value at which to evaluate the CDF.
     - mu (float): The mean of the normal distribution.
     - sigma (float): The standard deviation of the normal distribution.
 
-    Returns:
+    Returns
+    -------
     - cdf (float): The value of the CDF at the given input value.
 
     """
     cdf = (1 + erf(((t - mu) / sigma) / 2**0.5)) / 2
     return cdf
 
-def __loglogistic_3P_CDF(t, alpha, beta, gamma):
-    """
-    Calculate the cumulative distribution function (CDF) of the 3-parameter log-logistic distribution.
 
-    Parameters:
+def __loglogistic_3P_CDF(t, alpha, beta, gamma):
+    """Calculate the cumulative distribution function (CDF) of the 3-parameter log-logistic distribution.
+
+    Parameters
+    ----------
     - t (float): The value at which to evaluate the CDF.
     - alpha (float): The scale parameter of the distribution.
     - beta (float): The shape parameter of the distribution.
     - gamma (float): The location parameter of the distribution.
 
-    Returns:
+    Returns
+    -------
     - cdf (float): The value of the CDF at the given input.
 
     """
     cdf = 1 / (1 + ((t - gamma) / alpha) ** -beta)
     return cdf
 
-def __gamma_2P_CDF(t, alpha, beta):
-    """
-    Calculate the cumulative distribution function (CDF) of a two-parameter gamma distribution.
 
-    Parameters:
+def __gamma_2P_CDF(t, alpha, beta):
+    """Calculate the cumulative distribution function (CDF) of a two-parameter gamma distribution.
+
+    Parameters
+    ----------
     t (float): The value at which to evaluate the CDF.
     alpha (float): The shape parameter of the gamma distribution.
     beta (float): The scale parameter of the gamma distribution.
 
-    Returns:
+    Returns
+    -------
     float: The CDF value at the given value `t`.
+
     """
     cdf = gammainc(beta, t / alpha)
     return cdf
 
-def __gamma_3P_CDF(t, alpha, beta, gamma):
-    """
-    Calculate the cumulative distribution function (CDF) of a 3-parameter gamma distribution.
 
-    Parameters:
+def __gamma_3P_CDF(t, alpha, beta, gamma):
+    """Calculate the cumulative distribution function (CDF) of a 3-parameter gamma distribution.
+
+    Parameters
+    ----------
     - t (float): The value at which to evaluate the CDF.
     - alpha (float): The shape parameter of the gamma distribution.
     - beta (float): The scale parameter of the gamma distribution.
     - gamma (float): The location parameter of the gamma distribution.
 
-    Returns:
+    Returns
+    -------
     - cdf (float): The value of the CDF at the given input value.
 
     """
     cdf = gammainc(beta, (t - gamma) / alpha)
     return cdf
 
-def __beta_2P_CDF(t, alpha, beta):
-    """
-    Calculate the cumulative distribution function (CDF) of a 2-parameter beta distribution.
 
-    Parameters:
+def __beta_2P_CDF(t, alpha, beta):
+    """Calculate the cumulative distribution function (CDF) of a 2-parameter beta distribution.
+
+    Parameters
+    ----------
     - t (float): The value at which to evaluate the CDF.
     - alpha (float): The first shape parameter of the beta distribution.
     - beta (float): The second shape parameter of the beta distribution.
 
-    Returns:
+    Returns
+    -------
     - cdf (float): The value of the CDF at the given value `t`.
+
     """
     cdf = betainc(alpha, beta, t)
     return cdf
 
-def ALT_least_squares(model, failures, stress_1_array, stress_2_array=None)-> list[np.float64]:
+
+def ALT_least_squares(model, failures, stress_1_array, stress_2_array=None) -> list[np.float64]:
     """Uses least squares estimation to fit the parameters of the ALT stress-life
     model to the time to failure data.
 
@@ -880,6 +944,7 @@ def ALT_least_squares(model, failures, stress_1_array, stress_2_array=None)-> li
     For models with more than two parameters, linear algebra is equally valid,
     but in these cases it is not finding the line of best fit, it is instead
     finding the plane of best fit.
+
     """
     L: npt.NDArray[np.float64] = np.asarray(failures)
     S1: npt.NDArray[np.float64] = np.asarray(stress_1_array)
@@ -906,6 +971,7 @@ def ALT_least_squares(model, failures, stress_1_array, stress_2_array=None)-> li
             "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power.",
         )
     return output
+
 
 def non_invertable_handler(xx, yy, model) -> list[np.float64]:
     """This subfunction performs the linear algebra to find the solution.
@@ -943,55 +1009,66 @@ def non_invertable_handler(xx, yy, model) -> list[np.float64]:
                 "WARNING: Least squares estimates failed for " + model + " model.",
                 text_color="red",
             )
-            model_parameters = [np.float64(1), np.float64(2), np.float64(3)]  # return a dummy solution for MLE to deal with
+            model_parameters = [
+                np.float64(1),
+                np.float64(2),
+                np.float64(3),
+            ]  # return a dummy solution for MLE to deal with
     return model_parameters
 
-def exponential_ALT_least_squares(S1, L) -> list[np.float64]:
-    """
-    Calculate the parameters of an exponential function under ALT condtions using the least squares method.
 
-    Parameters:
+def exponential_ALT_least_squares(S1, L) -> list[np.float64]:
+    """Calculate the parameters of an exponential function under ALT condtions using the least squares method.
+
+    Parameters
+    ----------
     - S1: List or array of values representing the independent variable of Stress_1.
     - L: List or array of values representing the dependent variable of Failures.
 
-    Returns:
+    Returns
+    -------
     - output: List containing the parameters of the exponential function [m, b], where:
         - m: Slope of the linear regression line.
         - b: Intercept of the linear regression line.
+
     """
     m, c = linear_regression(x=1 / S1, y=np.log(L), RRX_or_RRY="RRY")
     b = np.exp(c)
     output = [m, b]  # y=mx+b
     return output
 
-def eyring_ALT_least_squares(S1, L) -> list[np.float64]:
-        """
-    Calculate the parameters of an eyring function under ALT condtions using the least squares method.
 
-    Parameters:
+def eyring_ALT_least_squares(S1, L) -> list[np.float64]:
+    """Calculate the parameters of an eyring function under ALT condtions using the least squares method.
+
+    Parameters
+    ----------
     - S1: List or array of values representing the independent variable of Stress_1.
     - L: List or array of values representing the dependent variable of Failures.
 
-    Returns:
+    Returns
+    -------
     - output: List containing the parameters of the exponential function [m, b], where:
-        - m: Slope of the linear regression line.
-        - b: Intercept of the linear regression line.
+    - m: Slope of the linear regression line.
+    - b: Intercept of the linear regression line.
 
-        """
-        m, c = linear_regression(x=1 / S1, y=np.log(L) + np.log(S1), RRX_or_RRY="RRY")
-        b = -c
-        output = [m, b]  # a,c
-        return output
+    """
+    m, c = linear_regression(x=1 / S1, y=np.log(L) + np.log(S1), RRX_or_RRY="RRY")
+    b = -c
+    output = [m, b]  # a,c
+    return output
+
 
 def power_ALT_least_squares(S1, L) -> list[np.float64]:
-    """
-    Calculate the parameters of an power function under ALT condtions using the least squares method.
+    """Calculate the parameters of an power function under ALT condtions using the least squares method.
 
-    Parameters:
+    Parameters
+    ----------
     - S1: List or array of values representing the independent variable of Stress_1.
     - L: List or array of values representing the dependent variable of Failures.
 
-    Returns:
+    Returns
+    -------
     - output: List containing the calculated values [a, n], where 'a' is the intercept and 'n' is the slope.
 
     """
@@ -999,17 +1076,19 @@ def power_ALT_least_squares(S1, L) -> list[np.float64]:
     output = [np.exp(c), m]  # a,n
     return output
 
-def dual_exponential_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
-    """
-    Calculate the parameters of a dual exponential model using the least squares method.
 
-    Parameters:
+def dual_exponential_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
+    """Calculate the parameters of a dual exponential model using the least squares method.
+
+    Parameters
+    ----------
     - L (array-like): The dependent variable values of Failures.
     - S1 (array-like): The first independent variable values of Stress_1.
     - S2 (array-like): The second independent variable values of Stress_2.
     - model (str): The type of model to use for non-invertible cases.
 
-    Returns:
+    Returns
+    -------
     - output (list): A list containing the calculated parameters [a, b, c].
 
     """
@@ -1023,18 +1102,20 @@ def dual_exponential_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
     output = [solution[1], solution[2], np.exp(solution[0])]  # a,b,c
     return output
 
-def power_exponential_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
-    """
-    Calculate the parameters of a power exponential model using the least squares method.
 
-    Parameters:
+def power_exponential_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
+    """Calculate the parameters of a power exponential model using the least squares method.
+
+    Parameters
+    ----------
     - L (array-like): The dependent variable values of Failures.
     - S1 (array-like): The first independent variable values of Stress_1.
     - S2 (array-like): The second independent variable values of Stress_2.
     - model: str
         The type of model to use for the regression.
 
-    Returns:
+    Returns
+    -------
     - output: list
         A list containing the calculated parameters of the power exponential model [a, c, n].
 
@@ -1049,18 +1130,20 @@ def power_exponential_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
     output = [solution[1], np.exp(solution[0]), solution[2]]  # a,c,n
     return output
 
-def dual_power_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
-    """
-    Calculate the parameters of a dual power model using the least squares method.
 
-    Parameters:
+def dual_power_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
+    """Calculate the parameters of a dual power model using the least squares method.
+
+    Parameters
+    ----------
     - L (array-like): The dependent variable values of Failures.
     - S1 (array-like): The first independent variable values of Stress_1.
     - S2 (array-like): The second independent variable values of Stress_2.
     - model: str
         The type of model to use for the regression.
 
-    Returns:
+    Returns
+    -------
     - output: list
         A list containing the calculated parameters of the dual power model [c, m, n].
 

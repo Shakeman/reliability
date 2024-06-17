@@ -168,8 +168,7 @@ class reliability_growth:
         self.__max_time = max_time
 
     def print_results(self) -> None:
-        """
-        Prints the results of the reliability growth model parameters and demonstrated metrics.
+        """Prints the results of the reliability growth model parameters and demonstrated metrics.
 
         If the model is "Crow-AMSAA", it prints the Crow-AMSAA reliability growth model parameters:
         - Beta
@@ -188,8 +187,10 @@ class reliability_growth:
 
         If a target MTBF is specified, it also prints the time to reach the target MTBF.
 
-        Returns:
+        Returns
+        -------
         None
+
         """
         if self.__model == "Crow-AMSAA":
             colorprint(
@@ -218,14 +219,15 @@ class reliability_growth:
         print("")  # blank line
 
     def plot(self, log_scale=False, **kwargs) -> plt.Axes:
-        """
-        Plot the reliability growth curve.
+        """Plot the reliability growth curve.
 
-        Parameters:
+        Parameters
+        ----------
         - log_scale (bool): If True, the x and y axes will be displayed in logarithmic scale.
         - **kwargs: Additional keyword arguments to customize the plot.
 
-        Returns:
+        Returns
+        -------
         - matplotlib.axes.Axes: The current axes instance.
 
         """
@@ -403,17 +405,19 @@ class optimal_replacement_time:
         self.__cost_PM = cost_PM
 
     def print_results(self) -> None:
-        """
-        Prints the results from the optimal_replacement_time calculation.
+        """Prints the results from the optimal_replacement_time calculation.
 
         The method prints the cost model assumption and the minimum cost per unit time
         along with the optimal replacement time.
 
-        Parameters:
+        Parameters
+        ----------
             None
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         colorprint("Results from optimal_replacement_time:", bold=True, underline=True)
         if self.__q == 0:
@@ -428,17 +432,19 @@ class optimal_replacement_time:
         )
 
     def show_time_plot(self, subplot=None, **kwargs):
-        """
-        Display a time plot of the repairable system.
+        """Display a time plot of the repairable system.
 
         Args:
+        ----
             subplot (matplotlib.axes.Axes, optional): The subplot to use for the plot. If not provided, a new figure will be created.
             **kwargs: Additional keyword arguments to customize the plot.
 
         Returns:
+        -------
             matplotlib.axes.Axes: The current axes instance.
 
         Raises:
+        ------
             None
 
         Example usage:
@@ -468,17 +474,20 @@ class optimal_replacement_time:
         return plt.gca()
 
     def show_ratio_plot(self, subplot=None):
-        """
-        Displays a plot of the optimal replacement interval across a range of CM costs.
+        """Displays a plot of the optimal replacement interval across a range of CM costs.
 
         Args:
+        ----
             subplot (matplotlib.axes.Axes, optional): The subplot to use for the plot. If not provided, a new figure will be created.
 
         Returns:
+        -------
             matplotlib.axes.Axes: The current axes instance.
 
         Raises:
+        ------
             None
+
         """
         if subplot is not None and issubclass(type(subplot), SubplotBase):
             plt.sca(ax=subplot)  # use the axes passed
@@ -697,14 +706,15 @@ class ROCOF:
         self.__CI_rounded = CI_rounded
 
     def print_results(self) -> None:
-        """
-        Print the results from the ROCOF analysis.
+        """Print the results from the ROCOF analysis.
 
         This method prints the results of the ROCOF analysis, including the confidence level,
         the type of trend (improving, worsening, or constant), and the parameters of the ROCOF assuming NHPP or HPP.
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         colorprint("Results from ROCOF analysis:", bold=True, underline=True)
         print(self.__results_str)
@@ -744,15 +754,16 @@ class ROCOF:
             )
 
     def plot(self, **kwargs) -> plt.Axes:
-        """
-        Plot the failure interarrival times and mean time between failures (MTBF) of a repairable system.
+        """Plot the failure interarrival times and mean time between failures (MTBF) of a repairable system.
 
-        Parameters:
+        Parameters
+        ----------
         - linestyle (str, optional): The line style for the MTBF plot. Default is '--'.
         - label (str, optional): The label for the failure interarrival times plot. Default is 'Failure interarrival times'.
         - **kwargs: Additional keyword arguments to be passed to the scatter plot function.
 
-        Returns:
+        Returns
+        -------
         - matplotlib.axes.Axes: The current axes instance.
 
         """
@@ -1009,17 +1020,19 @@ class MCF_nonparametric:
         self.CI_rounded = CI_rounded
 
     def print_results(self) -> None:
-        """
-        Prints the Mean Cumulative Function results with confidence interval.
+        """Prints the Mean Cumulative Function results with confidence interval.
 
         This method sets display options for pandas dataframe to prevent wrapping and truncation,
         and then prints the results with a header indicating the confidence interval.
 
         Args:
+        ----
             None
 
         Returns:
+        -------
             None
+
         """
         pd.set_option("display.width", 200)  # prevents wrapping after default 80 characters
         pd.set_option("display.max_columns", 9)  # shows the dataframe without ... truncation
@@ -1031,20 +1044,23 @@ class MCF_nonparametric:
         print(self.results.to_string(index=False), "\n")
 
     def plot(self, plot_CI=True, **kwargs) -> plt.Axes:
-        """
-        Plot the non-parametric estimate of the Mean Cumulative Function (MCF) for repairable systems.
+        """Plot the non-parametric estimate of the Mean Cumulative Function (MCF) for repairable systems.
 
         Args:
+        ----
             plot_CI (bool, optional): Whether to plot the confidence interval bounds. Defaults to True.
             **kwargs: Additional keyword arguments to be passed to the `plt.plot` function.
 
         Returns:
+        -------
             matplotlib.axes.Axes: The current axes instance.
 
         Raises:
+        ------
             None
 
         Example:
+        -------
             To plot the MCF with confidence interval bounds:
             >>> repairable_system.plot(plot_CI=True, color="red")
 
@@ -1245,14 +1261,15 @@ class MCF_parametric:
         )
 
     def print_results(self) -> None:
-        """
-        Print the results of the Mean Cumulative Function Parametric Model.
+        """Print the results of the Mean Cumulative Function Parametric Model.
 
         This method calculates and prints the results of the Mean Cumulative Function Parametric Model,
         including the Confidence Interval (CI), the MCF equation, and the system repair rate.
 
-        Returns:
+        Returns
+        -------
             None
+
         """
         CI_rounded = self.CI * 100
         if CI_rounded % 1 == 0:
@@ -1272,14 +1289,15 @@ class MCF_parametric:
             print("Since Beta is greater than 1, the system repair rate is WORSENING over time.")
 
     def plot(self, plot_CI=True, **kwargs) -> plt.Axes:
-        """
-        Plot the parametric estimate of the Mean Cumulative Function (MCF) for repairable systems.
+        """Plot the parametric estimate of the Mean Cumulative Function (MCF) for repairable systems.
 
         Args:
+        ----
             plot_CI (bool, optional): Whether to plot the confidence interval. Defaults to True.
             **kwargs: Additional keyword arguments to be passed to the plot function.
 
         Returns:
+        -------
             plt.Axes: The matplotlib Axes object containing the plot.
 
         """

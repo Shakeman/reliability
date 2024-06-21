@@ -1,5 +1,5 @@
+
 import numpy as np
-import numpy.typing as npt
 import pandas as pd
 import scipy.stats as ss
 
@@ -229,6 +229,7 @@ def distributions_input_checking(
         return X, xvals, xmin, xmax
 
 
+
 def validate_CI_params(*args):
     """Returns False if any of the args is None or Nan, else returns True.
     This function is different to using all() because it performs the checks
@@ -250,8 +251,6 @@ def validate_CI_params(*args):
         if arg is None or np.isfinite(arg) is np.False_:
             is_valid = False
     return is_valid
-
-
 class fitters_input_checking:
     """This function performs error checking and some basic default operations for
     all the inputs given to each of the fitters.
@@ -336,12 +335,12 @@ class fitters_input_checking:
         failures,
         method: str | None = None,
         right_censored=None,
-        optimizer: str | None = None,
-        CI: float = 0.95,
+        optimizer: str | None =None,
+        CI: float =0.95,
         quantiles: bool | str | list | np.ndarray | None = False,
-        force_beta: float | None = None,
-        force_sigma: float | None = None,
-        CI_type: str | None = None,
+        force_beta: float | None=None,
+        force_sigma: float | None=None,
+        CI_type: str | None =None,
     ):
         if dist not in [
             "Everything",
@@ -599,7 +598,6 @@ class fitters_input_checking:
         self.force_beta = force_beta
         self.force_sigma = force_sigma
         self.CI_type: str | None = CI_type
-
 
 class ALT_fitters_input_checking:
     """This function performs error checking and some basic default operations for
@@ -1050,7 +1048,7 @@ class ALT_fitters_input_checking:
         self.right_censored_stress_2 = right_censored_stress_2
         self.CI = CI
         self.optimizer = optimizer
-        self.use_level_stress: float | npt.NDArray[np.float64] = use_level_stress
+        self.use_level_stress = use_level_stress
         self.failure_groups = failure_groups[::-1]
         if right_censored_groups is None:
             self.right_censored_groups = right_censored_groups

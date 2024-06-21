@@ -171,10 +171,7 @@ class Fit_Weibull_Exponential:
         right_censored_stress = inputs.right_censored_stress_1
         CI = inputs.CI
         optimizer = inputs.optimizer
-        if isinstance(inputs.use_level_stress, float):
-            use_level_stress = inputs.use_level_stress
-        else:
-            raise ValueError("use_level_stress must be a float")
+        use_level_stress = inputs.use_level_stress
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups
@@ -604,10 +601,7 @@ class Fit_Weibull_Eyring:
         right_censored_stress = inputs.right_censored_stress_1
         CI = inputs.CI
         optimizer = inputs.optimizer
-        if isinstance(inputs.use_level_stress, float):
-            use_level_stress = inputs.use_level_stress
-        else:
-            raise ValueError("use_level_stress must be a float")
+        use_level_stress = inputs.use_level_stress
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups
@@ -1031,10 +1025,7 @@ class Fit_Weibull_Power:
         right_censored_stress = inputs.right_censored_stress_1
         CI = inputs.CI
         optimizer = inputs.optimizer
-        if isinstance(inputs.use_level_stress, float):
-            use_level_stress = inputs.use_level_stress
-        else:
-            raise ValueError("use_level_stress must be a float")
+        use_level_stress = inputs.use_level_stress
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups
@@ -1489,10 +1480,7 @@ class Fit_Weibull_Dual_Exponential:
         right_censored_stress_2 = inputs.right_censored_stress_2
         CI = inputs.CI
         optimizer = inputs.optimizer
-        if isinstance(inputs.use_level_stress, np.ndarray):
-            use_level_stress = inputs.use_level_stress
-        else:
-            raise ValueError("use_level_stress must be a array")
+        use_level_stress = inputs.use_level_stress
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups
@@ -1980,10 +1968,7 @@ class Fit_Weibull_Power_Exponential:
         right_censored_stress_2 = inputs.right_censored_stress_2
         CI = inputs.CI
         optimizer = inputs.optimizer
-        if isinstance(inputs.use_level_stress, np.ndarray):
-            use_level_stress = inputs.use_level_stress
-        else:
-            raise ValueError("use_level_stress must be a array")
+        use_level_stress = inputs.use_level_stress
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups
@@ -2484,10 +2469,7 @@ class Fit_Weibull_Dual_Power:
         right_censored_stress_2 = inputs.right_censored_stress_2
         CI = inputs.CI
         optimizer = inputs.optimizer
-        if isinstance(inputs.use_level_stress, np.ndarray):
-            use_level_stress = inputs.use_level_stress
-        else:
-            raise ValueError("use_level_stress must be a array")
+        use_level_stress = inputs.use_level_stress
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups

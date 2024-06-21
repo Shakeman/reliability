@@ -30,6 +30,7 @@ values (ie. every event is assumed to have a quantity of 1). XCN may not be just
 X as this is the same as F from FR format.
 """
 
+
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
@@ -189,7 +190,8 @@ class xlsx_to_XCN:
         self.__df = pd.DataFrame(data=Data, columns=["event time", "censor code", "number of events"])
 
     def print(self):
-        """This will print a dataframe of the data in XCN format to the console"""
+        """This will print a dataframe of the data in XCN format to the console
+        """
         colorprint("Data (XCN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -266,7 +268,8 @@ class xlsx_to_FR:
             )
 
     def print(self):
-        """This will print a dataframe of the data in FR format to the console"""
+        """This will print a dataframe of the data in FR format to the console
+        """
         colorprint("Data (FR format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -398,7 +401,8 @@ class xlsx_to_FNRN:
             self.__df = pd.DataFrame(Data, columns=["failures", "number of failures"])
 
     def print(self):
-        """This will print a dataframe of the data in FNRN format to the console"""
+        """This will print a dataframe of the data in FNRN format to the console
+        """
         colorprint("Data (FNRN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -476,14 +480,7 @@ class XCN_to_FNRN:
 
     """
 
-    def __init__(
-        self,
-        X: list[int] | npt.NDArray,
-        C: list[str | int] | npt.NDArray[np.str_ | np.float64],
-        N: list[int] | npt.NDArray[np.float64],
-        censor_code: str | int | None = None,
-        failure_code: str | int | None = None,
-    ) -> None:
+    def __init__(self, X, C, N=None, censor_code=None, failure_code=None):
         FR = XCN_to_FR(X=X, C=C, N=N, censor_code=censor_code, failure_code=failure_code)
         FNRN = FR_to_FNRN(failures=FR.failures, right_censored=FR.right_censored)
         self.failures = FNRN.failures
@@ -526,7 +523,8 @@ class XCN_to_FNRN:
             self.__df = pd.DataFrame(Data, columns=["failures", "number of failures"])
 
     def print(self):
-        """This will print a dataframe of the data in FNRN format to the console"""
+        """This will print a dataframe of the data in FNRN format to the console
+        """
         colorprint("Data (FNRN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -599,14 +597,7 @@ class XCN_to_FR:
 
     """
 
-    def __init__(
-        self,
-        X: list[int] | npt.NDArray,
-        C: list[str | int] | npt.NDArray[np.str_ | np.float64],
-        N: list[int] | npt.NDArray[np.float64],
-        censor_code: str | int | None = None,
-        failure_code: str | int | None = None,
-    ):
+    def __init__(self, X: list[int] | npt.NDArray, C, N=None, censor_code=None, failure_code=None):
         if type(N) == type(None):
             N = np.ones_like(X)  # assume a quantity of 1 if not specified
         if type(X) not in [list, np.ndarray]:
@@ -618,7 +609,7 @@ class XCN_to_FR:
         if N is not None and len(X) != len(N):
             raise ValueError("The length of X, C and N must match.")
 
-        C_upper: list[str | int] = []
+        C_upper = []
         for item in C:
             if type(item) in [str, np.str_]:
                 C_upper.append(item.upper())  # for strings
@@ -694,7 +685,8 @@ class XCN_to_FR:
             self.__df = pd.DataFrame(Data, columns=["failures"])
 
     def print(self):
-        """This will print a dataframe of the data in FR format to the console"""
+        """This will print a dataframe of the data in FR format to the console
+        """
         colorprint("Data (FR format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -745,7 +737,7 @@ class FR_to_XCN:
         print(XCN.X)
             >>> [1 2 3 7 8 9]
         print(XCN.C)
-            >>> ["F" "F" "F" "C" "C" "C"]
+            >>> ['F' 'F' 'F' 'C' 'C' 'C']
         print(XCN.N)
            >>> [2 2 1 1 2 4]
         XCN.print()
@@ -767,14 +759,14 @@ class FR_to_XCN:
             if type(right_censored) not in [list, np.ndarray]:
                 raise ValueError("right_censored must be a list or array.")
             FNRN = FR_to_FNRN(failures=failures, right_censored=right_censored)
-            self.X = np.hstack([FNRN.failures, FNRN.right_censored])  # type: ignore
-            self.N = np.hstack([FNRN.num_failures, FNRN.num_right_censored])  # type: ignore
+            self.X = np.hstack([FNRN.failures, FNRN.right_censored])
+            self.N = np.hstack([FNRN.num_failures, FNRN.num_right_censored])
             if type(failure_code) not in [str, float, int, np.float64]:
                 raise ValueError("failure_code must be a string or number. Default is 'F'")
             if type(censor_code) not in [str, float, int, np.float64]:
                 raise ValueError("censor_code must be a string or number. Default is 'C'")
             F_cens = [failure_code] * len(FNRN.failures)
-            C_cens = [censor_code] * len(FNRN.right_censored)  # type: ignore
+            C_cens = [censor_code] * len(FNRN.right_censored)
             self.C = np.hstack([F_cens, C_cens])
         else:
             FNRN = FR_to_FNRN(failures=failures)
@@ -787,7 +779,8 @@ class FR_to_XCN:
         self.__df = pd.DataFrame(data=Data, columns=["event time", "censor code", "number of events"])
 
     def print(self):
-        """This will print a dataframe of the data in XCN format to the console"""
+        """This will print a dataframe of the data in XCN format to the console
+        """
         colorprint("Data (XCN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -844,7 +837,7 @@ class FNRN_to_XCN:
         print(XCN.X)
             >>> [1. 2. 3. 7. 8. 9.]
         print(XCN.C)
-            >>> ["F" "F" "F" "C" "C" "C"]
+            >>> ['F' 'F' 'F' 'C' 'C' 'C']
         print(XCN.N)
            >>> [2 2 1 1 2 3]
         XCN.print()
@@ -863,8 +856,8 @@ class FNRN_to_XCN:
         self,
         failures,
         num_failures,
-        right_censored: list[int] | npt.NDArray,
-        num_right_censored: list[int] | npt.NDArray,
+        right_censored=None,
+        num_right_censored=None,
         censor_code="C",
         failure_code="F",
     ):
@@ -892,14 +885,14 @@ class FNRN_to_XCN:
                 failures=FR.failures,
                 right_censored=FR.right_censored,
             )  # we do this seeming redundant conversion to combine any duplicates from FNRN which were not correctly summarized in the input data
-            self.X = np.hstack([FNRN.failures, FNRN.right_censored])  # type: ignore
-            self.N = np.hstack([FNRN.num_failures, FNRN.num_right_censored])  # type: ignore
+            self.X = np.hstack([FNRN.failures, FNRN.right_censored])
+            self.N = np.hstack([FNRN.num_failures, FNRN.num_right_censored])
             if type(failure_code) not in [str, float, int, np.float64]:
                 raise ValueError("failure_code must be a string or number. Default is 'F'")
             if type(censor_code) not in [str, float, int, np.float64]:
                 raise ValueError("censor_code must be a string or number. Default is 'C'")
             F_cens = [failure_code] * len(FNRN.failures)
-            C_cens = [censor_code] * len(FNRN.right_censored)  # type: ignore
+            C_cens = [censor_code] * len(FNRN.right_censored)
             self.C = np.hstack([F_cens, C_cens])
         else:
             FR = FNRN_to_FR(failures=failures, num_failures=num_failures)
@@ -916,7 +909,8 @@ class FNRN_to_XCN:
         self.__df = pd.DataFrame(data=Data, columns=["event time", "censor code", "number of events"])
 
     def print(self):
-        """This will print a dataframe of the data in XCN format to the console"""
+        """This will print a dataframe of the data in XCN format to the console
+        """
         colorprint("Data (XCN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -983,9 +977,7 @@ class FR_to_FNRN:
     def __init__(self, failures, right_censored=None):
         if type(failures) not in [list, np.ndarray]:
             raise ValueError("failures must be a list or array.")
-        failures, num_failures = np.unique(failures, return_counts=True)
-        self.failures: npt.NDArray[np.float64] = failures
-        self.num_failures: npt.NDArray[np.float64] = num_failures
+        self.failures, self.num_failures = np.unique(failures, return_counts=True)
         if right_censored is not None:
             if type(right_censored) not in [list, np.ndarray]:
                 raise ValueError("right_censored must be a list or array.")
@@ -1029,7 +1021,8 @@ class FR_to_FNRN:
             self.__df = pd.DataFrame(Data, columns=["failures", "number of failures"])
 
     def print(self):
-        """This will print a dataframe of the data in FNRN format to the console"""
+        """This will print a dataframe of the data in FNRN format to the console
+        """
         colorprint("Data (FNRN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -1100,9 +1093,7 @@ class FNRN_to_FR:
 
     """
 
-    def __init__(
-        self, failures, num_failures, right_censored=None, num_right_censored: npt.NDArray | list[int] | None = None
-    ):
+    def __init__(self, failures, num_failures, right_censored=None, num_right_censored: npt.NDArray | list[int] | None = None):
         if type(failures) not in [list, np.ndarray]:
             raise ValueError("failures must be a list or array.")
         if type(num_failures) not in [list, np.ndarray]:
@@ -1142,7 +1133,8 @@ class FNRN_to_FR:
             self.__df = pd.DataFrame(Data, columns=["failures"])
 
     def print(self):
-        """This will print a dataframe of the data in FR format to the console"""
+        """This will print a dataframe of the data in FR format to the console
+        """
         colorprint("Data (FR format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 

@@ -56,6 +56,8 @@ from reliability.Utils._array_utils import (
 from reliability.Utils._dist_utils import distribution_confidence_intervals, extract_CI, life_stress_plot
 from reliability.Utils._input_checking_utils import (
     ALT_fitters_input_checking,
+    alt_fitters_dual_stress_input_checking,
+    alt_single_stress_fitters_input_checking,
     distributions_input_checking,
     fitters_input_checking,
     validate_CI_params,
@@ -116,4 +118,6 @@ __all__ = [
     "extract_CI",
     "unpack_single_arrays",
     "reshow_figure",
-    ]
+    "alt_fitters_dual_stress_input_checking",
+    "alt_single_stress_fitters_input_checking",
+]

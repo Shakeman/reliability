@@ -1,4 +1,3 @@
-
 import numpy as np
 import pandas as pd
 import scipy.stats as ss
@@ -229,7 +228,6 @@ def distributions_input_checking(
         return X, xvals, xmin, xmax
 
 
-
 def validate_CI_params(*args):
     """Returns False if any of the args is None or Nan, else returns True.
     This function is different to using all() because it performs the checks
@@ -251,6 +249,8 @@ def validate_CI_params(*args):
         if arg is None or np.isfinite(arg) is np.False_:
             is_valid = False
     return is_valid
+
+
 class fitters_input_checking:
     """This function performs error checking and some basic default operations for
     all the inputs given to each of the fitters.
@@ -335,12 +335,12 @@ class fitters_input_checking:
         failures,
         method: str | None = None,
         right_censored=None,
-        optimizer: str | None =None,
-        CI: float =0.95,
+        optimizer: str | None = None,
+        CI: float = 0.95,
         quantiles: bool | str | list | np.ndarray | None = False,
-        force_beta: float | None=None,
-        force_sigma: float | None=None,
-        CI_type: str | None =None,
+        force_beta: float | None = None,
+        force_sigma: float | None = None,
+        CI_type: str | None = None,
     ):
         if dist not in [
             "Everything",
@@ -599,9 +599,10 @@ class fitters_input_checking:
         self.force_sigma = force_sigma
         self.CI_type: str | None = CI_type
 
+
 class ALT_fitters_input_checking:
     """This function performs error checking and some basic default operations for
-    all the inputs given to each of the ALT_fitters.
+    al@l the inputs given to each of the ALT_fitters.
 
     Parameters
     ----------
@@ -1055,3 +1056,618 @@ class ALT_fitters_input_checking:
         else:
             self.right_censored_groups = right_censored_groups[::-1]
         self.stresses_for_groups = unique_failure_stresses[::-1]
+
+
+class alt_fitters_dual_stress_input_checking:
+    """This function performs error checking and some basic default operations for
+    al@l the inputs given to each of the ALT_fitters.
+
+    Parameters
+    ----------
+    dist : str
+        Must be one of "Exponential", "Weibull", "Lognormal", "Normal",
+        "Everything".
+    life_stress_model : str
+        Must be one of "Exponential", "Eyring", "Power","Dual_Exponential",
+        "Power_Exponential", "Dual_Power", "Everything".
+    failures : array, list
+        The failure data
+    failure_stress_1 : array, list
+        The stresses corresponding to the failure data
+    failure_stress_2 : array, list, optional
+        The second stresses corresponding to the failure data. Only required for
+        dual stress models. Default is None.
+    right_censored : array, list, optional
+        The right censored data. Default is None.
+    right_censored_stress_1 : array, list, optional
+        The stresses corresponding to the right censored data. Default is None.
+    right_censored_stress_2 : array, list, optional
+        The second stresses corresponding to the right censored data. Only
+        required for dual stress models. Default is None.
+    CI : float, optional
+        The confidence interval (between 0 and 1). Default is 0.95 for 95%
+        confidence interval (two sided).
+    optimizer : str, None
+        This will return "TNC", "L-BFGS-B", "nelder-mead", "powell", "best", or
+        None. Default is None.
+    use_level_stress : float, int, list, array, optional
+        The use level stress. Must be float or int for single stress models.
+        Must be array or list [stress_1, stress_2] for dual stress models.
+        Default is None.
+
+    Returns
+    -------
+    failures : array
+        The failure times
+    failure_stress_1 : array
+        The failure stresses
+    failure_stress_2 : array
+        The second failure stresses.
+    right_censored : array
+        The right censored times. This will be an empty array if the input was
+        None.
+    right_censored_stress_1 : array
+        The right censored failure stresses. This will be an empty array if the
+        input was None.
+    right_censored_stress_2 : array
+        The right censored second failure stresses. This will be an empty array
+        if the input was None.
+    CI : float
+        The confidence interval (between 0 and 1)
+    optimizer : str, None
+        This will return "TNC", "L-BFGS-B", "nelder-mead", "powell", "best", or
+        None.
+    use_level_stress : array, None
+        The use level stress. This will be an array for dual stress models. This will be None if the input was
+        None.
+    failure_groups : array
+        An array of arrays. This is the failure data grouped by failure
+        stresses.
+    right_censored_groups : array
+        An array of arrays. This is the right censored data grouped by right
+        censored stresses.
+    stresses_for_groups : array
+        An array of arrays. These are the stresses for each of the groups.
+
+    Notes
+    -----
+    For full detail on what is checked and the errors produced, you should read
+    the source code.
+
+    Some returns are None if the input is None. How None affects the behavior
+    is governed by other functions such as the individual ALT fitters and other
+    Utils.
+
+    """
+
+    def __init__(
+        self,
+        dist,
+        life_stress_model,
+        failures,
+        failure_stress_1,
+        failure_stress_2,
+        right_censored=None,
+        right_censored_stress_1=None,
+        right_censored_stress_2=None,
+        CI=0.95,
+        use_level_stress=None,
+        optimizer=None,
+    ):
+        if dist not in ["Exponential", "Weibull", "Lognormal", "Normal"]:
+            raise ValueError("dist must be one of Exponential, Weibull, Lognormal, Normal.")
+        if life_stress_model not in [
+            "Dual_Exponential",
+            "Power_Exponential",
+            "Dual_Power",
+        ]:
+            raise ValueError(
+                "life_stess_model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power.",
+            )
+        min_failures_reqd = 4
+
+        # failure checks
+        if failure_stress_1 is None or failure_stress_2 is None:
+            raise ValueError("failure_stress_1 and failure_stress_2 must be provided for dual stress models.")
+
+        # right_censored checks
+        if right_censored is None:
+            if right_censored_stress_1 is not None:
+                colorprint(
+                    "WARNING: right_censored_stress_1 is not being used as right_censored was not provided.",
+                    text_color="red",
+                )
+            if right_censored_stress_2 is not None:
+                colorprint(
+                    "WARNING: right_censored_stress_2 is not being used as right_censored was not provided.",
+                    text_color="red",
+                )
+            right_censored = []
+            right_censored_stress_1 = []
+            right_censored_stress_2 = []
+        else:
+            if right_censored_stress_1 is None or right_censored_stress_2 is None:
+                raise ValueError(
+                    "right_censored_stress_1 and right_censored_stress_2 must be provided for dual stress models.",
+                )
+
+        # type checking and converting to arrays for failures and right_censored
+        if type(failures) not in [list, np.ndarray]:
+            raise ValueError("failures must be a list or array of failure data")
+        if type(failure_stress_1) not in [list, np.ndarray]:
+            raise ValueError("failure_stress_1 must be a list or array of failure stress data")
+        if type(failure_stress_2) not in [list, np.ndarray]:
+            raise ValueError("failure_stress_2 must be a list or array of failure stress data")
+        if type(right_censored) not in [list, np.ndarray]:
+            raise ValueError("right_censored must be a list or array of right censored failure data")
+        if type(right_censored_stress_1) not in [list, np.ndarray]:
+            raise ValueError("right_censored_stress_1 must be a list or array of right censored failure stress data")
+        if type(right_censored_stress_2) not in [list, np.ndarray]:
+            raise ValueError("right_censored_stress_2 must be a list or array of right censored failure stress data")
+
+        failures = np.asarray(failures).astype(float)
+        failure_stress_1 = np.asarray(failure_stress_1).astype(float)
+        failure_stress_2 = np.asarray(failure_stress_2).astype(float)
+        right_censored = np.asarray(right_censored).astype(float)
+        right_censored_stress_1 = np.asarray(right_censored_stress_1).astype(float)
+        right_censored_stress_2 = np.asarray(right_censored_stress_2).astype(float)
+
+        if len(failures) != len(failure_stress_1) or len(failures) != len(failure_stress_2):
+            raise ValueError(
+                "failures must have the same number of elements as failure_stress_1 and failure_stress_2",
+            )
+        if len(right_censored) != len(right_censored_stress_1) or len(right_censored) != len(
+            right_censored_stress_2,
+        ):
+            raise ValueError(
+                "right_censored must have the same number of elements as right_censored_stress_1 and right_censored_stress_2",
+            )
+
+        # raise an error for values <= 0. Not even the Normal Distribution is allowed to have failures at negative life.
+        if min(np.hstack([failures, right_censored])) <= 0:
+            raise ValueError("All failure and right censored values must be greater than zero.")
+
+        CI = check_confidence_interval(CI)
+
+        # error checking for optimizer
+        if optimizer is not None:
+            optimizer = check_optimizer(optimizer)
+
+        # check the number of unique stresses
+        unique_stresses_1 = np.unique(failure_stress_1)
+        if len(unique_stresses_1) < 2:
+            raise ValueError("failure_stress_1 must have at least 2 unique stresses.")
+        unique_stresses_2 = np.unique(failure_stress_2)
+        if len(unique_stresses_2) < 2:
+            raise ValueError(
+                "failure_stress_2 must have at least 2 unique stresses when using a dual stress model.",
+            )
+
+        # group the failures into their failure_stresses and then check there are enough to fit the model
+        # concatenate the stresses to deal with them as a pair
+        failure_stress_pairs = []
+        for i in range(len(failure_stress_1)):
+            failure_stress_pairs.append(str(failure_stress_1[i]) + "_" + str(failure_stress_2[i]))
+
+        failure_df_ungrouped = pd.DataFrame(
+            data={
+                "failures": failures,
+                "failure_stress_pairs": failure_stress_pairs,
+            },
+            columns=["failures", "failure_stress_pairs"],
+        )
+        failure_groups = []
+        unique_failure_stresses_str = []
+        for key, items in failure_df_ungrouped.groupby(["failure_stress_pairs"]):
+            key = key[0]
+            values = list(items.iloc[:, 0].values)
+            failure_groups.append(values)
+            unique_failure_stresses_str.append(key)
+        # Check that there are enough failures to fit the model.
+        # This does not mean 2 failures at each stress.
+        # All we need is as many failures as there are parameters in the model.
+        total_unique_failures = 0
+        for _, failure_group in enumerate(failure_groups):
+            total_unique_failures += len(np.unique(failure_group))
+        if total_unique_failures < min_failures_reqd:
+            raise ValueError(
+                str(
+                    "There must be at least "
+                    + str(min_failures_reqd)
+                    + " unique failures for the "
+                    + dist
+                    + "-"
+                    + life_stress_model
+                    + "model to be fitted.",
+                ),
+            )
+
+        # unpack the concatenated string for dual stresses ==> ['10.0_1000.0','20.0_2000.0','5.0_500.0'] should be [[10.0,1000.0],[20.0,2000.0],[5.0,500.0]]
+        unique_failure_stresses = []
+        for item in unique_failure_stresses_str:
+            stress_pair = [float(x) for x in list(item.split("_"))]
+            unique_failure_stresses.append(stress_pair)
+
+        if len(right_censored) > 0:
+            # concatenate the right censored stresses to deal with them as a pair
+            right_censored_stress_pairs = []
+            for i in range(len(right_censored_stress_1)):
+                right_censored_stress_pairs.append(
+                    str(right_censored_stress_1[i]) + "_" + str(right_censored_stress_2[i]),
+                )
+
+            right_censored_df_ungrouped = pd.DataFrame(
+                data={
+                    "right_censored": right_censored,
+                    "right_censored_stress_pairs": right_censored_stress_pairs,
+                },
+                columns=["right_censored", "right_censored_stress_pairs"],
+            )
+            right_censored_groups = []
+            unique_right_censored_stresses_str = []
+            for key, items in right_censored_df_ungrouped.groupby(["right_censored_stress_pairs"]):
+                key = key[0]
+                values = list(items.iloc[:, 0].values)
+                right_censored_groups.append(values)
+                unique_right_censored_stresses_str.append(key)
+                if key not in unique_failure_stresses_str:
+                    raise ValueError(
+                        str(
+                            "The right censored stress pair "
+                            + str([float(x) for x in list(key.split("_"))])
+                            + " does not appear in failure stresses.",
+                        ),
+                    )
+
+            # add in empty lists for stresses which appear in failure_stress but not in right_censored_stress
+            for i, stress in enumerate(unique_failure_stresses_str):
+                if stress not in unique_right_censored_stresses_str:
+                    right_censored_groups.insert(i, [])
+        else:
+            right_censored_groups = None
+
+        if use_level_stress is not None:
+            if type(use_level_stress) not in [list, np.ndarray]:
+                raise ValueError(
+                    "use_level_stress must be an array or list of the use level stresses. eg. use_level_stress = [stress_1, stress_2].",
+                )
+            if len(use_level_stress) != 2:
+                raise ValueError(
+                    "use_level_stress must be an array or list of length 2 with the use level stresses. eg. use_level_stress = [stress_1, stress_2].",
+                )
+            use_level_stress = np.asarray(use_level_stress)
+
+        # return everything
+        self.failures = failures
+        self.failure_stress_1 = failure_stress_1
+        self.failure_stress_2 = failure_stress_2
+        self.right_censored = right_censored
+        self.right_censored_stress_1 = right_censored_stress_1
+        self.right_censored_stress_2 = right_censored_stress_2
+        self.CI = CI
+        self.optimizer = optimizer
+        self.use_level_stress = use_level_stress
+        self.failure_groups = failure_groups[::-1]
+        if right_censored_groups is None:
+            self.right_censored_groups = right_censored_groups
+        else:
+            self.right_censored_groups = right_censored_groups[::-1]
+        self.stresses_for_groups = unique_failure_stresses[::-1]
+
+
+class alt_single_stress_fitters_input_checking:
+    """This function performs error checking and some basic default operations for
+    all the inputs given to each of the ALT_fitters.
+
+    Parameters
+    ----------
+    dist : str
+        Must be one of "Exponential", "Weibull", "Lognormal", "Normal",
+        "Everything".
+    life_stress_model : str
+        Must be one of "Exponential", "Eyring", "Power","Dual_Exponential",
+        "Power_Exponential", "Dual_Power", "Everything".
+    failures : array, list
+        The failure data
+    failure_stress_1 : array, list
+        The stresses corresponding to the failure data
+    right_censored : array, list, optional
+        The right censored data. Default is None.
+    right_censored_stress_1 : array, list, optional
+        The stresses corresponding to the right censored data. Default is None.
+    CI : float, optional
+        The confidence interval (between 0 and 1). Default is 0.95 for 95%
+        confidence interval (two sided).
+    optimizer : str, None
+        This will return "TNC", "L-BFGS-B", "nelder-mead", "powell", "best", or
+        None. Default is None.
+    use_level_stress : float, int, list, array, optional
+        The use level stress. Must be float or int for single stress models.
+        Default is None.
+
+    Returns
+    -------
+    failures : array
+        The failure times
+    failure_stress_1 : array
+        The failure stresses
+    right_censored : array
+        The right censored times. This will be an empty array if the input was
+        None.
+    right_censored_stress_1 : array
+        The right censored failure stresses. This will be an empty array if the
+        input was None.
+    CI : float
+        The confidence interval (between 0 and 1)
+    optimizer : str, None
+        This will return "TNC", "L-BFGS-B", "nelder-mead", "powell", "best", or
+        None.
+    use_level_stress : float
+        The use level stress. This will be a float for single stress models.
+        This will be None if the input was
+        None.
+    failure_groups : array
+        An array of arrays. This is the failure data grouped by failure
+        stresses.
+    right_censored_groups : array
+        An array of arrays. This is the right censored data grouped by right
+        censored stresses.
+    stresses_for_groups : array
+        An array of arrays. These are the stresses for each of the groups.
+
+    Notes
+    -----
+    For full detail on what is checked and the errors produced, you should read
+    the source code.
+
+    Some returns are None if the input is None. How None affects the behavior
+    is governed by other functions such as the individual ALT fitters and other
+    Utils.
+
+    """
+
+    def __init__(
+        self,
+        dist,
+        life_stress_model,
+        failures,
+        failure_stress_1,
+        right_censored=None,
+        right_censored_stress_1=None,
+        CI=0.95,
+        use_level_stress=None,
+        optimizer=None,
+    ):
+        if dist not in ["Exponential", "Weibull", "Lognormal", "Normal"]:
+            raise ValueError("dist must be one of Exponential, Weibull, Lognormal, Normal.")
+        if life_stress_model not in ["Exponential", "Eyring", "Power"]:
+            raise ValueError(
+                "life_stess_model must be one of Exponential, Eyring, Power",
+            )
+        min_failures_reqd = 3
+        # failure checks
+        if failure_stress_1 is None:
+            raise ValueError("failure_stress_1 must be provided")
+        # right_censored checks
+        if right_censored is None:
+            if right_censored_stress_1 is not None:
+                colorprint(
+                    "WARNING: right_censored_stress_1 is not being used as right_censored was not provided.",
+                    text_color="red",
+                )
+            right_censored = []
+            right_censored_stress_1 = []
+        else:
+            if right_censored_stress_1 is None:
+                raise ValueError("right_censored_stress_1 must be provided")
+
+        # type checking and converting to arrays for failures and right_censored
+        if type(failures) not in [list, np.ndarray]:
+            raise ValueError("failures must be a list or array of failure data")
+        if type(failure_stress_1) not in [list, np.ndarray]:
+            raise ValueError("failure_stress_1 must be a list or array of failure stress data")
+        if type(right_censored) not in [list, np.ndarray]:
+            raise ValueError("right_censored must be a list or array of right censored failure data")
+        if type(right_censored_stress_1) not in [list, np.ndarray]:
+            raise ValueError("right_censored_stress_1 must be a list or array of right censored failure stress data")
+
+        failures = np.asarray(failures).astype(float)
+        failure_stress_1 = np.asarray(failure_stress_1).astype(float)
+        right_censored = np.asarray(right_censored).astype(float)
+        right_censored_stress_1 = np.asarray(right_censored_stress_1).astype(float)
+
+        # check that list lengths match
+        if len(failures) != len(failure_stress_1):
+            raise ValueError("failures must have the same number of elements as failure_stress_1")
+        if len(right_censored) != len(right_censored_stress_1):
+            raise ValueError("right_censored must have the same number of elements as right_censored_stress_1")
+
+        # raise an error for values <= 0. Not even the Normal Distribution is allowed to have failures at negative life.
+        if min(np.hstack([failures, right_censored])) <= 0:
+            raise ValueError("All failure and right censored values must be greater than zero.")
+
+        CI = check_confidence_interval(CI)
+
+        # error checking for optimizer
+        if optimizer is not None:
+            optimizer = check_optimizer(optimizer)
+
+        # check the number of unique stresses
+        unique_stresses_1 = np.unique(failure_stress_1)
+        if len(unique_stresses_1) < 2:
+            raise ValueError("failure_stress_1 must have at least 2 unique stresses.")
+
+        error_msg = str(
+            "There must be at least "
+            + str(min_failures_reqd)
+            + " unique failures for the "
+            + dist
+            + "-"
+            + life_stress_model
+            + " model to be fitted."
+        )
+        # group the failures into their failure_stresses and then check there are enough to fit the model
+        failure_groups, unique_failure_stresses = group_failure_stresses(
+            failures, failure_stress_1, min_failures_reqd, error_msg
+        )
+
+        right_censored_groups = group_right_censored(right_censored, right_censored_stress_1, unique_failure_stresses)
+
+        # check that use level stress is the correct type
+        if use_level_stress is not None:
+            if type(use_level_stress) in [list, tuple, np.ndarray, str, bool, dict]:
+                raise ValueError("use_level_stress must be a number")
+            use_level_stress = float(use_level_stress)
+
+        # return everything
+        self.failures = failures
+        self.failure_stress_1 = failure_stress_1
+        self.right_censored = right_censored
+        self.right_censored_stress_1 = right_censored_stress_1
+        self.CI = CI
+        self.optimizer = optimizer
+        self.use_level_stress = use_level_stress
+        self.failure_groups = failure_groups[::-1]
+        if right_censored_groups is None:
+            self.right_censored_groups = right_censored_groups
+        else:
+            self.right_censored_groups = right_censored_groups[::-1]
+        self.stresses_for_groups = unique_failure_stresses[::-1]
+
+
+def check_optimizer(optimizer: str) -> str:
+    """
+    Check if the given optimizer is valid and return the standardized optimizer name.
+
+    Parameters:
+    optimizer (str): The optimizer to be checked.
+
+    Returns:
+    str: The standardized optimizer name.
+
+    Raises:
+    ValueError: If the optimizer is not one of the valid options.
+
+    """
+    # error checking for optimizer
+    if not isinstance(optimizer, str):
+        raise ValueError(
+            'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html',
+        )
+    if optimizer.upper() == "TNC":
+        optimizer = "TNC"
+    elif optimizer.upper() == "POWELL":
+        optimizer = "powell"
+    elif optimizer.upper() in ["L-BFGS-B", "LBFGSB"]:
+        optimizer = "L-BFGS-B"
+    elif optimizer.upper() in ["NELDER-MEAD", "NELDERMEAD", "NM"]:
+        optimizer = "nelder-mead"
+    elif optimizer.upper() in ["ALL", "BEST"]:
+        optimizer = "best"
+    else:
+        raise ValueError(
+            'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html',
+        )
+    return optimizer
+
+
+def check_confidence_interval(CI: float) -> float:
+    """
+    Check if the given confidence interval is valid and return the standardized confidence interval.
+
+    Parameters:
+    CI (float): The confidence interval to be checked.
+
+    Returns:
+    float: The standardized confidence interval.
+
+    Raises:
+    ValueError: If the CI is not between 0 and 1.
+
+    """
+    if type(CI) not in [float, np.float64]:
+        raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence interval.")
+    if CI <= 0 or CI >= 1:
+        raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence interval.")
+    return CI
+
+
+def group_right_censored(right_censored, right_censored_stress_1, unique_failure_stresses):
+    """
+    Group the right-censored data and group them based on the right-censored stress values.
+
+    Args:
+        right_censored (list): List of right-censored data.
+        right_censored_stress_1 (list): List of right-censored stress values.
+        unique_failure_stresses (list): List of unique failure stresses.
+
+    Returns:
+        list: List of grouped right-censored data based on right-censored stress values.
+    """
+    if len(right_censored) > 0:
+        right_censored_df_ungrouped = pd.DataFrame(
+            data={
+                "right_censored": right_censored,
+                "right_censored_stress_1": right_censored_stress_1,
+            },
+            columns=["right_censored", "right_censored_stress_1"],
+        )
+        right_censored_groups = []
+        unique_right_censored_stresses = []
+        for key, items in right_censored_df_ungrouped.groupby(["right_censored_stress_1"]):
+            key = key[0]
+            values = list(items.iloc[:, 0].values)
+            right_censored_groups.append(values)
+            unique_right_censored_stresses.append(key)
+            if key not in unique_failure_stresses:
+                raise ValueError(
+                    str("The right censored stress " + str(key) + " does not appear in failure stresses."),
+                )
+
+        # add in empty lists for stresses which appear in failure_stress_1 but not in right_censored_stress_1
+        for i, stress in enumerate(unique_failure_stresses):
+            if stress not in unique_right_censored_stresses:
+                right_censored_groups.insert(i, [])
+
+    else:
+        right_censored_groups = None
+    return right_censored_groups
+
+
+def group_failure_stresses(failures, failure_stress_1, min_failures_reqd, error_msg):
+    """
+    Groups the failures into their failure_stresses and checks if there are enough failures to fit the model.
+
+    Args:
+        failures (list): A list of failure values.
+        failure_stress_1 (list): A list of failure stress values corresponding to the failures.
+        min_failures_reqd (int): The minimum number of failures required to fit the model.
+        error_msg (str): The error message to raise if there are not enough failures.
+
+    Returns:
+        tuple: A tuple containing two lists - `failure_groups` and `unique_failure_stresses`.
+            - `failure_groups` (list): A list of lists, where each inner list contains the failures grouped by their failure_stress_1 value.
+            - `unique_failure_stresses` (list): A list of unique failure_stress_1 values.
+
+    Raises:
+        ValueError: If the total number of unique failures is less than `min_failures_reqd`.
+    """
+    # group the failures into their failure_stresses and then check there are enough to fit the model
+    failure_df_ungrouped = pd.DataFrame(
+        data={"failures": failures, "failure_stress_1": failure_stress_1},
+        columns=["failures", "failure_stress_1"],
+    )
+
+    failure_df_grouped = failure_df_ungrouped.groupby("failure_stress_1")
+
+    unique_failures_df = failure_df_grouped.nunique()
+    unique_failure_stresses = unique_failures_df.index.tolist()
+    total_unique_failures = unique_failures_df.sum().sum()
+
+    failure_groups = failure_df_grouped["failures"].apply(list).values.tolist()
+    # Check that there are enough failures to fit the model.
+    # This does not mean 2 failures at each stress.
+    # All we need is as many failures as there are parameters in the model.
+    if total_unique_failures < min_failures_reqd:
+        raise ValueError(error_msg)
+    return failure_groups, unique_failure_stresses

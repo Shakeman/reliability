@@ -619,7 +619,7 @@ class ROCOF:
                 raise ValueError("times_between_failures cannot be less than zero")
             if isinstance(times_between_failures, list):
                 ti = times_between_failures
-            elif type(times_between_failures) == np.ndarray:
+            elif isinstance(times_between_failures, np.ndarray):
                 ti = list(times_between_failures)
             else:
                 raise ValueError("times_between_failures must be a list or array")
@@ -628,7 +628,7 @@ class ROCOF:
                 raise ValueError("failure_times cannot be less than zero")
             if isinstance(failure_times, list):
                 failure_times = np.sort(np.array(failure_times))
-            elif type(failure_times) == np.ndarray:
+            elif isinstance(failure_times, np.ndarray):
                 failure_times = np.sort(failure_times)
             else:
                 raise ValueError("failure_times must be a list or array")
@@ -874,7 +874,7 @@ class MCF_nonparametric:
         # check input is a list
         if isinstance(data, list):
             pass
-        elif type(data) == np.ndarray:
+        elif isinstance(data, np.ndarray):
             data = list(data)
         else:
             raise ValueError("data must be a list or numpy array")
@@ -884,7 +884,7 @@ class MCF_nonparametric:
         for i, item in enumerate(data):
             if isinstance(item, list):
                 test_for_single_system.append(False)
-            elif type(item) == np.ndarray:
+            elif isinstance(item, np.ndarray):
                 data[i] = list(item)
                 test_for_single_system.append(False)
             elif isinstance(item, (int, float)):

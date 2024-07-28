@@ -81,7 +81,7 @@ def life_stress_plot(
     else:
         swap_xy = False
 
-    if ax is True or type(ax) == _axes.Axes:
+    if ax is True or isinstance(ax, _axes.Axes):
         if model in ["Dual_Exponential", "Power_Exponential", "Dual_Power"]:
             dual_stress = True
         elif model in ["Exponential", "Eyring", "Power"]:
@@ -91,7 +91,7 @@ def life_stress_plot(
                 "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power",
             )
 
-        if type(ax) == _axes.Axes:
+        if isinstance(ax, _axes.Axes):
             if dual_stress is False:
                 if hasattr(ax, "get_zlim") is False:
                     plt.sca(ax=ax)  # use the axes passed if 2d

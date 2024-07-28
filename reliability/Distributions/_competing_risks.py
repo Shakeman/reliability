@@ -828,7 +828,7 @@ class Competing_Risks_Model:
             """This function does what __combiner does but more efficiently and
             also accepts single values
             """
-            if type(X) == np.ndarray:
+            if isinstance(X, np.ndarray):
                 sf = np.ones_like(X)
                 X_positive = X[X >= 0]
                 X_negative = X[X < 0]

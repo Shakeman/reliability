@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import integrate
@@ -21,7 +20,6 @@ from reliability.Utils import (
 
 dec = 4  # number of decimals to use when rounding descriptive statistics and parameter titles
 np.seterr(divide="ignore", invalid="ignore")  # ignore the divide by zero warnings
-
 
 
 class Mixture_Model:
@@ -845,7 +843,7 @@ class Mixture_Model:
             """This function does what __combiner does but more efficiently and
             also accepts single values.
             """
-            if type(X) == np.ndarray:
+            if isinstance(X, np.ndarray):
                 cdf = np.zeros_like(X)
                 X_positive = X[X >= 0]
                 X_negative = X[X < 0]

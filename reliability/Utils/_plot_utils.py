@@ -1,6 +1,6 @@
-
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 from matplotlib import ticker
 from matplotlib.axes import _axes
 from matplotlib.collections import LineCollection, PolyCollection
@@ -10,7 +10,7 @@ from numpy.linalg import LinAlgError
 from reliability.Utils._ancillary_utils import round_and_string
 
 
-def reshow_figure(handle):
+def reshow_figure(handle: _axes.Axes | Figure | None):
     """Shows a figure from an axes handle or figure handle.
     This is useful if the handle is saved to a variable but the figure has been
     closed.
@@ -28,21 +28,25 @@ def reshow_figure(handle):
         The figure is automatically shown using plt.show().
 
     """
-    if type(handle) is not Figure and type(handle) != _axes.Axes:
+    if type(handle) is not Figure and not isinstance(handle, _axes.Axes):
         # check that the handle is either an axes or a figure
         raise ValueError("handle must be an axes handle or a figure handle")
-    elif type(handle) == _axes.Axes:
+    elif isinstance(handle, _axes.Axes):
         # if the handle is an axes then extract the Figure
-        handle = handle.figure
+        handle = handle.figure  # type: ignore
 
     # rebuild the figure
-    figsize = handle.get_size_inches()
-    fig_new = plt.figure()
-    new_manager = fig_new.canvas.manager
-    new_manager.canvas.figure = handle
-    handle.set_canvas(new_manager.canvas)
-    handle.set_size_inches(figsize)
-    plt.show()
+    if handle is not None:
+        figsize: npt.NDArray[np.float64] = handle.get_size_inches()
+        fig_new = plt.figure()
+        new_manager: plt.FigureManagerBase = fig_new.canvas.manager
+        new_manager.canvas.figure = handle
+        handle.set_canvas(new_manager.canvas)
+        handle.set_size_inches(figsize)  # type: ignore
+        plt.show()
+    else:
+        raise ValueError("handle is None. It must be a valid axes or figure handle")
+
 
 def fill_no_autoscale(xlower, xupper, ylower, yupper, **kwargs):
     """Creates a filled region (polygon) without adding it to the global list of
@@ -107,6 +111,7 @@ def line_no_autoscale(x, y, **kwargs):
     line = np.column_stack([x, y])
     col = LineCollection([line], **kwargs)
     plt.gca().add_collection(col, autolim=False)
+
 
 def probability_plot_xyticks(yticks=None):
     """This function sets the x and y ticks for probability plots.
@@ -354,8 +359,7 @@ def probability_plot_xyticks(yticks=None):
     )  # sets the formatting of the axes coordinates in the bottom right of the figure. Without this the FuncFormatter raw strings make it into the axes coords and don't look good.
 
 
-
-def xy_transform(value, direction="forward", axis="x"):
+def xy_transform(value, direction="forward", axis="x") -> np.float64 | npt.NDArray[np.float64] | list[float]:
     """This function converts between data values and axes coordinates (based on
     xlim() or ylim()).
 
@@ -391,9 +395,9 @@ def xy_transform(value, direction="forward", axis="x"):
         if type(value) in [int, float, np.float64]:
             if axis == "x":
                 # x transform
-                transformed_values = ax.transData.inverted().transform((ax.transAxes.transform((value, 0.5))[0], 0.5))[
-                    0
-                ]
+                transformed_values: np.float64 | npt.NDArray[np.float64] | list[float] = (
+                    ax.transData.inverted().transform((ax.transAxes.transform((value, 0.5))[0], 0.5))[0]
+                )
             else:
                 # y transform
                 transformed_values = ax.transData.inverted().transform((1, ax.transAxes.transform((1, value))[1]))[1]
@@ -416,9 +420,7 @@ def xy_transform(value, direction="forward", axis="x"):
                 0
             ]  # x transform
         else:
-            transformed_values = ax.transAxes.inverted().transform(ax.transData.transform((1, value)))[
-                1
-            ]  # y transform
+            transformed_values = ax.transAxes.inverted().transform(ax.transData.transform((1, value)))[1]  # y transform
     elif type(value) in [list, np.ndarray]:
         transformed_values = []
         for item in value:
@@ -434,7 +436,10 @@ def xy_transform(value, direction="forward", axis="x"):
         raise ValueError("type of value is not recognized")
     return transformed_values
 
-def restore_axes_limits(limits: tuple[tuple[float, float], tuple[float, float], bool], dist, func, X, Y, xvals=None, xmin=None, xmax=None):
+
+def restore_axes_limits(
+    limits: tuple[tuple[float, float], tuple[float, float], bool], dist, func, X, Y, xvals=None, xmin=None, xmax=None
+):
     """This function works in a pair with get_axes_limits. Using the values
     producted by get_axes_limits which are [xlims, ylims, use_prev_lims], this
     function will determine how to change the axes limits to meet the style
@@ -567,6 +572,7 @@ def restore_axes_limits(limits: tuple[tuple[float, float], tuple[float, float], 
         else:
             plt.ylim(bottom=ylim_LOWER, auto=None)
 
+
 def get_axes_limits() -> tuple[tuple[float, float], tuple[float, float], bool]:
     """This function works in a pair with restore_axes_limits
     This function gets the previous xlim and ylim and also checks whether there
@@ -596,6 +602,7 @@ def get_axes_limits() -> tuple[tuple[float, float], tuple[float, float], bool]:
     )  # this checks if there was a previous plot. If the lims were 0,1 and 0,1 then there probably wasn't
     out: tuple[tuple[float, float], tuple[float, float], bool] = (xlims, ylims, use_prev_lims)
     return out
+
 
 def linear_regression(
     x,

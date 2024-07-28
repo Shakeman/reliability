@@ -21,7 +21,7 @@ xlsxwriter = "^3.2.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.1"
-ruff = "^0.4.8"
+ruff = "^0.5.5"
 pre-commit = "^3.7.1"
 docformatter = "^1.7.5"
 pytest-cov = "^5.0.0"

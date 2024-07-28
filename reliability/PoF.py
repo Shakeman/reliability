@@ -101,13 +101,13 @@ def SN_diagram(
 
     """
     # error checking of input and changing inputs to arrays
-    if type(stress) == np.ndarray:
+    if isinstance(stress, np.ndarray):
         pass
     elif isinstance(stress, list):
         stress = np.array(stress)
     else:
         raise ValueError("stress must be an array or list")
-    if type(cycles) == np.ndarray:
+    if isinstance(cycles, np.ndarray):
         pass
     elif isinstance(cycles, list):
         cycles = np.array(cycles)
@@ -119,13 +119,13 @@ def SN_diagram(
     if stress_runout is not None and cycles_runout is not None:
         if len(cycles_runout) != len(stress_runout):
             raise ValueError("the number of datapoints for stress_runout and cycles_runout must be equal")
-        if type(stress_runout) == np.ndarray:
+        if isinstance(stress_runout, np.ndarray):
             pass
         elif isinstance(stress_runout, list):
             stress_runout = np.array(stress_runout)
         else:
             raise ValueError("stress_runout must be an array or list")
-        if type(cycles_runout) == np.ndarray:
+        if isinstance(cycles_runout, np.ndarray):
             pass
         elif isinstance(cycles_runout, list):
             cycles_runout = np.array(cycles_runout)
@@ -340,20 +340,20 @@ class stress_strain_life_parameters_from_data:
 
     def __init__(self, strain, stress, E, cycles=None):
         # note that strain is the total strain (elastic strain + plastic strain)
-        if type(stress) == np.ndarray:
+        if isinstance(stress, np.ndarray):
             pass
         elif isinstance(stress, list):
             stress = np.array(stress)
         else:
             raise ValueError("stress must be an array or list")
-        if type(strain) == np.ndarray:
+        if isinstance(strain, np.ndarray):
             pass
         elif isinstance(strain, list):
             strain = np.array(strain)
         else:
             raise ValueError("strain must be an array or list")
         if cycles is not None:
-            if type(cycles) == np.ndarray:
+            if isinstance(cycles, np.ndarray):
                 cycles_2Nf = 2 * cycles
             elif isinstance(cycles, list):
                 cycles_2Nf = 2 * np.array(cycles)

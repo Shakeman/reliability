@@ -117,7 +117,7 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
             "Stress and Strength must both be probability distributions. First define the distribution using reliability.Distributions.___",
         )
     if (
-        type(stress) == Normal_Distribution and type(strength) == Normal_Distribution and warn is True
+        isinstance(stress, Normal_Distribution) and isinstance(strength, Normal_Distribution) and warn is True
     ):  # supress the warning by setting warn=False
         colorprint(
             "WARNING: If strength and stress are both Normal distributions, it is more accurate to use the exact formula. The exact formula is supported in the function stress_strength_normal. To supress this warning set warn=False",
@@ -163,9 +163,9 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
         if abs(xmin) < (xmax - xmin) / 4:
             xmin = 0  # if the lower bound on xmin is near zero (relative to the entire range) then just make it zero
 
-        if type(stress) == Beta_Distribution and stress.quantile(0.5) < strength.quantile(0.5):
+        if isinstance(stress, Beta_Distribution) and stress.quantile(0.5) < strength.quantile(0.5):
             xmin = 0
-        if type(strength) == Beta_Distribution and stress.quantile(0.5) < strength.quantile(0.5):
+        if isinstance(strength, Beta_Distribution) and stress.quantile(0.5) < strength.quantile(0.5):
             xmax = 1
         xvals = np.linspace(xmin, xmax, 10000)
         stress_PDF = stress.PDF(xvals=xvals, show_plot=False)

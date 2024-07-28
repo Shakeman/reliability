@@ -1,4 +1,3 @@
-
 from typing import Optional
 
 import numpy as np
@@ -26,7 +25,7 @@ def anderson_darling(fitted_cdf, empirical_cdf) -> float:
         The anderson darling (adjusted) test statistic.
 
     """
-    if type(fitted_cdf) != np.ndarray:
+    if not isinstance(fitted_cdf, np.ndarray):
         fitted_cdf = [fitted_cdf]  # required when there is only 1 failure
     Z = np.sort(np.asarray(fitted_cdf))
     Zi = np.hstack([Z, 1 - 1e-12])
@@ -43,7 +42,8 @@ def anderson_darling(fitted_cdf, empirical_cdf) -> float:
     AD: float = n * ((A + B + C).sum())
     return AD
 
-def unpack_single_arrays(array)-> np.float64 | npt.NDArray[np.float64]:
+
+def unpack_single_arrays(array) -> np.float64 | npt.NDArray[np.float64]:
     """Unpacks arrays with a single element to return just that element
 
     Parameters
@@ -59,7 +59,7 @@ def unpack_single_arrays(array)-> np.float64 | npt.NDArray[np.float64]:
         match the input
 
     """
-    out = (array[0] if len(array) == 1 else array) if type(array) == np.ndarray else array
+    out = (array[0] if len(array) == 1 else array) if isinstance(array, np.ndarray) else array
     return out
 
 
@@ -93,7 +93,7 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
     points = 200  # the number of points to use when generating the X array
     points_right = 25  # the number of points given to the area above QU. The total points is still equal to 'points' so the area below QU receives 'points - points_right'
     QL: np.float64 = dist.quantile(0.0001)  # quantile lower
-    QU: np.float64  = dist.quantile(0.99)  # quantile upper
+    QU: np.float64 = dist.quantile(0.99)  # quantile upper
     if xvals is not None:
         X = xvals
         if type(X) in [float, int, np.float64]:
@@ -313,6 +313,7 @@ def xy_downsample(x, y, downsample_factor=None, default_max_values=1000):
                 y_downsample.append(y_sorted[idx])
             return x_downsample, y_downsample
 
+
 def removeNaNs(X):
     """Removes NaNs from a list or array.
 
@@ -332,7 +333,7 @@ def removeNaNs(X):
     as numpy crashes for str and bool.
 
     """
-    if type(X) == np.ndarray:
+    if isinstance(X, np.ndarray):
         X = list(X)
         arr_out = True
     else:
@@ -347,6 +348,7 @@ def removeNaNs(X):
     if arr_out is True:
         out = np.asarray(out)
     return out
+
 
 def clean_CI_arrays(xlower, xupper, ylower, yupper, plot_type="CDF", x=None, q=None):
     """This function cleans the CI arrays of nans and numbers <= 0 and also removes
@@ -465,6 +467,7 @@ def clean_CI_arrays(xlower, xupper, ylower, yupper, plot_type="CDF", x=None, q=N
 
     return xlower_out3, xupper_out3, ylower_out3, yupper_out3
 
+
 def zeroise_below_gamma(X, Y, gamma):
     """This will make all Y values 0 for the corresponding X values being below
     gamma (the threshold parameter for Weibull, Exponential, Gamma, Loglogistic,
@@ -497,7 +500,8 @@ def zeroise_below_gamma(X, Y, gamma):
             Y[0 : (np.where(gamma < X)[0][0])] = 0  # zeroize below X=gamma
     return Y
 
-def no_reverse(x, CI_type, plot_type)-> npt.NDArray[np.float64] :
+
+def no_reverse(x, CI_type, plot_type) -> npt.NDArray[np.float64]:
     """This is used to convert an array that decreases and then increases into an
     array that decreases then is constant at its minimum.
 
@@ -622,7 +626,7 @@ def transform_spaced(
         def fwd(x: float):
             return np.log(-np.log(1 - x))
 
-        def inv(x: npt.NDArray[np.float64]): #type: ignore
+        def inv(x: npt.NDArray[np.float64]):  # type: ignore
             return 1 - np.exp(-np.exp(x))
 
     elif transform in ["loglogistic", "Loglogistic", "LL", "ll", "loglog"]:
@@ -630,7 +634,7 @@ def transform_spaced(
         def fwd(x: float):
             return np.log(1 / x - 1)
 
-        def inv(x: npt.NDArray[np.float64]): #type: ignore
+        def inv(x: npt.NDArray[np.float64]):  # type: ignore
             return 1 / (np.exp(x) + 1)
 
     elif transform in ["exponential", "Exponential", "expon", "Expon", "exp", "Exp"]:

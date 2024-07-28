@@ -600,7 +600,7 @@ class XCN_to_FR:
         censor_code=None,
         failure_code=None,
     ):
-        if type(quantities) == type(None):
+        if quantities is None:
             quantities = np.ones_like(X)  # assume a quantity of 1 if not specified
         if type(quantities) not in [list, np.ndarray]:
             raise ValueError("N must be a list or array.")

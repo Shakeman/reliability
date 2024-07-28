@@ -205,7 +205,7 @@ class Fit_Everything:
 
         if exclude is None:
             exclude = []
-        if type(exclude) == np.ndarray:
+        if isinstance(exclude, np.ndarray):
             exclude = list(exclude)
         if type(exclude) not in [list, np.ndarray]:
             raise ValueError(

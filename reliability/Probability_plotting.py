@@ -105,7 +105,7 @@ def plotting_positions(
     else:
         raise ValueError("failures must be specified as an array or list")
 
-    if type(right_censored) == type(None):
+    if right_censored is None:
         rc: npt.NDArray[np.float64] = np.array([])
     elif type(right_censored) in [np.ndarray, list]:
         rc: npt.NDArray[np.float64] = np.asarray(right_censored)
@@ -2326,13 +2326,13 @@ def PP_plot_semiparametric(
         )
     if isinstance(X_data_failures, list):
         X_data_failures = np.sort(np.array(X_data_failures))
-    elif type(X_data_failures) == np.ndarray:
+    elif isinstance(X_data_failures, np.ndarray):
         X_data_failures = np.sort(X_data_failures)
     else:
         raise ValueError("X_data_failures must be an array or list")
     if isinstance(X_data_right_censored, list):
         X_data_right_censored = np.sort(np.array(X_data_right_censored))
-    elif type(X_data_right_censored) == np.ndarray:
+    elif isinstance(X_data_right_censored, np.ndarray):
         X_data_right_censored = np.sort(X_data_right_censored)
     elif X_data_right_censored is None:
         pass
@@ -2497,13 +2497,13 @@ def QQ_plot_semiparametric(
         )
     if isinstance(X_data_failures, list):
         X_data_failures = np.sort(np.array(X_data_failures))
-    elif type(X_data_failures) == np.ndarray:
+    elif isinstance(X_data_failures, np.ndarray):
         X_data_failures = np.sort(X_data_failures)
     else:
         raise ValueError("X_data_failures must be an array or list")
     if isinstance(X_data_right_censored, list):
         X_data_right_censored = np.sort(np.array(X_data_right_censored))
-    elif type(X_data_right_censored) == np.ndarray:
+    elif isinstance(X_data_right_censored, np.ndarray):
         X_data_right_censored = np.sort(X_data_right_censored)
     elif X_data_right_censored is None:
         pass

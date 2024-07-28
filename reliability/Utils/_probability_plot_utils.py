@@ -132,8 +132,8 @@ def ALT_prob_plot(
         will be the same handle.
 
     """
-    if ax is True or type(ax) == _axes.Axes:
-        if type(ax) == _axes.Axes:
+    if ax is True or isinstance(ax, _axes.Axes):
+        if isinstance(ax, _axes.Axes):
             plt.sca(ax=ax)  # use the axes passed
         else:
             plt.figure()  # if no axes is passed, make a new figure
@@ -447,13 +447,13 @@ def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha
         dy_tfm = max_y_tfm - min_y_tfm
         ylim_lower = axes_transforms.weibull_inverse(min_y_tfm - dy_tfm * spacing)
         ylim_upper = axes_transforms.weibull_inverse(max_y_tfm + dy_tfm * spacing)
-    if dist == "exponential":
+    elif dist == "exponential":
         min_y_tfm = axes_transforms.exponential_forward(min_y)
         max_y_tfm = axes_transforms.exponential_forward(max_y)
         dy_tfm = max_y_tfm - min_y_tfm
         ylim_lower = axes_transforms.exponential_inverse(min_y_tfm - dy_tfm * spacing)
         ylim_upper = axes_transforms.exponential_inverse(max_y_tfm + dy_tfm * spacing)
-    elif dist == "gamma":
+    elif dist == "gamma" and gamma_beta is not None:
         min_y_tfm = axes_transforms.gamma_forward(min_y, gamma_beta)
         max_y_tfm = axes_transforms.gamma_forward(max_y, gamma_beta)
         dy_tfm = max_y_tfm - min_y_tfm
@@ -471,7 +471,7 @@ def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha
         dy_tfm = max_y_tfm - min_y_tfm
         ylim_lower = axes_transforms.gumbel_inverse(min_y_tfm - dy_tfm * spacing)
         ylim_upper = axes_transforms.gumbel_inverse(max_y_tfm + dy_tfm * spacing)
-    elif dist == "beta":
+    elif dist == "beta" and beta_alpha is not None and beta_beta is not None:
         min_y_tfm = axes_transforms.beta_forward(min_y, beta_alpha, beta_beta)
         max_y_tfm = axes_transforms.beta_forward(max_y, beta_alpha, beta_beta)
         dy_tfm = max_y_tfm - min_y_tfm
@@ -483,6 +483,8 @@ def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha
         dy_tfm = max_y_tfm - min_y_tfm
         ylim_lower = axes_transforms.loglogistic_inverse(min_y_tfm - dy_tfm * spacing)
         ylim_upper = axes_transforms.loglogistic_inverse(max_y_tfm + dy_tfm * spacing)
+    else:
+        raise ValueError("dist is unrecognised")
     if ylim_upper == ylim_lower:
         dx = min(1 - ylim_upper, ylim_upper - 1)
         ylim_upper = ylim_upper - spacing * dx

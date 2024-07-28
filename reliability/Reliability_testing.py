@@ -435,7 +435,7 @@ def sequential_sampling_chart(
 
     if show_plot is True:
         # plots the results of tests if they are specified
-        if type(F) == np.ndarray:
+        if isinstance(F, np.ndarray):
             nx = []
             ny = []
             failure_count = 0
@@ -989,9 +989,9 @@ class chi2test:
                 (len(parameters) - 1) if parameters[-1] == 0 else len(parameters)
             )  # if the gamma parameter is 0 then adjust the number of parameters to ignore gamma
 
-        elif type(distribution) == Mixture_Model:
+        elif isinstance(distribution, Mixture_Model):
             k = distribution._Mixture_Model__number_of_params
-        elif type(distribution) == Competing_Risks_Model:
+        elif isinstance(distribution, Competing_Risks_Model):
             k = distribution._Competing_Risks_Model__number_of_params
         else:
             k = distribution._DSZI_Model__number_of_params
@@ -1071,7 +1071,7 @@ class chi2test:
         )
         self.__distribution.CDF(label=self.__dist_title)
         plt.title("Chi-squared test\nHypothesized distribution CDF vs cumulative histogram of data")
-        if type(self.__distribution) == DSZI_Model:
+        if isinstance(self.__distribution, DSZI_Model):
             xmax = max(self.__data) * 1.1
             xmin = min(self.__data)
         else:
@@ -1240,7 +1240,7 @@ class KStest:
         self.__distribution.CDF(label=self.__dist_title)
         plt.plot(SN_plot_x, SN_plot_y, label="Empirical CDF")
 
-        if type(self.__distribution) == DSZI_Model:
+        if isinstance(self.__distribution, DSZI_Model):
             xmax = max(self.__data) * 1.2
             xmin = min(self.__data)
         else:

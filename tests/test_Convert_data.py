@@ -37,7 +37,11 @@ def test_FNRN_to_FR():
 
 def test_XCN_to_FR():
     FR = XCN_to_FR(
-        X=[12, 15, 18, 32, 35, 38, 60], C=[1, 1, 1, 0, 0, 0, 0], N=[1, 1, 1, 2, 2, 1, 3], failure_code=1, censor_code=0,
+        X=[12, 15, 18, 32, 35, 38, 60],
+        C=[1, 1, 1, 0, 0, 0, 0],
+        quantities=[1, 1, 1, 2, 2, 1, 3],
+        failure_code=1,
+        censor_code=0,
     )
     assert (FR.failures == [12.0, 15.0, 18.0]).all()
     assert (FR.right_censored == [32.0, 32.0, 35.0, 35.0, 38.0, 60.0, 60.0, 60.0]).all()
@@ -60,7 +64,10 @@ def test_FR_to_XCN():
 
 def test_FNRN_to_XCN():
     XCN = FNRN_to_XCN(
-        failures=[1, 2, 3], num_failures=[2, 2, 1], right_censored=[9, 8, 7], num_right_censored=[3, 2, 1],
+        failures=[1, 2, 3],
+        num_failures=[2, 2, 1],
+        right_censored=[9, 8, 7],
+        num_right_censored=[3, 2, 1],
     )
     assert ([1, 2, 3, 7, 8, 9] == XCN.X).all()
     assert (["F", "F", "F", "C", "C", "C"] == XCN.C).all()

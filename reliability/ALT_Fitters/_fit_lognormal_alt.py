@@ -12,10 +12,11 @@ from reliability.Distributions import (
 )
 from reliability.Fitters import Fit_Lognormal_2P
 from reliability.Utils import (
-    ALT_fitters_input_checking,
     ALT_least_squares,
     ALT_MLE_optimization,
     ALT_prob_plot,
+    alt_fitters_dual_stress_input_checking,
+    alt_single_stress_fitters_input_checking,
     colorprint,
     life_stress_plot,
     round_and_string,
@@ -24,6 +25,7 @@ from reliability.Utils import (
 pd.set_option("display.width", 200)  # prevents wrapping after default 80 characters
 pd.set_option("display.max_columns", 9)  # shows the dataframe without ... truncation
 shape_change_threshold = 0.5
+
 
 class Fit_Lognormal_Exponential:
     """This function will Fit the Lognormal-Exponential life-stress model to the
@@ -145,14 +147,14 @@ class Fit_Lognormal_Exponential:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress: float | None =None,
+        use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_single_stress_fitters_input_checking(
             dist="Lognormal",
             life_stress_model="Exponential",
             failures=failures,
@@ -233,7 +235,7 @@ class Fit_Lognormal_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.b, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -582,14 +584,14 @@ class Fit_Lognormal_Eyring:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress: float | None =None,
+        use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_single_stress_fitters_input_checking(
             dist="Lognormal",
             life_stress_model="Eyring",
             failures=failures,
@@ -669,7 +671,7 @@ class Fit_Lognormal_Eyring:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.c, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1012,14 +1014,14 @@ class Fit_Lognormal_Power:
         failure_stress,
         right_censored=None,
         right_censored_stress=None,
-        use_level_stress: float | None =None,
+        use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_single_stress_fitters_input_checking(
             dist="Lognormal",
             life_stress_model="Power",
             failures=failures,
@@ -1099,7 +1101,7 @@ class Fit_Lognormal_Power:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.n, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1465,14 +1467,14 @@ class Fit_Lognormal_Dual_Exponential:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: npt.NDArray[np.float64] | None =None,
+        use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_fitters_dual_stress_input_checking(
             dist="Lognormal",
             life_stress_model="Dual_Exponential",
             failures=failures,
@@ -1565,7 +1567,7 @@ class Fit_Lognormal_Dual_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.b, self.c, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -1969,14 +1971,14 @@ class Fit_Lognormal_Power_Exponential:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: npt.NDArray[np.float64] | None =None,
+        use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_fitters_dual_stress_input_checking(
             dist="Lognormal",
             life_stress_model="Power_Exponential",
             failures=failures,
@@ -2069,7 +2071,7 @@ class Fit_Lognormal_Power_Exponential:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.a, self.c, self.n, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),
@@ -2470,14 +2472,14 @@ class Fit_Lognormal_Dual_Power:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: npt.NDArray[np.float64] | None =None,
+        use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_fitters_dual_stress_input_checking(
             dist="Lognormal",
             life_stress_model="Dual_Power",
             failures=failures,
@@ -2570,7 +2572,7 @@ class Fit_Lognormal_Dual_Power:
         # confidence interval estimates of parameters
         Z = -ss.norm.ppf((1 - CI) / 2)
         params = [self.c, self.m, self.n, self.sigma]
-        hessian_matrix = hessian(LL_func)( # type: ignore
+        hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
             np.array(tuple(right_censored)),

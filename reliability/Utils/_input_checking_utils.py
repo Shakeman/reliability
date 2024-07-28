@@ -1461,24 +1461,25 @@ class alt_single_stress_fitters_input_checking:
             if right_censored_stress_1 is None:
                 raise ValueError("right_censored_stress_1 must be provided")
 
-        # type checking and converting to arrays for failures and right_censored
+        # type checking and converting to arrays for failures
         if type(failures) not in [list, np.ndarray]:
             raise ValueError("failures must be a list or array of failure data")
         if type(failure_stress_1) not in [list, np.ndarray]:
             raise ValueError("failure_stress_1 must be a list or array of failure stress data")
+        failures = np.asarray(failures).astype(float)
+        failure_stress_1 = np.asarray(failure_stress_1).astype(float)
+        # check that list lengths match
+        if len(failures) != len(failure_stress_1):
+            raise ValueError("failures must have the same number of elements as failure_stress_1")
+
+        # type checking and converting to arrays for failures right_censored
         if type(right_censored) not in [list, np.ndarray]:
             raise ValueError("right_censored must be a list or array of right censored failure data")
         if type(right_censored_stress_1) not in [list, np.ndarray]:
             raise ValueError("right_censored_stress_1 must be a list or array of right censored failure stress data")
-
-        failures = np.asarray(failures).astype(float)
-        failure_stress_1 = np.asarray(failure_stress_1).astype(float)
         right_censored = np.asarray(right_censored).astype(float)
         right_censored_stress_1 = np.asarray(right_censored_stress_1).astype(float)
-
         # check that list lengths match
-        if len(failures) != len(failure_stress_1):
-            raise ValueError("failures must have the same number of elements as failure_stress_1")
         if len(right_censored) != len(right_censored_stress_1):
             raise ValueError("right_censored must have the same number of elements as right_censored_stress_1")
 
@@ -1526,7 +1527,7 @@ class alt_single_stress_fitters_input_checking:
         self.right_censored_stress_1 = right_censored_stress_1
         self.CI = CI
         self.optimizer = optimizer
-        self.use_level_stress = use_level_stress
+        self.use_level_stress: float | None = use_level_stress
         self.failure_groups = failure_groups[::-1]
         if right_censored_groups is None:
             self.right_censored_groups = right_censored_groups
@@ -1612,13 +1613,16 @@ def group_right_censored(right_censored, right_censored_stress_1, unique_failure
             },
             columns=["right_censored", "right_censored_stress_1"],
         )
-        right_censored_groups = []
-        unique_right_censored_stresses = []
-        for key, items in right_censored_df_ungrouped.groupby(["right_censored_stress_1"]):
+        right_censored_df_grouped = right_censored_df_ungrouped.groupby(["right_censored_stress_1"])
+
+        unique_right_censored_stresses_df = right_censored_df_grouped.nunique()
+
+        unique_right_censored_stresses = unique_right_censored_stresses_df.index.tolist()
+
+        right_censored_groups = right_censored_df_grouped["right_censored"].apply(list).values.tolist()
+
+        for key, _ in right_censored_df_ungrouped.groupby(["right_censored_stress_1"]):
             key = key[0]
-            values = list(items.iloc[:, 0].values)
-            right_censored_groups.append(values)
-            unique_right_censored_stresses.append(key)
             if key not in unique_failure_stresses:
                 raise ValueError(
                     str("The right censored stress " + str(key) + " does not appear in failure stresses."),
@@ -1658,10 +1662,12 @@ def group_failure_stresses(failures, failure_stress_1, min_failures_reqd, error_
         columns=["failures", "failure_stress_1"],
     )
 
-    failure_df_grouped = failure_df_ungrouped.groupby("failure_stress_1")
+    failure_df_grouped = failure_df_ungrouped.groupby(["failure_stress_1"])
 
     unique_failures_df = failure_df_grouped.nunique()
+
     unique_failure_stresses = unique_failures_df.index.tolist()
+
     total_unique_failures = unique_failures_df.sum().sum()
 
     failure_groups = failure_df_grouped["failures"].apply(list).values.tolist()
@@ -1671,3 +1677,22 @@ def group_failure_stresses(failures, failure_stress_1, min_failures_reqd, error_
     if total_unique_failures < min_failures_reqd:
         raise ValueError(error_msg)
     return failure_groups, unique_failure_stresses
+
+
+def group_df_data(array_1, array_2):
+    df_ungrouped = pd.DataFrame(
+        data={"array_1": array_1, "array_2": array_2},
+        columns=["array_1", "array_2"],
+    )
+
+    df_grouped = df_ungrouped.groupby(["array_2"])
+
+    unique_df = df_grouped.nunique()
+
+    unique_failure_stresses = unique_df.index.tolist()
+
+    total_uniques = unique_df.sum().sum()
+
+    list_groups_in_df = df_grouped["array_1"].apply(list).values.tolist()
+
+    return list_groups_in_df, unique_failure_stresses, total_uniques

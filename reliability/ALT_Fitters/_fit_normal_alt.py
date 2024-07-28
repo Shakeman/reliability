@@ -12,10 +12,11 @@ from reliability.Distributions import (
 )
 from reliability.Fitters import Fit_Normal_2P
 from reliability.Utils import (
-    ALT_fitters_input_checking,
     ALT_least_squares,
     ALT_MLE_optimization,
     ALT_prob_plot,
+    alt_fitters_dual_stress_input_checking,
+    alt_single_stress_fitters_input_checking,
     colorprint,
     life_stress_plot,
     round_and_string,
@@ -153,7 +154,7 @@ class Fit_Normal_Exponential:
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_single_stress_fitters_input_checking(
             dist="Normal",
             life_stress_model="Exponential",
             failures=failures,
@@ -587,7 +588,7 @@ class Fit_Normal_Eyring:
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_single_stress_fitters_input_checking(
             dist="Normal",
             life_stress_model="Eyring",
             failures=failures,
@@ -1015,7 +1016,7 @@ class Fit_Normal_Power:
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_single_stress_fitters_input_checking(
             dist="Normal",
             life_stress_model="Power",
             failures=failures,
@@ -1466,7 +1467,7 @@ class Fit_Normal_Dual_Exponential:
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_fitters_dual_stress_input_checking(
             dist="Normal",
             life_stress_model="Dual_Exponential",
             failures=failures,
@@ -1959,7 +1960,7 @@ class Fit_Normal_Power_Exponential:
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_fitters_dual_stress_input_checking(
             dist="Normal",
             life_stress_model="Power_Exponential",
             failures=failures,
@@ -2444,7 +2445,7 @@ class Fit_Normal_Dual_Power:
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_fitters_dual_stress_input_checking(
             dist="Normal",
             life_stress_model="Dual_Power",
             failures=failures,

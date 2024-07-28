@@ -21,7 +21,6 @@ def test_reliability_growth_duane():
     times = [10400, 26900, 43400, 66400, 89400, 130400, 163400, 232000, 242000, 340700]
     rg_duane = reliability_growth(times=times, model="Duane", target_MTBF=50000)
     rg_duane.print_results()
-    rg_duane.plot()
     assert_allclose(rg_duane.A, 0.002355878294089656, rtol=rtol, atol=atol)
     assert_allclose(rg_duane.Alpha, 0.33617199465228115, rtol=rtol, atol=atol)
     assert_allclose(rg_duane.DMTBF_I, 46304.175358824315, rtol=rtol, atol=atol)
@@ -84,6 +83,7 @@ def test_ROCOF():
     results = ROCOF(times_between_failures=times)
     results.print_results()
     results.plot()
+    plt.close("all")
     assert_allclose(results.U, 2.4094382960447107, rtol=rtol, atol=atol)
     assert_allclose(results.z_crit, (-1.959963984540054, 1.959963984540054), rtol=rtol, atol=atol)
     assert results.trend == "worsening"
@@ -100,6 +100,7 @@ def test_old_MCF_nonparametric():
     results = MCF_nonparametric(data=times)
     results.print_results()
     results.plot()
+    plt.close("all")
     assert_allclose(sum(results.MCF), 22.833333333333332, rtol=rtol, atol=atol)
     assert_allclose(sum(results.variance), 3.933518518518521, rtol=rtol, atol=atol)
     assert_allclose(sum(results.lower), 13.992740081348929, rtol=rtol, atol=atol)
@@ -111,6 +112,7 @@ def test_MCF_parametric():
     results = MCF_parametric(data=times)
     results.print_results()
     results.plot()
+    plt.close("all")
     assert_allclose(sum(results.MCF), 22.833333333333332, rtol=rtol, atol=atol)
     assert_allclose(sum(results.times), 214, rtol=rtol, atol=atol)
     assert_allclose(results.alpha, 11.980589826209348, rtol=rtol, atol=atol)

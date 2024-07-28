@@ -13,7 +13,6 @@ from reliability.Distributions import (
 )
 from reliability.Fitters import Fit_Weibull_2P
 from reliability.Utils import (
-    ALT_fitters_input_checking,
     ALT_least_squares,
     ALT_MLE_optimization,
     ALT_prob_plot,
@@ -586,7 +585,7 @@ class Fit_Weibull_Eyring:
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_single_stress_fitters_input_checking(
             dist="Weibull",
             life_stress_model="Eyring",
             failures=failures,
@@ -603,10 +602,7 @@ class Fit_Weibull_Eyring:
         right_censored_stress = inputs.right_censored_stress_1
         CI = inputs.CI
         optimizer = inputs.optimizer
-        if isinstance(inputs.use_level_stress, float):
-            use_level_stress = inputs.use_level_stress
-        else:
-            raise ValueError("use_level_stress must be a float")
+        use_level_stress = inputs.use_level_stress
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups
@@ -736,7 +732,7 @@ class Fit_Weibull_Eyring:
         if n - k - 1 > 0:
             self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
@@ -1013,7 +1009,7 @@ class Fit_Weibull_Power:
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_single_stress_fitters_input_checking(
             dist="Weibull",
             life_stress_model="Power",
             failures=failures,
@@ -1030,10 +1026,7 @@ class Fit_Weibull_Power:
         right_censored_stress = inputs.right_censored_stress_1
         CI = inputs.CI
         optimizer = inputs.optimizer
-        if isinstance(inputs.use_level_stress, float):
-            use_level_stress = inputs.use_level_stress
-        else:
-            raise ValueError("use_level_stress must be a float")
+        use_level_stress = inputs.use_level_stress
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups
@@ -1167,7 +1160,7 @@ class Fit_Weibull_Power:
         if n - k - 1 > 0:
             self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
@@ -1460,7 +1453,7 @@ class Fit_Weibull_Dual_Exponential:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: npt.NDArray[np.float64] | None = None,
+        use_level_stress: npt.NDArray[np.float64] | list[float] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -1648,7 +1641,7 @@ class Fit_Weibull_Dual_Exponential:
         if n - k - 1 > 0:
             self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
@@ -1948,14 +1941,14 @@ class Fit_Weibull_Power_Exponential:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: npt.NDArray[np.float64] | None = None,
+        use_level_stress: npt.NDArray[np.float64] | list[float] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_fitters_dual_stress_input_checking(
             dist="Weibull",
             life_stress_model="Power_Exponential",
             failures=failures,
@@ -1976,10 +1969,7 @@ class Fit_Weibull_Power_Exponential:
         right_censored_stress_2 = inputs.right_censored_stress_2
         CI = inputs.CI
         optimizer = inputs.optimizer
-        if isinstance(inputs.use_level_stress, np.ndarray):
-            use_level_stress = inputs.use_level_stress
-        else:
-            raise ValueError("use_level_stress must be a array")
+        use_level_stress = inputs.use_level_stress
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups
@@ -2139,7 +2129,7 @@ class Fit_Weibull_Power_Exponential:
         if n - k - 1 > 0:
             self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
@@ -2452,14 +2442,14 @@ class Fit_Weibull_Dual_Power:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: npt.NDArray[np.float64] | None = None,
+        use_level_stress: npt.NDArray[np.float64] | list[float] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
     ):
-        inputs = ALT_fitters_input_checking(
+        inputs = alt_fitters_dual_stress_input_checking(
             dist="Weibull",
             life_stress_model="Dual_Power",
             failures=failures,
@@ -2480,10 +2470,7 @@ class Fit_Weibull_Dual_Power:
         right_censored_stress_2 = inputs.right_censored_stress_2
         CI = inputs.CI
         optimizer = inputs.optimizer
-        if isinstance(inputs.use_level_stress, np.ndarray):
-            use_level_stress = inputs.use_level_stress
-        else:
-            raise ValueError("use_level_stress must be a array")
+        use_level_stress = inputs.use_level_stress
         failure_groups = inputs.failure_groups
         right_censored_groups = inputs.right_censored_groups
         stresses_for_groups = inputs.stresses_for_groups
@@ -2643,7 +2630,7 @@ class Fit_Weibull_Dual_Power:
         if n - k - 1 > 0:
             self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],

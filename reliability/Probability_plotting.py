@@ -2547,7 +2547,7 @@ def QQ_plot_semiparametric(
         )
 
     # calculate the failure times at the given quantiles
-    dist_Y_ISF = [Y_dist.inverse_SF(float(q) for q in ecdf)]
+    dist_Y_ISF = [Y_dist.inverse_SF(float(q)) for q in ecdf]
     dist_Y_ISF = np.array(dist_Y_ISF[::-1])
     dist_Y_ISF[dist_Y_ISF == -np.inf] = 0
 

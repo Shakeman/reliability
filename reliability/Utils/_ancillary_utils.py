@@ -32,7 +32,7 @@ def validate_yes_no_prompt(prompt_msg) -> str:
 
     """
     bad_input_msg = "Invalid choice. Please specify Y or N"
-    prompts = chain([prompt_msg], repeat("\n".join([bad_input_msg, prompt_msg])))
+    prompts = chain([prompt_msg], repeat(f"{bad_input_msg}\n{prompt_msg}"))
     replies = map(input, prompts)
     uppercased_replies = map(str.upper, replies)
     stripped_replies = map(str.strip, uppercased_replies)
@@ -259,7 +259,7 @@ def colorprint(
 
     if type(text_color) not in [str, np.str_, type(None)]:
         raise ValueError("text_color must be a string")
-    elif text_color is None:
+    if text_color is None:
         pass
     elif text_color.upper() in ["GREY", "GRAY", "GR"]:
         text_color = "grey"

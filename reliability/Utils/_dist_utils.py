@@ -1,3 +1,5 @@
+from typing import Literal
+
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
 import numpy as np
@@ -974,9 +976,9 @@ class distribution_confidence_intervals:
     @staticmethod
     def weibull_CI(
         dist,
-        CI_type: str,
+        CI_type: Literal["time", "reliability"],
         CI: float,
-        func="CDF",
+        func: Literal["CDF", "SF", "CHF"] = "CDF",
         plot_CI=None,
         text_title="",
         color=None,

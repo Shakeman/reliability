@@ -101,10 +101,10 @@ ignore = [
     "PD011",#   pandas-use-of-dot-values"
     "D417",#    undocumented-param"
     "PLW0128", # redeclared-assigned-name"
-    "NPY002", #numpy-legacy-random
     "PLW3301",# nested min-max
     "TRY004",# type-check-without-type-error
     "FBT001", # " boolean-type-hint-positional-argument"
+    "PT013",
     "E501",  # line too long, handled by black
     "FBT003",# Boolean positional value in function call"
     "C901",  # too complex
@@ -121,7 +121,14 @@ ignore = [
     "FBT002", #boolean-default-value-positional-argument
     "TCH002", # Move third-party import
     "D100", # Missing docstring in public module
-    "INP001"
+    "INP001",
+    "PTH118",
+    "PTH107",
+    "PTH110",
+    "PTH109",
+    "PTH123",
+    "NPY002", #numpy-legacy-random
+    "NPY201"  #numpy deprecation
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.

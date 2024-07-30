@@ -1,3 +1,5 @@
+"""This is the ALT_Fitters package."""
+
 from reliability.ALT_Fitters._fit_everything_alt import Fit_Everything_ALT
 from reliability.ALT_Fitters._fit_exponential_alt import (
     Fit_Exponential_Dual_Exponential,

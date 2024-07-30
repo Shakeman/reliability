@@ -3,6 +3,7 @@ from typing import Iterator
 
 import numpy as np
 import pandas as pd
+import pytest
 from pytest import MonkeyPatch
 
 from reliability.Utils._ancillary_utils import (
@@ -186,16 +187,14 @@ def test_colorprint():
     colorprint("Hello, world!", text_color="blue", background_color="pink")
 
     # Test case: Print string with invalid text color
-    try:
+    with pytest.raises(ValueError) as e:
         colorprint("Hello, world!", text_color="invalid_color")
-    except ValueError as e:
-        assert str(e) == "Unknown text_color. Options are grey, red, green, yellow, blue, pink, turquoise."
+    assert str(e.value) == "Unknown text_color. Options are grey, red, green, yellow, blue, pink, turquoise."
 
     # Test case: Print string with invalid background color
-    try:
+    with pytest.raises(ValueError) as e:
         colorprint("Hello, world!", background_color="invalid_color")
-    except ValueError as e:
-        assert str(e) == "Unknown text_color. Options are grey, red, green, yellow, blue, pink, turquoise."
+    assert str(e.value) == "Unknown text_color. Options are grey, red, green, yellow, blue, pink, turquoise."
 
 
 def test_write_df_to_xlsx(monkeypatch: MonkeyPatch):

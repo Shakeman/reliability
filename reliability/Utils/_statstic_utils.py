@@ -99,7 +99,7 @@ def least_squares(
         guess = Exponential_1P_guess(x, y, method)
 
     elif dist == "Exponential_2P":
-        guess = Exponential_2P_guess(x, y, method, gamma0, failures)
+        guess = Exponential_2P_guess(x, y, gamma0, failures)
 
     elif dist == "Normal_2P":
         guess = Normal_2P_guess(x, y, method, force_shape)
@@ -262,14 +262,13 @@ def Exponential_1P_guess(x, y, method) -> list[np.float64]:
     return guess
 
 
-def Exponential_2P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
+def Exponential_2P_guess(x, y, gamma0, failures) -> list[np.float64]:
     """Estimate the parameters for a two-parameter exponential distribution.
 
     Args:
     ----
         x (array-like): The input data representing the time-to-failure values.
         y (array-like): The input data representing the cumulative probability of failure.
-        method (str): The method used for estimation.
         gamma0 (float): The initial guess for the location parameter.
         failures (array-like): The input data representing the failure times.
 

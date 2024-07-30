@@ -1041,7 +1041,7 @@ class chi2test:
         )
 
     def plot(self):
-        """Plots a cumulative histogram of the data and compares it with the hypothesized distribution's cumulative distribution function (CDF).
+        r"""Plots a cumulative histogram of the data and compares it with the hypothesized distribution's cumulative distribution function (CDF).
 
         This method uses the matplotlib library to create a histogram of the data, with the bin edges determined by the `bin_edges` attribute.
         The histogram is plotted as a cumulative histogram with the `density` parameter set to True.
@@ -1213,7 +1213,7 @@ class KStest:
         )
 
     def plot(self):
-        """Plots the empirical cumulative distribution function (CDF) of data against the hypothesized distribution CDF.
+        r"""Plots the empirical cumulative distribution function (CDF) of data against the hypothesized distribution CDF.
 
         This method builds a step plot by iterating over the data and the corresponding Sn_all values. It then adds the
         maximum data value multiplied by 1000 and 1 to the plot. The x-axis limits are determined based on the type of

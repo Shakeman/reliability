@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
@@ -22,7 +21,6 @@ from reliability.Utils import (
 
 dec = 4  # number of decimals to use when rounding descriptive statistics and parameter titles
 np.seterr(divide="ignore", invalid="ignore")  # ignore the divide by zero warnings
-
 
 
 class DSZI_Model:
@@ -340,7 +338,9 @@ class DSZI_Model:
         pdf = unpack_single_arrays(pdf)
 
         if show_plot is True and X is not None:
-            limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits
+            limits: tuple[tuple[float, float], tuple[float, float], bool] = (
+                get_axes_limits()
+            )  # get the previous axes limits
 
             plt.plot(X, pdf, **kwargs)
             plt.xlabel("x values")
@@ -406,7 +406,9 @@ class DSZI_Model:
         cdf = unpack_single_arrays(cdf)
 
         if show_plot is True and X is not None:
-            limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits
+            limits: tuple[tuple[float, float], tuple[float, float], bool] = (
+                get_axes_limits()
+            )  # get the previous axes limits
 
             plt.plot(X, cdf, **kwargs)
             plt.xlabel("x values")
@@ -473,7 +475,9 @@ class DSZI_Model:
         sf = unpack_single_arrays(sf)
 
         if show_plot is True and X is not None:
-            limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits
+            limits: tuple[tuple[float, float], tuple[float, float], bool] = (
+                get_axes_limits()
+            )  # get the previous axes limits
 
             plt.plot(X, sf, **kwargs)
             plt.xlabel("x values")
@@ -529,7 +533,7 @@ class DSZI_Model:
         """
         # obtain the X array
         if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
-            X: npt.NDArray[np.float64] | None  = xvals
+            X: npt.NDArray[np.float64] | None = xvals
             show_plot = False
         else:
             X = generate_X_array(dist=self.__base_distribution, xvals=xvals, xmin=xmin, xmax=xmax)
@@ -542,7 +546,9 @@ class DSZI_Model:
         hf = unpack_single_arrays(hf)
 
         if show_plot is True and X is not None:
-            limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits
+            limits: tuple[tuple[float, float], tuple[float, float], bool] = (
+                get_axes_limits()
+            )  # get the previous axes limits
 
             plt.plot(X, hf, **kwargs)
             plt.xlabel("x values")
@@ -609,7 +615,9 @@ class DSZI_Model:
         chf = unpack_single_arrays(chf)
 
         if show_plot is True and X is not None:
-            limits: tuple[tuple[float, float], tuple[float, float], bool] = get_axes_limits()  # get the previous axes limits
+            limits: tuple[tuple[float, float], tuple[float, float], bool] = (
+                get_axes_limits()
+            )  # get the previous axes limits
 
             plt.plot(X, chf, **kwargs)
             plt.xlabel("x values")
@@ -770,8 +778,7 @@ class DSZI_Model:
         if right_censored_time is None:
             if self.DS < 1:
                 raise ValueError("right_censored_time must be provided if DS is not 1")
-            else:
-                right_censored_time = 1  # dummy value which is multiplied by an empty array.
+            right_censored_time = 1  # dummy value which is multiplied by an empty array.
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:

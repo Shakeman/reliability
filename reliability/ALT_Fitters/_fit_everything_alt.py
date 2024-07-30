@@ -194,7 +194,7 @@ class Fit_Everything_ALT:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-        use_level_stress: float | npt.NDArray[np.float64] | None =None,
+        use_level_stress: float | npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
         show_probability_plot=True,
@@ -1448,7 +1448,7 @@ class Fit_Everything_ALT:
         ]:
             df["LLabs"] = abs(df["Log-likelihood"])  # need to create a new column for the absolute value before sorting
             df2 = df.sort_values(by="LLabs")
-            df2.drop("LLabs", axis=1, inplace=True)  # remove the column created just for sorting
+            df2 = df2.drop("LLabs", axis=1)  # remove the column created just for sorting
         else:
             raise ValueError(
                 "Invalid input to sort_by. Options are 'BIC', 'AICc', or 'Log-likelihood'. Default is 'BIC'.",

@@ -442,7 +442,7 @@ class Fit_Weibull_2P:
 
 
 class Fit_Weibull_2P_grouped:
-    """Fits a two parameter Weibull distribution (alpha,beta) to the data provided.
+    r"""Fits a two parameter Weibull distribution (alpha,beta) to the data provided.
     This function is similar to Fit_Weibull_2P however it accepts a dataframe
     which allows for efficient handling of grouped (repeated) data.
 

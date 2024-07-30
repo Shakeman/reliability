@@ -1,4 +1,4 @@
-# pylint: skip-file
+# pylint: skip-file  # noqa: D104
 import datetime
 
 __title__ = "reliability"

@@ -1,5 +1,4 @@
-
-from typing import Any
+from typing import Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -20,6 +19,7 @@ from reliability.Utils import (
 
 dec = 4  # number of decimals to use when rounding descriptive statistics and parameter titles
 np.seterr(divide="ignore", invalid="ignore")  # ignore the divide by zero warnings
+
 
 class Gamma_Distribution:
     """Gamma probability distribution. Creates a probability distribution object.
@@ -380,17 +380,17 @@ class Gamma_Distribution:
 
     def CDF(
         self,
-        xvals=None,
-        xmin=None,
-        xmax=None,
-        show_plot=True,
-        plot_CI=True,
-        CI_type=None,
-        CI=None,
-        CI_y=None,
-        CI_x=None,
+        xvals: npt.NDArray[np.float64] | None = None,
+        xmin: np.float64 | None = None,
+        xmax: np.float64 | None = None,
+        show_plot: bool = True,
+        plot_CI: bool = True,
+        CI_type: Literal["time", "reliability", "none"] | None = None,
+        CI: np.float64 | None = None,
+        CI_y: np.float64 | None = None,
+        CI_x: np.float64 | None = None,
         **kwargs,
-    ) -> tuple[Any, Any | npt.NDArray, Any] | Any :
+    ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
         """Plots the CDF (cumulative distribution function)
 
         Parameters
@@ -500,8 +500,7 @@ class Gamma_Distribution:
             elif CI_type == "reliability":
                 cdf_point = ss.gamma.cdf(CI_x, self.beta, scale=self.alpha, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(cdf_point), upper_CI
-        else:
-            return cdf
+        return cdf
 
     def SF(
         self,

@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from numpy.testing import assert_array_almost_equal
 
 from reliability.Utils._statstic_utils import (
@@ -64,10 +65,12 @@ def test_Weibull_2P_guess():
     method = "RRX"
     force_shape = None
     expected_result = [np.nan, np.nan]
-    try:
+    with pytest.raises(ValueError) as e:
         Weibull_2P_guess(x, y, method, force_shape)
-    except ValueError as e:
-        assert str(e) == "A minimum of 2 points are required to fit the line when slope or intercept are not specified."
+    assert (
+        str(e.value) == "A minimum of 2 points are required to fit the line when slope or intercept are not specified."
+    )
+
 
 def test_Weibull_3P_guess():
     # Test case: Positive shape parameter
@@ -100,12 +103,13 @@ def test_Weibull_3P_guess():
     expected_result = [6.870103083574396, 1.2144646336659919, 3.289767595144275e-10]
     assert Weibull_3P_guess(x, y, method, gamma0, failures, force_shape) == expected_result
 
+
 def test_Exponential_1P_guess():
     # Test case: RRX method
     x = np.array([1, 2, 3, 4, 5])
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRX"
-    expected_result = [0.1303526043922722] # Expected guess value for Exponential_1P model
+    expected_result = [0.1303526043922722]  # Expected guess value for Exponential_1P model
     assert Exponential_1P_guess(x, y, method) == expected_result
 
     # Test case: RRY method
@@ -115,33 +119,32 @@ def test_Exponential_1P_guess():
     expected_result = [0.12964928814483878]  # Expected guess value for Exponential_1P model
     assert Exponential_1P_guess(x, y, method) == expected_result
 
+
 def test_Exponential_2P_guess():
     # Test case: Positive shape parameter
     x = np.array([1, 2, 3, 4, 5])
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
-    method = "RRX"
     gamma0 = 0.5
     failures = np.array([1, 2, 3, 4, 5])
     expected_result = [0.14205458883223968, 0.3497157953954444]
-    assert Exponential_2P_guess(x, y, method, gamma0, failures) == expected_result
+    assert Exponential_2P_guess(x, y, gamma0, failures) == expected_result
 
     # Test case: RRY Method
     x = np.array([1, 2, 3, 4, 5])
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
-    method = "RRY"
     gamma0 = 0.5
     failures = np.array([1, 2, 3, 4, 5])
     expected_result = [0.14205458883223968, 0.3497157953954444]
-    assert Exponential_2P_guess(x, y, method, gamma0, failures) == expected_result
+    assert Exponential_2P_guess(x, y, gamma0, failures) == expected_result
 
     # Test case: Non-linear least squares estimation failure
     x = np.array([1, 2, 3, 4, 5])
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
-    method = "RRX"
     gamma0 = -0.5
     failures = np.array([1, 2, 3, 4, 5])
     expected_result = [0.1151051050364014, -0.5]  # Fallback to ordinary least squares estimation
-    assert Exponential_2P_guess(x, y, method, gamma0, failures) == expected_result
+    assert Exponential_2P_guess(x, y, gamma0, failures) == expected_result
+
 
 def test_Normal_2P_guess():
     # Test case: RRX method, no forced shape parameter
@@ -160,6 +163,7 @@ def test_Normal_2P_guess():
     expected_result = [4.160368165984542, 2.0]
     assert Normal_2P_guess(x, y, method, force_shape) == expected_result
 
+
 def test_Gumbel_2P_guess():
     # Test case: RRX Method
     x = np.array([1, 2, 3, 4, 5])
@@ -174,6 +178,7 @@ def test_Gumbel_2P_guess():
     method = "RRY"
     expected_result = [5.532452858362983, 2.1758420655270236]
     assert Gumbel_2P_guess(x, y, method) == expected_result
+
 
 def test_Lognormal_2P_guess():
     # Test case: RRX Method
@@ -205,8 +210,9 @@ def test_Lognormal_2P_guess():
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRY"
     force_shape = 1.0
-    expected_result = [1.5376824315486803, 1.0]# Fallback to least squares estimation
+    expected_result = [1.5376824315486803, 1.0]  # Fallback to least squares estimation
     assert Lognormal_2P_guess(x, y, method, force_shape) == expected_result
+
 
 def test___gamma_optimizer():
     # Test case: Positive correlation coefficient
@@ -229,6 +235,7 @@ def test___gamma_optimizer():
     gamma_guess = 0.5
     expected_result = 1.0
     assert np.isclose(__gamma_optimizer(gamma_guess, x, y), expected_result)
+
 
 def test_normal_2P_CDF():
     # Test case 1: Standard normal distribution
@@ -259,6 +266,7 @@ def test_normal_2P_CDF():
     expected_result = 0.30853753872598694
     assert np.isclose(__normal_2P_CDF(t, mu, sigma), expected_result)
 
+
 def test_Lognormal_3P_guess():
     # Test case: Positive shape parameter
     x = np.array([1, 2, 3, 4, 5])
@@ -267,6 +275,7 @@ def test_Lognormal_3P_guess():
     failures = np.array([1, 2, 3, 4, 5])
     expected_result = [1.661852414321683, 1.177303513131254, 0.0]
     assert Lognormal_3P_guess(x, y, gamma0, failures) == expected_result
+
 
 def test_Loglogistic_2P_guess():
     # Test case 1
@@ -282,6 +291,7 @@ def test_Loglogistic_2P_guess():
     method = "RRY"
     expected_result = [5.3404557038858895, 1.3475053647737885]
     assert Loglogistic_2P_guess(x, y, method) == expected_result
+
 
 def test_loglogistic_3P_CDF():
     # Test case 1
@@ -305,8 +315,9 @@ def test_loglogistic_3P_CDF():
     alpha = 0.5
     beta = 0.5
     gamma = 1.0
-    expected_result = (0.5+0.5j)
+    expected_result = 0.5 + 0.5j
     assert np.isclose(__loglogistic_3P_CDF(t, alpha, beta, gamma), expected_result)
+
 
 def test_Loglogistic_3P_guess():
     # Test case:RRX method parameter
@@ -326,6 +337,7 @@ def test_Loglogistic_3P_guess():
     method = "RRY"
     expected_result = [5.187796643455984, 1.4449857936930202, 1.2242313397159331e-12]
     assert Loglogistic_3P_guess(x, y, method, gamma0, failures) == expected_result
+
 
 def test__gamma_2P_CDF():
     # Test case 1
@@ -348,6 +360,7 @@ def test__gamma_2P_CDF():
     beta = 1.2
     expected_result = 0.3728289484897223
     assert np.isclose(__gamma_2P_CDF(t, alpha, beta), expected_result)
+
 
 def test_Gamma_2P_guess():
     # Test case: RRX Method
@@ -374,6 +387,7 @@ def test_Gamma_2P_guess():
     expected_result = [51704496447.09725, 1.3012814793486678]
     assert_array_almost_equal(Gamma_2P_guess(x, y, method, failures), expected_result)
 
+
 def test___gamma_3P_CDF():
     # Test case: t = 0, alpha = 1, beta = 1, gamma = 0
     assert __gamma_3P_CDF(0, 1, 1, 0) == 0
@@ -392,6 +406,7 @@ def test___gamma_3P_CDF():
 
     # Test case: t = 5, alpha = 3, beta = 1, gamma = 2
     assert __gamma_3P_CDF(5, 3, 1, 2) == 0.6321205588285577
+
 
 def test_Gamma_3P_guess():
     # Test case: Normal execution RRX method
@@ -412,6 +427,7 @@ def test_Gamma_3P_guess():
     expected_result = [5.170448986922751, 1.3012815922268393, 3.2238824435138636e-17]
     assert Gamma_3P_guess(x, y, method, gamma0, failures) == expected_result
 
+
 def test___beta_2P_CDF():
     # Test case: t = 0, alpha = 1, beta = 1
     assert __beta_2P_CDF(0, 1, 1) == 0.0
@@ -428,6 +444,7 @@ def test___beta_2P_CDF():
     # Test case: t = 0.75, alpha = 2, beta = 3
     assert __beta_2P_CDF(0.75, 2, 3) == 0.94921875
 
+
 def test_Beta_2P_guess():
     # Test case: Normal data
     x = np.array([1, 2, 3, 4, 5])
@@ -440,6 +457,7 @@ def test_Beta_2P_guess():
     y = np.random.rand(10000)
     failures = list(range(1, 10001))
     assert Beta_2P_guess(x, y, failures) == [2.0, 1.0]
+
 
 def test_non_invertable_handler():
     # Test case: Non-invertible matrix

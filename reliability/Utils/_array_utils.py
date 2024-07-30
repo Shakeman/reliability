@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import overload
 
 import numpy as np
 import numpy.typing as npt
@@ -43,7 +43,15 @@ def anderson_darling(fitted_cdf, empirical_cdf) -> float:
     return AD
 
 
-def unpack_single_arrays(array) -> np.float64 | npt.NDArray[np.float64]:
+@overload
+def unpack_single_arrays(array: np.float64) -> np.float64: ...
+
+
+@overload
+def unpack_single_arrays(array: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]: ...
+
+
+def unpack_single_arrays(array):
     """Unpacks arrays with a single element to return just that element
 
     Parameters
@@ -555,8 +563,8 @@ def transform_spaced(
     y_lower: float = 1e-8,
     y_upper: float = 1 - 1e-8,
     num: int = 1000,
-    alpha: Optional[float] = None,
-    beta: Optional[float] = None,
+    alpha: float | None = None,
+    beta: float | None = None,
 ):
     """Creates linearly spaced array based on a specified transform.
 
@@ -648,24 +656,22 @@ def transform_spaced(
     elif transform in ["gamma", "Gamma", "gam", "Gam"]:
         if beta is None:
             raise ValueError("beta must be specified to use the gamma transform")
-        else:
 
-            def fwd(x: float):
-                return ss.gamma.ppf(x, a=beta)
+        def fwd(x: float):
+            return ss.gamma.ppf(x, a=beta)
 
-            def inv(x: npt.NDArray[np.float64]):
-                return ss.gamma.cdf(x, a=beta)
+        def inv(x: npt.NDArray[np.float64]):
+            return ss.gamma.cdf(x, a=beta)
 
     elif transform in ["beta", "Beta"]:
         if alpha is None or beta is None:
             raise ValueError("alpha and beta must be specified to use the beta transform")
-        else:
 
-            def fwd(x: float):
-                return ss.beta.ppf(x, a=beta, b=alpha)
+        def fwd(x: float):
+            return ss.beta.ppf(x, a=beta, b=alpha)
 
-            def inv(x: npt.NDArray[np.float64]):
-                return ss.beta.cdf(x, a=beta, b=alpha)
+        def inv(x: npt.NDArray[np.float64]):
+            return ss.beta.cdf(x, a=beta, b=alpha)
 
     elif transform in [
         "lognormal",

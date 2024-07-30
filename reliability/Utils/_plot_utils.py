@@ -31,7 +31,7 @@ def reshow_figure(handle: _axes.Axes | Figure | None):
     if type(handle) is not Figure and not isinstance(handle, _axes.Axes):
         # check that the handle is either an axes or a figure
         raise ValueError("handle must be an axes handle or a figure handle")
-    elif isinstance(handle, _axes.Axes):
+    if isinstance(handle, _axes.Axes):
         # if the handle is an axes then extract the Figure
         handle = handle.figure  # type: ignore
 
@@ -438,7 +438,14 @@ def xy_transform(value, direction="forward", axis="x") -> np.float64 | npt.NDArr
 
 
 def restore_axes_limits(
-    limits: tuple[tuple[float, float], tuple[float, float], bool], dist, func, X, Y, xvals=None, xmin=None, xmax=None
+    limits: tuple[tuple[float, float], tuple[float, float], bool],
+    dist,
+    func,
+    X,
+    Y,
+    xvals=None,
+    xmin=None,
+    xmax=None,
 ):
     """This function works in a pair with get_axes_limits. Using the values
     producted by get_axes_limits which are [xlims, ylims, use_prev_lims], this

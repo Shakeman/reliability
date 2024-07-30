@@ -58,10 +58,12 @@ def test_Loglogistic():
 
 def test_Exponential():
     data1 = Exponential_Distribution(Lambda=1 / 10).random_samples(
-        50, seed=42,
+        50,
+        seed=42,
     )  # should give Exponential Lambda = 0.01 OR Weibull alpha = 10
     data2 = Exponential_Distribution(Lambda=1 / 100).random_samples(
-        50, seed=42,
+        50,
+        seed=42,
     )  # should give Exponential Lambda = 0.001 OR Weibull alpha = 100
     Exponential_probability_plot(failures=data1)
     Exponential_probability_plot(failures=data2)
@@ -75,10 +77,12 @@ def test_PP_plot_parametric():
 
 def test_Exponential_probability_plot_Weibull_Scale():
     data1 = Exponential_Distribution(Lambda=1 / 10).random_samples(
-        50, seed=42,
+        50,
+        seed=42,
     )  # should give Exponential Lambda = 0.01 OR Weibull alpha = 10
     data2 = Exponential_Distribution(Lambda=1 / 100).random_samples(
-        50, seed=42,
+        50,
+        seed=42,
     )  # should give Exponential Lambda = 0.001 OR Weibull alpha = 100
     Exponential_probability_plot_Weibull_Scale(failures=data1)
     Exponential_probability_plot_Weibull_Scale(failures=data2)
@@ -113,11 +117,14 @@ def test_plot_points_and_plotting_positions():
         label="joint",
     )
 
+
 def test_plotting_positions():
     # Test case 1: Basic test case with failure data
     failures: list[int] = [10, 20, 30, 40, 50]
-    expected_x: npt.NDArray[np.float64] = np.array([10., 20., 30., 40., 50.], dtype=np.float64)
-    expected_y: npt.NDArray[np.float64] = np.array([0.12962962962962962, 0.31481481481481477, 0.5, 0.6851851851851851, 0.8703703703703703])
+    expected_x: npt.NDArray[np.float64] = np.array([10.0, 20.0, 30.0, 40.0, 50.0], dtype=np.float64)
+    expected_y: npt.NDArray[np.float64] = np.array(
+        [0.12962962962962962, 0.31481481481481477, 0.5, 0.6851851851851851, 0.8703703703703703],
+    )
     x, y = plotting_positions(failures)
     assert np.allclose(x, expected_x)
     assert np.allclose(y, expected_y)
@@ -125,7 +132,7 @@ def test_plotting_positions():
     # Test case 2: Test case with right censored data
     failures = [10, 20, 30, 40, 50]
     right_censored: list[int] = [25, 35]
-    expected_x: npt.NDArray[np.float64] = np.array([10., 20., 30., 40., 50.], dtype=np.float64)
+    expected_x: npt.NDArray[np.float64] = np.array([10.0, 20.0, 30.0, 40.0, 50.0], dtype=np.float64)
     expected_y: npt.NDArray[np.float64] = np.array([0.09459459, 0.22972973, 0.39189189, 0.60810811, 0.82432432])
     x, y = plotting_positions(failures, right_censored)
     assert np.allclose(x, expected_x)
@@ -134,7 +141,7 @@ def test_plotting_positions():
     # Test case 3: Test case with custom value of a
     failures = [10, 20, 30, 40, 50]
     a = 0.5
-    expected_x: npt.NDArray[np.float64] = np.array([10., 20., 30., 40., 50.], dtype=np.float64)
+    expected_x: npt.NDArray[np.float64] = np.array([10.0, 20.0, 30.0, 40.0, 50.0], dtype=np.float64)
     expected_y = np.array([0.1, 0.3, 0.5, 0.7, 0.9])
     x, y = plotting_positions(failures, a=a)
     assert np.allclose(x, expected_x)
@@ -149,10 +156,9 @@ def test_plotting_positions():
     assert np.allclose(y, expected_y)
 
     # Test case 5: Test case with empty input
+    failures = []
     with pytest.raises(IndexError):
-        failures = []
         plotting_positions(failures)
-
 
     # Test case 6: Test case with invalid input type
     with pytest.raises(ValueError):
@@ -166,13 +172,17 @@ def test_plotting_positions():
 
     # Test case 8: Test case with invalid sort value
     with pytest.raises(ValueError):
-        plotting_positions([10, 20, 30], sort="invalid sort") # type: ignore
+        plotting_positions([10, 20, 30], sort="invalid sort")  # type: ignore
 
     # Test case 9: Test case with large input data
     failures = list(range(1, 10001))
     a = 0.3
     expected_x = np.array(failures, dtype=np.float64)
-    expected_y = np.linspace((1-a) / (len(failures) + 1 -2*a), ((len(failures)-a) / (len(failures) + 1 -2*a)), len(failures))
+    expected_y = np.linspace(
+        (1 - a) / (len(failures) + 1 - 2 * a),
+        ((len(failures) - a) / (len(failures) + 1 - 2 * a)),
+        len(failures),
+    )
     x, y = plotting_positions(failures=failures, a=a)
     assert np.allclose(x, expected_x)
     assert np.allclose(y, expected_y)
@@ -222,12 +232,13 @@ def test_Gumbel_probability_plot():
     with pytest.raises(ValueError):
         Gumbel_probability_plot(failures=[10, 20], CI_type="invalid type")
 
+
 def test_QQ_plot_semiparametric():
     # Test case 1: Basic test case with Weibull distribution
     X_data_failures = [10, 20, 30, 40, 50]
     Y_dist = Weibull_Distribution(alpha=100, beta=2)
     expected_model = [2.411095944079598, 3.0221225173625923, -22.404307687043136]
-    fig, model  = QQ_plot_semiparametric(X_data_failures=X_data_failures, Y_dist=Y_dist)
+    fig, model = QQ_plot_semiparametric(X_data_failures=X_data_failures, Y_dist=Y_dist)
     assert isinstance(fig, plt.Figure)
     assert np.allclose(model, expected_model)
 
@@ -236,7 +247,11 @@ def test_QQ_plot_semiparametric():
     X_data_right_censored = [25, 35]
     Y_dist = Weibull_Distribution(alpha=100, beta=2)
     expected_model = [2.762983200925992, 3.3508143133647574, -21.553807456088077]
-    fig, model = QQ_plot_semiparametric(X_data_failures=X_data_failures, X_data_right_censored=X_data_right_censored, Y_dist=Y_dist)
+    fig, model = QQ_plot_semiparametric(
+        X_data_failures=X_data_failures,
+        X_data_right_censored=X_data_right_censored,
+        Y_dist=Y_dist,
+    )
     assert isinstance(fig, plt.Figure)
     assert np.allclose(model, expected_model)
 
@@ -271,7 +286,12 @@ def test_QQ_plot_semiparametric():
         QQ_plot_semiparametric(X_data_failures=X_data_failures, Y_dist="invalid distribution")
 
     with pytest.raises(ValueError):
-        QQ_plot_semiparametric(X_data_failures=X_data_failures, Y_dist=Weibull_Distribution(alpha=100, beta=2), method="invalid method")
+        QQ_plot_semiparametric(
+            X_data_failures=X_data_failures,
+            Y_dist=Weibull_Distribution(alpha=100, beta=2),
+            method="invalid method",
+        )
+
 
 def test_PP_plot_semiparametric():
     # Test case 1: Basic test case with Weibull distribution
@@ -284,7 +304,11 @@ def test_PP_plot_semiparametric():
     X_data_failures = [10, 20, 30, 40, 50]
     X_data_right_censored = [25, 35]
     Y_dist = Weibull_Distribution(alpha=100, beta=2)
-    fig = PP_plot_semiparametric(X_data_failures=X_data_failures, X_data_right_censored=X_data_right_censored, Y_dist=Y_dist)
+    fig = PP_plot_semiparametric(
+        X_data_failures=X_data_failures,
+        X_data_right_censored=X_data_right_censored,
+        Y_dist=Y_dist,
+    )
     assert isinstance(fig, plt.Figure)
 
     # Test case 3: Test case with different method
@@ -325,7 +349,7 @@ def test_PP_plot_semiparametric():
         PP_plot_semiparametric(X_data_failures=X_data_failures, Y_dist=Y_dist, method="invalid method")
 
     with pytest.raises(ValueError):
-        PP_plot_semiparametric(X_data_failures=X_data_failures, Y_dist=Y_dist, downsample_scatterplot="invalid value") # type: ignore
+        PP_plot_semiparametric(X_data_failures=X_data_failures, Y_dist=Y_dist, downsample_scatterplot="invalid value")  # type: ignore
 
 
 def test_Lognormal_probability_plot():
@@ -352,7 +376,8 @@ def test_Lognormal_probability_plot():
     assert isinstance(fig, plt.Figure)
 
     # Test case 5: Test case with downsampling
-    failures = np.random.randint(1, 100, size=10000)
+    rng = np.random.default_rng(1337)
+    failures = rng.integers(1, 100, size=10000)
     fig = Lognormal_probability_plot(failures=failures, downsample_scatterplot=True)
     assert isinstance(fig, plt.Figure)
 
@@ -371,6 +396,7 @@ def test_Lognormal_probability_plot():
 
     with pytest.raises(ValueError):
         Lognormal_probability_plot(failures=[10, 20], CI_type="invalid type")
+
 
 def test_QQ_plot_parametric():
     # test Case 1 Basic
@@ -398,6 +424,7 @@ def test_QQ_plot_parametric():
     fig, model = QQ_plot_parametric(X_dist=X_dist, Y_dist=Y_dist, downsample_scatterplot=True)
     assert isinstance(fig, plt.Figure)
     assert np.allclose(model, expected_model)
+
 
 def test_Beta_probability_plot():
     # Test case 1: Basic test case with failure data
@@ -467,7 +494,8 @@ def test_Gamma_probability_plot():
     assert isinstance(fig, plt.Figure)
 
     # Test case 5: Test case with downsampling
-    failures = np.random.randint(1, 100, size=10000)
+    rng = np.random.default_rng(1337)
+    failures = rng.integers(1, 100, size=10000)
     fig = Gamma_probability_plot(failures=failures, downsample_scatterplot=True)
     assert isinstance(fig, plt.Figure)
 

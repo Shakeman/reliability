@@ -1098,7 +1098,11 @@ class FNRN_to_FR:
     """
 
     def __init__(
-        self, failures, num_failures, right_censored=None, num_right_censored: npt.NDArray | list[int] | None = None
+        self,
+        failures,
+        num_failures,
+        right_censored=None,
+        num_right_censored: npt.NDArray | list[int] | None = None,
     ):
         if type(failures) not in [list, np.ndarray]:
             raise ValueError("failures must be a list or array.")

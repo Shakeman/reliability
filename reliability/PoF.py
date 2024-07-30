@@ -1293,7 +1293,7 @@ class strain_life_diagram:
 
 
 def palmgren_miner_linear_damage(rated_life, time_at_stress, stress):
-    # TODO Update docstring
+    # TODO: Update docstring
     """Uses the Palmgren-Miner linear damage hypothesis to calculate the outputs.
 
     Parameters
@@ -1609,6 +1609,23 @@ class fracture_mechanics_crack_initiation:
         self.cycles_to_failure = Nf
 
     def print_results(self):
+        """Prints the results from fracture_mechanics_crack_initiation.
+
+        This method prints the following information:
+        - The number of cycles required for a crack of 1 mm to be formed.
+        - Stresses in the component: minimum, maximum, and mean.
+        - Strains in the component: minimum, maximum, and mean.
+        - The mean stress correction method used.
+
+        Args:
+        ----
+            None
+
+        Returns:
+        -------
+            None
+
+        """
         colorprint(
             "Results from fracture_mechanics_crack_initiation:",
             bold=True,
@@ -2019,7 +2036,7 @@ class fracture_mechanics_crack_growth:
                 "cycles.",
             )
             print("Note that a_final will not result in failure. To find cycles to failure, leave a_final as None.")
-        print("")
+        print()
         print("ITERATIVE METHOD (recalculating f(g), S_max, and a_crit for each cycle):")
         if self.__a_initial > self.transition_length_iterative:
             print(
@@ -2295,6 +2312,14 @@ class acceleration_factor:
             raise ValueError("Two of the three optional inputs must be specified")
 
     def print_results(self):
+        """Print the results from the acceleration_factor calculation.
+
+        This method prints the following information:
+        - Acceleration Factor
+        - Use Temperature
+        - Accelerated Temperature
+        - Activation Energy
+        """
         colorprint("Results from acceleration_factor:", bold=True, underline=True)
         print("Acceleration Factor:", self.AF)
         print("Use Temperature:", self.T_use, "°C")

@@ -949,7 +949,7 @@ class RankAdjustment:
             p = plt.plot(self.xvals, self.CDF, **kwargs)
             if plot_CI is True:  # plots the confidence bounds
                 title_text = str(
-                    "Rank Adjustment CDF estimate\n with " + str(self.__CI_rounded) + "% confidence bounds"
+                    "Rank Adjustment CDF estimate\n with " + str(self.__CI_rounded) + "% confidence bounds",
                 )
                 plt.fill_between(
                     self.xvals,
@@ -974,7 +974,7 @@ class RankAdjustment:
             CHF_upper = np.nan_to_num(self.CHF_upper, posinf=1e10)
             if plot_CI is True:  # plots the confidence bounds
                 title_text = str(
-                    "Rank Adjustment CHF estimate\n with " + str(self.__CI_rounded) + "% confidence bounds"
+                    "Rank Adjustment CHF estimate\n with " + str(self.__CI_rounded) + "% confidence bounds",
                 )
                 plt.fill_between(
                     self.xvals,

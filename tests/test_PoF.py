@@ -40,7 +40,10 @@ def test_stress_strain_diagram():
     stress_data = [650, 625, 555, 480, 395, 330]
     cycles_data = [200, 350, 1100, 4600, 26000, 560000]
     params = stress_strain_life_parameters_from_data(
-        stress=stress_data, strain=strain_data, cycles=cycles_data, E=216000
+        stress=stress_data,
+        strain=strain_data,
+        cycles=cycles_data,
+        E=216000,
     )
     params.plot()
     params.print_results()

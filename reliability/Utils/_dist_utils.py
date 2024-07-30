@@ -486,12 +486,12 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
             raise ValueError("Unknown distribution")
     else:
         lower, upper = None, None
-    if type(lower) is not type(None) and len(lower) == 1:  # unpack arrays of length 1
+    if lower is not None and len(lower) == 1:  # unpack arrays of length 1
         lower, upper = lower[0], upper[0]
     return lower, upper
 
 
-# TODO Implement confidence intervals as classes adn subclasses returning botht iem and reliability
+# TODO: Implement confidence intervals as classes adn subclasses returning botht iem and reliability
 class distribution_confidence_intervals:
     """This class contains several subfunctions that provide all the confidence
     intervals for CDF, SF, CHF for each distribution for which it is

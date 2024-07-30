@@ -143,7 +143,7 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
             text_color="red",
         )
         raise ValueError(
-            "The probability of failure is greater than 1. This is likely due to an asymptote in one of the distributions."
+            "The probability of failure is greater than 1. This is likely due to an asymptote in one of the distributions.",
         )
 
     if show_plot is True:

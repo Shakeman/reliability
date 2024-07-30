@@ -14,8 +14,6 @@ MCF_parametric - Mean Cumulative Function Parametric. Fits a parametric model to
     the data obtained from MCF_nonparametric
 """
 
-from typing import TYPE_CHECKING
-
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
@@ -27,9 +25,6 @@ from scipy import integrate
 from scipy.optimize import curve_fit
 
 from reliability.Utils import colorprint, round_and_string
-
-if TYPE_CHECKING:
-    import numpy.typing as npt
 
 
 class reliability_growth:
@@ -216,7 +211,7 @@ class reliability_growth:
 
         if self.__target_MTBF is not None:
             print("Time to reach target MTBF:", round_and_string(self.time_to_target))
-        print("")  # blank line
+        print()  # blank line
 
     def plot(self, log_scale=False, **kwargs) -> plt.Axes:
         """Plot the reliability growth curve.

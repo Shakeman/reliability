@@ -67,7 +67,10 @@ dec = 3  # number of decimals to use when rounding fitted parameters in labels
 
 
 def plotting_positions(
-    failures=None, right_censored=None, a: float | None = None, sort: bool = False
+    failures=None,
+    right_censored=None,
+    a: float | None = None,
+    sort: bool = False,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """Calculates the plotting positions for plotting on probability paper.
 
@@ -153,9 +156,7 @@ def plotting_positions(
             if j > 0:
                 rank_increment.append((n + 1 - adjusted_rank[-1]) / (1 + reverse_i[j]))
                 adjusted_rank.append(adjusted_rank[-1] + rank_increment[-1])
-    F: list[float] = []
-    for i in adjusted_rank:
-        F.append((i - a) / (n + 1 - 2 * a))
+    F: list[float] = [(i - a) / (n + 1 - 2 * a) for i in adjusted_rank]
 
     if sort is False:
         # restore the original order of the points using the index from the sorted dataframe
@@ -250,9 +251,8 @@ def Weibull_probability_plot(
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 2 and _fitted_dist_params is None:
+    if len(failures) < 2 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
-
     if type(failures) not in [np.ndarray, list]:
         raise ValueError("failures must be a list or an array")
     failures = np.asarray(failures)
@@ -471,7 +471,7 @@ def Loglogistic_probability_plot(
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 2 and _fitted_dist_params is None:
+    if len(failures) < 2 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -705,7 +705,7 @@ def Exponential_probability_plot_Weibull_Scale(
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 1 and _fitted_dist_params is None:
+    if len(failures) < 1 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 1")
 
     if type(failures) not in [np.ndarray, list]:
@@ -888,7 +888,7 @@ def Gumbel_probability_plot(
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 2 and _fitted_dist_params is None:
+    if len(failures) < 2 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -1052,7 +1052,7 @@ def Normal_probability_plot(
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 2 and _fitted_dist_params is None:
+    if len(failures) < 2 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -1219,7 +1219,7 @@ def Lognormal_probability_plot(
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 2 and _fitted_dist_params is None:
+    if len(failures) < 2 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -1433,7 +1433,7 @@ def Beta_probability_plot(
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 2 and _fitted_dist_params is None:
+    if len(failures) < 2 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -1586,7 +1586,7 @@ def Gamma_probability_plot(
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 2 and _fitted_dist_params is None:
+    if len(failures) < 2 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -1822,7 +1822,7 @@ def Exponential_probability_plot(
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    elif len(failures) < 1 and _fitted_dist_params is None:
+    if len(failures) < 1 and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 1")
 
     if type(failures) not in [np.ndarray, list]:
@@ -2220,7 +2220,6 @@ def QQ_plot_parametric(
     plt.xlabel(X_label_str)
     plt.ylabel(Y_label_str)
     plt.title("Quantile-Quantile plot\nParametric")
-    # plt.axis('equal')
     xmin, xmax = min(dist_X_ISF), max(dist_X_ISF)
     xdelta = xmax - xmin
     ymin, ymax = min(dist_Y_ISF), max(dist_Y_ISF)
@@ -2329,7 +2328,7 @@ def PP_plot_semiparametric(
     elif isinstance(X_data_failures, np.ndarray):
         X_data_failures = np.sort(X_data_failures)
     else:
-        raise ValueError("X_data_failures must be an array or list")
+        raise TypeError("X_data_failures must be an array or list")
     if isinstance(X_data_right_censored, list):
         X_data_right_censored = np.sort(np.array(X_data_right_censored))
     elif isinstance(X_data_right_censored, np.ndarray):
@@ -2548,9 +2547,7 @@ def QQ_plot_semiparametric(
         )
 
     # calculate the failure times at the given quantiles
-    dist_Y_ISF = []
-    for q in ecdf:
-        dist_Y_ISF.append(Y_dist.inverse_SF(float(q)))
+    dist_Y_ISF = [Y_dist.inverse_SF(float(q) for q in ecdf)]
     dist_Y_ISF = np.array(dist_Y_ISF[::-1])
     dist_Y_ISF[dist_Y_ISF == -np.inf] = 0
 

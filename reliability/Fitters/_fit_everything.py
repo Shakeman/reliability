@@ -372,7 +372,8 @@ class Fit_Everything:
             self.Weibull_3P_AD = self.__Weibull_3P_params.AD
             self.Weibull_3P_optimizer = self.__Weibull_3P_params.optimizer
             self._parametric_CDF_Weibull_3P: npt.NDArray[np.float64] = self.__Weibull_3P_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -423,7 +424,8 @@ class Fit_Everything:
             self.Gamma_3P_AD = self.__Gamma_3P_params.AD
             self.Gamma_3P_optimizer = self.__Gamma_3P_params.optimizer
             self._parametric_CDF_Gamma_3P: npt.NDArray[np.float64] = self.__Gamma_3P_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -523,7 +525,8 @@ class Fit_Everything:
             self.Lognormal_3P_AD = self.__Lognormal_3P_params.AD
             self.Lognormal_3P_optimizer = self.__Lognormal_3P_params.optimizer
             self._parametric_CDF_Lognormal_3P: npt.NDArray[np.float64] = self.__Lognormal_3P_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -572,7 +575,8 @@ class Fit_Everything:
             self.Normal_2P_AD = self.__Normal_2P_params.AD
             self.Normal_2P_optimizer = self.__Normal_2P_params.optimizer
             self._parametric_CDF_Normal_2P: npt.NDArray[np.float64] = self.__Normal_2P_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -622,7 +626,8 @@ class Fit_Everything:
             self.Lognormal_2P_AD = self.__Lognormal_2P_params.AD
             self.Lognormal_2P_optimizer = self.__Lognormal_2P_params.optimizer
             self._parametric_CDF_Lognormal_2P: npt.NDArray[np.float64] = self.__Lognormal_2P_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -671,7 +676,8 @@ class Fit_Everything:
             self.Gumbel_2P_AD = self.__Gumbel_2P_params.AD
             self.Gumbel_2P_optimizer = self.__Gumbel_2P_params.optimizer
             self._parametric_CDF_Gumbel_2P: npt.NDArray[np.float64] = self.__Gumbel_2P_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -721,7 +727,8 @@ class Fit_Everything:
             self.Weibull_2P_AD = self.__Weibull_2P_params.AD
             self.Weibull_2P_optimizer = self.__Weibull_2P_params.optimizer
             self._parametric_CDF_Weibull_2P: npt.NDArray[np.float64] = self.__Weibull_2P_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -827,7 +834,8 @@ class Fit_Everything:
             self.Weibull_CR_AD = self.__Weibull_CR_params.AD
             self.Weibull_CR_optimizer = self.__Weibull_CR_params.optimizer
             self._parametric_CDF_Weibull_CR: npt.NDArray[np.float64] = self.__Weibull_CR_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -877,7 +885,8 @@ class Fit_Everything:
             self.Weibull_DS_AD = self.__Weibull_DS_params.AD
             self.Weibull_DS_optimizer = self.__Weibull_DS_params.optimizer
             self._parametric_CDF_Weibull_DS: npt.NDArray[np.float64] = self.__Weibull_DS_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -928,7 +937,8 @@ class Fit_Everything:
             self.Gamma_2P_AD = self.__Gamma_2P_params.AD
             self.Gamma_2P_optimizer = self.__Gamma_2P_params.optimizer
             self._parametric_CDF_Gamma_2P: npt.NDArray[np.float64] = self.__Gamma_2P_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -1133,7 +1143,8 @@ class Fit_Everything:
             self.Beta_2P_AD = self.__Beta_2P_params.AD
             self.Beta_2P_optimizer = self.__Beta_2P_params.optimizer
             self._parametric_CDF_Beta_2P: npt.NDArray[np.float64] = self.__Beta_2P_params.distribution.CDF(
-                xvals=d, show_plot=False
+                xvals=d,
+                show_plot=False,
             )
             df = pd.concat(
                 [
@@ -1187,7 +1198,7 @@ class Fit_Everything:
         ]:
             df["LLabs"] = abs(df["Log-likelihood"])  # need to create a new column for the absolute value before sorting
             df2 = df.sort_values(by="LLabs")
-            df2.drop("LLabs", axis=1, inplace=True)  # remove the column created just for sorting
+            df2 = df2.drop("LLabs", axis=1)  # remove the column created just for sorting
         else:
             raise ValueError(
                 "Invalid input to sort_by. Options are 'BIC', 'AICc', 'AD', or 'Log-likelihood'. Default is 'BIC'.",

@@ -178,7 +178,10 @@ def test_fit_weibull_dzi_init():
     model = DSZI_Model(distribution=Weibull_Distribution(alpha=1200, beta=3), DS=0.7, ZI=0.2)
     failures, right_censored = model.random_samples(100, seed=5, right_censored_time=3000)
     fit = Fit_Weibull_DSZI(
-        failures=failures, right_censored=right_censored, show_probability_plot=True, print_results=True
+        failures=failures,
+        right_censored=right_censored,
+        show_probability_plot=True,
+        print_results=True,
     )
     assert isinstance(fit, Fit_Weibull_DSZI)
     assert fit.alpha > 0

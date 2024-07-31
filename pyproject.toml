@@ -61,6 +61,7 @@ select = [
     "RUF", # RUF-specific rules
 ]
 ignore = [
+    "SIM300",
     "FIX002", #flags on TODOs
     "COM812",
     "ISC001",

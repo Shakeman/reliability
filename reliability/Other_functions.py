@@ -621,22 +621,22 @@ class similar_distributions:
 
             if include_location_shifted is True:
                 if dist_name == "Weibull_3P":
-                    if fitted_results.Weibull_3P_gamma != 0:
+                    if fitted_results._Fit_Everything__Weibull_3P_params.gamma != 0:
                         ranked_distributions_objects.append(
                             Weibull_Distribution(
-                                alpha=fitted_results.Weibull_3P_alpha,
-                                beta=fitted_results.Weibull_3P_beta,
-                                gamma=fitted_results.Weibull_3P_gamma,
+                                alpha=fitted_results._Fit_Everything__Weibull_3P_params.alpha,
+                                beta=fitted_results._Fit_Everything__Weibull_3P_params.beta,
+                                gamma=fitted_results._Fit_Everything__Weibull_3P_params.gamma,
                             ),
                         )
                         ranked_distributions_labels.append(
                             str(
                                 "Weibull_3P (α="
-                                + str(round(fitted_results.Weibull_3P_alpha, sigfig))
+                                + str(round(fitted_results._Fit_Everything__Weibull_3P_params.alpha, sigfig))
                                 + ",β="
-                                + str(round(fitted_results.Weibull_3P_beta, sigfig))
+                                + str(round(fitted_results._Fit_Everything__Weibull_3P_params.beta, sigfig))
                                 + ",γ="
-                                + str(round(fitted_results.Weibull_3P_gamma, sigfig))
+                                + str(round(fitted_results._Fit_Everything__Weibull_3P_params.gamma, sigfig))
                                 + ")",
                             ),
                         )

@@ -1446,7 +1446,7 @@ class distribution_confidence_intervals:
     @staticmethod
     def gamma_CI(
         dist,
-        CI_type: str,
+        CI_type: Literal["time", "reliability"],
         CI: float,
         func="CDF",
         plot_CI=None,
@@ -1902,7 +1902,7 @@ class distribution_confidence_intervals:
     @staticmethod
     def normal_CI(
         dist,
-        CI_type: str,
+        CI_type: Literal["time", "reliability"],
         CI: float,
         func="CDF",
         plot_CI=None,

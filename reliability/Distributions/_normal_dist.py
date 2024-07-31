@@ -334,7 +334,7 @@ class Normal_Distribution:
         xmax: np.float64 | None = None,
         show_plot: bool = True,
         plot_CI: bool = True,
-        CI_type: Literal["time", "reliability", "none"] | None = None,
+        CI_type: Literal["time", "reliability"] | None = None,
         CI: np.float64 | None = None,
         CI_y: np.float64 | None = None,
         CI_x: np.float64 | None = None,
@@ -449,8 +449,7 @@ class Normal_Distribution:
             elif CI_type == "reliability":
                 cdf_point = ss.norm.cdf(CI_x, self.mu, self.sigma)
                 return lower_CI, unpack_single_arrays(cdf_point), upper_CI
-        else:
-            return cdf
+        return cdf
 
     def SF(
         self,

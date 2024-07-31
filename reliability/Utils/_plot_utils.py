@@ -1,3 +1,5 @@
+from typing import overload
+
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
@@ -141,51 +143,6 @@ def probability_plot_xyticks(yticks=None):
 
     """
 
-    def get_tick_locations(major_or_minor, in_lims=True, axis="x"):
-        """Returns the major or minor tick locations for the current axis.
-
-        Parameters
-        ----------
-        major_or_minor : str
-            Specifies which ticks to get. Must be either "major" or
-            "minor".
-        in_lims : bool, optional
-            If in_lims=True then it will only return the ticks that are within
-            the current xlim() or ylim(). Default is True.
-        axis : str, optional
-            Specifies which axis to get the ticks for. Must be "x" or "y".
-            Default is "x".
-
-        Returns
-        -------
-        locations : array
-            The tick locations
-
-        """
-        if axis == "x":
-            AXIS = ax.xaxis
-            L = xlower
-            U = xupper
-        elif axis == "y":
-            AXIS = ax.yaxis
-        #          L = ylower
-        #           U = yupper
-        else:
-            raise ValueError("axis must be x or y. Default is x")
-
-        if major_or_minor == "major":
-            all_locations = AXIS.get_major_locator().tick_values(L, U)
-        elif major_or_minor == "minor":
-            all_locations = AXIS.get_minor_locator().tick_values(L, U)
-        else:
-            raise ValueError('major_or_minor must be "major" or "minor"')
-        if in_lims is True:
-            locations = []
-            locations = [item for item in all_locations if item >= L and item <= U]
-        else:
-            locations = all_locations
-        return locations
-
     def customFormatter(value, _):
         """Provides custom string formatting that is used for the xticks
 
@@ -265,12 +222,10 @@ def probability_plot_xyticks(yticks=None):
             The edge distances
 
         """
-        xtick_locations = get_tick_locations("major", axis="x")
-        left_tick_distance = xy_transform(xtick_locations[0], direction="forward", axis="x") - xy_transform(
-            xlower,
-            direction="forward",
-            axis="x",
-        )
+        xtick_locations: npt.NDArray[np.float64] = ax.get_xticks()
+        left_tick_upper = xy_transform(xtick_locations[0], direction="forward", axis="x")
+        left_tick_lower = xy_transform(xlower, direction="forward", axis="x")
+        left_tick_distance = left_tick_upper - left_tick_lower
         right_tick_distance = xy_transform(xupper, direction="forward", axis="x") - xy_transform(
             xtick_locations[-1],
             direction="forward",
@@ -314,8 +269,8 @@ def probability_plot_xyticks(yticks=None):
         ticker.FuncFormatter(customFormatter),
     )  # the custom formatter is always applied to the major ticks
 
-    num_major_x_ticks_shown = len(get_tick_locations("major", axis="x"))
-    num_minor_x_xticks_shown = len(get_tick_locations("minor", axis="x"))
+    num_major_x_ticks_shown = len(ax.get_xticks())
+    num_minor_x_xticks_shown = len(ax.get_xticks(minor=True))
     max_minor_ticks = 15 if max(abs(xlower), abs(xupper)) < 1000 and min(abs(xlower), abs(xupper)) > 0.001 else 10
     if num_major_x_ticks_shown < 2 and num_minor_x_xticks_shown <= max_minor_ticks:
         ax.xaxis.set_minor_formatter(
@@ -359,7 +314,19 @@ def probability_plot_xyticks(yticks=None):
     )  # sets the formatting of the axes coordinates in the bottom right of the figure. Without this the FuncFormatter raw strings make it into the axes coords and don't look good.
 
 
-def xy_transform(value, direction="forward", axis="x") -> np.float64 | npt.NDArray[np.float64] | list[float]:
+@overload
+def xy_transform(value: np.float64 | float, direction="forward", axis="x") -> np.float64: ...
+
+
+@overload
+def xy_transform(value: npt.NDArray[np.float64], direction="forward", axis="x") -> npt.NDArray[np.float64]: ...
+
+
+@overload
+def xy_transform(value: list[float], direction="forward", axis="x") -> list[float]: ...
+
+
+def xy_transform(value, direction: str | None = "forward", axis: str | None = "x"):
     """This function converts between data values and axes coordinates (based on
     xlim() or ylim()).
 

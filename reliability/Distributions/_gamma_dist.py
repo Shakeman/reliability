@@ -385,7 +385,7 @@ class Gamma_Distribution:
         xmax: np.float64 | None = None,
         show_plot: bool = True,
         plot_CI: bool = True,
-        CI_type: Literal["time", "reliability", "none"] | None = None,
+        CI_type: Literal["time", "reliability"] | None = None,
         CI: np.float64 | None = None,
         CI_y: np.float64 | None = None,
         CI_x: np.float64 | None = None,

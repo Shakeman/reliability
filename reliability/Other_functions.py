@@ -443,14 +443,8 @@ class similar_distributions:
         # 698 samples is the ideal number for the points to align. Evidenced using plot_points.
 
         # filter out negative values
-        RVS_filtered = []
-        negative_values_error = False
-        for item in RVS:
-            if item > 0:
-                RVS_filtered.append(item)
-            else:
-                negative_values_error = True
-
+        RVS_filtered = RVS[RVS >= 0]
+        negative_values_error = RVS.min() < 0
         if len(RVS_filtered) < 175:
             raise ValueError(
                 "The input distribution has more than 75% of its area in the negative domain (x<0). Comparison with distributions bounded by the positive domain (x>0) is not possible.",

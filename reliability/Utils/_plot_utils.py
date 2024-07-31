@@ -223,8 +223,8 @@ def probability_plot_xyticks(yticks=None):
 
         """
         xtick_locations: npt.NDArray[np.float64] = ax.get_xticks()
-        left_tick_upper = xy_transform(xtick_locations[0], direction="forward", axis="x")
-        left_tick_lower = xy_transform(xlower, direction="forward", axis="x")
+        left_tick_upper: np.float64 = xy_transform(xtick_locations[0], direction="forward", axis="x")
+        left_tick_lower: np.float64 = xy_transform(xlower, direction="forward", axis="x")
         left_tick_distance = left_tick_upper - left_tick_lower
         right_tick_distance = xy_transform(xupper, direction="forward", axis="x") - xy_transform(
             xtick_locations[-1],

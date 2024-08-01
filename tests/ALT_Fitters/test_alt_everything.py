@@ -1,6 +1,7 @@
 import warnings
 
 import matplotlib.pyplot as plt
+import numpy as np
 from numpy.testing import assert_allclose
 
 from reliability.ALT_Fitters import (
@@ -179,7 +180,7 @@ def test_Fit_Everything_ALT_dual_stress():
         right_censored=data.right_censored,
         right_censored_stress_1=data.right_censored_stresses_1,
         right_censored_stress_2=data.right_censored_stresses_2,
-        use_level_stress=[300, 0.2],
+        use_level_stress=np.array([300, 0.2]),
         show_best_distribution_probability_plot=True,
         show_probability_plot=True,
         print_results=True,

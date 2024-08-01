@@ -1,6 +1,7 @@
 import warnings
 
 import matplotlib.pyplot as plt
+import numpy as np
 from numpy.testing import assert_allclose
 
 from reliability.ALT_Fitters import (
@@ -133,7 +134,7 @@ def test_Fit_Exponential_Dual_Exponential():
         right_censored=data.right_censored,
         right_censored_stress_1=data.right_censored_stresses_1,
         right_censored_stress_2=data.right_censored_stresses_2,
-        use_level_stress=[100, 0.2],
+        use_level_stress=np.array([100, 0.2]),
         show_life_stress_plot=True,
         show_probability_plot=True,
         print_results=True,
@@ -169,7 +170,7 @@ def test_Fit_Exponential_Dual_Power():
         right_censored=data.right_censored,
         right_censored_stress_1=data.right_censored_stresses_1,
         right_censored_stress_2=data.right_censored_stresses_2,
-        use_level_stress=[100, 0.2],
+        use_level_stress=np.array([100, 0.2]),
         show_life_stress_plot=True,
         show_probability_plot=True,
         print_results=True,
@@ -205,7 +206,7 @@ def test_Fit_Exponential_Power_Exponential():
         right_censored=data.right_censored,
         right_censored_stress_1=data.right_censored_stresses_1,
         right_censored_stress_2=data.right_censored_stresses_2,
-        use_level_stress=[200, 5],
+        use_level_stress=np.array([200, 5]),
         show_life_stress_plot=True,
         show_probability_plot=True,
         print_results=True,

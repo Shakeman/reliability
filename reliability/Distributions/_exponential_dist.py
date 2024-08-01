@@ -1,5 +1,3 @@
-
-
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
@@ -20,6 +18,7 @@ from reliability.Utils import (
 
 dec = 4  # number of decimals to use when rounding descriptive statistics and parameter titles
 np.seterr(divide="ignore", invalid="ignore")  # ignore the divide by zero warnings
+
 
 class Exponential_Distribution:
     """Exponential probability distribution. Creates a probability distribution
@@ -341,7 +340,7 @@ class Exponential_Distribution:
         CI_y=None,
         CI_x=None,
         **kwargs,
-    ):
+    ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
         """Plots the CDF (cumulative distribution function)
 
         Parameters
@@ -454,8 +453,7 @@ class Exponential_Distribution:
             elif CI_x is not None:
                 cdf_point = ss.expon.cdf(CI_x, scale=1 / self.Lambda, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(cdf_point), upper_CI
-        else:
-            return cdf
+        return cdf
 
     def SF(
         self,
@@ -468,7 +466,7 @@ class Exponential_Distribution:
         CI_y=None,
         CI_x=None,
         **kwargs,
-    ):
+    ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
         """Plots the SF (survival function)
 
         Parameters
@@ -580,8 +578,7 @@ class Exponential_Distribution:
             elif CI_x is not None:
                 sf_point = ss.expon.sf(CI_x, scale=1 / self.Lambda, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(sf_point), upper_CI
-        else:
-            return sf
+        return sf
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
         """Plots the HF (hazard function)
@@ -662,7 +659,7 @@ class Exponential_Distribution:
         CI_y=None,
         CI_x=None,
         **kwargs,
-    ):
+    ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
         """Plots the CHF (cumulative hazard function)
 
         Parameters
@@ -775,8 +772,7 @@ class Exponential_Distribution:
             elif CI_x is not None:
                 chf_point = zeroise_below_gamma(X=CI_x, Y=(CI_x - self.gamma) * self.Lambda, gamma=self.gamma)
                 return lower_CI, unpack_single_arrays(chf_point), upper_CI
-        else:
-            return chf
+        return chf
 
     def quantile(self, q):
         """Quantile calculator

@@ -464,7 +464,7 @@ class Gumbel_Distribution:
         CI_y=None,
         CI_x=None,
         **kwargs,
-    ):
+    ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
         """Plots the SF (survival function)
 
         Parameters
@@ -574,8 +574,7 @@ class Gumbel_Distribution:
             elif CI_type == "reliability":
                 sf_point = ss.gumbel_l.sf(CI_x, self.mu, self.sigma)
                 return lower_CI, unpack_single_arrays(sf_point), upper_CI
-        else:
-            return sf
+        return sf
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
         """Plots the HF (hazard function)
@@ -656,7 +655,7 @@ class Gumbel_Distribution:
         CI_y=None,
         CI_x=None,
         **kwargs,
-    ):
+    ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
         """Plots the CHF (cumulative hazard function)
 
         Parameters
@@ -768,8 +767,7 @@ class Gumbel_Distribution:
             elif CI_type == "reliability":
                 chf_point = np.exp((CI_x - self.mu) / self.sigma)
                 return lower_CI, unpack_single_arrays(chf_point), upper_CI
-        else:
-            return chf
+        return chf
 
     def quantile(self, q):
         """Quantile calculator

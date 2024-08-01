@@ -514,7 +514,7 @@ class Gamma_Distribution:
         CI_y=None,
         CI_x=None,
         **kwargs,
-    ):
+    ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
         """Plots the SF (survival function)
 
         Parameters
@@ -624,8 +624,7 @@ class Gamma_Distribution:
             elif CI_type == "reliability":
                 sf_point = ss.gamma.sf(CI_x, self.beta, scale=self.alpha, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(sf_point), upper_CI
-        else:
-            return sf
+        return sf
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
         """Plots the HF (hazard function)
@@ -711,7 +710,7 @@ class Gamma_Distribution:
         CI_y=None,
         CI_x=None,
         **kwargs,
-    ):
+    ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
         """Plots the CHF (cumulative hazard function)
 
         Parameters
@@ -823,8 +822,7 @@ class Gamma_Distribution:
             elif CI_type == "reliability":
                 chf_point = -np.log(ss.gamma.sf(CI_x, self.beta, scale=self.alpha, loc=self.gamma))
                 return lower_CI, unpack_single_arrays(chf_point), upper_CI
-        else:
-            return chf
+        return chf
 
     def quantile(self, q):
         """Quantile calculator

@@ -1,3 +1,4 @@
+import numpy as np
 from numpy.testing import assert_allclose
 
 from reliability.Distributions import (
@@ -21,15 +22,17 @@ def test_Exponential_Distribution():
     assert_allclose(dist.quantile(0.2), 11.11571775657105, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 11.783374719693661, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(20), 5, rtol=rtol, atol=atol)
-    xvals = [
-        dist.gamma - 1,
-        dist.quantile(0.001),
-        dist.quantile(0.01),
-        dist.quantile(0.1),
-        dist.quantile(0.9),
-        dist.quantile(0.99),
-        dist.quantile(0.999),
-    ]
+    xvals = np.array(
+        [
+            dist.gamma - 1,
+            dist.quantile(0.001),
+            dist.quantile(0.01),
+            dist.quantile(0.1),
+            dist.quantile(0.9),
+            dist.quantile(0.99),
+            dist.quantile(0.999),
+        ]
+    )
     assert_allclose(
         dist.PDF(xvals=xvals, show_plot=True),
         [0.0, 0.19980000000000003, 0.198, 0.18, 0.019999999999999997, 0.002000000000000001, 0.0002000000000000004],

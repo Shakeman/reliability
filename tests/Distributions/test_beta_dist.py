@@ -1,3 +1,4 @@
+import numpy as np
 from numpy.testing import assert_allclose
 
 from reliability.Distributions import (
@@ -21,15 +22,17 @@ def test_Beta_Distribution():
     assert_allclose(dist.quantile(0.2), 0.577552475153728, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 0.6396423096199797, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(0.5), 0.2518796992481146, rtol=rtol, atol=atol)
-    xvals = [
-        0,
-        dist.quantile(0.001),
-        dist.quantile(0.01),
-        dist.quantile(0.1),
-        dist.quantile(0.9),
-        dist.quantile(0.99),
-        dist.quantile(0.999),
-    ]
+    xvals = np.array(
+        [
+            0,
+            dist.quantile(0.001),
+            dist.quantile(0.01),
+            dist.quantile(0.1),
+            dist.quantile(0.9),
+            dist.quantile(0.99),
+            dist.quantile(0.999),
+        ]
+    )
     assert_allclose(
         dist.PDF(xvals=xvals, show_plot=True),
         [

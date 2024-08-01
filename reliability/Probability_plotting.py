@@ -394,12 +394,12 @@ def Weibull_probability_plot(
 
 
 def Loglogistic_probability_plot(
-    failures=None,
-    right_censored=None,
-    fit_gamma=False,
+    failures: npt.NDArray[np.float64],
+    right_censored: npt.NDArray[np.float64] | None = None,
+    fit_gamma: bool = False,
     _fitted_dist_params=None,
-    a=None,
-    CI=0.95,
+    a: float | None = None,
+    CI: float = 0.95,
     CI_type: str | None = "time",
     show_fitted_distribution=True,
     show_scatter_points=True,
@@ -542,12 +542,12 @@ def Loglogistic_probability_plot(
                 )
         elif fit_gamma is True:
             if _fitted_dist_params is not None:
-                alpha = _fitted_dist_params.alpha
-                beta = _fitted_dist_params.beta
-                gamma = _fitted_dist_params.gamma
-                alpha_SE = _fitted_dist_params.alpha_SE
-                beta_SE = _fitted_dist_params.beta_SE
-                Cov_alpha_beta = _fitted_dist_params.Cov_alpha_beta
+                alpha: np.float64 | float = _fitted_dist_params.alpha
+                beta: np.float64 | float = _fitted_dist_params.beta
+                gamma: np.float64 | float = _fitted_dist_params.gamma
+                alpha_SE: np.float64 | float = _fitted_dist_params.alpha_SE
+                beta_SE: np.float64 | float = _fitted_dist_params.beta_SE
+                Cov_alpha_beta: np.float64 | float = _fitted_dist_params.Cov_alpha_beta
             else:
                 from reliability.Fitters import Fit_Loglogistic_3P
 

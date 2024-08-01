@@ -1,3 +1,4 @@
+import numpy as np
 from numpy.testing import assert_allclose
 
 from reliability.Distributions import (
@@ -21,15 +22,17 @@ def test_Gamma_Distribution():
     assert_allclose(dist.quantile(0.2), 14.121941545164923, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 15.486746053517457, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(20), 6.666666666666647, rtol=rtol, atol=atol)
-    xvals = [
-        dist.gamma - 1,
-        dist.quantile(0.001),
-        dist.quantile(0.01),
-        dist.quantile(0.1),
-        dist.quantile(0.9),
-        dist.quantile(0.99),
-        dist.quantile(0.999),
-    ]
+    xvals = np.array(
+        [
+            dist.gamma - 1,
+            dist.quantile(0.001),
+            dist.quantile(0.01),
+            dist.quantile(0.1),
+            dist.quantile(0.9),
+            dist.quantile(0.99),
+            dist.quantile(0.999),
+        ]
+    )
     assert_allclose(
         dist.PDF(xvals=xvals, show_plot=True),
         [

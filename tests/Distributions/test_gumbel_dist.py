@@ -1,3 +1,4 @@
+import numpy as np
 from numpy.testing import assert_allclose
 
 from reliability.Distributions import (
@@ -21,14 +22,16 @@ def test_Gumbel_Distribution():
     assert_allclose(dist.quantile(0.2), 12.00012002648097, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 12.938139133682554, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(10), 4.349172610672009, rtol=rtol, atol=atol)
-    xvals = [
-        dist.quantile(0.001),
-        dist.quantile(0.01),
-        dist.quantile(0.1),
-        dist.quantile(0.9),
-        dist.quantile(0.99),
-        dist.quantile(0.999),
-    ]
+    xvals = np.array(
+        [
+            dist.quantile(0.001),
+            dist.quantile(0.01),
+            dist.quantile(0.1),
+            dist.quantile(0.9),
+            dist.quantile(0.99),
+            dist.quantile(0.999),
+        ]
+    )
     assert_allclose(
         dist.PDF(xvals=xvals, show_plot=True),
         [

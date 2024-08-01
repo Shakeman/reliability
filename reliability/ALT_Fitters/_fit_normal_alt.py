@@ -305,7 +305,7 @@ class Fit_Normal_Exponential:
         if n - k - 1 > 0:
             self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
@@ -739,7 +739,7 @@ class Fit_Normal_Eyring:
         if n - k - 1 > 0:
             self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
@@ -1167,7 +1167,7 @@ class Fit_Normal_Power:
         if n - k - 1 > 0:
             self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
@@ -1648,7 +1648,7 @@ class Fit_Normal_Dual_Exponential:
         if n - k - 1 > 0:
             self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
@@ -2141,7 +2141,7 @@ class Fit_Normal_Power_Exponential:
         if n - k - 1 > 0:
             self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
@@ -2625,7 +2625,7 @@ class Fit_Normal_Dual_Power:
         if n - k - 1 > 0:
             self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
-            self.AICc = "Insufficient data"
+            self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],

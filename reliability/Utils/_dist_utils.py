@@ -2789,8 +2789,8 @@ class distribution_confidence_intervals:
     @staticmethod
     def loglogistic_CI(
         dist,
-        CI_type: str,
-        CI: float,
+        CI_type: Literal["time", "reliability"],
+        CI: float | np.float64,
         func="CDF",
         plot_CI=None,
         text_title="",

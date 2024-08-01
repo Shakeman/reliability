@@ -68,7 +68,7 @@ class Loglogistic_Distribution:
 
     """
 
-    def __init__(self, alpha=None, beta=None, gamma: float | np.float64 = 0.0, **kwargs):
+    def __init__(self, alpha: np.float64 | float, beta: np.float64 | float, gamma: np.float64 | float = 0.0, **kwargs):
         self.name = "Loglogistic"
         if alpha is None or beta is None:
             raise ValueError(
@@ -77,32 +77,32 @@ class Loglogistic_Distribution:
         self.alpha = float(alpha)
         self.beta = float(beta)
         self.gamma = float(gamma)
-        self.parameters = np.array([self.alpha, self.beta, self.gamma])
+        self.parameters: npt.NDArray[np.float64] = np.array([self.alpha, self.beta, self.gamma])
 
         if self.beta > 1:
-            self.mean = float(ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="m"))
+            self.mean: float = float(ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="m"))
         else:
             self.mean = r"no mean when $\beta \leq 1$"
         if self.beta > 2:
-            self.variance = float(ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="v"))
-            self.standard_deviation = self.variance**0.5
+            self.variance: float = float(ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="v"))
+            self.standard_deviation: float = self.variance**0.5
         else:
             self.variance = r"no variance when $\beta \leq 2$"
             self.standard_deviation = r"no stdev when $\beta \leq 2$"
         if self.beta > 3:
-            self.skewness = float(ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="s"))
+            self.skewness: float = float(ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="s"))
         else:
             self.skewness = r"no skewness when $\beta \leq 3$"
         if self.beta > 4:
             self.excess_kurtosis = float(ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="k"))
-            self.kurtosis = self.excess_kurtosis + 3
+            self.kurtosis: float = self.excess_kurtosis + 3
         else:
             self.excess_kurtosis = r"no kurtosis when $\beta \leq 4$"
             self.kurtosis = r"no kurtosis when $\beta \leq 4$"
 
-        self.median = ss.fisk.median(self.beta, scale=self.alpha, loc=self.gamma)
+        self.median: float = float(ss.fisk.median(self.beta, scale=self.alpha, loc=self.gamma))
         if self.beta >= 1:
-            self.mode = self.alpha * ((self.beta - 1) / (self.beta + 1)) ** (1 / self.beta) + self.gamma
+            self.mode: float = self.alpha * ((self.beta - 1) / (self.beta + 1)) ** (1 / self.beta) + self.gamma
         else:
             self.mode = self.gamma
         if self.gamma != 0:
@@ -134,8 +134,8 @@ class Loglogistic_Distribution:
                 + ")",
             )
             self.name2 = "Loglogistic_2P"
-        self.b5 = ss.fisk.ppf(0.05, self.beta, scale=self.alpha, loc=self.gamma)
-        self.b95 = ss.fisk.ppf(0.95, self.beta, scale=self.alpha, loc=self.gamma)
+        self.b5: float = float(ss.fisk.ppf(0.05, self.beta, scale=self.alpha, loc=self.gamma))
+        self.b95: float = float(ss.fisk.ppf(0.95, self.beta, scale=self.alpha, loc=self.gamma))
 
         # extracts values for confidence interval plotting
         if "alpha_SE" in kwargs:
@@ -418,7 +418,7 @@ class Loglogistic_Distribution:
         xmax: np.float64 | None = None,
         show_plot: bool = True,
         plot_CI: bool = True,
-        CI_type: Literal["time", "reliability", "none"] | None = None,
+        CI_type: Literal["time", "reliability"] | None = None,
         CI: np.float64 | None = None,
         CI_y: np.float64 | None = None,
         CI_x: np.float64 | None = None,
@@ -549,7 +549,7 @@ class Loglogistic_Distribution:
         CI_y=None,
         CI_x=None,
         **kwargs,
-    ):
+    ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
         """Plots the SF (survival function)
 
         Parameters
@@ -659,8 +659,7 @@ class Loglogistic_Distribution:
             elif CI_type == "reliability":
                 sf_point = ss.fisk.sf(CI_x, self.beta, scale=self.alpha, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(sf_point), upper_CI
-        else:
-            return sf
+        return sf
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
         """Plots the HF (hazard function)
@@ -744,7 +743,7 @@ class Loglogistic_Distribution:
         CI_y=None,
         CI_x=None,
         **kwargs,
-    ):
+    ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
         """Plots the CHF (cumulative hazard function)
 
         Parameters
@@ -861,8 +860,7 @@ class Loglogistic_Distribution:
                     gamma=self.gamma,
                 )
                 return lower_CI, unpack_single_arrays(chf_point), upper_CI
-        else:
-            return chf
+        return chf
 
     def quantile(self, q):
         """Quantile calculator

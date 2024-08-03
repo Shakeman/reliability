@@ -682,16 +682,7 @@ class reliability_test_planner:
                 )
 
 
-def reliability_test_duration(
-    MTBF_required,
-    MTBF_design,
-    consumer_risk,
-    producer_risk,
-    one_sided=True,
-    time_terminated=True,
-    show_plot=True,
-    print_results=True,
-):
+class reliability_test_duration:
     """This function calculates the required duration for a reliability test to
     achieve the specified producers and consumers risks. This is done based on
     the specified MTBF required and MTBF design. For details please see the
@@ -736,89 +727,129 @@ def reliability_test_duration(
     If the plot does not show automatically, use plt.show() to show it.
 
     """
-    if consumer_risk <= 0 or consumer_risk > 0.5:
-        raise ValueError("consumer_risk must be between 0 and 0.5")
-    if producer_risk <= 0 or producer_risk > 0.5:
-        raise ValueError("producer_risk must be between 0 and 0.5")
-    if MTBF_design <= MTBF_required:
-        raise ValueError("MTBF_design must exceed MTBF_required")
-    if one_sided not in [True, False]:
-        raise ValueError("one_sided must be True or False. Default is True")
-    if time_terminated not in [True, False]:
-        raise ValueError("time_terminated must be True or False. Default is True")
-    if show_plot not in [True, False]:
-        raise ValueError("show_plot must be True or False. Default is True")
-    if print_results not in [True, False]:
-        raise ValueError("print_results must be True or False. Default is True")
 
-    duration_array = []
-    producer_risk_array = []
-    failures = 0  # initial counter. Incremented each iteration
-    solution_index = False  # initial vlue to be updated later
-    max_failures = 1e10  # initial value to be updated later
-    event_check = False
-    time_start = time.time()
-    time_out = 10  # seconds until first warning about long runtime
-    while True:
-        result1 = reliability_test_planner(
-            number_of_failures=failures,
-            CI=1 - consumer_risk,
-            MTBF=MTBF_required,
-            one_sided=one_sided,
-            time_terminated=time_terminated,
-            print_results=False,
-        )  # finds the test duration based on MTBF required and consumer risk
-        result2 = reliability_test_planner(
-            MTBF=MTBF_design,
-            test_duration=result1.test_duration,
-            number_of_failures=failures,
-            one_sided=one_sided,
-            time_terminated=time_terminated,
-            print_results=False,
-        )  # finds the producer risk based on test duration and MTBR of design
-        duration_array.append(result1.test_duration)
-        producer_risk_array.append(result2.CI)
-        if (
-            producer_risk_array[-1] < producer_risk and event_check is False
-        ):  # check whether the number of failures resulted in the correct producer risk
-            solution_index = (
-                failures - 1
-            )  # we have exceeded the target so need to go back one to find the point it was below, and one more to find the point it was above
-            max_failures = solution_index * 1.5
-            event_check = True
-        if failures > max_failures:
-            break
-        failures += 1  # increment failures
-        if time.time() - time_start > time_out:
-            colorprint(
-                str(
-                    "WARNING: The algorithm is taking a long time to find the solution. This is probably because MTBF_required is too close to MTBF_design so the item struggles to pass the test. --- Current runtime: "
-                    + str(int(round(time.time() - time_start, 0)))
-                    + " seconds",
-                ),
-                text_color="red",
-            )
-            time_out += 10
+    def __init__(
+        self,
+        MTBF_required,
+        MTBF_design,
+        consumer_risk,
+        producer_risk,
+        one_sided=True,
+        time_terminated=True,
+    ):
+        if consumer_risk <= 0 or consumer_risk > 0.5:
+            raise ValueError("consumer_risk must be between 0 and 0.5")
+        if producer_risk <= 0 or producer_risk > 0.5:
+            raise ValueError("producer_risk must be between 0 and 0.5")
+        if MTBF_design <= MTBF_required:
+            raise ValueError("MTBF_design must exceed MTBF_required")
+        if one_sided not in [True, False]:
+            raise ValueError("one_sided must be True or False. Default is True")
+        if time_terminated not in [True, False]:
+            raise ValueError("time_terminated must be True or False. Default is True")
 
-    duration_solution = duration_array[solution_index]
-    if print_results is True:
-        if time_terminated is True:
+        duration_array = []
+        producer_risk_array = []
+        failures = 0  # initial counter. Incremented each iteration
+        solution_index = False  # initial vlue to be updated later
+        max_failures = 1e10  # initial value to be updated later
+        event_check = False
+        time_start = time.time()
+        time_out = 10  # seconds until first warning about long runtime
+        while True:
+            result1 = reliability_test_planner(
+                number_of_failures=failures,
+                CI=1 - consumer_risk,
+                MTBF=MTBF_required,
+                one_sided=one_sided,
+                time_terminated=time_terminated,
+                print_results=False,
+            )  # finds the test duration based on MTBF required and consumer risk
+            result2 = reliability_test_planner(
+                MTBF=MTBF_design,
+                test_duration=result1.test_duration,
+                number_of_failures=failures,
+                one_sided=one_sided,
+                time_terminated=time_terminated,
+                print_results=False,
+            )  # finds the producer risk based on test duration and MTBR of design
+            duration_array.append(result1.test_duration)
+            producer_risk_array.append(result2.CI)
+            if (
+                producer_risk_array[-1] < producer_risk and event_check is False
+            ):  # check whether the number of failures resulted in the correct producer risk
+                solution_index = (
+                    failures - 1
+                )  # we have exceeded the target so need to go back one to find the point it was below, and one more to find the point it was above
+                max_failures = solution_index * 1.5
+                event_check = True
+            if failures > max_failures:
+                break
+            failures += 1  # increment failures
+            if time.time() - time_start > time_out:
+                colorprint(
+                    str(
+                        "WARNING: The algorithm is taking a long time to find the solution. This is probably because MTBF_required is too close to MTBF_design so the item struggles to pass the test. --- Current runtime: "
+                        + str(int(round(time.time() - time_start, 0)))
+                        + " seconds",
+                    ),
+                    text_color="red",
+                )
+                time_out += 10
+
+        duration_solution = duration_array[solution_index]
+
+        self.producer_risk_array = producer_risk_array
+        self.duration_array = duration_array
+        self.time_terminated = time_terminated
+        self.consumer_risk = consumer_risk
+        self.producer_risk = producer_risk
+        self.duration_solution = duration_solution
+        self.MTBF_required = MTBF_required
+        self.MTBF_design = MTBF_design
+
+    def print_results(self) -> None:
+        """Prints the results of the reliability test.
+
+        If the test is time-terminated, it prints the duration solver for time-terminated test.
+        If the test is failure-terminated, it prints the duration solver for failure-terminated test.
+
+        Prints the required test duration, specified consumer's risk, specified producer's risk,
+        specified MTBF required by the consumer, and specified MTBF designed by the producer.
+
+        Returns
+        -------
+            None
+
+        """
+        if self.time_terminated is True:
             print("\nReliability Test Duration Solver for time-terminated test:")
         else:
             print("\nReliability Test Duration Solver for failure-terminated test:")
-        print("Required test duration:", duration_solution)
-        print("Specified consumer's risk:", consumer_risk)
-        print("Specified producer's risk:", producer_risk)
-        print("Specified MTBF required by the consumer:", MTBF_required)
-        print("Specified MTBF designed to by the producer:", MTBF_design)
+        print("Required test duration:", self.duration_solution)
+        print("Specified consumer's risk:", self.consumer_risk)
+        print("Specified producer's risk:", self.producer_risk)
+        print("Specified MTBF required by the consumer:", self.MTBF_required)
+        print("Specified MTBF designed to by the producer:", self.MTBF_design)
 
-    if show_plot is True:
-        consumer_risk_array = np.ones_like(duration_array) * consumer_risk
-        plt.plot(duration_array, producer_risk_array, label="Producer's risk")
-        plt.plot(duration_array, consumer_risk_array, label="Consumer's risk")
+    def plot(self) -> None:
+        """Plot the Producer's and Consumer's risk as a function of test duration.
+
+        This method plots the Producer's risk, Consumer's risk, and failure events
+        as a function of test duration. It also adds a vertical line to indicate
+        the duration solution and displays the test duration value as text.
+
+        Returns
+        -------
+            None
+
+        """
+        consumer_risk_array = np.ones_like(self.duration_array) * self.consumer_risk
+        plt.plot(self.duration_array, self.producer_risk_array, label="Producer's risk")
+        plt.plot(self.duration_array, consumer_risk_array, label="Consumer's risk")
         plt.scatter(
-            duration_array,
-            producer_risk_array,
+            self.duration_array,
+            self.producer_risk_array,
             color="k",
             marker=".",
             label="Failure events",
@@ -827,17 +858,16 @@ def reliability_test_duration(
         plt.xlabel("Test duration")
         plt.ylabel("Risk")
         plt.legend(loc="upper right")
-        if len(duration_array) > 1:
-            plt.xlim(min(duration_array), max(duration_array))
-        plt.axvline(x=duration_solution, color="k", linestyle="--", linewidth=1)
+        if len(self.duration_array) > 1:
+            plt.xlim(min(self.duration_array), max(self.duration_array))
+        plt.axvline(x=self.duration_solution, color="k", linestyle="--", linewidth=1)
         plt.title("Test duration vs Producer's and Consumer's Risk")
         plt.text(
-            x=duration_solution,
+            x=self.duration_solution,
             y=plt.ylim()[0],
-            s=str(" Test duration\n " + str(int(math.ceil(duration_solution)))),
+            s=str(" Test duration\n " + str(int(math.ceil(self.duration_solution)))),
             va="bottom",
         )
-    return duration_solution
 
 
 class chi2test:

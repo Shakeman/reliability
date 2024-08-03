@@ -31,6 +31,7 @@ pytest-xdist = "^3.6.1"
 pytest-mock = "^3.12.0"
 pyright = "^1.1.365"
 pytest-sugar = "^1.0.0"
+pytest-rerunfailures = "^14.0"
 
 
 [tool.ruff]

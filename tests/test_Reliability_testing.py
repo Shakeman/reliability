@@ -52,13 +52,16 @@ def test_reliability_test_planner():
 
 
 def test_reliability_test_duration():
-    test_duration = reliability_test_duration(
+    results = reliability_test_duration(
         MTBF_required=2500,
         MTBF_design=3000,
         consumer_risk=0.2,
         producer_risk=0.2,
     )
-    assert_allclose(test_duration, 231615.79491309822, rtol=rtol, atol=atol)
+    assert_allclose(results.duration_solution, 231615.79491309822, rtol=rtol, atol=atol)
+    results.print_results()
+    results.plot()
+    plt.close()
 
 
 def test_chi2test():

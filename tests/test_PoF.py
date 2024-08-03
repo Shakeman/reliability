@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import pytest
 from numpy.testing import assert_allclose
 
@@ -33,6 +34,7 @@ def test_SN_diagram():
         cycles_trace=[5 * 10**5],
         stress_trace=[260],
     )
+    plt.close()
 
 
 def test_stress_strain_diagram():
@@ -53,6 +55,7 @@ def test_stress_strain_diagram():
     assert_allclose(stress_strain.min_strain, -0.006, rtol=rtol, atol=atol)
     assert_allclose(stress_strain.max_stress, 483.8581623940639, rtol=rtol, atol=atol)
     assert_allclose(stress_strain.min_stress, -483.8581623940639, rtol=rtol, atol=atol)
+    plt.close()
 
 
 def test_strain_life_diagram():
@@ -72,6 +75,7 @@ def test_strain_life_diagram():
     assert_allclose(results.min_strain, -0.0029, rtol=rtol, atol=atol)
     assert_allclose(results.max_stress, 377.9702002307027, rtol=rtol, atol=atol)
     assert_allclose(results.min_stress, -321.06700330271457, rtol=rtol, atol=atol)
+    plt.close()
 
 
 def test_fracture_mechanics_crack_initiation():
@@ -98,6 +102,7 @@ def test_fracture_mechanics_crack_initiation():
     assert_allclose(results.sigma_max, 506.7290859876517, rtol=rtol, atol=atol)
     assert_allclose(results.sigma_mean, -5.684341886080802e-14, rtol=rtol, atol=atol)
     assert_allclose(results.sigma_min, -506.7290859876518, rtol=rtol, atol=atol)
+    plt.close()
 
 
 @pytest.mark.filterwarnings("ignore::UserWarning")
@@ -115,6 +120,7 @@ def test_fracture_mechanics():
     assert_allclose(results.final_crack_length_simplified, 7.8603053527017686, rtol=rtol, atol=atol)
     assert_allclose(results.transition_length_iterative, 2.4520443881041274, rtol=rtol, atol=atol)
     assert_allclose(results.transition_length_simplified, 2.0798236309560947, rtol=rtol, atol=atol)
+    plt.close()
 
 
 @pytest.mark.filterwarnings("ignore::UserWarning")
@@ -173,6 +179,7 @@ def test_creep():
         31.8,
     ]
     creep_rupture_curves(temp_array=TEMP, stress_array=STRESS, TTF_array=TTF, stress_trace=70, temp_trace=1100)
+    plt.close()
 
 
 def test_creep_failure_time():

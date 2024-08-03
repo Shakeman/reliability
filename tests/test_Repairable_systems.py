@@ -273,6 +273,7 @@ def test_ort_print_results(capsys: pytest.CaptureFixture[str]) -> None:
     captured_out = captured_out.replace("\x1b[1m\x1b[23m\x1b[4m\x1b[49m\x1b[39m", "")
     captured_out = captured_out.replace("\x1b[0m", "")
     assert captured_out == expected_output
+    plt.close()
 
 
 def test_show_time_plot():
@@ -304,6 +305,7 @@ def test_show_time_plot():
     assert_allclose(lines[0].get_xdata(), rs._optimal_replacement_time__t)
     assert_allclose(lines[0].get_ydata(), rs._optimal_replacement_time__CPUT)
     assert lines[0].get_color() == "red"
+    plt.close()
 
 
 def test_show_ratio_plot():

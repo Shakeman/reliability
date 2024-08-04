@@ -39,9 +39,6 @@ def test_Fit_Normal_Exponential():
         right_censored=data.right_censored,
         right_censored_stress=data.right_censored_stresses,
         use_level_stress=300,
-        show_life_stress_plot=True,
-        show_probability_plot=True,
-        print_results=True,
     )
     plt.close("all")
     assert_allclose(model.a, 510.32806900630544, rtol=rtol, atol=atol)
@@ -102,9 +99,6 @@ def test_Fit_Normal_Power():
         right_censored=data.right_censored,
         right_censored_stress=data.right_censored_stresses,
         use_level_stress=300,
-        show_life_stress_plot=True,
-        show_probability_plot=True,
-        print_results=True,
     )
     plt.close("all")
     assert_allclose(model.a, 6889372.65785002, rtol=rtol, atol=atol)

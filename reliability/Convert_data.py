@@ -859,7 +859,7 @@ class FNRN_to_XCN:
         failures,
         num_failures,
         right_censored=None,
-        num_right_censored=None,
+        num_right_censored: list[int] | None = None,
         censor_code="C",
         failure_code="F",
     ):
@@ -873,7 +873,7 @@ class FNRN_to_XCN:
         if right_censored is not None:
             if type(right_censored) not in [list, np.ndarray]:
                 raise ValueError("right_censored must be a list or array.")
-            if type(num_right_censored) not in [list, np.ndarray]:
+            if type(num_right_censored) not in [list, np.ndarray] and num_right_censored is not None:
                 raise ValueError("num_right_censored must be a list or array.")
             if len(right_censored) != len(num_right_censored):
                 raise ValueError("right_censored and num_right_censored must be the same length.")
@@ -988,8 +988,8 @@ class FR_to_FNRN:
                 raise ValueError("right_censored must be a list or array.")
             self.right_censored, self.num_right_censored = np.unique(right_censored, return_counts=True)
         else:
-            self.right_censored = None
-            self.num_right_censored = None
+            self.right_censored = []
+            self.num_right_censored = []
         # make the dataframe for printing and writing to excel
         if self.right_censored is not None and self.num_right_censored is not None:
             f, nf, rc, nrc = (

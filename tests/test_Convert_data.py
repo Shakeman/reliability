@@ -24,6 +24,11 @@ def test_FR_to_FNRN():
     assert (FNRN.num_failures == [1, 2, 1, 1, 4, 3]).all()
     assert (FNRN.right_censored == [17, 50, 78, 90]).all()
     assert (FNRN.num_right_censored == [2, 4, 4, 1]).all()
+    current_directory: Path = Path.cwd()
+    file_name: Path = current_directory / "tests/_excel_files/FR_to_FNRN.xlsx"
+    FNRN.print()
+    FNRN.write_to_xlsx(file_name)
+    file_name.unlink()
 
 
 def test_FNRN_to_FR():
@@ -47,6 +52,11 @@ def test_FNRN_to_FR():
             7,
         ]
     ).all()
+    current_directory: Path = Path.cwd()
+    file_name: Path = current_directory / "tests/_excel_files/FNRN_to_FR.xlsx"
+    FR.print()
+    FR.write_to_xlsx(file_name)
+    file_name.unlink()
 
 
 def test_XCN_to_FR():
@@ -59,6 +69,11 @@ def test_XCN_to_FR():
     )
     assert (FR.failures == [12.0, 15.0, 18.0]).all()
     assert (FR.right_censored == [32.0, 32.0, 35.0, 35.0, 38.0, 60.0, 60.0, 60.0]).all()
+    current_directory: Path = Path.cwd()
+    file_name: Path = current_directory / "tests/_excel_files/XCN_to_FR.xlsx"
+    FR.print()
+    FR.write_to_xlsx(file_name)
+    file_name.unlink()
 
 
 def test_XCN_to_FNRN():
@@ -67,6 +82,11 @@ def test_XCN_to_FNRN():
     assert (FNRN.num_failures == [1, 2, 2]).all()
     assert (FNRN.right_censored == [7.0, 8.0, 9.0]).all()
     assert (FNRN.num_right_censored == [3, 2, 1]).all()
+    current_directory: Path = Path.cwd()
+    file_name: Path = current_directory / "tests/_excel_files/XCN_to_FNRN.xlsx"
+    FNRN.print()
+    FNRN.write_to_xlsx(file_name)
+    file_name.unlink()
 
 
 def test_FR_to_XCN():
@@ -74,6 +94,11 @@ def test_FR_to_XCN():
     assert ([1, 2, 3, 7, 8, 9] == XCN.X).all()
     assert (["F", "F", "F", "C", "C", "C"] == XCN.C).all()
     assert ([2, 2, 1, 1, 2, 4] == XCN.N).all()
+    current_directory: Path = Path.cwd()
+    file_name: Path = current_directory / "tests/_excel_files/FR_to_XCN.xlsx"
+    XCN.print()
+    XCN.write_to_xlsx(file_name)
+    file_name.unlink()
 
 
 def test_FNRN_to_XCN():
@@ -86,6 +111,11 @@ def test_FNRN_to_XCN():
     assert ([1, 2, 3, 7, 8, 9] == XCN.X).all()
     assert (["F", "F", "F", "C", "C", "C"] == XCN.C).all()
     assert ([2, 2, 1, 1, 2, 3] == XCN.N).all()
+    current_directory: Path = Path.cwd()
+    file_name: Path = current_directory / "tests/_excel_files/FNRN_to_XCN.xlsx"
+    XCN.print()
+    XCN.write_to_xlsx(file_name)
+    file_name.unlink()
 
 
 def test_xlsx_to_XCN() -> None:
@@ -101,6 +131,9 @@ def test_xlsx_to_XCN() -> None:
     assert (X == XCN.X).all()
     assert (C == XCN.C).all()
     assert (N == XCN.N).all()
+    file_name.unlink()
+    XCN.print()
+    XCN.write_to_xlsx(file_name)
     file_name.unlink()
 
 
@@ -124,6 +157,9 @@ def test_xlsx_to_FR() -> None:
     FR = xlsx_to_FR(file_name)
     assert (failures == FR.failures).all()
     assert (right_censored == FR.right_censored).all()
+    file_name.unlink()
+    FR.print()
+    FR.write_to_xlsx(file_name)
     file_name.unlink()
 
 
@@ -150,4 +186,7 @@ def test_xlsx_to_FNRN():
     assert (FNRN.right_censored == FNRN_file.right_censored).all()
     assert (FNRN.num_failures == FNRN_file.num_failures).all()
     assert (FNRN.num_right_censored == FNRN_file.num_right_censored).all()
+    file_name.unlink()
+    FNRN_file.print()
+    FNRN_file.write_to_xlsx(file_name)
     file_name.unlink()

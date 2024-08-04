@@ -1,4 +1,18 @@
-from reliability.Convert_data import FNRN_to_FR, FNRN_to_XCN, FR_to_FNRN, FR_to_XCN, XCN_to_FNRN, XCN_to_FR
+from pathlib import Path
+
+import pandas as pd
+
+from reliability.Convert_data import (
+    FNRN_to_FR,
+    FNRN_to_XCN,
+    FR_to_FNRN,
+    FR_to_XCN,
+    XCN_to_FNRN,
+    XCN_to_FR,
+    xlsx_to_FNRN,
+    xlsx_to_FR,
+    xlsx_to_XCN,
+)
 
 
 def test_FR_to_FNRN():
@@ -72,3 +86,68 @@ def test_FNRN_to_XCN():
     assert ([1, 2, 3, 7, 8, 9] == XCN.X).all()
     assert (["F", "F", "F", "C", "C", "C"] == XCN.C).all()
     assert ([2, 2, 1, 1, 2, 3] == XCN.N).all()
+
+
+def test_xlsx_to_XCN() -> None:
+    X: list[int] = [13, 45, 78, 89, 102, 105]
+    C: list[str] = ["F", "F", "F", "C", "C", "C"]
+    N: list[int] = [1, 1, 1, 2, 2, 1]
+    data = {"event time": X, "censor code": C, "number of events": N}
+    XCN_df = pd.DataFrame(data=data, columns=["event time", "censor code", "number of events"])
+    current_directory: Path = Path.cwd()
+    file_name: Path = current_directory / "tests/_excel_files/XCN.xlsx"
+    XCN_df.to_excel(file_name, index=False)
+    XCN = xlsx_to_XCN(file_name)
+    assert (X == XCN.X).all()
+    assert (C == XCN.C).all()
+    assert (N == XCN.N).all()
+    file_name.unlink()
+
+
+def test_xlsx_to_FR() -> None:
+    failures: list[int | str] = [1, 1, 2, 2, 3]
+    right_censored: list[int | str] = [9, 9, 9, 9, 8, 8, 7]
+    f: list[int | str] = failures.copy()
+    rc: list[int | str] = right_censored.copy()
+    len_f: int = len(f)
+    len_rc: int = len(rc)
+    max_len: int = max(len_f, len_rc)
+    if max_len != len_f:
+        f.extend([""] * (max_len - len_f))
+    if max_len != len_rc:
+        rc.extend([""] * (max_len - len_rc))
+    data = {"failures": f, "right censored": rc}
+    FR_df = pd.DataFrame(data, columns=["failures", "right censored"])
+    current_directory: Path = Path.cwd()
+    file_name: Path = current_directory / "tests/_excel_files/FR.xlsx"
+    FR_df.to_excel(file_name, index=False)
+    FR = xlsx_to_FR(file_name)
+    assert (failures == FR.failures).all()
+    assert (right_censored == FR.right_censored).all()
+    file_name.unlink()
+
+
+def test_xlsx_to_FNRN():
+    failures = [1, 2, 3]
+    num_failures = [2, 2, 1]
+    right_censored = [9, 8, 7]
+    num_right_censored = [3, 2, 1]
+    FR = FNRN_to_FR(
+        failures=failures,
+        num_failures=num_failures,
+        right_censored=right_censored,
+        num_right_censored=num_right_censored,
+    )
+    FNRN = FR_to_FNRN(
+        failures=FR.failures,
+        right_censored=FR.right_censored,
+    )
+    current_directory: Path = Path.cwd()
+    file_name: Path = current_directory / "tests/_excel_files/FNRN.xlsx"
+    FNRN._FR_to_FNRN__df.to_excel(file_name, index=False)
+    FNRN_file = xlsx_to_FNRN(file_name)
+    assert (FNRN.failures == FNRN_file.failures).all()
+    assert (FNRN.right_censored == FNRN_file.right_censored).all()
+    assert (FNRN.num_failures == FNRN_file.num_failures).all()
+    assert (FNRN.num_right_censored == FNRN_file.num_right_censored).all()
+    file_name.unlink()

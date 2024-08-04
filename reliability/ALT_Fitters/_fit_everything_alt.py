@@ -1198,9 +1198,6 @@ class Fit_Everything_ALT:
                 use_level_stress=use_level_stress,
                 CI=CI,
                 optimizer=optimizer,
-                show_probability_plot=False,
-                show_life_stress_plot=False,
-                print_results=False,
             )
             self.Normal_Power_Exponential_a = self.__Normal_Power_Exponential_params.a
             self.Normal_Power_Exponential_c = self.__Normal_Power_Exponential_params.c
@@ -1244,9 +1241,6 @@ class Fit_Everything_ALT:
                 use_level_stress=use_level_stress,
                 CI=CI,
                 optimizer=optimizer,
-                show_probability_plot=False,
-                show_life_stress_plot=False,
-                print_results=False,
             )
             self.Normal_Dual_Power_c = self.__Normal_Dual_Power_params.c
             self.Normal_Dual_Power_m = self.__Normal_Dual_Power_params.m
@@ -2155,69 +2149,13 @@ class Fit_Everything_ALT:
                 )
 
             elif item == "Normal_Dual_Exponential":
-                self.__Normal_Dual_Exponential_params.probability_plot(ax=ax)
+                self._Fit_Everything_ALT__Normal_Dual_Exponential_params.probability_plot(ax=ax)
 
             elif item == "Normal_Power_Exponential":
-
-                def life_func(S1, S2):
-                    return (
-                        self.Normal_Power_Exponential_c
-                        * (S2**self.Normal_Power_Exponential_n)
-                        * np.exp(self.Normal_Power_Exponential_a / S1)
-                    )
-
-                stresses_for_groups = self._Fit_Everything_ALT__Normal_Power_Exponential_params._Fit_Normal_Power_Exponential__stresses_for_groups
-                scale_for_change_df = self._Fit_Everything_ALT__Normal_Power_Exponential_params._Fit_Normal_Power_Exponential__scale_for_change_df
-                shape_for_change_df = self._Fit_Everything_ALT__Normal_Power_Exponential_params._Fit_Normal_Power_Exponential__shape_for_change_df
-                failure_groups = self._Fit_Everything_ALT__Normal_Power_Exponential_params._Fit_Normal_Power_Exponential__failure_groups
-                right_censored_groups = self._Fit_Everything_ALT__Normal_Power_Exponential_params._Fit_Normal_Power_Exponential__right_censored_groups
-                ALT_prob_plot(
-                    dist="Normal",
-                    model="Power_Exponential",
-                    stresses_for_groups=stresses_for_groups,
-                    failure_groups=failure_groups,
-                    right_censored_groups=right_censored_groups,
-                    life_func=life_func,
-                    shape=self.Normal_Power_Exponential_sigma,
-                    scale_for_change_df=scale_for_change_df,
-                    shape_for_change_df=shape_for_change_df,
-                    use_level_stress=use_level_stress,
-                    ax=ax,
-                )
+                self._Fit_Everything_ALT__Normal_Power_Exponential_params.probability_plot(ax=ax)
 
             elif item == "Normal_Dual_Power":
-
-                def life_func(S1, S2):
-                    return self.Normal_Dual_Power_c * (S1**self.Normal_Dual_Power_m) * (S2**self.Normal_Dual_Power_n)
-
-                stresses_for_groups = (
-                    self._Fit_Everything_ALT__Normal_Dual_Power_params._Fit_Normal_Dual_Power__stresses_for_groups
-                )
-                scale_for_change_df = (
-                    self._Fit_Everything_ALT__Normal_Dual_Power_params._Fit_Normal_Dual_Power__scale_for_change_df
-                )
-                shape_for_change_df = (
-                    self._Fit_Everything_ALT__Normal_Dual_Power_params._Fit_Normal_Dual_Power__shape_for_change_df
-                )
-                failure_groups = (
-                    self._Fit_Everything_ALT__Normal_Dual_Power_params._Fit_Normal_Dual_Power__failure_groups
-                )
-                right_censored_groups = (
-                    self._Fit_Everything_ALT__Normal_Dual_Power_params._Fit_Normal_Dual_Power__right_censored_groups
-                )
-                ALT_prob_plot(
-                    dist="Normal",
-                    model="Dual_Power",
-                    stresses_for_groups=stresses_for_groups,
-                    failure_groups=failure_groups,
-                    right_censored_groups=right_censored_groups,
-                    life_func=life_func,
-                    shape=self.Normal_Dual_Power_sigma,
-                    scale_for_change_df=scale_for_change_df,
-                    shape_for_change_df=shape_for_change_df,
-                    use_level_stress=use_level_stress,
-                    ax=ax,
-                )
+                self._Fit_Everything_ALT__Normal_Dual_Power_params.probability_plot(ax=ax)
 
             elif item == "Exponential_Dual_Exponential":
 

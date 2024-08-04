@@ -715,9 +715,6 @@ class Fit_Everything_ALT:
                 use_level_stress=use_level_stress,
                 CI=CI,
                 optimizer=optimizer,
-                show_probability_plot=False,
-                show_life_stress_plot=False,
-                print_results=False,
             )
             self.Normal_Power_a = self.__Normal_Power_params.a
             self.Normal_Power_n = self.__Normal_Power_params.n

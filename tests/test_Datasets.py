@@ -9,7 +9,9 @@ from reliability.Datasets import (
     ALT_temperature2,
     ALT_temperature3,
     ALT_temperature4,
+    ALT_temperature_humidity,
     ALT_temperature_voltage,
+    ALT_temperature_voltage2,
     automotive,
     defective_sample,
     mileage,
@@ -148,20 +150,23 @@ def test_alt_temp_volt():
     assert_allclose(results.AICc, 155.26657670807614, rtol=rtol, atol=atol)
 
 
-"""""
 def test_alt_temp_volt2():
     data = ALT_temperature_voltage2()
-    results = Fit_Normal_Dual_Exponential(failures=data.failures, failure_stress_1=data.failure_stress_temp, failure_stress_2=data.failure_stress_voltage)
+    results = Fit_Normal_Dual_Exponential(
+        failures=data.failures, failure_stress_1=data.failure_stress_temp, failure_stress_2=data.failure_stress_voltage
+    )
     assert_allclose(results.a, 3736.1347199847964, rtol=rtol, atol=atol)
     assert_allclose(results.b, -28.351882768859106, rtol=rtol, atol=atol)
     assert_allclose(results.c, 0.6733124765303472, rtol=rtol, atol=atol)
     assert_allclose(results.AICc, 290.91988252498925, rtol=rtol, atol=atol)
 
+
 def test_alt_temp_humidity():
     data = ALT_temperature_humidity()
-    results = Fit_Normal_Dual_Exponential(failures=data.failures, failure_stress_1=data.failure_stress_temp, failure_stress_2=data.failure_stress_humidity)
+    results = Fit_Normal_Dual_Exponential(
+        failures=data.failures, failure_stress_1=data.failure_stress_temp, failure_stress_2=data.failure_stress_humidity
+    )
     assert_allclose(results.a, 6398.279398789768, rtol=rtol, atol=atol)
     assert_allclose(results.b, 0.31744610580758836, rtol=rtol, atol=atol)
     assert_allclose(results.c, 6.834419843778612e-06, rtol=rtol, atol=atol)
     assert_allclose(results.AICc, 135.9958438480237, rtol=rtol, atol=atol)
-""" ""

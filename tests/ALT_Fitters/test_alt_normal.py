@@ -193,9 +193,6 @@ def test_Fit_Normal_Dual_Exponential():
         right_censored_stress_1=data.right_censored_stresses_1,
         right_censored_stress_2=data.right_censored_stresses_2,
         use_level_stress=np.array([100, 0.2]),
-        show_life_stress_plot=True,
-        show_probability_plot=True,
-        print_results=True,
     )
     plt.close("all")
     assert_allclose(model.a, 59.71344103606326, rtol=rtol, atol=atol)

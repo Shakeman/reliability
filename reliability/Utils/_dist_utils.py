@@ -10,6 +10,7 @@ from autograd_gamma import gammaincc as agammaincc
 from autograd_gamma import gammainccinv as agammainccinv
 from matplotlib import colors
 from matplotlib.axes import _axes
+from matplotlib.axes._axes import Axes
 
 from reliability.Utils._ancillary_utils import colorprint, round_and_string
 from reliability.Utils._array_utils import (
@@ -30,7 +31,7 @@ def life_stress_plot(
     failure_groups: list[list[float]],
     stresses_for_groups: list[list[float]] | list[float],
     use_level_stress: float | npt.NDArray[np.float64] | None = None,
-    ax: bool = True,
+    ax: bool | Axes = True,
 ):
     """Generates a life stress plot using the inputs provided. The life stress plot
     is an output from each of the ALT_fitters.

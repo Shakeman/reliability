@@ -679,9 +679,6 @@ class Fit_Everything_ALT:
                 use_level_stress=use_level_stress,
                 CI=CI,
                 optimizer=optimizer,
-                show_probability_plot=False,
-                show_life_stress_plot=False,
-                print_results=False,
             )
             self.Normal_Eyring_a = self.__Normal_Eyring_params.a
             self.Normal_Eyring_c = self.__Normal_Eyring_params.c
@@ -1887,70 +1884,11 @@ class Fit_Everything_ALT:
                     ax=ax,
                 )
             elif item == "Normal_Exponential":
+                self._Fit_Everything_ALT__Normal_Exponential_params.probability_plot(ax=ax)
 
-                def life_func(S1):
-                    return self.Normal_Exponential_b * np.exp(self.Normal_Exponential_a / S1)
-
-                stresses_for_groups = (
-                    self._Fit_Everything_ALT__Normal_Exponential_params._Fit_Normal_Exponential__stresses_for_groups
-                )
-                scale_for_change_df = (
-                    self._Fit_Everything_ALT__Normal_Exponential_params._Fit_Normal_Exponential__scale_for_change_df
-                )
-                shape_for_change_df = (
-                    self._Fit_Everything_ALT__Normal_Exponential_params._Fit_Normal_Exponential__shape_for_change_df
-                )
-                failure_groups = (
-                    self._Fit_Everything_ALT__Normal_Exponential_params._Fit_Normal_Exponential__failure_groups
-                )
-                right_censored_groups = (
-                    self._Fit_Everything_ALT__Normal_Exponential_params._Fit_Normal_Exponential__right_censored_groups
-                )
-
-                ALT_prob_plot(
-                    dist="Normal",
-                    model="Exponential",
-                    stresses_for_groups=stresses_for_groups,
-                    failure_groups=failure_groups,
-                    right_censored_groups=right_censored_groups,
-                    life_func=life_func,
-                    shape=self.Normal_Exponential_sigma,
-                    scale_for_change_df=scale_for_change_df,
-                    shape_for_change_df=shape_for_change_df,
-                    use_level_stress=use_level_stress,
-                    ax=ax,
-                )
             elif item == "Normal_Eyring":
+                self._Fit_Everything_ALT__Normal_Eyring_params.probability_plot(ax=ax)
 
-                def life_func(S1):
-                    return 1 / S1 * np.exp(-(self.Normal_Eyring_c - self.Normal_Eyring_a / S1))
-
-                stresses_for_groups = (
-                    self._Fit_Everything_ALT__Normal_Eyring_params._Fit_Normal_Eyring__stresses_for_groups
-                )
-                scale_for_change_df = (
-                    self._Fit_Everything_ALT__Normal_Eyring_params._Fit_Normal_Eyring__scale_for_change_df
-                )
-                shape_for_change_df = (
-                    self._Fit_Everything_ALT__Normal_Eyring_params._Fit_Normal_Eyring__shape_for_change_df
-                )
-                failure_groups = self._Fit_Everything_ALT__Normal_Eyring_params._Fit_Normal_Eyring__failure_groups
-                right_censored_groups = (
-                    self._Fit_Everything_ALT__Normal_Eyring_params._Fit_Normal_Eyring__right_censored_groups
-                )
-                ALT_prob_plot(
-                    dist="Normal",
-                    model="Eyring",
-                    stresses_for_groups=stresses_for_groups,
-                    failure_groups=failure_groups,
-                    right_censored_groups=right_censored_groups,
-                    life_func=life_func,
-                    shape=self.Normal_Eyring_sigma,
-                    scale_for_change_df=scale_for_change_df,
-                    shape_for_change_df=shape_for_change_df,
-                    use_level_stress=use_level_stress,
-                    ax=ax,
-                )
             elif item == "Normal_Power":
 
                 def life_func(S1):

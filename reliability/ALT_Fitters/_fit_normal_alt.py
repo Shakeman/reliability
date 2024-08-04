@@ -151,9 +151,6 @@ class Fit_Normal_Exponential:
         use_level_stress: float | None = None,
         CI=0.95,
         optimizer: str | None = None,
-        show_probability_plot=True,
-        show_life_stress_plot=True,
-        print_results=True,
     ):
         inputs = alt_single_stress_fitters_input_checking(
             dist="Normal",
@@ -314,12 +311,9 @@ class Fit_Normal_Exponential:
         }
         self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
-        def life_func(S1):
-            return self.b * np.exp(self.a / S1)
-
         # use level stress calculations
         if use_level_stress is not None:
-            self.mu_at_use_stress = life_func(S1=use_level_stress)
+            self.mu_at_use_stress = self.life_func(S1=use_level_stress)
             self.distribution_at_use_stress = Normal_Distribution(mu=self.mu_at_use_stress, sigma=self.sigma)
             self.mean_life = self.distribution_at_use_stress.mean
 
@@ -327,9 +321,9 @@ class Fit_Normal_Exponential:
         new_mus = []
         AF = []
         for stress in stresses_for_groups:
-            new_mus.append(life_func(S1=stress))
+            new_mus.append(self.life_func(S1=stress))
             if use_level_stress is not None:
-                AF.append(life_func(S1=use_level_stress) / life_func(S1=stress))
+                AF.append(self.life_func(S1=use_level_stress) / self.life_func(S1=stress))
         common_sigmas = np.ones_like(stresses_for_groups) * self.sigma
         sigma_differences = []
         shape_change_exceeded = False
@@ -345,8 +339,8 @@ class Fit_Normal_Exponential:
                     sigma_differences.append(str("+" + str(round(sigma_diff * 100, 2)) + "%"))
                 else:
                     sigma_differences.append(str(str(round(sigma_diff * 100, 2)) + "%"))
-        self.__scale_for_change_df = mus_for_change_df
-        self.__shape_for_change_df = sigmas_for_change_df
+        self.__mus_for_change_df = mus_for_change_df
+        self.__sigmas_for_change_df = sigmas_for_change_df
 
         if use_level_stress is not None:
             change_of_parameters_data = {
@@ -371,80 +365,93 @@ class Fit_Normal_Exponential:
             data=change_of_parameters_data,
             columns=list(change_of_parameters_data.keys()),
         )
+        self.__failures = failures
+        self.__right_censored = right_censored
+        self.__CI: float = CI
+        self.__shape_change_exceeded = shape_change_exceeded
+        self.__use_level_stress = use_level_stress
 
-        if print_results is True:
-            n = len(failures) + len(right_censored)
-            CI_rounded = CI * 100
-            if CI_rounded % 1 == 0:
-                CI_rounded = int(CI * 100)
-            frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
-                frac_censored = int(frac_censored)
-            colorprint(
-                str("Results from Fit_Normal_Exponential (" + str(CI_rounded) + "% CI):"),
-                bold=True,
-                underline=True,
-            )
-            print("Analysis method: Maximum Likelihood Estimation (MLE)")
-            if self.optimizer is not None:
-                print("Optimizer:", self.optimizer)
+    def print_results(self):
+        n: int = len(self.__failures) + len(self.__right_censored)
+        CI_rounded: float = self.__CI * 100
+        if CI_rounded % 1 == 0:
+            CI_rounded = int(self.__CI * 100)
+        frac_censored = len(self.__right_censored) / n * 100
+        if frac_censored % 1 < 1e-10:
+            frac_censored = int(frac_censored)
+        colorprint(
+            str("Results from Fit_Normal_Exponential (" + str(CI_rounded) + "% CI):"),
+            bold=True,
+            underline=True,
+        )
+        print("Analysis method: Maximum Likelihood Estimation (MLE)")
+        if self.optimizer is not None:
+            print("Optimizer:", self.optimizer)
+        print(
+            "Failures / Right censored:",
+            str(str(len(self.__failures)) + "/" + str(len(self.__right_censored))),
+            str("(" + round_and_string(frac_censored) + "% right censored)"),
+            "\n",
+        )
+        print(self.results.to_string(index=False), "\n")
+        print(self.change_of_parameters.to_string(index=False))
+        if self.__shape_change_exceeded is True:
             print(
-                "Failures / Right censored:",
-                str(str(len(failures)) + "/" + str(len(right_censored))),
-                str("(" + round_and_string(frac_censored) + "% right censored)"),
-                "\n",
+                str(
+                    "The sigma parameter has been found to change significantly (>"
+                    + str(int(shape_change_threshold * 100))
+                    + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate.",
+                ),
             )
-            print(self.results.to_string(index=False), "\n")
-            print(self.change_of_parameters.to_string(index=False))
-            if shape_change_exceeded is True:
-                print(
-                    str(
-                        "The sigma parameter has been found to change significantly (>"
-                        + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate.",
-                    ),
-                )
-            print("\n", self.goodness_of_fit.to_string(index=False), "\n")
+        print("\n", self.goodness_of_fit.to_string(index=False), "\n")
+        print(
+            "If this model is being used for the Arrhenius Model, a = Ea/K_B ==> Ea =",
+            round(self.a * 8.617333262145 * 10**-5, 5),
+            "eV\n",
+        )
+
+        if self.__use_level_stress is not None:
             print(
-                "If this model is being used for the Arrhenius Model, a = Ea/K_B ==> Ea =",
-                round(self.a * 8.617333262145 * 10**-5, 5),
-                "eV\n",
+                str(
+                    "At the use level stress of "
+                    + round_and_string(self.__use_level_stress)
+                    + ", the mean life is "
+                    + str(round(self.mean_life, 5))
+                    + "\n",
+                ),
             )
 
-            if use_level_stress is not None:
-                print(
-                    str(
-                        "At the use level stress of "
-                        + round_and_string(use_level_stress)
-                        + ", the mean life is "
-                        + str(round(self.mean_life, 5))
-                        + "\n",
-                    ),
-                )
-
-        self.probability_plot = ALT_prob_plot(
+    def probability_plot(self, ax: bool | Axes = True):
+        probability_plot = ALT_prob_plot(
             dist="Normal",
             model="Exponential",
-            stresses_for_groups=stresses_for_groups,
-            failure_groups=failure_groups,
-            right_censored_groups=right_censored_groups,
-            life_func=life_func,
+            stresses_for_groups=self.__stresses_for_groups,
+            failure_groups=self.__failure_groups,
+            right_censored_groups=self.__right_censored_groups,
+            life_func=self.life_func,
             shape=self.sigma,
-            scale_for_change_df=mus_for_change_df,
-            shape_for_change_df=sigmas_for_change_df,
-            use_level_stress=use_level_stress,
-            ax=show_probability_plot,
+            scale_for_change_df=self.__mus_for_change_df,
+            shape_for_change_df=self.__sigmas_for_change_df,
+            use_level_stress=self.__use_level_stress,
+            ax=ax,
         )
+        return probability_plot
 
-        self.life_stress_plot = life_stress_plot(
+    def life_stress_plot(self, ax: bool | Axes = True):
+        life_stress = life_stress_plot(
             dist="Normal",
             model="Exponential",
-            life_func=life_func,
-            failure_groups=failure_groups,
-            stresses_for_groups=stresses_for_groups,
-            use_level_stress=use_level_stress,
-            ax=show_life_stress_plot,
+            life_func=self.life_func,
+            failure_groups=self.__failure_groups,
+            stresses_for_groups=self.__stresses_for_groups,
+            use_level_stress=self.__use_level_stress,
+            ax=ax,
         )
+        return life_stress
+
+    def life_func(self, S1):
+        life = self.b * np.exp(self.a / S1)
+        return life
 
     @staticmethod
     def logf(t, T, a, b, sigma):  # Log PDF
@@ -493,15 +500,6 @@ class Fit_Normal_Eyring:
     use_level_stress : int, float, optional
         The use level stress at which you want to know the mean life. Optional
         input.
-    print_results : bool, optional
-        True/False. Default is True. Prints the results to the console.
-    show_probability_plot : bool, object, optional
-        True/False. Default is True. Provides a probability plot of the fitted
-        ALT model. If an axes object is passed it will be used.
-    show_life_stress_plot : bool, str, object, optional
-        If True the life-stress plot will be shown. To hide the life-stress
-        plot use False. To swap the axes and show a stress-life plot use
-        'swap'. If an axes handle is passed it will be used. Default is True.
     CI : float, optional
         Confidence interval for estimating confidence limits on parameters. Must
         be between 0 and 1. Default is 0.95 for 95% CI.
@@ -585,9 +583,6 @@ class Fit_Normal_Eyring:
         use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
-        show_probability_plot=True,
-        show_life_stress_plot=True,
-        print_results=True,
     ):
         inputs = alt_single_stress_fitters_input_checking(
             dist="Normal",
@@ -748,12 +743,9 @@ class Fit_Normal_Eyring:
         }
         self.goodness_of_fit = pd.DataFrame(data=GoF_data, columns=["Goodness of fit", "Value"])
 
-        def life_func(S1):
-            return 1 / S1 * np.exp(-(self.c - self.a / S1))
-
         # use level stress calculations
         if use_level_stress is not None:
-            self.mu_at_use_stress = life_func(S1=use_level_stress)
+            self.mu_at_use_stress = self.life_func(S1=use_level_stress)
             self.distribution_at_use_stress = Normal_Distribution(mu=self.mu_at_use_stress, sigma=self.sigma)
             self.mean_life = self.distribution_at_use_stress.mean
 
@@ -761,9 +753,9 @@ class Fit_Normal_Eyring:
         new_mus = []
         AF = []
         for stress in stresses_for_groups:
-            new_mus.append(life_func(S1=stress))
+            new_mus.append(self.life_func(S1=stress))
             if use_level_stress is not None:
-                AF.append(life_func(S1=use_level_stress) / life_func(S1=stress))
+                AF.append(self.life_func(S1=use_level_stress) / self.life_func(S1=stress))
         common_sigmas = np.ones_like(stresses_for_groups) * self.sigma
         sigma_differences = []
         shape_change_exceeded = False
@@ -779,8 +771,8 @@ class Fit_Normal_Eyring:
                     sigma_differences.append(str("+" + str(round(sigma_diff * 100, 2)) + "%"))
                 else:
                     sigma_differences.append(str(str(round(sigma_diff * 100, 2)) + "%"))
-        self.__scale_for_change_df = mus_for_change_df
-        self.__shape_for_change_df = sigmas_for_change_df
+        self.__mus_for_change_df = mus_for_change_df
+        self.__sigmas_for_change_df = sigmas_for_change_df
 
         if use_level_stress is not None:
             change_of_parameters_data = {
@@ -805,75 +797,88 @@ class Fit_Normal_Eyring:
             data=change_of_parameters_data,
             columns=list(change_of_parameters_data.keys()),
         )
+        self.__failures = failures
+        self.__right_censored = right_censored
+        self.__CI: float = CI
+        self.__shape_change_exceeded = shape_change_exceeded
+        self.__use_level_stress = use_level_stress
 
-        if print_results is True:
-            n = len(failures) + len(right_censored)
-            CI_rounded = CI * 100
-            if CI_rounded % 1 == 0:
-                CI_rounded = int(CI * 100)
-            frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
-                frac_censored = int(frac_censored)
-            colorprint(
-                str("Results from Fit_Normal_Eyring (" + str(CI_rounded) + "% CI):"),
-                bold=True,
-                underline=True,
-            )
-            print("Analysis method: Maximum Likelihood Estimation (MLE)")
-            if self.optimizer is not None:
-                print("Optimizer:", self.optimizer)
+    def print_results(self) -> None:
+        n: int = len(self.__failures) + len(self.__right_censored)
+        CI_rounded: float = self.__CI * 100
+        if CI_rounded % 1 == 0:
+            CI_rounded = int(self.__CI * 100)
+        frac_censored = len(self.__right_censored) / n * 100
+        if frac_censored % 1 < 1e-10:
+            frac_censored = int(frac_censored)
+        colorprint(
+            str("Results from Fit_Normal_Eyring (" + str(CI_rounded) + "% CI):"),
+            bold=True,
+            underline=True,
+        )
+        print("Analysis method: Maximum Likelihood Estimation (MLE)")
+        if self.optimizer is not None:
+            print("Optimizer:", self.optimizer)
+        print(
+            "Failures / Right censored:",
+            str(str(len(self.__failures)) + "/" + str(len(self.__right_censored))),
+            str("(" + round_and_string(frac_censored) + "% right censored)"),
+            "\n",
+        )
+        print(self.results.to_string(index=False), "\n")
+        print(self.change_of_parameters.to_string(index=False))
+        if self.__shape_change_exceeded is True:
             print(
-                "Failures / Right censored:",
-                str(str(len(failures)) + "/" + str(len(right_censored))),
-                str("(" + round_and_string(frac_censored) + "% right censored)"),
-                "\n",
+                str(
+                    "The sigma parameter has been found to change significantly (>"
+                    + str(int(shape_change_threshold * 100))
+                    + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate.",
+                ),
             )
-            print(self.results.to_string(index=False), "\n")
-            print(self.change_of_parameters.to_string(index=False))
-            if shape_change_exceeded is True:
-                print(
-                    str(
-                        "The sigma parameter has been found to change significantly (>"
-                        + str(int(shape_change_threshold * 100))
-                        + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate.",
-                    ),
-                )
-            print("\n", self.goodness_of_fit.to_string(index=False), "\n")
+        print("\n", self.goodness_of_fit.to_string(index=False), "\n")
 
-            if use_level_stress is not None:
-                print(
-                    str(
-                        "At the use level stress of "
-                        + round_and_string(use_level_stress)
-                        + ", the mean life is "
-                        + str(round(self.mean_life, 5))
-                        + "\n",
-                    ),
-                )
+        if self.__use_level_stress is not None:
+            print(
+                str(
+                    "At the use level stress of "
+                    + round_and_string(self.__use_level_stress)
+                    + ", the mean life is "
+                    + str(round(self.mean_life, 5))
+                    + "\n",
+                ),
+            )
 
-        self.probability_plot = ALT_prob_plot(
+    def probability_plot(self, ax: bool | Axes = True):
+        prob_plot = ALT_prob_plot(
             dist="Normal",
             model="Eyring",
-            stresses_for_groups=stresses_for_groups,
-            failure_groups=failure_groups,
-            right_censored_groups=right_censored_groups,
-            life_func=life_func,
+            stresses_for_groups=self.__stresses_for_groups,
+            failure_groups=self.__failure_groups,
+            right_censored_groups=self.__right_censored_groups,
+            life_func=self.life_func,
             shape=self.sigma,
-            scale_for_change_df=mus_for_change_df,
-            shape_for_change_df=sigmas_for_change_df,
-            use_level_stress=use_level_stress,
-            ax=show_probability_plot,
+            scale_for_change_df=self.__mus_for_change_df,
+            shape_for_change_df=self.__sigmas_for_change_df,
+            use_level_stress=self.__use_level_stress,
+            ax=ax,
         )
+        return prob_plot
 
-        self.life_stress_plot = life_stress_plot(
+    def life_stress_plot(self, ax: bool | Axes = True):
+        life_stress = life_stress_plot(
             dist="Normal",
             model="Eyring",
-            life_func=life_func,
-            failure_groups=failure_groups,
-            stresses_for_groups=stresses_for_groups,
-            use_level_stress=use_level_stress,
-            ax=show_life_stress_plot,
+            life_func=self.life_func,
+            failure_groups=self.__failure_groups,
+            stresses_for_groups=self.__stresses_for_groups,
+            use_level_stress=self.__use_level_stress,
+            ax=ax,
         )
+        return life_stress
+
+    def life_func(self, S1):
+        life = 1 / S1 * np.exp(-(self.c - self.a / S1))
+        return life
 
     @staticmethod
     def logf(t, T, a, c, sigma):  # Log PDF

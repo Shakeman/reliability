@@ -320,3 +320,64 @@ def colorprint(
     print(
         BOLD + ITALIC + UNDERLINE + background_colors[background_color] + text_colors[text_color] + string + "\033[0m",
     )
+
+
+def print_dual_stress_fit_results(
+    dist_type: str,
+    optimizer: str,
+    len_failures: int,
+    len_right_cens: int,
+    CI: float,
+    results,
+    change_of_parameters,
+    shape_change_exceeded,
+    shape_change_threshold,
+    goodness_of_fit,
+    use_level_stress,
+    mean_life,
+) -> None:
+    n: int = len_failures + len_right_cens
+    CI_rounded = CI * 100
+    if CI_rounded % 1 == 0:
+        CI_rounded = int(CI * 100)
+    frac_censored = len_right_cens / n * 100
+    if frac_censored % 1 < 1e-10:
+        frac_censored = int(frac_censored)
+    colorprint(
+        str("Results from " + dist_type + " (" + str(CI_rounded) + "% CI):"),
+        bold=True,
+        underline=True,
+    )
+    print("Analysis method: Maximum Likelihood Estimation (MLE)")
+    if optimizer is not None:
+        print("Optimizer:", optimizer)
+    print(
+        "Failures / Right censored:",
+        str(str(len_failures) + "/" + str(len_right_cens)),
+        str("(" + round_and_string(frac_censored) + "% right censored)"),
+        "\n",
+    )
+    print(results.to_string(index=False), "\n")
+    print(change_of_parameters.to_string(index=False))
+    if shape_change_exceeded is True:
+        print(
+            str(
+                "The sigma parameter has been found to change significantly (>"
+                + str(int(shape_change_threshold * 100))
+                + "%) when fitting the ALT model.\nThis may indicate that a different failure mode is acting at different stress levels or that the Normal distribution may not be appropriate.",
+            ),
+        )
+    print("\n", goodness_of_fit.to_string(index=False), "\n")
+
+    if use_level_stress is not None:
+        print(
+            str(
+                "At the use level stress of "
+                + round_and_string(use_level_stress[0])
+                + ", "
+                + round_and_string(use_level_stress[1])
+                + ", the mean life is "
+                + str(round(mean_life, 5))
+                + "\n",
+            ),
+        )

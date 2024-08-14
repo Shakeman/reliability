@@ -3,6 +3,7 @@ from __future__ import annotations
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import scipy.stats as ss
 from autograd.differential_operators import hessian
@@ -221,14 +222,14 @@ class Fit_Normal_2P:
                 force_shape=force_sigma,
                 LL_func_force=Fit_Normal_2P.LL_fs,
             )
-            self.mu = MLE_results.scale
-            self.sigma = MLE_results.shape
+            self.mu: np.float64 = MLE_results.scale
+            self.sigma: np.float64 = MLE_results.shape
             self.method = "Maximum Likelihood Estimation (MLE)"
-            self.optimizer = MLE_results.optimizer
+            self.optimizer: str = MLE_results.optimizer
 
         # confidence interval estimates of parameters
-        Z = -ss.norm.ppf((1 - CI) / 2)
-        params = [self.mu, self.sigma]
+        Z: np.float64 = -ss.norm.ppf((1 - CI) / 2)
+        params: list[np.float64] = [self.mu, self.sigma]
         if force_sigma is None:
             hessian_matrix = hessian(Fit_Normal_2P.LL)(  # type: ignore
                 np.array(tuple(params)),
@@ -236,14 +237,16 @@ class Fit_Normal_2P:
                 np.array(tuple(right_censored)),
             )
             try:
-                covariance_matrix = np.linalg.inv(hessian_matrix)
-                self.mu_SE = abs(covariance_matrix[0][0]) ** 0.5
-                self.sigma_SE = abs(covariance_matrix[1][1]) ** 0.5
-                self.Cov_mu_sigma = covariance_matrix[0][1]
-                self.mu_upper = self.mu + (Z * self.mu_SE)  # these are unique to normal and lognormal mu params
-                self.mu_lower = self.mu + (-Z * self.mu_SE)
-                self.sigma_upper = self.sigma * (np.exp(Z * (self.sigma_SE / self.sigma)))
-                self.sigma_lower = self.sigma * (np.exp(-Z * (self.sigma_SE / self.sigma)))
+                covariance_matrix: npt.NDArray[np.float64] = np.linalg.inv(hessian_matrix)
+                self.mu_SE: np.float64 = abs(covariance_matrix[0][0]) ** 0.5
+                self.sigma_SE: np.float64 = abs(covariance_matrix[1][1]) ** 0.5
+                self.Cov_mu_sigma: np.float64 = covariance_matrix[0][1]
+                self.mu_upper: np.float64 = self.mu + (
+                    Z * self.mu_SE
+                )  # these are unique to normal and lognormal mu params
+                self.mu_lower: np.float64 = self.mu + (-Z * self.mu_SE)
+                self.sigma_upper: np.float64 = self.sigma * (np.exp(Z * (self.sigma_SE / self.sigma)))
+                self.sigma_lower: np.float64 = self.sigma * (np.exp(-Z * (self.sigma_SE / self.sigma)))
             except LinAlgError:
                 # this exception is rare but can occur with some optimizers
                 colorprint(
@@ -356,20 +359,20 @@ class Fit_Normal_2P:
         n = len(failures) + len(right_censored)
         if force_sigma is None:
             k = 2
-            LL2 = 2 * Fit_Normal_2P.LL(params, failures, right_censored)
+            LL2: np.float64 = 2 * Fit_Normal_2P.LL(params, failures, right_censored)
         else:
             k = 1
             LL2 = 2 * Fit_Normal_2P.LL_fs([self.mu], failures, right_censored, force_sigma)
-        self.loglik2 = LL2
-        self.loglik = LL2 * -0.5
+        self.loglik2: np.float64 = LL2
+        self.loglik: np.float64 = LL2 * -0.5
         if n - k - 1 > 0:
             self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = np.inf
-        self.BIC = np.log(n) * k + LL2
+        self.BIC: np.float64 = np.log(n) * k + LL2
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
+        self.AD: float = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
@@ -428,9 +431,11 @@ class Fit_Normal_2P:
         return anp.log((1 + erf(((mu - t) / sigma) / 2**0.5)) / 2)
 
     @staticmethod
-    def LL(params, T_f, T_rc):  # log likelihood function (2 parameter Normal)
-        LL_f = Fit_Normal_2P.logf(T_f, params[0], params[1]).sum()
-        LL_rc = Fit_Normal_2P.logR(T_rc, params[0], params[1]).sum()
+    def LL(
+        params: list[np.float64], T_f: npt.NDArray[np.float64], T_rc: npt.NDArray[np.float64]
+    ) -> np.float64:  # log likelihood function (2 parameter Normal)
+        LL_f: np.float64 = Fit_Normal_2P.logf(T_f, params[0], params[1]).sum()
+        LL_rc: np.float64 = Fit_Normal_2P.logR(T_rc, params[0], params[1]).sum()
         return -(LL_f + LL_rc)
 
     @staticmethod

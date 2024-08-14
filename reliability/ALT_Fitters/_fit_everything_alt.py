@@ -502,9 +502,6 @@ class Fit_Everything_ALT:
                 use_level_stress=use_level_stress,
                 CI=CI,
                 optimizer=optimizer,
-                show_probability_plot=False,
-                show_life_stress_plot=False,
-                print_results=False,
             )
             self.Lognormal_Exponential_a = self.__Lognormal_Exponential_params.a
             self.Lognormal_Exponential_b = self.__Lognormal_Exponential_params.b
@@ -544,9 +541,6 @@ class Fit_Everything_ALT:
                 use_level_stress=use_level_stress,
                 CI=CI,
                 optimizer=optimizer,
-                show_probability_plot=False,
-                show_life_stress_plot=False,
-                print_results=False,
             )
             self.Lognormal_Eyring_a = self.__Lognormal_Eyring_params.a
             self.Lognormal_Eyring_c = self.__Lognormal_Eyring_params.c
@@ -586,9 +580,6 @@ class Fit_Everything_ALT:
                 use_level_stress=use_level_stress,
                 CI=CI,
                 optimizer=optimizer,
-                show_probability_plot=False,
-                show_life_stress_plot=False,
-                print_results=False,
             )
             self.Lognormal_Power_a = self.__Lognormal_Power_params.a
             self.Lognormal_Power_n = self.__Lognormal_Power_params.n
@@ -999,9 +990,6 @@ class Fit_Everything_ALT:
                 use_level_stress=use_level_stress,
                 CI=CI,
                 optimizer=optimizer,
-                show_probability_plot=False,
-                show_life_stress_plot=False,
-                print_results=False,
             )
             self.Lognormal_Dual_Exponential_a = self.__Lognormal_Dual_Exponential_params.a
             self.Lognormal_Dual_Exponential_b = self.__Lognormal_Dual_Exponential_params.b
@@ -1681,92 +1669,14 @@ class Fit_Everything_ALT:
                 self._Fit_Everything_ALT__Weibull_Power_params.probability_plot(ax)
 
             elif item == "Lognormal_Exponential":
+                self._Fit_Everything_ALT__Lognormal_Exponential_params.probability_plot(ax)
 
-                def life_func(S1):
-                    return self.Lognormal_Exponential_b * np.exp(self.Lognormal_Exponential_a / S1)
-
-                stresses_for_groups = self._Fit_Everything_ALT__Lognormal_Exponential_params._Fit_Lognormal_Exponential__stresses_for_groups
-                scale_for_change_df = self._Fit_Everything_ALT__Lognormal_Exponential_params._Fit_Lognormal_Exponential__scale_for_change_df
-                shape_for_change_df = self._Fit_Everything_ALT__Lognormal_Exponential_params._Fit_Lognormal_Exponential__shape_for_change_df
-                failure_groups = (
-                    self._Fit_Everything_ALT__Lognormal_Exponential_params._Fit_Lognormal_Exponential__failure_groups
-                )
-                right_censored_groups = self._Fit_Everything_ALT__Lognormal_Exponential_params._Fit_Lognormal_Exponential__right_censored_groups
-                ALT_prob_plot(
-                    dist="Lognormal",
-                    model="Exponential",
-                    stresses_for_groups=stresses_for_groups,
-                    failure_groups=failure_groups,
-                    right_censored_groups=right_censored_groups,
-                    life_func=life_func,
-                    shape=self.Lognormal_Exponential_sigma,
-                    scale_for_change_df=scale_for_change_df,
-                    shape_for_change_df=shape_for_change_df,
-                    use_level_stress=use_level_stress,
-                    ax=ax,
-                )
             elif item == "Lognormal_Eyring":
+                self._Fit_Everything_ALT__Lognormal_Eyring_params.probability_plot(ax)
 
-                def life_func(S1):
-                    return 1 / S1 * np.exp(-(self.Lognormal_Eyring_c - self.Lognormal_Eyring_a / S1))
-
-                stresses_for_groups = (
-                    self._Fit_Everything_ALT__Lognormal_Eyring_params._Fit_Lognormal_Eyring__stresses_for_groups
-                )
-                scale_for_change_df = (
-                    self._Fit_Everything_ALT__Lognormal_Eyring_params._Fit_Lognormal_Eyring__scale_for_change_df
-                )
-                shape_for_change_df = (
-                    self._Fit_Everything_ALT__Lognormal_Eyring_params._Fit_Lognormal_Eyring__shape_for_change_df
-                )
-                failure_groups = self._Fit_Everything_ALT__Lognormal_Eyring_params._Fit_Lognormal_Eyring__failure_groups
-                right_censored_groups = (
-                    self._Fit_Everything_ALT__Lognormal_Eyring_params._Fit_Lognormal_Eyring__right_censored_groups
-                )
-                ALT_prob_plot(
-                    dist="Lognormal",
-                    model="Eyring",
-                    stresses_for_groups=stresses_for_groups,
-                    failure_groups=failure_groups,
-                    right_censored_groups=right_censored_groups,
-                    life_func=life_func,
-                    shape=self.Lognormal_Eyring_sigma,
-                    scale_for_change_df=scale_for_change_df,
-                    shape_for_change_df=shape_for_change_df,
-                    use_level_stress=use_level_stress,
-                    ax=ax,
-                )
             elif item == "Lognormal_Power":
+                self._Fit_Everything_ALT__Lognormal_Power_params.probability_plot(ax)
 
-                def life_func(S1):
-                    return self.Lognormal_Power_a * S1**self.Lognormal_Power_n
-
-                stresses_for_groups = (
-                    self._Fit_Everything_ALT__Lognormal_Power_params._Fit_Lognormal_Power__stresses_for_groups
-                )
-                scale_for_change_df = (
-                    self._Fit_Everything_ALT__Lognormal_Power_params._Fit_Lognormal_Power__scale_for_change_df
-                )
-                shape_for_change_df = (
-                    self._Fit_Everything_ALT__Lognormal_Power_params._Fit_Lognormal_Power__shape_for_change_df
-                )
-                failure_groups = self._Fit_Everything_ALT__Lognormal_Power_params._Fit_Lognormal_Power__failure_groups
-                right_censored_groups = (
-                    self._Fit_Everything_ALT__Lognormal_Power_params._Fit_Lognormal_Power__right_censored_groups
-                )
-                ALT_prob_plot(
-                    dist="Lognormal",
-                    model="Power",
-                    stresses_for_groups=stresses_for_groups,
-                    failure_groups=failure_groups,
-                    right_censored_groups=right_censored_groups,
-                    life_func=life_func,
-                    shape=self.Lognormal_Power_sigma,
-                    scale_for_change_df=scale_for_change_df,
-                    shape_for_change_df=shape_for_change_df,
-                    use_level_stress=use_level_stress,
-                    ax=ax,
-                )
             elif item == "Normal_Exponential":
                 self._Fit_Everything_ALT__Normal_Exponential_params.probability_plot(ax=ax)
 
@@ -1876,30 +1786,7 @@ class Fit_Everything_ALT:
                 self._Fit_Everything_ALT__Weibull_Dual_Power_params.probability_plot(ax=ax)
 
             elif item == "Lognormal_Dual_Exponential":
-
-                def life_func(S1, S2):
-                    return self.Lognormal_Dual_Exponential_c * np.exp(
-                        self.Lognormal_Dual_Exponential_a / S1 + self.Lognormal_Dual_Exponential_b / S2,
-                    )
-
-                stresses_for_groups = self._Fit_Everything_ALT__Lognormal_Dual_Exponential_params._Fit_Lognormal_Dual_Exponential__stresses_for_groups
-                scale_for_change_df = self._Fit_Everything_ALT__Lognormal_Dual_Exponential_params._Fit_Lognormal_Dual_Exponential__scale_for_change_df
-                shape_for_change_df = self._Fit_Everything_ALT__Lognormal_Dual_Exponential_params._Fit_Lognormal_Dual_Exponential__shape_for_change_df
-                failure_groups = self._Fit_Everything_ALT__Lognormal_Dual_Exponential_params._Fit_Lognormal_Dual_Exponential__failure_groups
-                right_censored_groups = self._Fit_Everything_ALT__Lognormal_Dual_Exponential_params._Fit_Lognormal_Dual_Exponential__right_censored_groups
-                ALT_prob_plot(
-                    dist="Lognormal",
-                    model="Dual_Exponential",
-                    stresses_for_groups=stresses_for_groups,
-                    failure_groups=failure_groups,
-                    right_censored_groups=right_censored_groups,
-                    life_func=life_func,
-                    shape=self.Lognormal_Dual_Exponential_sigma,
-                    scale_for_change_df=scale_for_change_df,
-                    shape_for_change_df=shape_for_change_df,
-                    use_level_stress=use_level_stress,
-                    ax=ax,
-                )
+                self._Fit_Everything_ALT__Lognormal_Dual_Exponential_params.probability_plot(ax=ax)
 
             elif item == "Lognormal_Power_Exponential":
 

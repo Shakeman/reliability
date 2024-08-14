@@ -39,9 +39,6 @@ def test_Fit_Lognormal_Exponential():
         right_censored=data.right_censored,
         right_censored_stress=data.right_censored_stresses,
         use_level_stress=300,
-        show_life_stress_plot=True,
-        show_probability_plot=True,
-        print_results=True,
     )
     plt.close("all")
     assert_allclose(model.a, 2033.15392013689, rtol=rtol, atol=atol)
@@ -72,9 +69,6 @@ def test_Fit_Lognormal_Eyring():
         right_censored=data.right_censored,
         right_censored_stress=data.right_censored_stresses,
         use_level_stress=300,
-        show_life_stress_plot=True,
-        show_probability_plot=True,
-        print_results=True,
     )
     plt.close("all")
     assert_allclose(model.a, 1533.14724753, rtol=rtol, atol=atol)
@@ -105,9 +99,6 @@ def test_Fit_Lognormal_Power():
         right_censored=data.right_censored,
         right_censored_stress=data.right_censored_stresses,
         use_level_stress=300,
-        show_life_stress_plot=True,
-        show_probability_plot=True,
-        print_results=True,
     )
     plt.close("all")
     assert_allclose(
@@ -228,9 +219,6 @@ def test_Fit_Lognormal_Dual_Exponential():
         right_censored_stress_1=data.right_censored_stresses_1,
         right_censored_stress_2=data.right_censored_stresses_2,
         use_level_stress=np.array([100, 0.2]),
-        show_life_stress_plot=True,
-        show_probability_plot=True,
-        print_results=True,
     )
     plt.close("all")
     assert_allclose(model.a, 73.25301902, rtol=rtol, atol=atol)

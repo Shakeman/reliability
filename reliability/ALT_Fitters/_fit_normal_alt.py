@@ -1,3 +1,5 @@
+from typing import Literal
+
 import autograd.numpy as anp
 import numpy as np
 import numpy.typing as npt
@@ -149,7 +151,7 @@ class Fit_Normal_Exponential:
         right_censored=None,
         right_censored_stress=None,
         use_level_stress: float | None = None,
-        CI=0.95,
+        CI: float = 0.95,
         optimizer: str | None = None,
     ):
         inputs = alt_single_stress_fitters_input_checking(
@@ -179,33 +181,27 @@ class Fit_Normal_Exponential:
         self.__stresses_for_groups = inputs.stresses_for_groups
 
         # obtain the initial guess for the life stress model and the life distribution
-        life_stress_guess = ALT_least_squares(model="Exponential", failures=failures, stress_1_array=failure_stress)
+        life_stress_guess: list[np.float64] = ALT_least_squares(
+            model="Exponential", failures=failures, stress_1_array=failure_stress
+        )
 
         # obtain the common shape parameter
-        sigmas = []
-        sigmas_for_change_df = []
-        mus_for_change_df = []
-        for i in range(len(stresses_for_groups)):
-            f = failure_groups[i]
-            rc = None if right_censored_groups is None else right_censored_groups[i]
+        fits: list[Fit_Normal_2P | float] = [
+            Fit_Normal_2P(failures=f, right_censored=rc, print_results=False, show_probability_plot=False)
+            if len(f) > 1
+            else np.nan
+            for f, rc in zip(failure_groups, right_censored_groups)
+        ]
+        sigmas: list[np.float64 | float] = [fit.sigma if len(f) > 1 else np.nan for f, fit in zip(failure_groups, fits)]
+        mus_for_change_df: list[np.float64 | float] = [
+            fit.mu if len(f) > 1 else np.nan for f, fit in zip(failure_groups, fits)
+        ]
 
-            if len(f) > 1:
-                fit = Fit_Normal_2P(
-                    failures=f,
-                    right_censored=rc,
-                    print_results=False,
-                    show_probability_plot=False,
-                )
-                sigmas.append(fit.sigma)
-                sigmas_for_change_df.append(fit.sigma)
-                mus_for_change_df.append(fit.mu)
-            else:  # 1 failure at this stress
-                sigmas_for_change_df.append(0)
-                mus_for_change_df.append("")
-
-        common_sigma = float(np.average(sigmas)) if len(sigmas) > 0 else 1  # guess in the absence of enough points
+        common_sigma: float | Literal[1] = (
+            float(np.nanmean(sigmas)) if len(sigmas) > 0 else 1
+        )  # guess in the absence of enough points
         # compile the guess for the MLE method
-        guess = [
+        guess: list[np.float64 | float] = [
             life_stress_guess[0],
             life_stress_guess[1],
             common_sigma,
@@ -223,15 +219,15 @@ class Fit_Normal_Exponential:
             right_censored=right_censored,
             right_censored_stress_1=right_censored_stress,
         )
-        self.a = MLE_results.a
-        self.b = MLE_results.b
-        self.sigma = MLE_results.sigma
-        self.success = MLE_results.success
+        self.a: np.float64 = MLE_results.a
+        self.b: np.float64 = MLE_results.b
+        self.sigma: np.float64 = MLE_results.sigma
+        self.success: bool = MLE_results.success
         self.optimizer: str = MLE_results.optimizer
 
         # confidence interval estimates of parameters
-        Z = -ss.norm.ppf((1 - CI) / 2)
-        params = [self.a, self.b, self.sigma]
+        Z: np.float64 = -ss.norm.ppf((1 - CI) / 2)
+        params: list[np.float64] = [self.a, self.b, self.sigma]
         hessian_matrix = hessian(LL_func)(  # type: ignore
             np.array(tuple(params)),
             np.array(tuple(failures)),
@@ -241,18 +237,18 @@ class Fit_Normal_Exponential:
         )
         try:
             covariance_matrix = np.linalg.inv(hessian_matrix)
-            self.a_SE = abs(covariance_matrix[0][0]) ** 0.5
-            self.b_SE = abs(covariance_matrix[1][1]) ** 0.5
-            self.sigma_SE = abs(covariance_matrix[2][2]) ** 0.5
+            self.a_SE: np.float64 = abs(covariance_matrix[0][0]) ** 0.5
+            self.b_SE: np.float64 = abs(covariance_matrix[1][1]) ** 0.5
+            self.sigma_SE: np.float64 = abs(covariance_matrix[2][2]) ** 0.5
             # a can be positive or negative
-            self.a_upper = self.a + (Z * self.a_SE)
-            self.a_lower = self.a + (-Z * self.a_SE)
+            self.a_upper: np.float64 = self.a + (Z * self.a_SE)
+            self.a_lower: np.float64 = self.a + (-Z * self.a_SE)
             # b is strictly positive
-            self.b_upper = self.b * (np.exp(Z * (self.b_SE / self.b)))
-            self.b_lower = self.b * (np.exp(-Z * (self.b_SE / self.b)))
+            self.b_upper: np.float64 = self.b * (np.exp(Z * (self.b_SE / self.b)))
+            self.b_lower: np.float64 = self.b * (np.exp(-Z * (self.b_SE / self.b)))
             # sigma is strictly positive
-            self.sigma_upper = self.sigma * (np.exp(Z * (self.sigma_SE / self.sigma)))
-            self.sigma_lower = self.sigma * (np.exp(-Z * (self.sigma_SE / self.sigma)))
+            self.sigma_upper: np.float64 = self.sigma * (np.exp(Z * (self.sigma_SE / self.sigma)))
+            self.sigma_lower: np.float64 = self.sigma * (np.exp(-Z * (self.sigma_SE / self.sigma)))
         except LinAlgError:
             # this exception is rare but can occur with some optimizers and small data sets
             colorprint(
@@ -265,9 +261,9 @@ class Fit_Normal_Exponential:
                 ),
                 text_color="red",
             )
-            self.a_SE = 0
-            self.b_SE = 0
-            self.sigma_SE = 0
+            self.a_SE = 0.0
+            self.b_SE = 0.0
+            self.sigma_SE = 0.0
             self.a_upper = self.a
             self.a_lower = self.a
             self.b_upper = self.b
@@ -295,16 +291,16 @@ class Fit_Normal_Exponential:
         )
 
         # goodness of fit dataframe
-        n = len(failures) + len(right_censored)
-        k = len(guess)
-        LL2 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
-        self.loglik2 = LL2
-        self.loglik = LL2 * -0.5
+        n: int = len(failures) + len(right_censored)
+        k: int = len(guess)
+        LL2: np.float64 = 2 * LL_func(params, failures, right_censored, failure_stress, right_censored_stress)
+        self.loglik2: np.float64 = LL2
+        self.loglik: np.float64 = LL2 * -0.5
         if n - k - 1 > 0:
-            self.AICc = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
+            self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = np.inf
-        self.BIC = np.log(n) * k + LL2
+        self.BIC: np.float64 = np.log(n) * k + LL2
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC"],
             "Value": [self.loglik, self.AICc, self.BIC],
@@ -313,40 +309,35 @@ class Fit_Normal_Exponential:
 
         # use level stress calculations
         if use_level_stress is not None:
-            self.mu_at_use_stress = self.life_func(S1=use_level_stress)
+            self.mu_at_use_stress: np.float64 = self.life_func(S1=use_level_stress)
             self.distribution_at_use_stress = Normal_Distribution(mu=self.mu_at_use_stress, sigma=self.sigma)
-            self.mean_life = self.distribution_at_use_stress.mean
+            self.mean_life: np.float64 = self.distribution_at_use_stress.mean
 
         # change of parameters dataframe
-        new_mus = []
-        AF = []
-        for stress in stresses_for_groups:
-            new_mus.append(self.life_func(S1=stress))
-            if use_level_stress is not None:
-                AF.append(self.life_func(S1=use_level_stress) / self.life_func(S1=stress))
-        common_sigmas = np.ones_like(stresses_for_groups) * self.sigma
+        new_mus: npt.NDArray[np.float64] = self.life_func(S1=stresses_for_groups)
+        AF: npt.NDArray[np.float64] | None = (
+            self.life_func(S1=use_level_stress) / new_mus if use_level_stress is not None else None
+        )
+        common_sigmas: npt.NDArray[np.float64] = np.ones_like(stresses_for_groups) * self.sigma
         sigma_differences = []
-        shape_change_exceeded = False
+        shape_change_exceeded: bool = False
         for i in range(len(stresses_for_groups)):
-            if sigmas_for_change_df[i] == 0:
-                sigmas_for_change_df[i] = ""  # replace with space
-                sigma_differences.append("")
+            if isinstance(sigmas[i], float) and np.isnan(sigmas[i]):
+                sigma_differences.append(np.nan)
             else:
-                sigma_diff = (common_sigmas[i] - sigmas_for_change_df[i]) / sigmas_for_change_df[i]
+                sigma_diff = (common_sigmas[i] - sigmas[i]) / sigmas[i]
                 if abs(sigma_diff) > shape_change_threshold:
                     shape_change_exceeded = True
-                if sigma_diff > 0:
-                    sigma_differences.append(str("+" + str(round(sigma_diff * 100, 2)) + "%"))
-                else:
-                    sigma_differences.append(str(str(round(sigma_diff * 100, 2)) + "%"))
-        self.__mus_for_change_df = mus_for_change_df
-        self.__sigmas_for_change_df = sigmas_for_change_df
+                sigma_differences.append(f"{sigma_diff * 100:+.2f}%")
+
+        self.__mus_for_change_df: list[np.float64 | float] = mus_for_change_df
+        self.__sigmas_for_change_df: list[np.float64 | float] = sigmas
 
         if use_level_stress is not None:
             change_of_parameters_data = {
                 "stress": stresses_for_groups,
                 "original mu": mus_for_change_df,
-                "original sigma": sigmas_for_change_df,
+                "original sigma": sigmas,
                 "new mu": new_mus,
                 "common sigma": common_sigmas,
                 "sigma change": sigma_differences,
@@ -356,7 +347,7 @@ class Fit_Normal_Exponential:
             change_of_parameters_data = {
                 "stress": stresses_for_groups,
                 "original mu": mus_for_change_df,
-                "original sigma": sigmas_for_change_df,
+                "original sigma": sigmas,
                 "new mu": new_mus,
                 "common sigma": common_sigmas,
                 "sigma change": sigma_differences,
@@ -368,8 +359,8 @@ class Fit_Normal_Exponential:
         self.__failures = failures
         self.__right_censored = right_censored
         self.__CI: float = CI
-        self.__shape_change_exceeded = shape_change_exceeded
-        self.__use_level_stress = use_level_stress
+        self.__shape_change_exceeded: bool = shape_change_exceeded
+        self.__use_level_stress: float | None = use_level_stress
 
     def print_results(self):
         n: int = len(self.__failures) + len(self.__right_censored)

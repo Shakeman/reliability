@@ -161,16 +161,12 @@ class Fit_Normal_2P:
         self,
         failures=None,
         right_censored=None,
-        show_probability_plot=True,
-        print_results=True,
         CI: float = 0.95,
         quantiles=None,
         optimizer: str | None = None,
         CI_type: str | None = "time",
         method: str | None = "MLE",
         force_sigma: float | None = None,
-        downsample_scatterplot=True,
-        **kwargs,
     ):
         inputs = fitters_input_checking(
             dist="Normal_2P",
@@ -356,7 +352,7 @@ class Fit_Normal_2P:
             )
 
         # goodness of fit measures
-        n = len(failures) + len(right_censored)
+        n: int = len(failures) + len(right_censored)
         if force_sigma is None:
             k = 2
             LL2: np.float64 = 2 * Fit_Normal_2P.LL(params, failures, right_censored)
@@ -378,49 +374,54 @@ class Fit_Normal_2P:
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
         self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
+        self.__right_censored = right_censored
+        self.__failures = failures
+        self.__CI = CI
+        self.__CI_type = CI_type
+        self.__n = n
 
-        if print_results is True:
-            CI_rounded = CI * 100
-            if CI_rounded % 1 == 0:
-                CI_rounded = int(CI * 100)
-            frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
-                frac_censored = int(frac_censored)
-            colorprint(
-                str("Results from Fit_Normal_2P (" + str(CI_rounded) + "% CI):"),
-                bold=True,
-                underline=True,
-            )
-            print("Analysis method:", self.method)
-            if self.optimizer is not None:
-                print("Optimizer:", self.optimizer)
-            print(
-                "Failures / Right censored:",
-                str(str(len(failures)) + "/" + str(len(right_censored))),
-                str("(" + round_and_string(frac_censored) + "% right censored)"),
-                "\n",
-            )
-            print(self.results.to_string(index=False), "\n")
-            print(self.goodness_of_fit.to_string(index=False), "\n")
+    def print_results(self):
+        CI_rounded = self.__CI * 100
+        if CI_rounded % 1 == 0:
+            CI_rounded = int(self.__CI * 100)
+        frac_censored = len(self.__right_censored) / self.__n * 100
+        if frac_censored % 1 < 1e-10:
+            frac_censored = int(frac_censored)
+        colorprint(
+            str("Results from Fit_Normal_2P (" + str(CI_rounded) + "% CI):"),
+            bold=True,
+            underline=True,
+        )
+        print("Analysis method:", self.method)
+        if self.optimizer is not None:
+            print("Optimizer:", self.optimizer)
+        print(
+            "Failures / Right censored:",
+            str(str(len(self.__failures)) + "/" + str(len(self.__right_censored))),
+            str("(" + round_and_string(frac_censored) + "% right censored)"),
+            "\n",
+        )
+        print(self.results.to_string(index=False), "\n")
+        print(self.goodness_of_fit.to_string(index=False), "\n")
 
-            if quantiles is not None:
-                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
-                print(self.quantiles.to_string(index=False), "\n")
+        if self.quantiles is not None:
+            print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
+            print(self.quantiles.to_string(index=False), "\n")
 
-        if show_probability_plot is True:
-            from reliability.Probability_plotting import Normal_probability_plot
+    def probability_plot(self, downsample_scatterplot=True, **kwargs):
+        from reliability.Probability_plotting import Normal_probability_plot
 
-            rc = None if len(right_censored) == 0 else right_censored
-            Normal_probability_plot(
-                failures=failures,
-                right_censored=rc,
-                _fitted_dist_params=self,
-                CI=CI,
-                CI_type=CI_type,
-                downsample_scatterplot=downsample_scatterplot,
-                **kwargs,
-            )
-            self.probability_plot = plt.gca()
+        rc = None if len(self.__right_censored) == 0 else self.__right_censored
+        Normal_probability_plot(
+            failures=self.__failures,
+            right_censored=rc,
+            _fitted_dist_params=self,
+            CI=self.__CI,
+            CI_type=self.__CI_type,
+            downsample_scatterplot=downsample_scatterplot,
+            **kwargs,
+        )
+        self.probability_plot = plt.gca()
 
     @staticmethod
     def logf(t, mu, sigma):  # Log PDF (Normal)

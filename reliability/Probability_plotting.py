@@ -1091,8 +1091,6 @@ def Normal_probability_plot(
             fit = Fit_Normal_2P(
                 failures=failures,
                 right_censored=right_censored,
-                show_probability_plot=False,
-                print_results=False,
             )
             mu = fit.mu
             sigma = fit.sigma

@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import scipy.stats as ss
 
@@ -10,16 +11,16 @@ from reliability.Utils._array_utils import (
 
 def distributions_input_checking(
     self,
-    func,
+    func: str,
     xvals,
-    xmin,
-    xmax,
-    show_plot=None,
-    plot_CI=None,
-    CI_type=None,
-    CI=None,
-    CI_y=None,
-    CI_x=None,
+    xmin: None | float,
+    xmax: None | float,
+    show_plot: None | bool = None,
+    plot_CI: None | bool = None,
+    CI_type: None | str = None,
+    CI: None | float = None,
+    CI_y: None | list[float] | npt.NDArray[np.float64] | float = None,
+    CI_x: None | list[float] | npt.NDArray[np.float64] | float = None,
 ):
     """Performs checks and sets default values for the inputs to distributions
     sub function (PDF, CDF, SF, HF, CHF)
@@ -131,7 +132,7 @@ def distributions_input_checking(
         X = xvals
         show_plot = False
     else:
-        X = generate_X_array(dist=self, xvals=xvals, xmin=xmin, xmax=xmax)
+        X: npt.NDArray[np.float64] = generate_X_array(dist=self, xvals=xvals, xmin=xmin, xmax=xmax)
 
     if CI is None and self.Z is None:
         CI = 0.95
@@ -144,7 +145,7 @@ def distributions_input_checking(
     if show_plot is None:
         show_plot = True
 
-    no_CI_array = ["None", "NONE", "none", "OFF", "Off", "off"]
+    no_CI_array: list[str] = ["None", "NONE", "none", "OFF", "Off", "off"]
     if self.name == "Exponential":
         if CI_type not in no_CI_array and CI_type is not None:
             colorprint(
@@ -192,7 +193,7 @@ def distributions_input_checking(
             CI_x = None
 
     if CI_x is not None:
-        if type(CI_x) in [float, int]:
+        if isinstance(CI_x, float | int):
             if CI_x <= 0 and self.name not in ["Normal", "Gumbel"]:
                 raise ValueError("CI_x must be greater than 0")
             CI_x = np.array([CI_x])  # package as array. Will be unpacked later
@@ -202,7 +203,7 @@ def distributions_input_checking(
                 raise ValueError("CI_x values must all be greater than 0")
 
     if CI_y is not None:
-        if type(CI_y) in [float, int]:
+        if isinstance(CI_y, float | int):
             if CI_y <= 0:
                 raise ValueError("CI_y must be greater than 0")
             if CI_y >= 1 and func in ["CDF", "SF"]:

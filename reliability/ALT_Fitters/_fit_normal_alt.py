@@ -187,9 +187,7 @@ class Fit_Normal_Exponential:
 
         # obtain the common shape parameter
         fits: list[Fit_Normal_2P | float] = [
-            Fit_Normal_2P(failures=f, right_censored=rc, print_results=False, show_probability_plot=False)
-            if len(f) > 1
-            else np.nan
+            Fit_Normal_2P(failures=f, right_censored=rc) if len(f) > 1 else np.nan
             for f, rc in zip(failure_groups, right_censored_groups)
         ]
         sigmas: list[np.float64 | float] = [fit.sigma if len(f) > 1 else np.nan for f, fit in zip(failure_groups, fits)]
@@ -616,8 +614,6 @@ class Fit_Normal_Eyring:
                 fit = Fit_Normal_2P(
                     failures=f,
                     right_censored=rc,
-                    print_results=False,
-                    show_probability_plot=False,
                 )
                 sigmas.append(fit.sigma)
                 sigmas_for_change_df.append(fit.sigma)
@@ -1051,8 +1047,6 @@ class Fit_Normal_Power:
                 fit = Fit_Normal_2P(
                     failures=f,
                     right_censored=rc,
-                    print_results=False,
-                    show_probability_plot=False,
                 )
                 sigmas.append(fit.sigma)
                 sigmas_for_change_df.append(fit.sigma)
@@ -1518,8 +1512,6 @@ class Fit_Normal_Dual_Exponential:
                 fit = Fit_Normal_2P(
                     failures=f,
                     right_censored=rc,
-                    print_results=False,
-                    show_probability_plot=False,
                 )
                 sigmas.append(fit.sigma)
                 sigmas_for_change_df.append(fit.sigma)
@@ -2015,8 +2007,6 @@ class Fit_Normal_Power_Exponential:
                 fit = Fit_Normal_2P(
                     failures=f,
                     right_censored=rc,
-                    print_results=False,
-                    show_probability_plot=False,
                 )
                 sigmas.append(fit.sigma)
                 sigmas_for_change_df.append(fit.sigma)
@@ -2508,8 +2498,6 @@ class Fit_Normal_Dual_Power:
                 fit = Fit_Normal_2P(
                     failures=f,
                     right_censored=rc,
-                    print_results=False,
-                    show_probability_plot=False,
                 )
                 sigmas.append(fit.sigma)
                 sigmas_for_change_df.append(fit.sigma)

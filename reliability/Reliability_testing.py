@@ -1455,8 +1455,6 @@ def likelihood_plot(
             failures=failures,
             right_censored=right_censored,
             method=method,
-            show_probability_plot=False,
-            print_results=False,
         )
         X_array = np.linspace(
             fit.mu_lower * grid_lower_multiplier,

@@ -25,8 +25,6 @@ def test_Fit_Normal_2P():
         failures=data.failures,
         right_censored=data.right_censored,
         method="MLE",
-        show_probability_plot=True,
-        print_results=True,
     )
     assert_allclose(MLE.mu, 49.01641649924297, rtol=rtol, atol=atol)
     assert_allclose(MLE.sigma, 6.653242350482225, rtol=rtol, atol=atol)
@@ -40,8 +38,6 @@ def test_Fit_Normal_2P():
         failures=data.failures,
         right_censored=data.right_censored,
         method="LS",
-        show_probability_plot=True,
-        print_results=True,
     )
     assert_allclose(LS.mu, 48.90984235374872, rtol=rtol, atol=atol)
     assert_allclose(LS.sigma, 6.990098677785364, rtol=rtol, atol=atol)

@@ -556,8 +556,6 @@ class Fit_Everything:
                 right_censored=right_censored,
                 method=method,
                 optimizer=optimizer,
-                show_probability_plot=False,
-                print_results=False,
             )
             self.Normal_2P_mu = self.__Normal_2P_params.mu
             self.Normal_2P_sigma = self.__Normal_2P_params.sigma

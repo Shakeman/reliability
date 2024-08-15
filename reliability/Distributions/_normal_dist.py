@@ -63,31 +63,31 @@ class Normal_Distribution:
     """
 
     def __init__(self, mu=None, sigma=None, **kwargs):
-        self.name = "Normal"
-        self.name2 = "Normal_2P"
+        self.name: str = "Normal"
+        self.name2: str = "Normal_2P"
         if mu is None or sigma is None:
             raise ValueError("Parameters mu and sigma must be specified. Eg. Normal_Distribution(mu=5,sigma=2)")
-        self.mu = float(mu)
-        self.sigma = float(sigma)
-        self.parameters = np.array([self.mu, self.sigma])
-        self.mean = mu
-        self.variance = sigma**2
-        self.standard_deviation = sigma
-        self.skewness = 0
-        self.kurtosis = 3
-        self.excess_kurtosis = 0
-        self.median = mu
-        self.mode = mu
-        self.param_title = str("μ=" + round_and_string(self.mu, dec) + ",σ=" + round_and_string(self.sigma, dec))
-        self.param_title_long = str(
+        self.parameters: npt.NDArray[np.float64] = np.array([float(mu), float(sigma)])
+        self.mu: np.float64 = self.parameters[0]
+        self.sigma: np.float64 = self.parameters[1]
+        self.mean: np.float64 = self.mu
+        self.variance: np.float64 = self.sigma**2
+        self.standard_deviation: np.float64 = self.sigma
+        self.skewness: int = 0
+        self.kurtosis: int = 3
+        self.excess_kurtosis: int = 0
+        self.median: np.float64 = self.mu
+        self.mode: np.float64 = self.mu
+        self.param_title: str = str("μ=" + round_and_string(self.mu, dec) + ",σ=" + round_and_string(self.sigma, dec))
+        self.param_title_long: str = str(
             "Normal Distribution (μ="
             + round_and_string(self.mu, dec)
             + ",σ="
             + round_and_string(self.sigma, dec)
             + ")",
         )
-        self.b5 = ss.norm.ppf(0.05, loc=self.mu, scale=self.sigma)
-        self.b95 = ss.norm.ppf(0.95, loc=self.mu, scale=self.sigma)
+        self.b5: np.float64 = ss.norm.ppf(0.05, loc=self.mu, scale=self.sigma)
+        self.b95: np.float64 = ss.norm.ppf(0.95, loc=self.mu, scale=self.sigma)
 
         # extracts values for confidence interval plotting
         if "mu_SE" in kwargs:

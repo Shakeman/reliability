@@ -184,15 +184,18 @@ class Fit_Normal_Exponential:
         life_stress_guess: list[np.float64] = ALT_least_squares(
             model="Exponential", failures=failures, stress_1_array=failure_stress
         )
-
+        if right_censored_groups is None:
+            right_censored_groups = []
         # obtain the common shape parameter
-        fits: list[Fit_Normal_2P | float] = [
-            Fit_Normal_2P(failures=f, right_censored=rc) if len(f) > 1 else np.nan
+        fits: list[Fit_Normal_2P | np.float64] = [
+            Fit_Normal_2P(failures=f, right_censored=rc) if len(f) > 1 else np.float64(np.nan)
             for f, rc in zip(failure_groups, right_censored_groups)
         ]
-        sigmas: list[np.float64 | float] = [fit.sigma if len(f) > 1 else np.nan for f, fit in zip(failure_groups, fits)]
-        mus_for_change_df: list[np.float64 | float] = [
-            fit.mu if len(f) > 1 else np.nan for f, fit in zip(failure_groups, fits)
+        sigmas: list[np.float64] = [
+            fit.sigma if len(f) > 1 else np.float64(np.nan) for f, fit in zip(failure_groups, fits)
+        ]
+        mus_for_change_df: list[np.float64] = [
+            fit.mu if len(f) > 1 else np.float64(np.nan) for f, fit in zip(failure_groups, fits)
         ]
 
         common_sigma: float | Literal[1] = (

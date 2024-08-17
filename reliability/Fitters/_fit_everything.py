@@ -153,7 +153,7 @@ class Fit_Everything:
 
     def __init__(
         self,
-        failures: npt.NDArray[np.float64] | None = None,
+        failures: npt.NDArray[np.float64],
         right_censored: npt.NDArray[np.float64] | None = None,
         exclude=None,
         sort_by="BIC",

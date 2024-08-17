@@ -332,9 +332,9 @@ class fitters_input_checking:
     def __init__(
         self,
         dist: str,
-        failures,
+        failures: npt.NDArray[np.float64],
         method: str | None = None,
-        right_censored=None,
+        right_censored: npt.NDArray[np.float64] | None = None,
         optimizer: str | None = None,
         CI: float = 0.95,
         quantiles: bool | str | list | np.ndarray | None = False,
@@ -367,7 +367,7 @@ class fitters_input_checking:
 
         # fill right_censored with empty list if not specified
         if right_censored is None:
-            right_censored = []
+            right_censored = np.asarray([]).astype(float)
 
         # type checking and converting to arrays for failures and right_censored
         if type(failures) not in [list, np.ndarray]:

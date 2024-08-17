@@ -1106,11 +1106,11 @@ def Normal_probability_plot(
         nf = Normal_Distribution(
             mu=mu,
             sigma=sigma,
-            mu_SE=mu_SE,
-            sigma_SE=sigma_SE,
+            mean_standard_error=mu_SE,
+            sigma_standard_error=sigma_SE,
             Cov_mu_sigma=Cov_mu_sigma,
             CI=CI,
-            CI_type=CI_type,
+            CI_type=CI_type if CI_type is not None else "time",
         )
 
     # plot the failure points and format the scale and axes

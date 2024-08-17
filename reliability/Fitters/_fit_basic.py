@@ -159,8 +159,8 @@ class Fit_Normal_2P:
 
     def __init__(
         self,
-        failures=None,
-        right_censored=None,
+        failures: npt.NDArray[np.float64],
+        right_censored: npt.NDArray[np.float64] | None = None,
         CI: float = 0.95,
         quantiles=None,
         optimizer: str | None = None,
@@ -319,11 +319,11 @@ class Fit_Normal_2P:
         self.distribution = Normal_Distribution(
             mu=self.mu,
             sigma=self.sigma,
-            mu_SE=self.mu_SE,
-            sigma_SE=self.sigma_SE,
+            mean_standard_error=self.mu_SE,
+            sigma_standard_error=self.sigma_SE,
             Cov_mu_sigma=self.Cov_mu_sigma,
             CI=CI,
-            CI_type=CI_type,
+            CI_type=CI_type if CI_type is not None else "time",
         )
 
         if quantiles is not None:
@@ -567,8 +567,8 @@ class Fit_Gumbel_2P:
 
     def __init__(
         self,
-        failures=None,
-        right_censored=None,
+        failures: npt.NDArray[np.float64],
+        right_censored: npt.NDArray[np.float64] | None = None,
         show_probability_plot=True,
         print_results=True,
         CI=0.95,
@@ -908,8 +908,8 @@ class Fit_Beta_2P:
 
     def __init__(
         self,
-        failures=None,
-        right_censored=None,
+        failures: npt.NDArray[np.float64],
+        right_censored: npt.NDArray[np.float64] | None = None,
         show_probability_plot=True,
         print_results=True,
         CI=0.95,

@@ -45,7 +45,7 @@ def test_Weibull():
 
 
 def test_Normal():
-    dist = Normal_Distribution(mu=50, sigma=10)
+    dist = Normal_Distribution(mu=np.float64(50.0), sigma=np.float64(10))
     failures = dist.random_samples(100, seed=5)
     Normal_probability_plot(failures=failures)  # generates the probability plot
     dist.CDF(linestyle="--", label="True CDF")  # this is the actual distribution provided for comparison
@@ -74,7 +74,7 @@ def test_Exponential():
 
 
 def test_PP_plot_parametric():
-    Field = Normal_Distribution(mu=100, sigma=30)
+    Field = Normal_Distribution(mu=np.float64(100), sigma=np.float64(30))
     Lab = Weibull_Distribution(alpha=120, beta=3)
     PP_plot_parametric(X_dist=Field, Y_dist=Lab, x_quantile_lines=[0.3, 0.6], y_quantile_lines=[0.1, 0.6])
     plt.close()
@@ -264,7 +264,7 @@ def test_QQ_plot_semiparametric():
     plt.close()
     # Test case 3: Test case with normal distribution
     X_data_failures = [10, 20, 30, 40, 50]
-    Y_dist = Normal_Distribution(mu=50, sigma=10)
+    Y_dist = Normal_Distribution(mu=np.float64(50.0), sigma=np.float64(10))
     expected_model = [1.3232401964337186, 1.2778210803854542, 1.665367588436365]
     fig, model = QQ_plot_semiparametric(X_data_failures=X_data_failures, Y_dist=Y_dist)
     assert isinstance(fig, plt.Figure)

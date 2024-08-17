@@ -1968,7 +1968,7 @@ class distribution_confidence_intervals:
 
         # this determines if the user has specified for the CI bounds to be shown or hidden.
         if (
-            validate_CI_params(dist.mu_SE, dist.sigma_SE, dist.Cov_mu_sigma, dist.Z) is True
+            validate_CI_params(dist.mean_standard_error, dist.sigma_standard_error, dist.Cov_mu_sigma, dist.Z) is True
             and (plot_CI is True or q is not None or x is not None)
             and CI_type is not None
         ):
@@ -2022,15 +2022,15 @@ class distribution_confidence_intervals:
 
             def var_u(self, v):  # v is time
                 return (
-                    du_da(v, self.mu, self.sigma) ** 2 * self.mu_SE**2
-                    + du_db(v, self.mu, self.sigma) ** 2 * self.sigma_SE**2
+                    du_da(v, self.mu, self.sigma) ** 2 * self.mean_standard_error**2
+                    + du_db(v, self.mu, self.sigma) ** 2 * self.sigma_standard_error**2
                     + 2 * du_da(v, self.mu, self.sigma) * du_db(v, self.mu, self.sigma) * self.Cov_mu_sigma
                 )
 
             def var_v(self, u):  # u is reliability
                 return (
-                    dv_da(u, self.mu, self.sigma) ** 2 * self.mu_SE**2
-                    + dv_db(u, self.mu, self.sigma) ** 2 * self.sigma_SE**2
+                    dv_da(u, self.mu, self.sigma) ** 2 * self.mean_standard_error**2
+                    + dv_db(u, self.mu, self.sigma) ** 2 * self.sigma_standard_error**2
                     + 2 * dv_da(u, self.mu, self.sigma) * dv_db(u, self.mu, self.sigma) * self.Cov_mu_sigma
                 )
 

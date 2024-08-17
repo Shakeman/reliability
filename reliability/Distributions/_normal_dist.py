@@ -1,3 +1,4 @@
+from dataclasses import dataclass, field
 from typing import Literal
 
 import matplotlib.pyplot as plt
@@ -21,6 +22,7 @@ dec = 4  # number of decimals to use when rounding descriptive statistics and pa
 np.seterr(divide="ignore", invalid="ignore")  # ignore the divide by zero warnings
 
 
+@dataclass
 class Normal_Distribution:
     """Normal probability distribution. Creates a probability distribution object.
 
@@ -62,67 +64,44 @@ class Normal_Distribution:
 
     """
 
-    def __init__(self, mu=None, sigma=None, **kwargs):
-        self.name: str = "Normal"
-        self.name2: str = "Normal_2P"
-        if mu is None or sigma is None:
-            raise ValueError("Parameters mu and sigma must be specified. Eg. Normal_Distribution(mu=5,sigma=2)")
-        self.parameters: npt.NDArray[np.float64] = np.array([float(mu), float(sigma)])
-        self.mu: np.float64 = self.parameters[0]
-        self.sigma: np.float64 = self.parameters[1]
-        self.mean: np.float64 = self.mu
-        self.variance: np.float64 = self.sigma**2
-        self.standard_deviation: np.float64 = self.sigma
-        self.skewness: int = 0
-        self.kurtosis: int = 3
-        self.excess_kurtosis: int = 0
-        self.median: np.float64 = self.mu
-        self.mode: np.float64 = self.mu
-        self.param_title: str = str("μ=" + round_and_string(self.mu, dec) + ",σ=" + round_and_string(self.sigma, dec))
-        self.param_title_long: str = str(
+    mu: np.float64
+    sigma: np.float64
+    CI: float | None = None
+    CI_type: str = "time"
+    mean_standard_error: np.float64 | float = field(default_factory=lambda: np.float64(np.nan))
+    sigma_standard_error: np.float64 | float = field(default_factory=lambda: np.float64(np.nan))
+    Cov_mu_sigma: np.float64 | float = field(default_factory=lambda: np.float64(np.nan))
+
+    def __post_init__(self):
+        self.mean = self.mu
+        self.variance = self.sigma**2
+        self.standard_deviation = self.sigma
+        self.median = self.mu
+        self.mode = self.mu
+        self.param_title = str("μ=" + round_and_string(self.mu, dec) + ",σ=" + round_and_string(self.sigma, dec))
+        self.param_title_long = str(
             "Normal Distribution (μ="
             + round_and_string(self.mu, dec)
             + ",σ="
             + round_and_string(self.sigma, dec)
             + ")",
         )
-        self.b5: np.float64 = ss.norm.ppf(0.05, loc=self.mu, scale=self.sigma)
-        self.b95: np.float64 = ss.norm.ppf(0.95, loc=self.mu, scale=self.sigma)
-
-        # extracts values for confidence interval plotting
-        if "mu_SE" in kwargs:
-            self.mu_SE = kwargs.pop("mu_SE")
-        else:
-            self.mu_SE = None
-        if "sigma_SE" in kwargs:
-            self.sigma_SE = kwargs.pop("sigma_SE")
-        else:
-            self.sigma_SE = None
-        if "Cov_mu_sigma" in kwargs:
-            self.Cov_mu_sigma = kwargs.pop("Cov_mu_sigma")
-        else:
-            self.Cov_mu_sigma = None
-        if "CI" in kwargs:
-            CI = kwargs.pop("CI")
-            self.Z = -ss.norm.ppf((1 - CI) / 2)
-        else:
-            self.Z = None
-        if "CI_type" in kwargs:
-            self.CI_type = kwargs.pop("CI_type")
-        else:
-            self.CI_type = "time"
-        for item in kwargs:
-            colorprint(
-                str(
-                    "WARNING: "
-                    + item
-                    + "is not recognised as an appropriate entry in kwargs. Appropriate entries are mu_SE, sigma_SE, Cov_mu_sigma, CI, and CI_type.",
-                ),
-                text_color="red",
-            )
-
+        self.name: str = "Normal"
+        self.name2: str = "Normal_2P"
+        self.skewness: int = 0
+        self.kurtosis: int = 3
+        self.excess_kurtosis: int = 0
         self._pdf0 = 0  # the pdf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
         self._hf0 = 0  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
+        self.b5 = ss.norm.ppf(0.05, loc=self.mu, scale=self.sigma)
+        self.b95 = ss.norm.ppf(0.95, loc=self.mu, scale=self.sigma)
+        self.parameters = [self.mu, self.sigma]
+        if self.CI is not None:
+            self.Z = -ss.norm.ppf((1 - self.CI) / 2)
+        else:
+            self.Z = None
+        if self.CI_type is None:
+            self.CI_type = "time"
 
     def plot(self, xvals=None, xmin=None, xmax=None):
         """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics

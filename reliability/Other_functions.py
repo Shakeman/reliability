@@ -718,8 +718,7 @@ class similar_distributions:
             colorprint("Results from similar_distributions:", bold=True, underline=True)
             print("The input distribution was:")
             print(distribution.param_title_long)
-            if number_of_distributions_fitted < number_of_distributions_to_show:
-                number_of_distributions_to_show = number_of_distributions_fitted
+            number_of_distributions_to_show = min(number_of_distributions_fitted, number_of_distributions_to_show)
             print(
                 "\nThe top",
                 number_of_distributions_to_show,

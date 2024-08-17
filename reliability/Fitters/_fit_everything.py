@@ -1576,83 +1576,67 @@ class Fit_Everything:
             if item == "Exponential_1P":
                 yy: npt.NDArray[np.float64] = self._parametric_CDF_Exponential_1P
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
             elif item == "Exponential_2P":
                 yy = self._parametric_CDF_Exponential_2P
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
             elif item == "Lognormal_2P":
                 yy = self._parametric_CDF_Lognormal_2P
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
             elif item == "Lognormal_3P":
                 yy = self._parametric_CDF_Lognormal_3P
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
             elif item == "Weibull_2P":
                 yy = self._parametric_CDF_Weibull_2P
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
             elif item == "Weibull_3P":
                 yy = self._parametric_CDF_Weibull_3P
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
             elif item == "Weibull_Mixture":
                 yy = self._parametric_CDF_Weibull_Mixture
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
             elif item == "Weibull_CR":
                 yy = self._parametric_CDF_Weibull_CR
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
             elif item == "Weibull_DS":
                 yy = self._parametric_CDF_Weibull_DS
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
             elif item == "Loglogistic_2P":
                 yy = self._parametric_CDF_Loglogistic_2P
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
             elif item == "Loglogistic_3P":
                 yy = self._parametric_CDF_Loglogistic_3P
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
             elif item == "Gamma_2P":
                 yy = self._parametric_CDF_Gamma_2P
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
             elif item == "Gamma_3P":
                 yy = self._parametric_CDF_Gamma_3P
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
             elif item == "Normal_2P":
                 yy = self._parametric_CDF_Normal_2P
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
             elif item == "Gumbel_2P":
                 yy = self._parametric_CDF_Gumbel_2P
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
             elif item == "Beta_2P":
                 yy = self._parametric_CDF_Beta_2P
                 max_yy = max(yy)
-                if max_yy > plotlim:
-                    plotlim = max_yy
+                plotlim = max(max_yy, plotlim)
 
             # downsample if necessary
             x_scatter, y_scatter = xy_downsample(xx, yy, downsample_factor=self.__downsample_scatterplot)

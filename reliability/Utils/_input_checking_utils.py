@@ -1,3 +1,5 @@
+from typing import Literal
+
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
@@ -9,25 +11,13 @@ from reliability.Utils._array_utils import (
 )
 
 
-def distributions_input_checking(
-    self,
-    func: str,
-    xvals,
-    xmin: None | float,
-    xmax: None | float,
-    show_plot: None | bool = None,
-    plot_CI: None | bool = None,
-    CI_type: None | str = None,
-    CI: None | float = None,
-    CI_y: None | list[float] | npt.NDArray[np.float64] | float = None,
-    CI_x: None | list[float] | npt.NDArray[np.float64] | float = None,
-):
+class distributions_input_checking:
     """Performs checks and sets default values for the inputs to distributions
     sub function (PDF, CDF, SF, HF, CHF)
 
     Parameters
     ----------
-    self : object
+    dist : object
         Distribution object created by reliability.Distributions
     func : str
         Must be either 'PDF','CDF', 'SF', 'HF', 'CHF'
@@ -87,145 +77,173 @@ def distributions_input_checking(
         returned if func is 'CDF', 'SF', or 'CHF' and self.name !='Beta'.
 
     """
-    if func not in ["PDF", "CDF", "SF", "HF", "CHF", "ALL"]:
-        raise ValueError("func must be either 'PDF','CDF', 'SF', 'HF', 'CHF', 'ALL'")
 
-    # type checking
-    if type(xvals) not in [type(None), list, np.ndarray, int, float, np.float64]:
-        raise ValueError(
-            "xvals must be an int, float, list, or array. Default is None. Value of xvals is:" + str(xvals),
-        )
-    if type(xmin) not in [type(None), int, float]:
-        raise ValueError("xmin must be an int or float. Default is None")
-    if type(xmax) not in [type(None), int, float]:
-        raise ValueError("xmax must be an int or float. Default is None")
-    if type(show_plot) not in [type(None), bool]:
-        raise ValueError("show_plot must be True or False. Default is True")
-    if type(plot_CI) not in [type(None), bool]:
-        raise ValueError(
-            "plot_CI must be True or False. Default is True. Only used if the distribution object was created by Fitters.",
-        )
-    if type(CI_type) not in [type(None), str]:
-        raise ValueError(
-            'CI_type must be "time" or "reliability". Default is "time". Only used if the distribution object was created by Fitters.',
-        )
-    if CI is True:
-        CI = 0.95
-    if CI is False:
-        CI = 0.95
-        plot_CI = False
-    if type(CI) not in [type(None), float]:
-        raise ValueError(
-            "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval. Only used if the distribution object was created by Fitters.",
-        )
-    if type(CI_y) not in [type(None), list, np.ndarray, float, int]:
-        raise ValueError(
-            'CI_y must be a list, array, float, or int. Default is None. Only used if the distribution object was created by Fitters anc CI_type="time".',
-        )
-    if type(CI_x) not in [type(None), list, np.ndarray, float, int]:
-        raise ValueError(
-            'CI_x must be a list, array, float, or int. Default is None. Only used if the distribution object was created by Fitters anc CI_type="reliability".',
-        )
+    def __init__(
+        self,
+        dist,
+        func: str,
+        xvals: float | npt.NDArray[np.float64] | None,
+        xmin: None | float,
+        xmax: None | float,
+        show_plot: None | bool = None,
+        plot_CI: None | bool = None,
+        CI_type: None | str = None,
+        CI: None | float = None,
+        CI_y: None | list[float] | npt.NDArray[np.float64] | float = None,
+        CI_x: None | list[float] | npt.NDArray[np.float64] | float = None,
+    ):
+        """Initialize the object with the given parameters.
 
-    # default values
-    if xmin is None and xmax is None and type(xvals) not in [list, np.ndarray, type(None)]:
-        X = xvals
-        show_plot = False
-    else:
-        X: npt.NDArray[np.float64] = generate_X_array(dist=self, xvals=xvals, xmin=xmin, xmax=xmax)
+        Parameters
+        ----------
+        - dist: The distribution object.
+        - func: The function type. Must be one of "PDF", "CDF", "SF", "HF", "CHF", "ALL".
+        - xvals: The x-values. Can be None, int, float, list, or numpy array.
+        - xmin: The minimum x-value. Can be None, int, or float.
+        - xmax: The maximum x-value. Can be None, int, or float.
+        - show_plot: Whether to show the plot. Can be None or bool. Default is None.
+        - plot_CI: Whether to plot the confidence interval. Can be None or bool. Default is None.
+        - CI_type: The type of confidence interval. Can be None or str. Default is None.
+        - CI: The confidence interval. Can be None or float. Default is None.
+        - CI_y: The y-values for the confidence interval. Can be None, float, int, list, or numpy array. Default is None.
+        - CI_x: The x-values for the confidence interval. Can be None, float, int, list, or numpy array. Default is None.
 
-    if CI is None and self.Z is None:
-        CI = 0.95
-    elif CI is not None:  # CI takes precedence over Z
-        if CI <= 0 or CI >= 1:
-            raise ValueError("CI must be between 0 and 1")
-    else:  # CI is None and Z is not None
-        CI = 1 - ss.norm.cdf(-self.Z) * 2  # converts Z to CI
+        """
+        # code implementation...
+        if func not in ["PDF", "CDF", "SF", "HF", "CHF", "ALL"]:
+            raise ValueError("func must be either 'PDF','CDF', 'SF', 'HF', 'CHF', 'ALL'")
 
-    if show_plot is None:
-        show_plot = True
-
-    no_CI_array: list[str] = ["None", "NONE", "none", "OFF", "Off", "off"]
-    if self.name == "Exponential":
-        if CI_type not in no_CI_array and CI_type is not None:
-            colorprint(
-                "WARNING: CI_type is not required for the Exponential distribution since the confidence intervals of time and reliability are identical",
-                text_color="red",
+        # type checking
+        if type(xvals) not in [type(None), list, np.ndarray, int, float, np.float64]:
+            raise ValueError(
+                "xvals must be an int, float, list, or array. Default is None. Value of xvals is:" + str(xvals),
             )
-        CI_type = None
-    elif self.name == "Beta":
-        if CI_type not in no_CI_array and CI_type is not None:
-            colorprint(
-                "WARNING: CI_type is not used for the Beta distribution since the confidence intervals are not implemented",
-                text_color="red",
+        self.xvals = xvals
+        if type(xmin) not in [type(None), int, float]:
+            raise ValueError("xmin must be an int or float. Default is None")
+        self.xmin = xmin
+        if type(xmax) not in [type(None), int, float]:
+            raise ValueError("xmax must be an int or float. Default is None")
+        self.xmax = xmax
+        if type(show_plot) not in [type(None), bool]:
+            raise ValueError("show_plot must be True or False. Default is True")
+        if type(plot_CI) not in [type(None), bool]:
+            raise ValueError(
+                "plot_CI must be True or False. Default is True. Only used if the distribution object was created by Fitters.",
             )
-        CI_type = None
-    else:
-        if CI_type is None:
-            CI_type = None if self.CI_type in no_CI_array or self.CI_type is None else self.CI_type
-        elif CI_type in no_CI_array:
-            CI_type = None
+        if type(CI_type) not in [type(None), str]:
+            raise ValueError(
+                'CI_type must be "time" or "reliability". Default is "time". Only used if the distribution object was created by Fitters.',
+            )
+        if CI is True:
+            CI = 0.95
+        if CI is False:
+            CI = 0.95
+            plot_CI = False
+        self.plot_CI: None | bool = plot_CI
+        if type(CI) not in [type(None), float]:
+            raise ValueError(
+                "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval. Only used if the distribution object was created by Fitters.",
+            )
+        if type(CI_y) not in [type(None), list, np.ndarray, float, int]:
+            raise ValueError(
+                'CI_y must be a list, array, float, or int. Default is None. Only used if the distribution object was created by Fitters anc CI_type="time".',
+            )
+        if type(CI_x) not in [type(None), list, np.ndarray, float, int]:
+            raise ValueError(
+                'CI_x must be a list, array, float, or int. Default is None. Only used if the distribution object was created by Fitters anc CI_type="reliability".',
+            )
 
-        if isinstance(CI_type, str):
-            if CI_type.upper() in ["T", "TIME"]:
-                CI_type = "time"
-            elif CI_type.upper() in ["R", "REL", "RELIABILITY"]:
-                CI_type = "reliability"
-            else:
+        # default values
+        if xmin is None and xmax is None and xvals is not None and type(xvals) not in [list, np.ndarray, type(None)]:
+            X = xvals
+            show_plot = False
+        else:
+            X: npt.NDArray[np.float64] | float = generate_X_array(dist=dist, xvals=xvals, xmin=xmin, xmax=xmax)
+        self.X: npt.NDArray[np.float64] | float = X
+        if CI is None and dist.Z is None:
+            CI = 0.95
+        elif CI is not None:  # CI takes precedence over Z
+            if CI <= 0 or CI >= 1:
+                raise ValueError("CI must be between 0 and 1")
+        else:  # CI is None and Z is not None
+            CI = 1 - ss.norm.cdf(-dist.Z) * 2  # converts Z to CI
+        self.CI: float = CI
+        if show_plot is None:
+            show_plot = True
+        self.show_plot: bool = show_plot
+        no_CI_array: list[str] = ["None", "NONE", "none", "OFF", "Off", "off"]
+        if dist.name == "Exponential":
+            if CI_type not in no_CI_array and CI_type is not None:
                 colorprint(
-                    "WARNING: CI_type is not recognised. Accepted values are 'time', 'reliability' and 'none'",
+                    "WARNING: CI_type is not required for the Exponential distribution since the confidence intervals of time and reliability are identical",
                     text_color="red",
                 )
+            CI_type = None
+        elif dist.name == "Beta":
+            if CI_type not in no_CI_array and CI_type is not None:
+                colorprint(
+                    "WARNING: CI_type is not used for the Beta distribution since the confidence intervals are not implemented",
+                    text_color="red",
+                )
+            CI_type = None
+        else:
+            if CI_type is None:
+                CI_type = None if dist.CI_type in no_CI_array or dist.CI_type is None else dist.CI_type
+            elif CI_type in no_CI_array:
                 CI_type = None
 
-    if CI_x is not None and CI_y is not None:
-        if CI_type == "reliability":
-            colorprint(
-                "WARNING: CI_x and CI_y can not be specified at the same time. CI_y has been reset to None and the results for CI_x will be provided.",
-                text_color="red",
-            )
-            CI_y = None
-        else:
-            colorprint(
-                "WARNING: CI_x and CI_y can not be specified at the same time. CI_x has been reset to None and the results for CI_y will be provided.",
-                text_color="red",
-            )
-            CI_x = None
+            if isinstance(CI_type, str):
+                if CI_type.upper() in ["T", "TIME"]:
+                    CI_type = "time"
+                elif CI_type.upper() in ["R", "REL", "RELIABILITY"]:
+                    CI_type = "reliability"
+                else:
+                    colorprint(
+                        "WARNING: CI_type is not recognised. Accepted values are 'time', 'reliability' and 'none'",
+                        text_color="red",
+                    )
+                    CI_type = None
+        self.CI_type: None | Literal["time", "reliability"] = CI_type
+        if CI_x is not None and CI_y is not None:
+            if CI_type == "reliability":
+                colorprint(
+                    "WARNING: CI_x and CI_y can not be specified at the same time. CI_y has been reset to None and the results for CI_x will be provided.",
+                    text_color="red",
+                )
+                CI_y = None
+            else:
+                colorprint(
+                    "WARNING: CI_x and CI_y can not be specified at the same time. CI_x has been reset to None and the results for CI_y will be provided.",
+                    text_color="red",
+                )
+                CI_x = None
 
-    if CI_x is not None:
-        if isinstance(CI_x, float | int):
-            if CI_x <= 0 and self.name not in ["Normal", "Gumbel"]:
-                raise ValueError("CI_x must be greater than 0")
-            CI_x = np.array([CI_x])  # package as array. Will be unpacked later
-        else:
-            CI_x = np.asarray(CI_x)
-            if min(CI_x) <= 0 and self.name not in ["Normal", "Gumbel"]:
-                raise ValueError("CI_x values must all be greater than 0")
+        if CI_x is not None:
+            if isinstance(CI_x, float | int):
+                if CI_x <= 0 and dist.name not in ["Normal", "Gumbel"]:
+                    raise ValueError("CI_x must be greater than 0")
+                CI_x = np.array([np.float64(CI_x)])  # package as array. Will be unpacked later
+            else:
+                CI_x = np.asarray(CI_x)
+                if min(CI_x) <= 0 and dist.name not in ["Normal", "Gumbel"]:
+                    raise ValueError("CI_x values must all be greater than 0")
+        self.CI_x: npt.NDArray[np.float64] = CI_x
 
-    if CI_y is not None:
-        if isinstance(CI_y, float | int):
-            if CI_y <= 0:
-                raise ValueError("CI_y must be greater than 0")
-            if CI_y >= 1 and func in ["CDF", "SF"]:
-                raise ValueError("CI_y must be less than 1")
-            CI_y = np.array([CI_y])  # package as array. Will be unpacked later
-        else:
-            CI_y = np.asarray(CI_y)
-            if min(CI_y) <= 0:
-                raise ValueError("CI_y values must all be above 0")
-            if max(CI_y) >= 1 and func in ["CDF", "SF"]:
-                raise ValueError("CI_y values must all be below 1")
-
-    if self.name == "Beta":
-        if func in ["PDF", "CDF", "SF", "HF", "CHF"]:
-            return X, xvals, xmin, xmax, show_plot  # func ='ALL' which is used for the .plot() method
-        return X, xvals, xmin, xmax
-    if func in ["PDF", "HF"]:
-        return X, xvals, xmin, xmax, show_plot
-    if func in ["CDF", "SF", "CHF"]:
-        return X, xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
-    # func ='ALL' which is used for the .plot() method
-    return X, xvals, xmin, xmax
+        if CI_y is not None:
+            if isinstance(CI_y, float | int):
+                if CI_y <= 0:
+                    raise ValueError("CI_y must be greater than 0")
+                if CI_y >= 1 and func in ["CDF", "SF"]:
+                    raise ValueError("CI_y must be less than 1")
+                CI_y = np.array([np.float64(CI_y)])  # package as array. Will be unpacked later
+            else:
+                CI_y = np.asarray(CI_y)
+                if min(CI_y) <= 0:
+                    raise ValueError("CI_y values must all be above 0")
+                if max(CI_y) >= 1 and func in ["CDF", "SF"]:
+                    raise ValueError("CI_y values must all be below 1")
+        self.CI_y: npt.NDArray[np.float64] = CI_y
 
 
 def validate_CI_params(*args: bool):
@@ -1532,7 +1550,7 @@ class alt_single_stress_fitters_input_checking:
         self.stresses_for_groups = unique_failure_stresses[::-1]
 
 
-def check_optimizer(optimizer: str) -> str:
+def check_optimizer(optimizer) -> str:
     """Check if the given optimizer is valid and return the standardized optimizer name.
 
     Parameters

@@ -163,7 +163,7 @@ class Weibull_Distribution:
             loc=0,
         )  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
-    def plot(self, xvals=None, xmin=None, xmax=None):
+    def plot(self, xvals: npt.NDArray[np.float64] | None = None, xmin: None | float = None, xmax: None | float = None):
         """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
         in a single figure
 
@@ -190,14 +190,17 @@ class Weibull_Distribution:
         accepted.
 
         """
-        X, xvals, xmin, xmax = distributions_input_checking(
-            self,
-            "ALL",
-            xvals,
-            xmin,
-            xmax,
+        inputs = distributions_input_checking(
+            dist=self,
+            func="ALL",
+            xvals=xvals,
+            xmin=xmin,
+            xmax=xmax,
         )
-
+        X = inputs.X
+        xvals = inputs.xvals
+        xmin = inputs.xmin
+        xmax = inputs.xmax
         pdf = ss.weibull_min.pdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         cdf = ss.weibull_min.cdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         sf = ss.weibull_min.sf(X, self.beta, scale=self.alpha, loc=self.gamma)
@@ -339,15 +342,21 @@ class Weibull_Distribution:
         be based on the distribution's parameters.
 
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(
+        input_check = distributions_input_checking(
             self,
             "PDF",
             xvals,
             xmin,
             xmax,
             show_plot,
-        )  # lgtm [py/mismatched-multiple-assignment]
-
+        )
+        X, xvals, xmin, xmax, show_plot = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+        )
         pdf = ss.weibull_min.pdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         pdf = unpack_single_arrays(pdf)
 
@@ -442,6 +451,9 @@ class Weibull_Distribution:
         be based on the distribution's parameters.
 
         """
+        input_check = distributions_input_checking(
+            self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+        )
         (
             X,
             xvals,
@@ -453,8 +465,18 @@ class Weibull_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
-
+        ) = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+            input_check.plot_CI,
+            input_check.CI_type,
+            input_check.CI,
+            input_check.CI_y,
+            input_check.CI_x,
+        )
         cdf: npt.NDArray[np.float64] = ss.weibull_min.cdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         cdf = unpack_single_arrays(cdf)
 
@@ -566,6 +588,9 @@ class Weibull_Distribution:
         be based on the distribution's parameters.
 
         """
+        input_check = distributions_input_checking(
+            self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+        )
         (
             X,
             xvals,
@@ -577,8 +602,18 @@ class Weibull_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
-
+        ) = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+            input_check.plot_CI,
+            input_check.CI_type,
+            input_check.CI,
+            input_check.CI_y,
+            input_check.CI_x,
+        )
         sf = ss.weibull_min.sf(X, self.beta, scale=self.alpha, loc=self.gamma)
         sf = unpack_single_arrays(sf)
 
@@ -654,15 +689,21 @@ class Weibull_Distribution:
         be based on the distribution's parameters.
 
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(
+        input_check = distributions_input_checking(
             self,
             "HF",
             xvals,
             xmin,
             xmax,
             show_plot,
-        )  # lgtm [py/mismatched-multiple-assignment]
-
+        )
+        X, xvals, xmin, xmax, show_plot = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+        )
         hf = (self.beta / self.alpha) * ((X - self.gamma) / self.alpha) ** (self.beta - 1)
         hf = zeroise_below_gamma(X=X, Y=hf, gamma=self.gamma)
         hf = unpack_single_arrays(hf)
@@ -760,6 +801,9 @@ class Weibull_Distribution:
         be based on the distribution's parameters.
 
         """
+        input_check = distributions_input_checking(
+            self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+        )
         (
             X,
             xvals,
@@ -771,8 +815,18 @@ class Weibull_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
-
+        ) = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+            input_check.plot_CI,
+            input_check.CI_type,
+            input_check.CI,
+            input_check.CI_y,
+            input_check.CI_x,
+        )
         chf = ((X - self.gamma) / self.alpha) ** self.beta
         chf = zeroise_below_gamma(X=X, Y=chf, gamma=self.gamma)
         chf = unpack_single_arrays(chf)

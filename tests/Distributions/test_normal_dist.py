@@ -10,7 +10,7 @@ rtol = 1e-7
 
 
 def test_Normal_Distribution():
-    dist = Normal_Distribution(mu=np.float64(5.0), sigma=np.float64(2.0))
+    dist = Normal_Distribution(mu=5.0, sigma=2.0)
     dist.plot()
     dist.stats()
     assert_allclose(dist.mean, 5, rtol=rtol, atol=atol)

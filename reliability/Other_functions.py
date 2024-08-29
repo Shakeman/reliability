@@ -1551,14 +1551,14 @@ class distribution_explorer:
             self.ax2.set_visible(True)
             self.s2 = Slider(self.ax2, param_names[2], valmin=0, valmax=500, valinit=dist.gamma)
         elif self.name == "Normal":
-            dist = Normal_Distribution(mu=0, sigma=10)
+            dist = Normal_Distribution(mu=np.float64(0.0), sigma=np.float64(10))
             param_names = ["Mu", "Sigma", ""]
             plt.sca(self.ax0)
             plt.cla()
-            self.s0 = Slider(self.ax0, param_names[0], valmin=-100, valmax=100, valinit=dist.mu)
+            self.s0 = Slider(self.ax0, param_names[0], valmin=-100, valmax=100, valinit=dist.mu)  # type: ignore
             plt.sca(self.ax1)
             plt.cla()
-            self.s1 = Slider(self.ax1, param_names[1], valmin=0.01, valmax=20, valinit=dist.sigma)
+            self.s1 = Slider(self.ax1, param_names[1], valmin=0.01, valmax=20, valinit=dist.sigma)  # type: ignore
             self.ax2.set_visible(False)
         elif self.name == "Gumbel":
             dist = Gumbel_Distribution(mu=0, sigma=10)

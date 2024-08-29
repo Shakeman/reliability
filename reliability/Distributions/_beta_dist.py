@@ -16,6 +16,7 @@ from reliability.Utils import (
 dec = 4  # number of decimals to use when rounding descriptive statistics and parameter titles
 np.seterr(divide="ignore", invalid="ignore")  # ignore the divide by zero warnings
 
+
 class Beta_Distribution:
     """Beta probability distribution. Creates a probability distribution object.
 
@@ -122,8 +123,8 @@ class Beta_Distribution:
         accepted.
 
         """
-        X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
-
+        input_check = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
+        X, xvals, xmin, xmax = input_check.X, input_check.xvals, input_check.xmin, input_check.xmax
         pdf = ss.beta.pdf(X, self.alpha, self.beta, 0, 1)
         cdf = ss.beta.cdf(X, self.alpha, self.beta, 0, 1)
         sf = ss.beta.sf(X, self.alpha, self.beta, 0, 1)
@@ -266,15 +267,21 @@ class Beta_Distribution:
         be based on the distribution's parameters.
 
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(
+        input_check = distributions_input_checking(
             self,
             "PDF",
             xvals,
             xmin,
             xmax,
             show_plot,
-        )  # lgtm [py/mismatched-multiple-assignment]
-
+        )
+        X, xvals, xmin, xmax, show_plot = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+        )
         pdf = ss.beta.pdf(X, self.alpha, self.beta, 0, 1)
         pdf = unpack_single_arrays(pdf)
 
@@ -333,8 +340,14 @@ class Beta_Distribution:
         be based on the distribution's parameters.
 
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot)
-
+        input_check = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot)
+        X, xvals, xmin, xmax, show_plot = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+        )
         cdf = ss.beta.cdf(X, self.alpha, self.beta, 0, 1)
         cdf = unpack_single_arrays(cdf)
 
@@ -393,15 +406,21 @@ class Beta_Distribution:
         be based on the distribution's parameters.
 
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(
+        input_check = distributions_input_checking(
             self,
             "SF",
             xvals,
             xmin,
             xmax,
             show_plot,
-        )  # lgtm [py/mismatched-multiple-assignment]
-
+        )
+        X, xvals, xmin, xmax, show_plot = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+        )
         sf = ss.beta.sf(X, self.alpha, self.beta, 0, 1)
         sf = unpack_single_arrays(sf)
 
@@ -460,15 +479,21 @@ class Beta_Distribution:
         be based on the distribution's parameters.
 
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(
+        input_check = distributions_input_checking(
             self,
             "HF",
             xvals,
             xmin,
             xmax,
             show_plot,
-        )  # lgtm [py/mismatched-multiple-assignment]
-
+        )
+        X, xvals, xmin, xmax, show_plot = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+        )
         hf = ss.beta.pdf(X, self.alpha, self.beta, 0, 1) / ss.beta.sf(X, self.alpha, self.beta, 0, 1)
         hf = unpack_single_arrays(hf)
 
@@ -527,15 +552,21 @@ class Beta_Distribution:
         be based on the distribution's parameters.
 
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(
+        input_check = distributions_input_checking(
             self,
             "CHF",
             xvals,
             xmin,
             xmax,
             show_plot,
-        )  # lgtm [py/mismatched-multiple-assignment]
-
+        )
+        X, xvals, xmin, xmax, show_plot = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+        )
         chf = -np.log(ss.beta.sf(X, self.alpha, self.beta, 0, 1))
         chf = unpack_single_arrays(chf)
         self._chf = chf  # required by the CI plotting part

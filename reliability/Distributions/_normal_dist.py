@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Literal
 
 import matplotlib.pyplot as plt
@@ -64,20 +64,20 @@ class Normal_Distribution:
 
     """
 
-    mu: np.float64
-    sigma: np.float64
+    mu: float
+    sigma: float
     CI: float | None = None
     CI_type: str = "time"
-    mean_standard_error: np.float64 | float = field(default_factory=lambda: np.float64(np.nan))
-    sigma_standard_error: np.float64 | float = field(default_factory=lambda: np.float64(np.nan))
-    Cov_mu_sigma: np.float64 | float = field(default_factory=lambda: np.float64(np.nan))
+    mean_standard_error: float | None = None
+    sigma_standard_error: float | None = None
+    Cov_mu_sigma: float | None = None
 
     def __post_init__(self):
-        self.mean = self.mu
-        self.variance = self.sigma**2
-        self.standard_deviation = self.sigma
-        self.median = self.mu
-        self.mode = self.mu
+        self.mean: float = self.mu
+        self.variance: float = self.sigma**2
+        self.standard_deviation: float = self.sigma
+        self.median: float = self.mu
+        self.mode: float = self.mu
         self.param_title = str("μ=" + round_and_string(self.mu, dec) + ",σ=" + round_and_string(self.sigma, dec))
         self.param_title_long = str(
             "Normal Distribution (μ="
@@ -93,15 +93,15 @@ class Normal_Distribution:
         self.excess_kurtosis: int = 0
         self._pdf0 = 0  # the pdf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
         self._hf0 = 0  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
-        self.b5 = ss.norm.ppf(0.05, loc=self.mu, scale=self.sigma)
-        self.b95 = ss.norm.ppf(0.95, loc=self.mu, scale=self.sigma)
-        self.parameters = [self.mu, self.sigma]
+        self.b5: float = ss.norm.ppf(0.05, loc=self.mu, scale=self.sigma)
+        self.b95: float = ss.norm.ppf(0.95, loc=self.mu, scale=self.sigma)
+        self.parameters: list[float] = [self.mu, self.sigma]
         if self.CI is not None:
-            self.Z = -ss.norm.ppf((1 - self.CI) / 2)
+            self.Z: float | None = -ss.norm.ppf((1 - self.CI) / 2)
         else:
             self.Z = None
         if self.CI_type is None:
-            self.CI_type = "time"
+            self.CI_type: str = "time"
 
     def plot(self, xvals=None, xmin=None, xmax=None):
         """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
@@ -130,8 +130,8 @@ class Normal_Distribution:
         accepted.
 
         """
-        X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
-
+        input_check = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
+        X, xvals, xmin, xmax = input_check.X, input_check.xvals, input_check.xmin, input_check.xmax
         pdf = ss.norm.pdf(X, self.mu, self.sigma)
         cdf = ss.norm.cdf(X, self.mu, self.sigma)
         sf = ss.norm.sf(X, self.mu, self.sigma)
@@ -272,15 +272,21 @@ class Normal_Distribution:
         be based on the distribution's parameters.
 
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(
+        input_check = distributions_input_checking(
             self,
             "PDF",
             xvals,
             xmin,
             xmax,
             show_plot,
-        )  # lgtm [py/mismatched-multiple-assignment]
-
+        )
+        X, xvals, xmin, xmax, show_plot = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+        )
         pdf: npt.NDArray[np.float64] = ss.norm.pdf(X, self.mu, self.sigma)
 
         if show_plot is True:
@@ -374,6 +380,9 @@ class Normal_Distribution:
         be based on the distribution's parameters.
 
         """
+        input_check = distributions_input_checking(
+            self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+        )
         (
             X,
             xvals,
@@ -385,8 +394,18 @@ class Normal_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
-
+        ) = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+            input_check.plot_CI,
+            input_check.CI_type,
+            input_check.CI,
+            input_check.CI_y,
+            input_check.CI_x,
+        )
         cdf = ss.norm.cdf(X, self.mu, self.sigma)
         cdf = unpack_single_arrays(cdf)
 
@@ -498,6 +517,9 @@ class Normal_Distribution:
         be based on the distribution's parameters.
 
         """
+        input_check = distributions_input_checking(
+            self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+        )
         (
             X,
             xvals,
@@ -509,8 +531,18 @@ class Normal_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
-
+        ) = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+            input_check.plot_CI,
+            input_check.CI_type,
+            input_check.CI,
+            input_check.CI_y,
+            input_check.CI_x,
+        )
         sf = ss.norm.sf(X, self.mu, self.sigma)
         sf = unpack_single_arrays(sf)
 
@@ -586,15 +618,21 @@ class Normal_Distribution:
         be based on the distribution's parameters.
 
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(
+        input_check = distributions_input_checking(
             self,
             "HF",
             xvals,
             xmin,
             xmax,
             show_plot,
-        )  # lgtm [py/mismatched-multiple-assignment]
-
+        )
+        X, xvals, xmin, xmax, show_plot = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+        )
         hf = ss.norm.pdf(X, self.mu, self.sigma) / ss.norm.sf(X, self.mu, self.sigma)
         hf = unpack_single_arrays(hf)
 
@@ -689,6 +727,9 @@ class Normal_Distribution:
         be based on the distribution's parameters.
 
         """
+        input_check = distributions_input_checking(
+            self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+        )
         (
             X,
             xvals,
@@ -700,8 +741,18 @@ class Normal_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
-
+        ) = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+            input_check.plot_CI,
+            input_check.CI_type,
+            input_check.CI,
+            input_check.CI_y,
+            input_check.CI_x,
+        )
         chf = -np.log(ss.norm.sf(X, self.mu, self.sigma))
         chf = unpack_single_arrays(chf)
         self._chf = chf  # required by the CI plotting part

@@ -151,8 +151,8 @@ class Exponential_Distribution:
         accepted.
 
         """
-        X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
-
+        input_check = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
+        X, xvals, xmin, xmax = input_check.X, input_check.xvals, input_check.xmin, input_check.xmax
         pdf = ss.expon.pdf(X, scale=1 / self.Lambda, loc=self.gamma)
         cdf = ss.expon.cdf(X, scale=1 / self.Lambda, loc=self.gamma)
         sf = ss.expon.sf(X, scale=1 / self.Lambda, loc=self.gamma)
@@ -294,7 +294,7 @@ class Exponential_Distribution:
         be based on the distribution's parameters.
 
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(
+        input_check = distributions_input_checking(
             self,
             "PDF",
             xvals,
@@ -302,7 +302,13 @@ class Exponential_Distribution:
             xmax,
             show_plot,
         )
-
+        X, xvals, xmin, xmax, show_plot = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+        )
         pdf = ss.expon.pdf(X, scale=1 / self.Lambda, loc=self.gamma)
         pdf = unpack_single_arrays(pdf)
 
@@ -399,19 +405,20 @@ class Exponential_Distribution:
                 "WARNING: CI_type is not required for the Exponential Distribution since bounds on time and bounds on reliability are identical.",
                 text_color="red",
             )
-        (
-            X,
-            xvals,
-            xmin,
-            xmax,
-            show_plot,
-            plot_CI,
-            _,
-            CI,
-            CI_y,
-            CI_x,
-        ) = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x)
-
+        input_check = distributions_input_checking(
+            self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x
+        )
+        X, xvals, xmin, xmax, show_plot, plot_CI, CI, CI_y, CI_x = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+            input_check.plot_CI,
+            input_check.CI,
+            input_check.CI_y,
+            input_check.CI_x,
+        )
         cdf = ss.expon.cdf(X, scale=1 / self.Lambda, loc=self.gamma)
         cdf = unpack_single_arrays(cdf)
         if show_plot is True:
@@ -525,19 +532,20 @@ class Exponential_Distribution:
                 "WARNING: CI_type is not required for the Exponential Distribution since bounds on time and bounds on reliability are identical.",
                 text_color="red",
             )
-        (
-            X,
-            xvals,
-            xmin,
-            xmax,
-            show_plot,
-            plot_CI,
-            _,
-            CI,
-            CI_y,
-            CI_x,
-        ) = distributions_input_checking(self, "SF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x)
-
+        input_check = distributions_input_checking(
+            self, "SF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x
+        )
+        X, xvals, xmin, xmax, show_plot, plot_CI, CI, CI_y, CI_x = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+            input_check.plot_CI,
+            input_check.CI,
+            input_check.CI_y,
+            input_check.CI_x,
+        )
         sf = ss.expon.sf(X, scale=1 / self.Lambda, loc=self.gamma)
         sf = unpack_single_arrays(sf)
 
@@ -612,15 +620,21 @@ class Exponential_Distribution:
         be based on the distribution's parameters.
 
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(
+        input_check = distributions_input_checking(
             self,
             "HF",
             xvals,
             xmin,
             xmax,
             show_plot,
-        )  # lgtm [py/mismatched-multiple-assignment]
-
+        )
+        X, xvals, xmin, xmax, show_plot = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+        )
         hf = np.ones_like(X) * self.Lambda
         hf = zeroise_below_gamma(X=X, Y=hf, gamma=self.gamma)
         hf = unpack_single_arrays(hf)
@@ -718,6 +732,9 @@ class Exponential_Distribution:
                 "WARNING: CI_type is not required for the Exponential Distribution since bounds on time and bounds on reliability are identical.",
                 text_color="red",
             )
+        input_check = distributions_input_checking(
+            self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x
+        )
         (
             X,
             xvals,
@@ -725,12 +742,20 @@ class Exponential_Distribution:
             xmax,
             show_plot,
             plot_CI,
-            _,
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x)
-
+        ) = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+            input_check.plot_CI,
+            input_check.CI,
+            input_check.CI_y,
+            input_check.CI_x,
+        )
         chf = (X - self.gamma) * self.Lambda
         chf = zeroise_below_gamma(X=X, Y=chf, gamma=self.gamma)
         chf = unpack_single_arrays(chf)

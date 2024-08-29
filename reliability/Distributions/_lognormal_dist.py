@@ -192,8 +192,8 @@ class Lognormal_Distribution:
         accepted.
 
         """
-        X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
-
+        input_check = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
+        X, xvals, xmin, xmax = input_check.X, input_check.xvals, input_check.xmin, input_check.xmax
         pdf = ss.lognorm.pdf(X, self.sigma, self.gamma, np.exp(self.mu))
         cdf = ss.lognorm.cdf(X, self.sigma, self.gamma, np.exp(self.mu))
         sf = ss.lognorm.sf(X, self.sigma, self.gamma, np.exp(self.mu))
@@ -333,15 +333,21 @@ class Lognormal_Distribution:
         be based on the distribution's parameters.
 
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(
+        input_check = distributions_input_checking(
             self,
             "PDF",
             xvals,
             xmin,
             xmax,
             show_plot,
-        )  # lgtm [py/mismatched-multiple-assignment]
-
+        )
+        X, xvals, xmin, xmax, show_plot = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+        )
         pdf = ss.lognorm.pdf(X, self.sigma, self.gamma, np.exp(self.mu))
         pdf = unpack_single_arrays(pdf)
 
@@ -436,6 +442,9 @@ class Lognormal_Distribution:
         be based on the distribution's parameters.
 
         """
+        input_check = distributions_input_checking(
+            self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+        )
         (
             X,
             xvals,
@@ -447,8 +456,18 @@ class Lognormal_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
-
+        ) = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+            input_check.plot_CI,
+            input_check.CI_type,
+            input_check.CI,
+            input_check.CI_y,
+            input_check.CI_x,
+        )
         cdf = ss.lognorm.cdf(X, self.sigma, self.gamma, np.exp(self.mu))
         cdf = unpack_single_arrays(cdf)
 
@@ -562,6 +581,9 @@ class Lognormal_Distribution:
         be based on the distribution's parameters.
 
         """
+        input_check = distributions_input_checking(
+            self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+        )
         (
             X,
             xvals,
@@ -573,8 +595,18 @@ class Lognormal_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
-
+        ) = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+            input_check.plot_CI,
+            input_check.CI_type,
+            input_check.CI,
+            input_check.CI_y,
+            input_check.CI_x,
+        )
         sf = ss.lognorm.sf(X, self.sigma, self.gamma, np.exp(self.mu))
         sf = unpack_single_arrays(sf)
 
@@ -650,15 +682,21 @@ class Lognormal_Distribution:
         be based on the distribution's parameters.
 
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(
+        input_check = distributions_input_checking(
             self,
             "HF",
             xvals,
             xmin,
             xmax,
             show_plot,
-        )  # lgtm [py/mismatched-multiple-assignment]
-
+        )
+        X, xvals, xmin, xmax, show_plot = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+        )
         hf = ss.lognorm.pdf(X, self.sigma, self.gamma, np.exp(self.mu)) / ss.lognorm.sf(
             X,
             self.sigma,
@@ -758,6 +796,9 @@ class Lognormal_Distribution:
         be based on the distribution's parameters.
 
         """
+        input_check = distributions_input_checking(
+            self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+        )
         (
             X,
             xvals,
@@ -769,8 +810,18 @@ class Lognormal_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
-
+        ) = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+            input_check.plot_CI,
+            input_check.CI_type,
+            input_check.CI,
+            input_check.CI_y,
+            input_check.CI_x,
+        )
         chf = -np.log(ss.lognorm.sf(X, self.sigma, self.gamma, np.exp(self.mu)))
         chf = unpack_single_arrays(chf)
         self._chf = chf  # required by the CI plotting part

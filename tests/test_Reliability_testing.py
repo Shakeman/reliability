@@ -66,7 +66,7 @@ def test_reliability_test_duration():
 
 def test_chi2test():
     data = np.asarray(mileage().failures)
-    dist = Normal_Distribution(mu=np.float64(30011.0), sigma=np.float64(10472))
+    dist = Normal_Distribution(mu=30011.0, sigma=10472)
     bins = [
         0,
         13417,
@@ -89,7 +89,7 @@ def test_chi2test():
 
 def test_KStest():
     data = mileage().failures
-    dist = Normal_Distribution(mu=np.float64(30011.0), sigma=np.float64(10472))
+    dist = Normal_Distribution(mu=30011.0, sigma=10472)
     results = KStest(distribution=dist, data=data)
     results.print_results()
     results.plot()

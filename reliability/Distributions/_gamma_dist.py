@@ -202,8 +202,8 @@ class Gamma_Distribution:
         accepted.
 
         """
-        X, xvals, xmin, xmax = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
-
+        input_check = distributions_input_checking(self, "ALL", xvals, xmin, xmax)
+        X, xvals, xmin, xmax = input_check.X, input_check.xvals, input_check.xmin, input_check.xmax
         pdf = ss.gamma.pdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         cdf = ss.gamma.cdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         sf = ss.gamma.sf(X, self.beta, scale=self.alpha, loc=self.gamma)
@@ -343,15 +343,21 @@ class Gamma_Distribution:
         be based on the distribution's parameters.
 
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(
+        input_check = distributions_input_checking(
             self,
             "PDF",
             xvals,
             xmin,
             xmax,
             show_plot,
-        )  # lgtm [py/mismatched-multiple-assignment]
-
+        )
+        X, xvals, xmin, xmax, show_plot = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+        )
         pdf = ss.gamma.pdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         pdf = unpack_single_arrays(pdf)
 
@@ -446,6 +452,9 @@ class Gamma_Distribution:
         be based on the distribution's parameters.
 
         """
+        input_check = distributions_input_checking(
+            self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+        )
         (
             X,
             xvals,
@@ -457,8 +466,18 @@ class Gamma_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
-
+        ) = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+            input_check.plot_CI,
+            input_check.CI_type,
+            input_check.CI,
+            input_check.CI_y,
+            input_check.CI_x,
+        )
         cdf = ss.gamma.cdf(X, self.beta, scale=self.alpha, loc=self.gamma)
         cdf = unpack_single_arrays(cdf)
 
@@ -570,6 +589,9 @@ class Gamma_Distribution:
         be based on the distribution's parameters.
 
         """
+        input_check = distributions_input_checking(
+            self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+        )
         (
             X,
             xvals,
@@ -581,8 +603,18 @@ class Gamma_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
-
+        ) = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+            input_check.plot_CI,
+            input_check.CI_type,
+            input_check.CI,
+            input_check.CI_y,
+            input_check.CI_x,
+        )
         sf = ss.gamma.sf(X, self.beta, scale=self.alpha, loc=self.gamma)
         sf = unpack_single_arrays(sf)
 
@@ -658,15 +690,21 @@ class Gamma_Distribution:
         be based on the distribution's parameters.
 
         """
-        X, xvals, xmin, xmax, show_plot = distributions_input_checking(
+        input_check = distributions_input_checking(
             self,
             "HF",
             xvals,
             xmin,
             xmax,
             show_plot,
-        )  # lgtm [py/mismatched-multiple-assignment]
-
+        )
+        X, xvals, xmin, xmax, show_plot = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+        )
         hf = ss.gamma.pdf(X, self.beta, scale=self.alpha, loc=self.gamma) / ss.gamma.sf(
             X,
             self.beta,
@@ -766,6 +804,9 @@ class Gamma_Distribution:
         be based on the distribution's parameters.
 
         """
+        input_check = distributions_input_checking(
+            self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+        )
         (
             X,
             xvals,
@@ -777,8 +818,18 @@ class Gamma_Distribution:
             CI,
             CI_y,
             CI_x,
-        ) = distributions_input_checking(self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x)
-
+        ) = (
+            input_check.X,
+            input_check.xvals,
+            input_check.xmin,
+            input_check.xmax,
+            input_check.show_plot,
+            input_check.plot_CI,
+            input_check.CI_type,
+            input_check.CI,
+            input_check.CI_y,
+            input_check.CI_x,
+        )
         chf = -np.log(ss.gamma.sf(X, self.beta, scale=self.alpha, loc=self.gamma))
         chf = unpack_single_arrays(chf)
         self._chf = chf  # required by the CI plotting part

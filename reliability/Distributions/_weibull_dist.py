@@ -163,7 +163,9 @@ class Weibull_Distribution:
             loc=0,
         )  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
-    def plot(self, xvals: npt.NDArray[np.float64] | None = None, xmin: None | float = None, xmax: None | float = None):
+    def plot(
+        self, xvals: npt.NDArray[np.float64] | float | None = None, xmin: None | float = None, xmax: None | float = None
+    ):
         """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
         in a single figure
 
@@ -385,15 +387,15 @@ class Weibull_Distribution:
 
     def CDF(
         self,
-        xvals: npt.NDArray[np.float64] | None = None,
-        xmin: np.float64 | None = None,
-        xmax: np.float64 | None = None,
-        show_plot: bool = True,
-        plot_CI: bool = True,
+        xvals: npt.NDArray[np.float64] | float | None = None,
+        xmin: float | None = None,
+        xmax: float | None = None,
+        show_plot: bool | None = True,
+        plot_CI: bool | None = True,
         CI_type: Literal["time", "reliability", "none"] | None = None,
-        CI: np.float64 | None = None,
-        CI_y: np.float64 | None = None,
-        CI_x: np.float64 | None = None,
+        CI: float | None = None,
+        CI_y: npt.NDArray[np.float64] | float | None = None,
+        CI_x: npt.NDArray[np.float64] | float | None = None,
         **kwargs,
     ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
         """Plots the CDF (cumulative distribution function)
@@ -740,12 +742,12 @@ class Weibull_Distribution:
         xmax=None,
         show_plot=True,
         plot_CI=True,
-        CI_type=None,
+        CI_type: Literal["time", "reliability"] | None = "time",
         CI=None,
         CI_y=None,
         CI_x=None,
         **kwargs,
-    ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
+    ):
         """Plots the CHF (cumulative hazard function)
 
         Parameters

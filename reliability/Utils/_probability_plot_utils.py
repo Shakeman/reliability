@@ -3,6 +3,7 @@ import numpy as np
 import scipy.stats as ss
 from matplotlib.axes import _axes
 
+from reliability.Distributions._exponential_dist import Exponential_Distribution
 from reliability.Utils._ancillary_utils import round_and_string
 from reliability.Utils._plot_utils import probability_plot_xyticks
 
@@ -156,9 +157,6 @@ def ALT_prob_plot(
                 Normal_probability_plot as probplot,
             )
         elif dist == "Exponential":
-            from reliability.Distributions import (
-                Exponential_Distribution as Distribution,
-            )
             from reliability.Probability_plotting import (
                 Exponential_probability_plot_Weibull_Scale as probplot,
             )
@@ -200,7 +198,9 @@ def ALT_prob_plot(
                 # plot the original fitted line
                 if dist == "Exponential":
                     if scale_for_change_df[i] != "":
-                        Distribution(1 / scale_for_change_df[i]).CDF(linestyle="--", alpha=0.5, color=color_cycle[i])
+                        Exponential_Distribution(1 / scale_for_change_df[i]).CDF(
+                            linestyle="--", alpha=0.5, color=color_cycle[i]
+                        )
                 elif scale_for_change_df[i] != "":
                     Distribution(scale_for_change_df[i], shape_for_change_df[i]).CDF(
                         linestyle="--",
@@ -220,7 +220,7 @@ def ALT_prob_plot(
                         shape,
                     )
                 elif dist == "Exponential":
-                    distribution_at_use_stress = Distribution(
+                    distribution_at_use_stress = Exponential_Distribution(
                         1 / life_func(S1=use_level_stress[0], S2=use_level_stress[1]),
                     )
                 distribution_at_use_stress.CDF(
@@ -264,7 +264,9 @@ def ALT_prob_plot(
                 # plot the original fitted line
                 if dist == "Exponential":
                     if scale_for_change_df[i] != "":
-                        Distribution(1 / scale_for_change_df[i]).CDF(linestyle="--", alpha=0.5, color=color_cycle[i])
+                        Exponential_Distribution(1 / scale_for_change_df[i]).CDF(
+                            linestyle="--", alpha=0.5, color=color_cycle[i]
+                        )
                 elif scale_for_change_df[i] != "":
                     Distribution(scale_for_change_df[i], shape_for_change_df[i]).CDF(
                         linestyle="--",
@@ -278,7 +280,7 @@ def ALT_prob_plot(
                 elif dist == "Lognormal":
                     distribution_at_use_stress = Distribution(np.log(life_func(S1=use_level_stress)), shape)
                 elif dist == "Exponential":
-                    distribution_at_use_stress = Distribution(1 / life_func(S1=use_level_stress))
+                    distribution_at_use_stress = Exponential_Distribution(1 / life_func(S1=use_level_stress))
                 distribution_at_use_stress.CDF(
                     color=color_cycle[i + 1],
                     label=str(round_and_string(use_level_stress) + " (use stress)"),

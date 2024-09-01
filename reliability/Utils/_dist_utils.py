@@ -133,12 +133,9 @@ def life_stress_plot(
 
         if dual_stress is True:
             # collect all the stresses so we can find their min and max
-            stress_1_array0 = []
-            stress_2_array0 = []
-            for stress in stresses_for_groups:
-                stress_1_array0.append(stress[0])
-                stress_2_array0.append(stress[1])
-            if use_level_stress is not None:
+            stress_1_array0 = [stress[0] for stress in stresses_for_groups]  # type: ignore
+            stress_2_array0 = [stress[1] for stress in stresses_for_groups]  # type: ignore
+            if use_level_stress is not None and not isinstance(use_level_stress, (int, float)):
                 stress_1_array0.append(use_level_stress[0])
                 stress_2_array0.append(use_level_stress[1])
             min_stress_1 = min(stress_1_array0)
@@ -172,29 +169,29 @@ def life_stress_plot(
             for i, stress in enumerate(stresses_for_groups):
                 # plot the failures as a scatter plot
                 ax.scatter(
-                    stress[0],
-                    stress[1],
+                    stress[0],  # type: ignore
+                    stress[1],  # type: ignore
                     failure_groups[i],
                     color=color_cycle[i],
-                    s=30,
+                    s=30,  # type: ignore
                     label=str(
-                        "Failures at stress of " + round_and_string(stress[0]) + ", " + round_and_string(stress[1]),
+                        "Failures at stress of " + round_and_string(stress[0]) + ", " + round_and_string(stress[1]),  # type: ignore
                     ),
                     zorder=1,
                 )
             if use_level_stress is not None:
                 # plot the use level stress
                 ax.scatter(
-                    use_level_stress[0],
-                    use_level_stress[1],
-                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]),
+                    use_level_stress[0],  # type: ignore
+                    use_level_stress[1],  # type: ignore
+                    life_func(S1=use_level_stress[0], S2=use_level_stress[1]),  # type: ignore
                     color=color_cycle[i + 1],
-                    s=30,
+                    s=30,  # type: ignore
                     label=str(
                         "Use stress of "
-                        + round_and_string(use_level_stress[0])
+                        + round_and_string(use_level_stress[0])  # type: ignore
                         + ", "
-                        + round_and_string(use_level_stress[1]),
+                        + round_and_string(use_level_stress[1]),  # type: ignore
                     ),
                     marker="^",
                     zorder=2,
@@ -211,17 +208,17 @@ def life_stress_plot(
 
         else:  # single stress model
             if use_level_stress is not None:
-                min_stress = min(min(stresses_for_groups), use_level_stress)
+                min_stress: float = min(min(stresses_for_groups), np.min(use_level_stress))
             else:
-                min_stress = min(stresses_for_groups)
-            max_stress = max(stresses_for_groups)
-            stress_delta_log = np.log(max_stress) - np.log(min_stress)
+                min_stress = np.min(stresses_for_groups)
+            max_stress: float = np.max(stresses_for_groups)
+            stress_delta_log: np.float64 = np.log(max_stress) - np.log(min_stress)
             # lower and upper lim
-            stress_array_lower = np.exp(np.log(min_stress) - stress_delta_log * 0.2)
-            stress_array_upper = np.exp(np.log(max_stress) + stress_delta_log * 0.2)
+            stress_array_lower: np.float64 = np.exp(np.log(min_stress) - stress_delta_log * 0.2)
+            stress_array_upper: np.float64 = np.exp(np.log(max_stress) + stress_delta_log * 0.2)
             # array for the life-stress line
-            stress_array = np.linspace(0, stress_array_upper * 10, 1000)
-            life_array = life_func(S1=stress_array)
+            stress_array: npt.NDArray[np.float64] = np.linspace(0, stress_array_upper * 10, 1000)
+            life_array: npt.NDArray[np.float64] = life_func(S1=stress_array)
             if swap_xy is True:
                 plt.plot(
                     life_array,
@@ -241,6 +238,10 @@ def life_stress_plot(
                 plt.ylabel("Life")
                 plt.xlabel("Stress")
             for i, stress in enumerate(stresses_for_groups):
+                if isinstance(stress, list):
+                    raise ValueError(
+                        "stresses_for_groups must be a list of floats for single stress, not a list of lists."
+                    )
                 failure_points = failure_groups[i]
                 stress_points = np.ones_like(failure_points) * stress
                 if swap_xy is True:
@@ -260,6 +261,8 @@ def life_stress_plot(
                         label=str("Failures at stress of " + round_and_string(stress)),
                     )
             if use_level_stress is not None:
+                if isinstance(use_level_stress, np.ndarray):
+                    raise ValueError("use_level_stress must be a float for single stress, not an array.")
                 alpha_at_use_stress = life_func(S1=use_level_stress)
                 if swap_xy is True:
                     plt.plot(
@@ -276,7 +279,7 @@ def life_stress_plot(
                         color=color_cycle[i + 1],
                     )
             # this is a list comprehension to flatten the list of lists. np.ravel won't work here
-            flattened_failure_groups = [item for sublist in failure_groups for item in sublist]
+            flattened_failure_groups: list[float] = [item for sublist in failure_groups for item in sublist]
             if swap_xy is True:
                 plt.xlim(
                     0,
@@ -296,7 +299,9 @@ def life_stress_plot(
         return plt.gca()
 
 
-def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
+def extract_CI(
+    dist, func="CDF", CI_type: Literal["time", "reliability"] | None = "time", CI=0.95, CI_y=None, CI_x=None
+):
     """Extracts the confidence bounds at CI_x or CI_y.
 
     Parameters
@@ -360,6 +365,8 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
                 raise ValueError("func must be CDF, SF, or CHF")
         else:
             lower, upper = None, None
+    elif CI_type is None:
+        lower, upper = None, None
     elif CI_x is not None and CI_y is None and CI_type == "time":
         raise ValueError(
             "WARNING: If CI_type=time then CI_y must be specified in order to extract the confidence bounds on time.",
@@ -489,7 +496,7 @@ def extract_CI(dist, func="CDF", CI_type="time", CI=0.95, CI_y=None, CI_x=None):
             raise ValueError("Unknown distribution")
     else:
         lower, upper = None, None
-    if lower is not None and len(lower) == 1:  # unpack arrays of length 1
+    if lower is not None and upper is not None and len(lower) == 1:  # unpack arrays of length 1
         lower, upper = lower[0], upper[0]
     return lower, upper
 
@@ -977,7 +984,7 @@ class distribution_confidence_intervals:
     @staticmethod
     def weibull_CI(
         dist,
-        CI_type: Literal["time", "reliability"],
+        CI_type: Literal["time", "reliability"] | None,
         CI: float,
         func: Literal["CDF", "SF", "CHF"] = "CDF",
         plot_CI=None,

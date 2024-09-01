@@ -1,5 +1,7 @@
 {
     "reportUnknownMemberType": false,
     "reportAttributeAccessIssue": false,
+    "reportPrivateImportUsage": false,
+    "reportIndexIssues": false,
     "typeCheckingMode ": "basic",
 }

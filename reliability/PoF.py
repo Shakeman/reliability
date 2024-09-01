@@ -2162,19 +2162,19 @@ def creep_rupture_curves(temp_array, stress_array, TTF_array, stress_trace=None,
         raise ValueError("temp_trace must be one of the temperatures provided in temp_array")
 
     for i, T in enumerate(unique_temps):
-        xvalues = TTF_array[stress_indices[i] : stress_indices[i + 1]]
-        yvalues = stress_array[stress_indices[i] : stress_indices[i + 1]]
+        xvalues: list[int] = TTF_array[stress_indices[i] : stress_indices[i + 1]]
+        yvalues: list[int] = stress_array[stress_indices[i] : stress_indices[i + 1]]
         plt.scatter(xvalues, yvalues, label=T, alpha=0.8)
-        fit = np.polyfit(np.log10(xvalues), yvalues, deg=1)
-        m = fit[0]
-        c = fit[1]
+        fit: npt.NDArray[np.float64] = np.polyfit(np.log10(xvalues), yvalues, deg=1)
+        m: np.float64 = fit[0]
+        c: np.float64 = fit[1]
         plt.plot(xvals, m * np.log10(xvals) + c, alpha=0.8)
         if stress_trace is not None and temp_trace is not None and temp_trace == T:
-            y = stress_trace
-            x = 10 ** ((y - c) / m)
+            y: int = stress_trace
+            x: np.float64 = 10 ** ((y - c) / m)
             plt.plot([xmin, x, x], [y, y, ymin], linestyle="--", color="k", linewidth=1)
             plt.text(xmin, y, str(" Stress = " + str(y)), va="bottom")
-            plt.text(x, ymin, str(" Time to failure = " + str(round(x, 3))), va="bottom")
+            plt.text(x, ymin, str(" Time to failure = " + str(round(x, 3))), va="bottom")  # type: ignore
     plt.xscale("log")
     plt.xlabel("Time to failure")
     plt.ylabel("Stress")

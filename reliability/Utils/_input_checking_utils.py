@@ -611,7 +611,7 @@ class fitters_input_checking:
         self.CI: float = CI
         self.method = method
         self.optimizer: str | None = optimizer
-        self.quantiles = quantiles
+        self.quantiles: npt.NDArray[np.float64] = quantiles
         self.force_beta = force_beta
         self.force_sigma = force_sigma
         self.CI_type: str | None = CI_type

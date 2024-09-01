@@ -64,13 +64,13 @@ class Normal_Distribution:
 
     """
 
-    mu: float
-    sigma: float
+    mu: float | np.float64
+    sigma: float | np.float64
     CI: float | None = None
     CI_type: str = "time"
-    mean_standard_error: float | None = None
-    sigma_standard_error: float | None = None
-    Cov_mu_sigma: float | None = None
+    mean_standard_error: float | np.float64 | None = None
+    sigma_standard_error: float | np.float64 | None = None
+    Cov_mu_sigma: float | np.float64 | None = None
 
     def __post_init__(self):
         self.mean: float = self.mu
@@ -315,14 +315,14 @@ class Normal_Distribution:
     def CDF(
         self,
         xvals: npt.NDArray[np.float64] | None = None,
-        xmin: np.float64 | None = None,
-        xmax: np.float64 | None = None,
-        show_plot: bool = True,
-        plot_CI: bool = True,
+        xmin: float | None = None,
+        xmax: float | None = None,
+        show_plot: bool | None = True,
+        plot_CI: bool | None = True,
         CI_type: Literal["time", "reliability"] | None = None,
-        CI: np.float64 | None = None,
-        CI_y: np.float64 | None = None,
-        CI_x: np.float64 | None = None,
+        CI: float | None = None,
+        CI_y: float | None = None,
+        CI_x: float | None = None,
         **kwargs,
     ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
         """Plots the CDF (cumulative distribution function)
@@ -405,7 +405,7 @@ class Normal_Distribution:
             input_check.CI,
             input_check.CI_y,
             input_check.CI_x,
-        )
+        )  # type: ignore
         cdf = ss.norm.cdf(X, self.mu, self.sigma)
         cdf = unpack_single_arrays(cdf)
 
@@ -422,7 +422,7 @@ class Normal_Distribution:
             distribution_confidence_intervals.normal_CI(
                 self,
                 func="CDF",
-                CI_type=CI_type,
+                CI_type=CI_type,  # type: ignore
                 plot_CI=plot_CI,
                 CI=CI,
                 text_title=text_title,
@@ -559,7 +559,7 @@ class Normal_Distribution:
             distribution_confidence_intervals.normal_CI(
                 self,
                 func="SF",
-                CI_type=CI_type,
+                CI_type=CI_type,  # type: ignore
                 plot_CI=plot_CI,
                 CI=CI,
                 text_title=text_title,
@@ -753,7 +753,7 @@ class Normal_Distribution:
             input_check.CI_y,
             input_check.CI_x,
         )
-        chf = -np.log(ss.norm.sf(X, self.mu, self.sigma))
+        chf: npt.NDArray[np.float64] = -np.log(ss.norm.sf(X, self.mu, self.sigma))
         chf = unpack_single_arrays(chf)
         self._chf = chf  # required by the CI plotting part
         self._X = X
@@ -771,7 +771,7 @@ class Normal_Distribution:
             distribution_confidence_intervals.normal_CI(
                 self,
                 func="CHF",
-                CI_type=CI_type,
+                CI_type=CI_type,  # type: ignore
                 plot_CI=plot_CI,
                 CI=CI,
                 text_title=text_title,

@@ -189,7 +189,7 @@ class Fit_Normal_2P:
         CI_type = inputs.CI_type
 
         # Obtain least squares estimates
-        LS_method = "LS" if method == "MLE" else method
+        LS_method: None | str = "LS" if method == "MLE" else method
         LS_results = LS_optimization(
             func_name="Normal_2P",
             LL_func=Fit_Normal_2P.LL,
@@ -255,8 +255,8 @@ class Fit_Normal_2P:
                     ),
                     text_color="red",
                 )
-                self.mu_SE = 0
-                self.sigma_SE = 0
+                self.mu_SE = np.float64(0)
+                self.sigma_SE = np.float64(0)
                 self.Cov_mu_sigma = 0
                 self.mu_upper = self.mu
                 self.mu_lower = self.mu

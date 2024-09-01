@@ -1,5 +1,5 @@
-import os
 from itertools import chain, repeat
+from pathlib import Path
 
 import numpy as np
 
@@ -40,28 +40,23 @@ def validate_yes_no_prompt(prompt_msg) -> str:
     return choice
 
 
-def update_path(path: str) -> str:
+def update_path(path: Path) -> Path:
     """Update the given path by adding '(new)' to the filename if it already exists.
 
     Args:
     ----
-        path (str): The original path.
+        path (Path): The original path.
 
     Returns:
     -------
-        str: The updated path with '(new)' added to the filename.
+        Path: The updated path with '(new)' added to the filename.
 
     """
-    X: tuple[str, str] = os.path.split(path)
-    Y: list[str] = X[1].split(".")
-    Z = str(
-        Y[0] + "(new)" + "." + Y[1],
-    )  # auto renaming will keep adding (new) to the filename if it already exists
-    path = str(X[0] + "\\" + Z)
-    return path
+    new_path: Path = path.with_name(f"{path.stem}(new){path.suffix}")
+    return new_path
 
 
-def write_df_to_xlsx(df, path: str, **kwargs) -> None:
+def write_df_to_xlsx(df, path: Path, **kwargs) -> None:
     """Writes a dataframe to an xlsx file
     For use exclusively by the Convert_data module
 
@@ -69,7 +64,7 @@ def write_df_to_xlsx(df, path: str, **kwargs) -> None:
     ----------
     df : dataframe
         The dataframe to be written
-    path : str
+    path : Path
         The file path to the xlsx file.
 
     Returns
@@ -85,7 +80,7 @@ def write_df_to_xlsx(df, path: str, **kwargs) -> None:
 
     """
     # this section checks whether the file exists and reprompts the user based on their choices
-    if os.path.exists(path):
+    if Path.exists(path):
         colorprint(
             "WARNING: the specified output file already exists",
             text_color="red",

@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 from typing import Iterator
 
 import numpy as np
@@ -46,8 +46,8 @@ def test_validate_yes_no_prompt(monkeypatch: MonkeyPatch):
 
 def test_update_path():
     # Test case: (new) added to file name
-    path = "C:\\Users\\Current User\\Desktop\\XCN.xlsx"
-    expected_result = "C:\\Users\\Current User\\Desktop\\XCN(new).xlsx"
+    path = Path("C:\\Users\\Current User\\Desktop\\XCN.xlsx")
+    expected_result = Path("C:\\Users\\Current User\\Desktop\\XCN(new).xlsx")
     assert update_path(path) == expected_result
 
 
@@ -198,33 +198,33 @@ def test_colorprint():
 
 
 def test_write_df_to_xlsx(monkeypatch: MonkeyPatch):
-    current_path: str = os.getcwd()
-    folder_path: str = os.path.join(current_path, "tests")
-    folder_path: str = os.path.join(folder_path, "_excel_files")
-    path: str = os.path.join(folder_path, "test.xlsx")
-    new_path: str = os.path.join(folder_path, "test(new).xlsx")
+    current_path: Path = Path.cwd()
+    folder_path: Path = current_path / "tests"
+    folder_path: Path = folder_path / "_excel_files"
+    path: Path = folder_path / "test.xlsx"
+    new_path: Path = folder_path / "test(new).xlsx"
     df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
 
     # Test case: Writing dataframe to xlsx file
     write_df_to_xlsx(df, path)
-    assert os.path.exists(path)
+    assert Path.exists(path)
 
     # Test case: Writing dataframe to existing xlsx file and choosing not to overwrite
     monkeypatch.setattr("builtins.input", lambda _: "N")
     write_df_to_xlsx(df, path)
-    assert os.path.exists(new_path)
+    assert Path.exists(new_path)
 
     # Test case: Writing dataframe to existing xlsx file and choosing to overwrite
     monkeypatch.setattr("builtins.input", lambda _: "Y")
     write_df_to_xlsx(df, path)
-    assert os.path.exists(path)
+    assert Path.exists(path)
 
-    os.remove(path)
+    Path(path).unlink()
 
     # Test case: Writing dataframe to xlsx file with additional kwargs
     kwargs = {"sheet_name": "Sheet1", "header": False}
     write_df_to_xlsx(df, path, **kwargs)
-    assert os.path.exists(path)
+    assert Path.exists(path)
 
-    os.remove(path)
-    os.remove(new_path)
+    Path(path).unlink()
+    Path(new_path).unlink()

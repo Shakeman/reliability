@@ -44,7 +44,7 @@ def anderson_darling(fitted_cdf, empirical_cdf) -> float:
 
 
 @overload
-def unpack_single_arrays(array: np.float64) -> np.float64: ...
+def unpack_single_arrays(array: np.float64 | float) -> np.float64: ...
 
 
 @overload

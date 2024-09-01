@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
+from pathlib import Path
+
 import setuptools
 
-with open("README.md") as file:
+with Path("README.md").open() as file:
     long_description = file.read()
 
 setuptools.setup(

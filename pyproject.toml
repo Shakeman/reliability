@@ -126,11 +126,6 @@ ignore = [
     "TCH002", # Move third-party import
     "D100", # Missing docstring in public module
     "INP001",
-    "PTH118",
-    "PTH107",
-    "PTH110",
-    "PTH109",
-    "PTH123",
     "NPY002", #numpy-legacy-random
     "NPY201"  #numpy deprecation
 ]

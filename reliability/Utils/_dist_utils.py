@@ -501,7 +501,7 @@ def extract_CI(
     return lower, upper
 
 
-# TODO: Implement confidence intervals as classes adn subclasses returning botht iem and reliability
+# TODO: Implement confidence intervals as classes and subclasses returning botht iem and reliability
 class distribution_confidence_intervals:
     """This class contains several subfunctions that provide all the confidence
     intervals for CDF, SF, CHF for each distribution for which it is

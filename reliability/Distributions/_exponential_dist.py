@@ -63,7 +63,7 @@ class Exponential_Distribution:
 
     """
 
-    def __init__(self, Lambda: float | None = None, gamma: float | np.float64 = 0.0, **kwargs):
+    def __init__(self, Lambda: float | np.float64 | None = None, gamma: float | np.float64 = 0.0, **kwargs):
         self.name = "Exponential"
         if Lambda is None:
             raise ValueError("Parameter Lambda must be specified. Eg. Exponential_Distribution(Lambda=3)")
@@ -664,7 +664,7 @@ class Exponential_Distribution:
 
     def CHF(
         self,
-        xvals=None,
+        xvals: npt.NDArray[np.float64] | float | None = None,
         xmin=None,
         xmax=None,
         show_plot=True,
@@ -795,7 +795,9 @@ class Exponential_Distribution:
             if CI_y is not None:
                 return lower_CI, self.inverse_SF(np.exp(-CI_y)), upper_CI
             elif CI_x is not None:
-                chf_point = zeroise_below_gamma(X=CI_x, Y=(CI_x - self.gamma) * self.Lambda, gamma=self.gamma)
+                chf_point: npt.NDArray[np.float64] = zeroise_below_gamma(
+                    X=CI_x, Y=(CI_x - self.gamma) * self.Lambda, gamma=self.gamma
+                )
                 return lower_CI, unpack_single_arrays(chf_point), upper_CI
         return chf
 

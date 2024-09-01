@@ -763,7 +763,7 @@ def Exponential_probability_plot_Weibull_Scale(
                     right_censored=right_censored,
                     CI=CI,
                 )
-                Lambda = fit.Lambda
+                Lambda: np.float64 = fit.Lambda
                 Lambda_SE = fit.Lambda_SE
                 gamma = fit.gamma
 

@@ -888,10 +888,9 @@ class Competing_Risks_Model:
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
-        if seed is not None:
-            np.random.seed(seed)
-        return np.random.choice(
-            self.__xvals_init,
+        rng = np.random.default_rng(seed)
+        return rng.choice(
+            a=self.__xvals_init,
             size=number_of_samples,
             p=self.__pdf_init / np.sum(self.__pdf_init),
         )

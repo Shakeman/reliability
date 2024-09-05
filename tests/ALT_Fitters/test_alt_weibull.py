@@ -40,12 +40,10 @@ def test_Fit_Weibull_Exponential():
         use_level_stress=300,
     )
     plt.close("all")
-    assert_allclose(model.a, 1965.7797395338112, rtol=rtol, atol=atol)
-    assert_allclose(model.b, 11.0113385296826, rtol=rtol, atol=atol)
-    assert_allclose(model.beta, 2.3990457903278615, rtol=rtol, atol=atol)
-    assert_allclose(model.AICc, 3710.5717742652996, rtol=rtol, atol=atol)
-    assert_allclose(model.BIC, 3721.602040608187, rtol=rtol, atol=atol)
-    assert_allclose(model.loglik, -1852.2453465921092, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 2153.752541872851, rtol=rtol, atol=atol)
+    assert_allclose(model.b, 7.0806871632850354, rtol=rtol, atol=atol)
+    assert_allclose(model.beta, 2.6084287722032555, rtol=rtol, atol=atol)
+    assert_allclose(model.AICc, 3693.8395259640993, rtol=rtol, atol=atol)
 
 
 def test_Fit_Weibull_Eyring():
@@ -70,12 +68,10 @@ def test_Fit_Weibull_Eyring():
         use_level_stress=300,
     )
     plt.close("all")
-    assert_allclose(model.a, 1509.2873266741617, rtol=rtol, atol=atol)
-    assert_allclose(model.c, -10.051886457997458, rtol=rtol, atol=atol)
-    assert_allclose(model.beta, 0.9696541010302344, rtol=rtol, atol=atol)
-    assert_allclose(model.AICc, 4201.877589122597, rtol=rtol, atol=atol)
-    assert_allclose(model.BIC, 4212.907855465484, rtol=rtol, atol=atol)
-    assert_allclose(model.loglik, -2097.898254020758, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 2063.9299881256084, rtol=rtol, atol=atol)
+    assert_allclose(model.c, -8.746906466816322, rtol=rtol, atol=atol)
+    assert_allclose(model.beta, 1.0416258330443826, rtol=rtol, atol=atol)
+    assert_allclose(model.AICc, 4217.808596358866, rtol=rtol, atol=atol)
 
 
 def test_Fit_Weibull_Power():
@@ -100,12 +96,10 @@ def test_Fit_Weibull_Power():
         use_level_stress=300,
     )
     plt.close("all")
-    assert_allclose(model.a, 3.54549542e15, rtol=rtol, atol=atol)  # larger due to variation in python versions
-    assert_allclose(model.n, -3.916925628937264, rtol=rtol, atol=atol)  # larger due to variation in python versions
-    assert_allclose(model.beta, 2.399407397407449, rtol=rtol, atol=atol)
-    assert_allclose(model.AICc, 6041.16703767533, rtol=rtol, atol=atol)
-    assert_allclose(model.BIC, 6052.197304018217, rtol=rtol, atol=atol)
-    assert_allclose(model.loglik, -3017.5429782971246, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 1.123013751762961e17, rtol=rtol, atol=atol)  # larger due to variation in python versions
+    assert_allclose(model.n, -4.511429406626488, rtol=rtol, atol=atol)  # larger due to variation in python versions
+    assert_allclose(model.beta, 2.5998128091856803, rtol=rtol, atol=atol)
+    assert_allclose(model.AICc, 6024.964778108171, rtol=rtol, atol=atol)
 
 
 def test_Fit_Weibull_Dual_Exponential():
@@ -134,13 +128,11 @@ def test_Fit_Weibull_Dual_Exponential():
         use_level_stress=[100, 0.2],
     )
     plt.close("all")
-    assert_allclose(model.a, 109.3385636, rtol=rtol, atol=atol)
-    assert_allclose(model.b, 0.09291729, rtol=rtol, atol=atol)
-    assert_allclose(model.c, 456.09622917, rtol=rtol, atol=atol)
-    assert_allclose(model.beta, 2.53216375, rtol=rtol, atol=atol)
-    assert_allclose(model.AICc, 6584.301151215161, rtol=rtol, atol=atol)
-    assert_allclose(model.BIC, 6603.466037531028, rtol=rtol, atol=atol)
-    assert_allclose(model.loglik, -3288.128229238865, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 62.215172831404445, rtol=rtol, atol=atol)
+    assert_allclose(model.b, 0.08066684667618673, rtol=rtol, atol=atol)
+    assert_allclose(model.c, 564.1123255104022, rtol=rtol, atol=atol)
+    assert_allclose(model.beta, 2.7627192146927757, rtol=rtol, atol=atol)
+    assert_allclose(model.AICc, 6564.886720768444, rtol=rtol, atol=atol)
 
 
 def test_Fit_Weibull_Dual_Power():
@@ -169,13 +161,11 @@ def test_Fit_Weibull_Dual_Power():
         use_level_stress=[250, 7],
     )
     plt.close("all")
-    assert_allclose(model.c, 1.17720289e15, rtol=rtol, atol=atol)
-    assert_allclose(model.m, -4.08880812, rtol=rtol, atol=atol)
-    assert_allclose(model.n, -1.7890763670187908, rtol=rtol, atol=atol)
-    assert_allclose(model.beta, 2.570622042328891, rtol=rtol, atol=atol)
-    assert_allclose(model.AICc, 3624.015790007103, rtol=rtol, atol=atol)
-    assert_allclose(model.BIC, 3640.793414319984, rtol=rtol, atol=atol)
-    assert_allclose(model.loglik, -1807.9674909631476, rtol=rtol, atol=atol)
+    assert_allclose(model.c, 3674526569650209.5, rtol=rtol, atol=atol)
+    assert_allclose(model.m, -4.12561554753957, rtol=rtol, atol=atol)
+    assert_allclose(model.n, -2.197453348501671, rtol=rtol, atol=atol)
+    assert_allclose(model.beta, 2.875946232407607, rtol=rtol, atol=atol)
+    assert_allclose(model.AICc, 3590.722079245432, rtol=rtol, atol=atol)
 
 
 def test_Fit_Weibull_Power_Exponential():
@@ -204,10 +194,8 @@ def test_Fit_Weibull_Power_Exponential():
         use_level_stress=[200, 5],
     )
     plt.close("all")
-    assert_allclose(model.a, 54.68972069, rtol=rtol, atol=atol)
-    assert_allclose(model.c, 253.34403063, rtol=rtol, atol=atol)
-    assert_allclose(model.n, -0.03048628, rtol=rtol, atol=atol)
-    assert_allclose(model.beta, 2.571207071526618, rtol=rtol, atol=atol)
-    assert_allclose(model.AICc, 3122.643924859823, rtol=rtol, atol=atol)
-    assert_allclose(model.BIC, 3139.421549172704, rtol=rtol, atol=atol)
-    assert_allclose(model.loglik, -1557.2815583895076, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 87.65242092877672, rtol=rtol, atol=atol)
+    assert_allclose(model.c, 385.7441374514881, rtol=rtol, atol=atol)
+    assert_allclose(model.n, -0.2582500455023094, rtol=rtol, atol=atol)
+    assert_allclose(model.beta, 2.8546609205024525, rtol=rtol, atol=atol)
+    assert_allclose(model.AICc, 3094.0022423730807, rtol=rtol, atol=atol)

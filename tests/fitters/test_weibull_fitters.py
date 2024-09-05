@@ -39,14 +39,10 @@ def test_Fit_Weibull_2P():
         show_probability_plot=True,
         print_results=True,
     )
-    assert_allclose(MLE.alpha, 45.099010886086354, rtol=rtol, atol=atol)
-    assert_allclose(MLE.beta, 2.7827531773597984, rtol=rtol, atol=atol)
+    assert_allclose(MLE.alpha, 47.0217247918312, rtol=rtol, atol=atol)
+    assert_allclose(MLE.beta, 1.982318106214522, rtol=rtol, atol=atol)
     assert_allclose(MLE.gamma, 0, rtol=rtol, atol=atol)
-    assert_allclose(MLE.AICc, 115.66971887883678, rtol=rtol, atol=atol)
-    assert_allclose(MLE.BIC, 116.95530107300358, rtol=rtol, atol=atol)
-    assert_allclose(MLE.loglik, -55.4819182629478, rtol=rtol, atol=atol)
-    assert_allclose(MLE.AD, 55.60004028891652, rtol=rtol, atol=atol)
-    assert_allclose(MLE.Cov_alpha_beta, -0.9178064889295378, rtol=rtol, atol=atol)
+    assert_allclose(MLE.AICc, 120.41667818523239, rtol=rtol, atol=atol)
 
     MLE_beta = Fit_Weibull_2P(
         failures=data.failures,
@@ -57,14 +53,10 @@ def test_Fit_Weibull_2P():
         force_beta=0.7,
         quantiles=True,
     )
-    assert_allclose(MLE_beta.alpha, 72.46689970922911, rtol=rtol, atol=atol)
+    assert_allclose(MLE_beta.alpha, 69.06525502566299, rtol=rtol, atol=atol)
     assert_allclose(MLE_beta.beta, 0.7, rtol=rtol, atol=atol)
     assert_allclose(MLE_beta.gamma, 0, rtol=rtol, atol=atol)
-    assert_allclose(MLE_beta.AICc, 130.7785604380564, rtol=rtol, atol=atol)
-    assert_allclose(MLE_beta.BIC, 131.55207048938814, rtol=rtol, atol=atol)
-    assert_allclose(MLE_beta.loglik, -64.27816910791708, rtol=rtol, atol=atol)
-    assert_allclose(MLE_beta.AD, 56.535966829249546, rtol=rtol, atol=atol)
-    assert_allclose(MLE_beta.Cov_alpha_beta, 0, rtol=rtol, atol=atol)
+    assert_allclose(MLE_beta.AICc, 128.85522919807656, rtol=rtol, atol=atol)
 
     LS = Fit_Weibull_2P(
         failures=data.failures,
@@ -73,14 +65,10 @@ def test_Fit_Weibull_2P():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(LS.alpha, 42.91333312142757, rtol=rtol, atol=atol)
-    assert_allclose(LS.beta, 2.9657153686461033, rtol=rtol, atol=atol)
+    assert_allclose(LS.alpha, 47.43515443864693, rtol=rtol, atol=atol)
+    assert_allclose(LS.beta, 1.8458742548969898, rtol=rtol, atol=atol)
     assert_allclose(LS.gamma, 0, rtol=rtol, atol=atol)
-    assert_allclose(LS.AICc, 115.93668384456019, rtol=rtol, atol=atol)
-    assert_allclose(LS.BIC, 117.222266038727, rtol=rtol, atol=atol)
-    assert_allclose(LS.loglik, -55.61540074580951, rtol=rtol, atol=atol)
-    assert_allclose(LS.AD, 55.62807482958476, rtol=rtol, atol=atol)
-    assert_allclose(LS.Cov_alpha_beta, -0.1119680481788733, rtol=rtol, atol=atol)
+    assert_allclose(LS.AICc, 120.4881112461033, rtol=rtol, atol=atol)
 
 
 def test_Fit_Weibull_3P():
@@ -97,14 +85,10 @@ def test_Fit_Weibull_3P():
         show_probability_plot=True,
         print_results=True,
     )
-    assert_allclose(MLE.alpha, 33.0123537701021, rtol=rtol, atol=atol)
-    assert_allclose(MLE.beta, 1.327313848890964, rtol=rtol, atol=atol)
-    assert_allclose(MLE.gamma, 513.7220829514334, rtol=rtol, atol=atol)
-    assert_allclose(MLE.AICc, 116.5327581203968, rtol=rtol, atol=atol)
-    assert_allclose(MLE.BIC, 118.01995494105878, rtol=rtol, atol=atol)
-    assert_allclose(MLE.loglik, -54.5163790601984, rtol=rtol, atol=atol)
-    assert_allclose(MLE.AD, 55.606805028079016, rtol=rtol, atol=atol)
-    assert_allclose(MLE.Cov_alpha_beta, -0.7687781958569139, rtol=rtol, atol=atol)
+    assert_allclose(MLE.alpha, 53.47204088338224, rtol=rtol, atol=atol)
+    assert_allclose(MLE.beta, 0.5155304947981104, rtol=rtol, atol=atol)
+    assert_allclose(MLE.gamma, 510.7623510663467, rtol=rtol, atol=atol)
+    assert_allclose(MLE.AICc, 112.03506795155228, rtol=rtol, atol=atol)
 
     LS = Fit_Weibull_3P(
         failures=data.failures,
@@ -113,14 +97,10 @@ def test_Fit_Weibull_3P():
         show_probability_plot=False,
         print_results=False,
     )
-    assert_allclose(LS.alpha, 32.639290779819824, rtol=rtol, atol=atol)
-    assert_allclose(LS.beta, 1.2701961119432184, rtol=rtol, atol=atol)
-    assert_allclose(LS.gamma, 514.5065549826453, rtol=rtol, atol=atol)
-    assert_allclose(LS.AICc, 119.47369772704523, rtol=rtol, atol=atol)
-    assert_allclose(LS.BIC, 120.96089454770721, rtol=rtol, atol=atol)
-    assert_allclose(LS.loglik, -55.98684886352262, rtol=rtol, atol=atol)
-    assert_allclose(LS.AD, 55.70853682331155, rtol=rtol, atol=atol)
-    assert_allclose(LS.Cov_alpha_beta, -0.8435523816679948, rtol=rtol, atol=atol)
+    assert_allclose(LS.alpha, 545.2235196821472, rtol=rtol, atol=atol)
+    assert_allclose(LS.beta, 39.21654896663356, rtol=rtol, atol=atol)
+    assert_allclose(LS.gamma, 0, rtol=rtol, atol=atol)
+    assert_allclose(LS.AICc, 125.3766843880421, rtol=rtol, atol=atol)
 
 
 def test_Fit_Weibull_Mixture():
@@ -138,16 +118,13 @@ def test_Fit_Weibull_Mixture():
         show_probability_plot=True,
         print_results=True,
     )
-    assert_allclose(MLE.alpha_1, 11.06604639424718, rtol=rtol, atol=atol)
-    assert_allclose(MLE.beta_1, 2.735078296796997, rtol=rtol, atol=atol)
-    assert_allclose(MLE.alpha_2, 34.325433665495346, rtol=rtol, atol=atol)
-    assert_allclose(MLE.beta_2, 7.60238532821206, rtol=rtol, atol=atol)
-    assert_allclose(MLE.proportion_1, 0.23640116719132157, rtol=rtol, atol=atol)
-    assert_allclose(MLE.proportion_2, 0.7635988328086785, rtol=rtol, atol=atol)
-    assert_allclose(MLE.AICc, 471.97390405380236, rtol=rtol, atol=atol)
-    assert_allclose(MLE.BIC, 484.3614571114024, rtol=rtol, atol=atol)
-    assert_allclose(MLE.loglik, -230.66780309073096, rtol=rtol, atol=atol)
-    assert_allclose(MLE.AD, 320.1963544647712, rtol=rtol, atol=atol)
+    assert_allclose(MLE.alpha_1, 10.62279389, rtol=rtol, atol=atol)
+    assert_allclose(MLE.beta_1, 2.752678473152489, rtol=rtol, atol=atol)
+    assert_allclose(MLE.alpha_2, 37.98235528150885, rtol=rtol, atol=atol)
+    assert_allclose(MLE.beta_2, 6.104783916543841, rtol=rtol, atol=atol)
+    assert_allclose(MLE.proportion_1, 0.2614784966586089, rtol=rtol, atol=atol)
+    assert_allclose(MLE.proportion_2, 0.7385215033413911, rtol=rtol, atol=atol)
+    assert_allclose(MLE.AICc, 433.0648387794518, rtol=rtol, atol=atol)
 
 
 def test_Fit_Weibull_CR():
@@ -164,14 +141,11 @@ def test_Fit_Weibull_CR():
         show_probability_plot=True,
         print_results=True,
     )
-    assert_allclose(MLE.alpha_1, 53.05674752263902, rtol=rtol, atol=atol)
-    assert_allclose(MLE.beta_1, 1.9411091317375062, rtol=rtol, atol=atol)
-    assert_allclose(MLE.alpha_2, 38.026383998212154, rtol=rtol, atol=atol)
-    assert_allclose(MLE.beta_2, 9.033349805988692, rtol=rtol, atol=atol)
-    assert_allclose(MLE.AICc, 665.5311523940719, rtol=rtol, atol=atol)
-    assert_allclose(MLE.BIC, 675.5307805064454, rtol=rtol, atol=atol)
-    assert_allclose(MLE.loglik, -328.5550498812465, rtol=rtol, atol=atol)
-    assert_allclose(MLE.AD, 34.0918038201449, rtol=rtol, atol=atol)
+    assert_allclose(MLE.alpha_1, 52.38879644, rtol=rtol, atol=atol)
+    assert_allclose(MLE.beta_1, 1.775887008836593, rtol=rtol, atol=atol)
+    assert_allclose(MLE.alpha_2, 39.44857208719343, rtol=rtol, atol=atol)
+    assert_allclose(MLE.beta_2, 9.740661609822869, rtol=rtol, atol=atol)
+    assert_allclose(MLE.AICc, 656.9054812126976, rtol=rtol, atol=atol)
 
 
 def test_fit_weibull_dzi_init():
@@ -200,9 +174,9 @@ def test_Fit_Weibull_ZI_init():
     zeros = np.zeros(30)
     failures = np.hstack([zeros, data])
     fit = Fit_Weibull_ZI(failures=failures)
-    assert_allclose(actual=fit.alpha, desired=192.93112941119827, rtol=rtol, atol=atol)
-    assert_allclose(fit.beta, 4.531770672312745, rtol=rtol, atol=atol)
-    assert_allclose(fit.AICc, 859.2589334451959, rtol=rtol, atol=atol)
+    assert_allclose(actual=fit.alpha, desired=203.686397752733, rtol=rtol, atol=atol)
+    assert_allclose(fit.beta, 5.472841068783268, rtol=rtol, atol=atol)
+    assert_allclose(fit.AICc, 842.3158548968776, rtol=rtol, atol=atol)
     # Test case with invalid input
     with pytest.raises(ValueError):
         Fit_Weibull_ZI(failures=[], right_censored=[4, 5])

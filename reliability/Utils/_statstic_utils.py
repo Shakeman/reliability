@@ -1001,7 +1001,8 @@ def non_invertable_handler(xx, yy, model) -> list[np.float64]:
             # if the matrix is perfectly symmetrical, it becomes non-invertable
             # in this case we introduce a small amount of noise so it can be inverted
             # this noise doesn't affect the result much and it doesn't really matter since it is just a guess being passed to MLE for optimization
-            noise = np.random.normal(loc=0, scale=0.01, size=(3, 3))
+            rng = np.random.default_rng()
+            noise = rng.normal(loc=0, scale=0.01, size=(3, 3))
             model_parameters = np.linalg.inv(xx.T.dot(xx) + noise).dot(xx.T).dot(yy)
         except LinAlgError:
             colorprint(

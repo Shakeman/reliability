@@ -903,9 +903,8 @@ class Mixture_Model:
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
-        if seed is not None:
-            np.random.seed(seed)
-        return np.random.choice(
+        generator = np.random.default_rng(seed=seed)
+        return generator.choice(
             self.__xvals_init,
             size=number_of_samples,
             p=self.__pdf_init / np.sum(self.__pdf_init),

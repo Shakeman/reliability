@@ -899,10 +899,7 @@ class make_right_censored_data:
 
         # multiply censored
         if threshold is None and fraction_censored is not None:
-            if seed is not None:
-                np.random.seed(seed)
-            # randomize the order of the data in case it was ordered
-            np.random.shuffle(data)
+            np.random.default_rng(seed=seed).shuffle(data)
             # place a limit on the amount of the data that can be censored
             if (
                 fraction_censored < 0
@@ -913,7 +910,8 @@ class make_right_censored_data:
                     "fraction_censored must be >= 0 and < 1. The default is 0.5 which will right censor half the data",
                 )
             number_of_items_to_censor = int(np.floor(len(data) * fraction_censored))
-            self.right_censored = data[0:number_of_items_to_censor] * np.random.rand(number_of_items_to_censor)
+            rng = np.random.default_rng(seed=seed)
+            self.right_censored = data[0:number_of_items_to_censor] * rng.random(number_of_items_to_censor)
             self.failures = data[number_of_items_to_censor:]
 
         # singly censored
@@ -1106,8 +1104,7 @@ class make_ALT_data:
         right_censored_stresses_1 = []
         failure_stresses_2 = []
         right_censored_stresses_2 = []
-        np.random.seed(seed)
-        seeds = np.random.randint(
+        seeds = np.random.default_rng(seed=seed).integers(
             low=0,
             high=1000000,
             size=num_stresses,

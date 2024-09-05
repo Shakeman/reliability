@@ -219,7 +219,8 @@ def test_Gumbel_probability_plot():
     assert isinstance(fig, plt.Figure)
     plt.close()
     # Test case 5: Test case with downsampling
-    failures = np.random.randint(1, 100, size=10000)
+    rng = np.random.default_rng(1337)
+    failures = rng.integers(1, 100, size=10000)
     fig = Gumbel_probability_plot(failures=failures, downsample_scatterplot=True)
     assert isinstance(fig, plt.Figure)
     plt.close()
@@ -271,10 +272,10 @@ def test_QQ_plot_semiparametric():
     assert np.allclose(model, expected_model)
     plt.close()
     # Test case 4: Test case with downsampling
-    np.random.seed(0)
-    X_data_failures = np.random.randint(1, 100, size=10000)
+    rng = np.random.default_rng(seed=0)
+    X_data_failures = rng.integers(1, 100, size=10000)
     Y_dist = Weibull_Distribution(alpha=100, beta=2)
-    expected_model = [1.733973949688778, 1.5768901869332173, 10.371020288250993]
+    expected_model = [1.719651891260017, 1.5618204644873288, 10.502856153672889]
     fig, model = QQ_plot_semiparametric(X_data_failures=X_data_failures, Y_dist=Y_dist, downsample_scatterplot=True)
     assert isinstance(fig, plt.Figure)
     assert np.allclose(model, expected_model)

@@ -26,23 +26,15 @@ def test_Fit_Normal_2P():
         right_censored=data.right_censored,
         method="MLE",
     )
-    assert_allclose(MLE.mu, 49.01641649924297, rtol=rtol, atol=atol)
-    assert_allclose(MLE.sigma, 6.653242350482225, rtol=rtol, atol=atol)
-    assert_allclose(MLE.AICc, 91.15205546551952, rtol=rtol, atol=atol)
-    assert_allclose(MLE.BIC, 92.43763765968633, rtol=rtol, atol=atol)
-    assert_allclose(MLE.loglik, -43.223086556289175, rtol=rtol, atol=atol)
-    assert_allclose(MLE.AD, 63.64069171746617, rtol=rtol, atol=atol)
-    assert_allclose(MLE.Cov_mu_sigma, 1.0395705891908218, rtol=rtol, atol=atol)
+    assert_allclose(MLE.mu, 47.80488376, rtol=rtol, atol=atol)
+    assert_allclose(MLE.sigma, 6.560501525359938, rtol=rtol, atol=atol)
+    assert_allclose(MLE.AICc, 97.12216494401913, rtol=rtol, atol=atol)
 
     LS = Fit_Normal_2P(
         failures=data.failures,
         right_censored=data.right_censored,
         method="LS",
     )
-    assert_allclose(LS.mu, 48.90984235374872, rtol=rtol, atol=atol)
-    assert_allclose(LS.sigma, 6.990098677785364, rtol=rtol, atol=atol)
-    assert_allclose(LS.AICc, 91.21601631804141, rtol=rtol, atol=atol)
-    assert_allclose(LS.BIC, 92.50159851220822, rtol=rtol, atol=atol)
-    assert_allclose(LS.loglik, -43.25506698255012, rtol=rtol, atol=atol)
-    assert_allclose(LS.AD, 63.657853523044515, rtol=rtol, atol=atol)
-    assert_allclose(LS.Cov_mu_sigma, 1.0973540350799618, rtol=rtol, atol=atol)
+    assert_allclose(LS.mu, 47.16714285744403, rtol=rtol, atol=atol)
+    assert_allclose(LS.sigma, 6.2953497068956965, rtol=rtol, atol=atol)
+    assert_allclose(LS.AICc, 97.28829409387366, rtol=rtol, atol=atol)

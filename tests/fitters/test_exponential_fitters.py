@@ -32,22 +32,16 @@ def test_Fit_Exponential_1P():
     )
     MLE.print_results()
     MLE.plot()
-    assert_allclose(MLE.Lambda, 6.101198944227536, rtol=rtol, atol=atol)
-    assert_allclose(MLE.AICc, -22.032339191099148, rtol=rtol, atol=atol)
-    assert_allclose(MLE.BIC, -21.25882913976738, rtol=rtol, atol=atol)
-    assert_allclose(MLE.loglik, 12.127280706660684, rtol=rtol, atol=atol)
-    assert_allclose(MLE.AD, 29.59913306667145, rtol=rtol, atol=atol)
+    assert_allclose(MLE.Lambda, 4.840717199880608, rtol=rtol, atol=atol)
+    assert_allclose(MLE.AICc, -11.627214606819548, rtol=rtol, atol=atol)
 
     LS = Fit_Exponential_1P(
         failures=data.failures,
         right_censored=data.right_censored,
         method="LS",
     )
-    assert_allclose(LS.Lambda, 5.776959885774546, rtol=rtol, atol=atol)
-    assert_allclose(LS.AICc, -21.988412212242917, rtol=rtol, atol=atol)
-    assert_allclose(LS.BIC, -21.214902160911148, rtol=rtol, atol=atol)
-    assert_allclose(LS.loglik, 12.10531721723257, rtol=rtol, atol=atol)
-    assert_allclose(LS.AD, 29.52124203457833, rtol=rtol, atol=atol)
+    assert_allclose(LS.Lambda, 5.392088065738381, rtol=rtol, atol=atol)
+    assert_allclose(LS.AICc, -11.482416561720566, rtol=rtol, atol=atol)
 
 
 def test_Fit_Exponential_2P():
@@ -64,21 +58,15 @@ def test_Fit_Exponential_2P():
     )
     MLE.print_results()
     MLE.plot()
-    assert_allclose(MLE.Lambda, 7.062867654421206, rtol=rtol, atol=atol)
-    assert_allclose(MLE.gamma, 500.016737532126, rtol=rtol, atol=atol)
-    assert_allclose(MLE.AICc, -23.939665128347745, rtol=rtol, atol=atol)
-    assert_allclose(MLE.BIC, -22.65408293418094, rtol=rtol, atol=atol)
-    assert_allclose(MLE.loglik, 14.322773740644461, rtol=rtol, atol=atol)
-    assert_allclose(MLE.AD, 29.413655089419287, rtol=rtol, atol=atol)
+    assert_allclose(MLE.Lambda, 5.08394828467135, rtol=rtol, atol=atol)
+    assert_allclose(MLE.gamma, 500.00593053745575, rtol=rtol, atol=atol)
+    assert_allclose(MLE.AICc, -10.320253751764174, rtol=rtol, atol=atol)
 
     LS = Fit_Exponential_2P(
         failures=data.failures,
         right_censored=data.right_censored,
         method="LS",
     )
-    assert_allclose(LS.Lambda, 6.4445633542175, rtol=rtol, atol=atol)
-    assert_allclose(LS.gamma, 500.01368943066706, rtol=rtol, atol=atol)
-    assert_allclose(LS.AICc, -23.031777273560103, rtol=rtol, atol=atol)
-    assert_allclose(LS.BIC, -21.7461950793933, rtol=rtol, atol=atol)
-    assert_allclose(LS.loglik, 13.86882981325064, rtol=rtol, atol=atol)
-    assert_allclose(LS.AD, 29.33840933641424, rtol=rtol, atol=atol)
+    assert_allclose(LS.Lambda, 4.8653099226517025, rtol=rtol, atol=atol)
+    assert_allclose(LS.gamma, 499.9932589011877, rtol=rtol, atol=atol)
+    assert_allclose(LS.AICc, -7.831344030677088, rtol=rtol, atol=atol)

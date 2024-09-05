@@ -454,7 +454,8 @@ def test_Beta_2P_guess():
 
     # Test case: Large data
     x = np.arange(1, 10001)
-    y = np.random.rand(10000)
+    rng = np.random.default_rng()
+    y = rng.random(10000)
     failures = list(range(1, 10001))
     assert Beta_2P_guess(x, y, failures) == [2.0, 1.0]
 

@@ -57,10 +57,10 @@ def test_similar_distributions():
 
 def test_make_right_censored_data():
     results = make_right_censored_data(data=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], fraction_censored=0.5, seed=1)
-    assert_allclose(results.failures, [4, 2, 8, 9, 6], rtol=rtol, atol=atol)
+    assert_allclose(results.failures, [3, 6, 10, 7, 4], rtol=rtol, atol=atol)
     assert_allclose(
         results.right_censored,
-        [1.16373222, 6.69746037, 6.5487735, 4.23155458, 0.31327352],
+        [4.60639462, 4.75231848, 1.1532769, 0.94864945, 0.6236629],
         rtol=rtol,
         atol=atol,
     )

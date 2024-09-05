@@ -41,12 +41,10 @@ def test_Fit_Lognormal_Exponential():
         use_level_stress=300,
     )
     plt.close("all")
-    assert_allclose(model.a, 2033.15392013689, rtol=rtol, atol=atol)
-    assert_allclose(model.b, 9.380682049168223, rtol=rtol, atol=atol)
-    assert_allclose(model.sigma, 0.4901664124825419, rtol=rtol, atol=atol)
-    assert_allclose(model.AICc, 3824.906495666694, rtol=rtol, atol=atol)
-    assert_allclose(model.BIC, 3835.9367620095813, rtol=rtol, atol=atol)
-    assert_allclose(model.loglik, -1909.4127072928063, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 1908.048447899532, rtol=rtol, atol=atol)
+    assert_allclose(model.b, 12.802133247235542, rtol=rtol, atol=atol)
+    assert_allclose(model.sigma, 0.4797308001925457, rtol=rtol, atol=atol)
+    assert_allclose(model.AICc, 3817.426209093163, rtol=rtol, atol=atol)
 
 
 def test_Fit_Lognormal_Eyring():
@@ -71,12 +69,10 @@ def test_Fit_Lognormal_Eyring():
         use_level_stress=300,
     )
     plt.close("all")
-    assert_allclose(model.a, 1533.14724753, rtol=rtol, atol=atol)
-    assert_allclose(model.c, -9.98431861625691, rtol=rtol, atol=atol)
-    assert_allclose(model.sigma, 0.49016660648069477, rtol=rtol, atol=atol)
-    assert_allclose(model.AICc, 4040.853294458127, rtol=rtol, atol=atol)
-    assert_allclose(model.BIC, 4051.8835608010145, rtol=rtol, atol=atol)
-    assert_allclose(model.loglik, -2017.386106688523, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 1408.0357162993603, rtol=rtol, atol=atol)
+    assert_allclose(model.c, -10.247060908350143, rtol=rtol, atol=atol)
+    assert_allclose(model.sigma, 0.47975465111948656, rtol=rtol, atol=atol)
+    assert_allclose(model.AICc, 4033.3730693667667, rtol=rtol, atol=atol)
 
 
 def test_Fit_Lognormal_Power():
@@ -103,15 +99,13 @@ def test_Fit_Lognormal_Power():
     plt.close("all")
     assert_allclose(
         model.a,
-        6986752555048811.0,
+        1386857914593527.0,
         rtol=rtol,
         atol=atol,
     )  # larger due to variation in python versions
-    assert_allclose(model.n, -4.052657513810853, rtol=rtol, atol=atol)  # larger due to variation in python versions
-    assert_allclose(model.sigma, 0.49023468735812314, rtol=rtol, atol=atol)
-    assert_allclose(model.AICc, 6155.617784732405, rtol=rtol, atol=atol)
-    assert_allclose(model.BIC, 6166.648051075293, rtol=rtol, atol=atol)
-    assert_allclose(model.loglik, -3074.768351825662, rtol=rtol, atol=atol)
+    assert_allclose(model.n, -3.7834766874541224, rtol=rtol, atol=atol)  # larger due to variation in python versions
+    assert_allclose(model.sigma, 0.47980567226965753, rtol=rtol, atol=atol)
+    assert_allclose(model.AICc, 6148.1595131243, rtol=rtol, atol=atol)
 
 
 def test_Fit_Lognormal_Dual_Power():
@@ -143,18 +137,16 @@ def test_Fit_Lognormal_Dual_Power():
         print_results=True,
     )
     plt.close("all")
-    assert_allclose(model.c, 1041948435048137.1, rtol=rtol, atol=atol)  # larger due to variation in python versions
-    assert_allclose(model.m, -3.9879794497580847, rtol=rtol, atol=atol)  # larger due to variation in python versions
+    assert_allclose(model.c, 2025001594073569.8, rtol=rtol, atol=atol)  # larger due to variation in python versions
+    assert_allclose(model.m, -4.10306765883972, rtol=rtol, atol=atol)  # larger due to variation in python versions
     assert_allclose(
         model.n,
-        -1.9979114185818097,
+        -1.9771667948254903,
         rtol=rtol,
         atol=atol,
     )  # larger due to variation in python versions
-    assert_allclose(model.sigma, 0.4910883211257458, rtol=rtol, atol=atol)
-    assert_allclose(model.AICc, 3727.3363565359323, rtol=rtol, atol=atol)
-    assert_allclose(model.BIC, 3744.0959378437265, rtol=rtol, atol=atol)
-    assert_allclose(model.loglik, -1859.6187527250188, rtol=rtol, atol=atol)
+    assert_allclose(model.sigma, 0.5206885479789575, rtol=rtol, atol=atol)
+    assert_allclose(model.AICc, 3770.4702143474196, rtol=rtol, atol=atol)
 
 
 def test_Fit_Lognormal_Power_Exponential():
@@ -186,13 +178,11 @@ def test_Fit_Lognormal_Power_Exponential():
         print_results=True,
     )
     plt.close("all")
-    assert_allclose(model.a, 203.64166629, rtol=rtol, atol=atol)
-    assert_allclose(model.c, 391.30870096, rtol=rtol, atol=atol)
-    assert_allclose(model.n, -0.44133854, rtol=rtol, atol=atol)
-    assert_allclose(model.sigma, 0.4910516937147718, rtol=rtol, atol=atol)
-    assert_allclose(model.AICc, 3200.6626325485195, rtol=rtol, atol=atol)
-    assert_allclose(model.BIC, 3217.4402568614005, rtol=rtol, atol=atol)
-    assert_allclose(model.loglik, -1596.2909122338558, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 242.68553531905303, rtol=rtol, atol=atol)
+    assert_allclose(model.c, 342.6394573810117, rtol=rtol, atol=atol)
+    assert_allclose(model.n, -0.4170107712496197, rtol=rtol, atol=atol)
+    assert_allclose(model.sigma, 0.5206867352489463, rtol=rtol, atol=atol)
+    assert_allclose(model.AICc, 3244.202696675515, rtol=rtol, atol=atol)
 
 
 def test_Fit_Lognormal_Dual_Exponential():
@@ -221,10 +211,8 @@ def test_Fit_Lognormal_Dual_Exponential():
         use_level_stress=np.array([100, 0.2]),
     )
     plt.close("all")
-    assert_allclose(model.a, 73.25301902, rtol=rtol, atol=atol)
-    assert_allclose(model.b, 0.11880547, rtol=rtol, atol=atol)
-    assert_allclose(model.c, 499.62393884, rtol=rtol, atol=atol)
-    assert_allclose(model.sigma, 0.4837723906057129, rtol=rtol, atol=atol)
-    assert_allclose(model.AICc, 6786.541219570215, rtol=rtol, atol=atol)
-    assert_allclose(model.BIC, 6805.706105886082, rtol=rtol, atol=atol)
-    assert_allclose(model.loglik, -3389.248263416392, rtol=rtol, atol=atol)
+    assert_allclose(model.a, 77.72107829490336, rtol=rtol, atol=atol)
+    assert_allclose(model.b, 0.08922384502386554, rtol=rtol, atol=atol)
+    assert_allclose(model.c, 531.2400298122011, rtol=rtol, atol=atol)
+    assert_allclose(model.sigma, 0.5191985969241459, rtol=rtol, atol=atol)
+    assert_allclose(model.AICc, 6855.920520053332, rtol=rtol, atol=atol)

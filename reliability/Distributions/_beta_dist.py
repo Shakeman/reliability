@@ -725,8 +725,8 @@ class Beta_Distribution:
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
-            np.random.seed(seed)
-        RVS = ss.beta.rvs(self.alpha, self.beta, 0, 1, size=number_of_samples)
+            rng = np.random.default_rng(seed)
+        RVS = ss.beta.rvs(self.alpha, self.beta, 0, 1, size=number_of_samples, random_state=rng)
 
         # this section is for resampling so that we always get numbers below 1.
         # For a Beta Distribution, 1 should be impossible, but scipy.stats will

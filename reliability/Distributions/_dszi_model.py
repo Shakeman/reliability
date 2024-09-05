@@ -781,11 +781,10 @@ class DSZI_Model:
             right_censored_time = 1  # dummy value which is multiplied by an empty array.
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             raise ValueError("number_of_samples must be an integer greater than 0")
-        if seed is not None:
-            np.random.seed(seed)
+        rng = np.random.default_rng(seed)
 
-        samples0 = np.random.choice(
-            [0, 1, 2],
+        samples0 = rng.choice(
+            a=[0, 1, 2],
             size=number_of_samples,
             p=[self.ZI, self.DS - self.ZI, 1 - self.DS],
         )  # 0 is number of ZI, 1 is number of failures, 2 is number of right censored

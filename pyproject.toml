@@ -7,13 +7,13 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-autograd = ">=1.5"
+autograd = "^1.7.0"
 scipy = ">=1.10.1"
-numpy = ">=1.24.2"
+numpy = "^2.1.1"
 pandas = ">=2.0.1"
 autograd-gamma = ">=0.5.0"
 mplcursors = ">=0.5.2"
-pyarrow = "^15.0.0"
+pyarrow = "^17.0.0"
 pathlib = "^1.0.1"
 openpyxl = "^3.1.2"
 xlsxwriter = "^3.2.0"
@@ -126,7 +126,6 @@ ignore = [
     "TCH002", # Move third-party import
     "D100", # Missing docstring in public module
     "INP001",
-    "NPY201"
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.

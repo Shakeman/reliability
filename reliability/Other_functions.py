@@ -136,7 +136,7 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
         trapezoids,
     )  # we take the min and max here since there may be cases when stress > strength
 
-    prob_of_failure = np.trapz(strength.PDF(x, show_plot=False) * stress.SF(x, show_plot=False), x)  # type: ignore
+    prob_of_failure = np.trapezoid(strength.PDF(x, show_plot=False) * stress.SF(x, show_plot=False), x)  # type: ignore
     if prob_of_failure > 1:
         colorprint(
             "WARNING: The probability of failure is wrong. One of the distributions likely has an asymptote where the values along the y-axis approach infinity which has caused the integration to fail. There is no solution to this other than to use a distribution that does not have an asymptote.",

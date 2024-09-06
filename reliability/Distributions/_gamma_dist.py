@@ -518,7 +518,7 @@ class Gamma_Distribution:
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.quantile(CI_y), upper_CI
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 cdf_point = ss.gamma.cdf(CI_x, self.beta, scale=self.alpha, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(cdf_point), upper_CI
         return cdf
@@ -655,7 +655,7 @@ class Gamma_Distribution:
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(CI_y), upper_CI
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 sf_point = ss.gamma.sf(CI_x, self.beta, scale=self.alpha, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(sf_point), upper_CI
         return sf
@@ -872,7 +872,7 @@ class Gamma_Distribution:
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(np.exp(-CI_y)), upper_CI
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 chf_point = -np.log(ss.gamma.sf(CI_x, self.beta, scale=self.alpha, loc=self.gamma))
                 return lower_CI, unpack_single_arrays(chf_point), upper_CI
         return chf

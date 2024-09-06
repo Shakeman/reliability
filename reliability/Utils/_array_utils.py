@@ -306,25 +306,23 @@ def xy_downsample(x, y, downsample_factor=None, default_max_values=1000):
         return x, y
     if downsample_factor in [None, True] and len_x < default_max_values:
         return x, y
-    else:
-        if downsample_factor in [None, True]:
-            downsample_factor = np.floor(len_x / (0.5 * default_max_values))
-        elif not isinstance(downsample_factor, int):
-            raise ValueError("downsample_factor must be an integer")
-        MINIMUM_POINTS = 2
-        if len_x / downsample_factor < MINIMUM_POINTS:
-            return x, y
-        else:
-            indices = np.arange(start=0, stop=len_x, step=int(np.floor(downsample_factor)), dtype=int)
+    if downsample_factor in [None, True]:
+        downsample_factor = np.floor(len_x / (0.5 * default_max_values))
+    elif not isinstance(downsample_factor, int):
+        raise ValueError("downsample_factor must be an integer")
+    MINIMUM_POINTS = 2
+    if len_x / downsample_factor < MINIMUM_POINTS:
+        return x, y
+    indices = np.arange(start=0, stop=len_x, step=int(np.floor(downsample_factor)), dtype=int)
 
-            if len_x - 1 not in indices:
-                indices[-1] = len_x - 1
-            x_downsample = []
-            y_downsample = []
-            for idx in indices:
-                x_downsample.append(x_sorted[idx])
-                y_downsample.append(y_sorted[idx])
-            return x_downsample, y_downsample
+    if len_x - 1 not in indices:
+        indices[-1] = len_x - 1
+    x_downsample = []
+    y_downsample = []
+    for idx in indices:
+        x_downsample.append(x_sorted[idx])
+        y_downsample.append(y_sorted[idx])
+    return x_downsample, y_downsample
 
 
 def removeNaNs(X):

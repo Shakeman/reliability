@@ -305,6 +305,7 @@ def ALT_prob_plot(
         plt.title("Probability plot\n" + dist + "_" + model + " Model")
         plt.tight_layout()
         return plt.gca()
+    return None
 
 
 class axes_transforms:

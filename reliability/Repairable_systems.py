@@ -503,8 +503,8 @@ class optimal_replacement_time:
                     1 / self.__weibull_beta
                 )
 
-            else:  # q = 0
-                return self.__t[np.argmin((self.__cost_PM * self.__sf + x * (1 - self.__sf)) / self.__integral)]
+            # q = 0
+            return self.__t[np.argmin((self.__cost_PM * self.__sf + x * (1 - self.__sf)) / self.__integral)]
 
         vcalc_ORT = np.vectorize(calc_ORT)
         ORT_array = vcalc_ORT(CC)

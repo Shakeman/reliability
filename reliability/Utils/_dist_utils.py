@@ -301,6 +301,7 @@ def life_stress_plot(
             plt.legend(loc="upper right")
             plt.tight_layout()
         return plt.gca()
+    return None
 
 
 def extract_CI(
@@ -629,14 +630,12 @@ class distribution_confidence_intervals:
                 t_lower: npt.NDArray[np.float64] = -np.log(q) / Lambda_upper + dist.gamma
                 t_upper: npt.NDArray[np.float64] = -np.log(q) / Lambda_lower + dist.gamma
                 return t_lower, t_upper
-            elif x is not None:
+            if x is not None:
                 return Y_lower, Y_upper
-            else:
-                raise ValueError("q or x values must be provided in order to calculate the confidence intervals.")
-        else:
-            raise ValueError(
-                "The Exponential distribution object must contain Lambda_SE, Z, and q or x values in order to calculate the confidence intervals.",
-            )
+            raise ValueError("q or x values must be provided in order to calculate the confidence intervals.")
+        raise ValueError(
+            "The Exponential distribution object must contain Lambda_SE, Z, and q or x values in order to calculate the confidence intervals.",
+        )
 
     @staticmethod
     def exponential_CI(
@@ -785,8 +784,10 @@ class distribution_confidence_intervals:
                 t_lower: npt.NDArray[np.float64] = -np.log(q) / Lambda_upper + dist.gamma
                 t_upper: npt.NDArray[np.float64] = -np.log(q) / Lambda_lower + dist.gamma
                 return t_lower, t_upper
-            elif x is not None:
+            if x is not None:
                 return Y_lower, Y_upper
+            return None
+        return None
 
     @staticmethod
     def weibull_CI_only(
@@ -937,10 +938,9 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
-                else:
-                    raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+                raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
             # Confidence bounds on Reliability (in terms of time)
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 if x is not None:
                     t = x - dist.gamma
                 else:
@@ -978,16 +978,13 @@ class distribution_confidence_intervals:
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
                 if x is not None:
                     return Y_lower, Y_upper
-                else:
-                    raise ValueError(
-                        "x values must be provided in order to calculate the reliability confidence intervals.",
-                    )
-            else:
-                raise ValueError("CI_type must be either 'time' or 'reliability'")
-        else:
-            raise ValueError(
-                "The Weibull distribution object must contain alpha_SE, beta_SE, Cov_alpha_beta, Z, and q or x values in order to calculate the confidence intervals.",
-            )
+                raise ValueError(
+                    "x values must be provided in order to calculate the reliability confidence intervals.",
+                )
+            raise ValueError("CI_type must be either 'time' or 'reliability'")
+        raise ValueError(
+            "The Weibull distribution object must contain alpha_SE, beta_SE, Cov_alpha_beta, Z, and q or x values in order to calculate the confidence intervals.",
+        )
 
     @staticmethod
     def weibull_CI(
@@ -1192,9 +1189,10 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
+                return None
 
             # Confidence bounds on Reliability (in terms of time)
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 if x is not None:
                     t = x - dist.gamma
                 else:
@@ -1252,6 +1250,9 @@ class distribution_confidence_intervals:
                     )
                 if x is not None:
                     return Y_lower, Y_upper
+                return None
+            return None
+        return None
 
     @staticmethod
     def gamma_CI_only(
@@ -1410,11 +1411,10 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
-                else:
-                    raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+                raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
 
             # Confidence bounds on Reliability (in terms of time)
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 if x is not None:
                     t = x - dist.gamma
                 else:
@@ -1453,16 +1453,13 @@ class distribution_confidence_intervals:
 
                 if x is not None:
                     return Y_lower, Y_upper
-                else:
-                    raise ValueError(
-                        "x values must be provided in order to calculate the reliability confidence intervals.",
-                    )
-            else:
-                raise ValueError("CI_type must be either 'time' or 'reliability'")
-        else:
-            raise ValueError(
-                "The Gamma distribution object must contain mu_SE, beta_SE, Cov_mu_beta, CI, and q or x values in order to calculate the confidence intervals.",
-            )
+                raise ValueError(
+                    "x values must be provided in order to calculate the reliability confidence intervals.",
+                )
+            raise ValueError("CI_type must be either 'time' or 'reliability'")
+        raise ValueError(
+            "The Gamma distribution object must contain mu_SE, beta_SE, Cov_mu_beta, CI, and q or x values in order to calculate the confidence intervals.",
+        )
 
     @staticmethod
     def gamma_CI(
@@ -1674,9 +1671,10 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
+                return None
 
             # Confidence bounds on Reliability (in terms of time)
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 if x is not None:
                     t = x - dist.gamma
                 else:
@@ -1734,12 +1732,11 @@ class distribution_confidence_intervals:
                     )
                 if x is not None:
                     return Y_lower, Y_upper
-                else:
-                    raise ValueError(
-                        "x values must be provided in order to calculate the reliability confidence intervals.",
-                    )
-            else:
-                raise ValueError("CI_type must be either 'time' or 'reliability'")
+                raise ValueError(
+                    "x values must be provided in order to calculate the reliability confidence intervals.",
+                )
+            raise ValueError("CI_type must be either 'time' or 'reliability'")
+        return None
 
     @staticmethod
     def normal_CI_only(
@@ -1884,10 +1881,9 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
-                else:
-                    raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+                raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
             # Confidence bounds on Reliability (in terms of time)
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 t = x if x is not None else np.linspace(dist.quantile(1e-05), dist.quantile(0.99999), points)
 
                 # u is reliability u = phiinv(R)
@@ -1914,16 +1910,13 @@ class distribution_confidence_intervals:
 
                 if x is not None:
                     return Y_lower, Y_upper
-                else:
-                    raise ValueError(
-                        "x values must be provided in order to calculate the reliability confidence intervals.",
-                    )
-            else:
                 raise ValueError(
-                    "The confidence intervals cannot be calculated. Pleasesupply CI Type of time or reliability.",
+                    "x values must be provided in order to calculate the reliability confidence intervals.",
                 )
-        else:
-            raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
+            raise ValueError(
+                "The confidence intervals cannot be calculated. Pleasesupply CI Type of time or reliability.",
+            )
+        raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
 
     @staticmethod
     def normal_CI(
@@ -2121,9 +2114,10 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
+                return None
 
             # Confidence bounds on Reliability (in terms of time)
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 t = x if x is not None else np.linspace(dist.quantile(1e-05), dist.quantile(0.99999), points)
 
                 # u is reliability u = phiinv(R)
@@ -2162,6 +2156,9 @@ class distribution_confidence_intervals:
                     CI_plot(x=t, x_lower=t, x_upper=t, yy_lower=yy_lower, yy_upper=yy_upper, color=color)
                 if x is not None:
                     return Y_lower, Y_upper
+                return None
+            return None
+        return None
 
     @staticmethod
     def lognormal_CI_only(
@@ -2310,10 +2307,9 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
-                else:
-                    raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+                raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
 
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 # Confidence bounds on Reliability (in terms of time)
                 if x is not None:
                     t = x - dist.gamma
@@ -2351,16 +2347,13 @@ class distribution_confidence_intervals:
 
                 if x is not None:
                     return Y_lower, Y_upper
-                else:
-                    raise ValueError(
-                        "x values must be provided in order to calculate the reliability confidence intervals.",
-                    )
-            else:
                 raise ValueError(
-                    "The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.",
+                    "x values must be provided in order to calculate the reliability confidence intervals.",
                 )
-        else:
-            raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
+            raise ValueError(
+                "The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.",
+            )
+        raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
 
     @staticmethod
     def lognormal_CI(
@@ -2562,8 +2555,9 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
+                return None
 
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 # Confidence bounds on Reliability (in terms of time)
                 if x is not None:
                     t = x - dist.gamma
@@ -2620,6 +2614,9 @@ class distribution_confidence_intervals:
                     )
                 if x is not None:
                     return Y_lower, Y_upper
+                return None
+            return None
+        return None
 
     @staticmethod
     def loglogistic_CI_only(
@@ -2767,10 +2764,9 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
-                else:
-                    raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+                raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
 
-            elif CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
+            if CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
                 if x is not None:
                     t = x - dist.gamma
                 else:
@@ -2809,16 +2805,13 @@ class distribution_confidence_intervals:
 
                 if x is not None:
                     return Y_lower, Y_upper
-                else:
-                    raise ValueError(
-                        "x values must be provided in order to calculate the reliability confidence intervals.",
-                    )
-            else:
                 raise ValueError(
-                    "The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.",
+                    "x values must be provided in order to calculate the reliability confidence intervals.",
                 )
-        else:
-            raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
+            raise ValueError(
+                "The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.",
+            )
+        raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
 
     @staticmethod
     def loglogistic_CI(
@@ -3020,8 +3013,9 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
+                return None
 
-            elif CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
+            if CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
                 if x is not None:
                     t = x - dist.gamma
                 else:
@@ -3080,6 +3074,9 @@ class distribution_confidence_intervals:
                     )
                 if x is not None:
                     return Y_lower, Y_upper
+                return None
+            return None
+        return None
 
     @staticmethod
     def gumbel_CI_only(
@@ -3223,10 +3220,9 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
-                else:
-                    raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+                raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
 
-            elif CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
+            if CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
                 t = x if x is not None else np.linspace(dist.quantile(1e-05), dist.quantile(0.99999), points)
 
                 # u is reliability u = ln(-ln(R))
@@ -3253,16 +3249,13 @@ class distribution_confidence_intervals:
 
                 if x is not None:
                     return Y_lower, Y_upper
-                else:
-                    raise ValueError(
-                        "x values must be provided in order to calculate the reliability confidence intervals.",
-                    )
-            else:
                 raise ValueError(
-                    "The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.",
+                    "x values must be provided in order to calculate the reliability confidence intervals.",
                 )
-        else:
-            raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
+            raise ValueError(
+                "The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.",
+            )
+        raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
 
     @staticmethod
     def gumbel_CI(
@@ -3460,8 +3453,9 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
+                return None
 
-            elif CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
+            if CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
                 t = x if x is not None else np.linspace(dist.quantile(1e-05), dist.quantile(0.99999), points)
 
                 # u is reliability u = ln(-ln(R))
@@ -3501,6 +3495,9 @@ class distribution_confidence_intervals:
                     CI_plot(x=t, x_lower=t, x_upper=t, yy_lower=yy_lower, yy_upper=yy_upper, color=color)
                 if x is not None:
                     return Y_lower, Y_upper
+                return None
+            return None
+        return None
 
 
 def CI_plot(x, x_lower, x_upper, yy_lower, yy_upper, color) -> None:

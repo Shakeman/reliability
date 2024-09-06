@@ -553,7 +553,7 @@ class Loglogistic_Distribution:
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.quantile(CI_y), upper_CI
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 cdf_point = ss.fisk.cdf(CI_x, self.beta, scale=self.alpha, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(cdf_point), upper_CI
         return cdf
@@ -690,7 +690,7 @@ class Loglogistic_Distribution:
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(CI_y), upper_CI
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 sf_point = ss.fisk.sf(CI_x, self.beta, scale=self.alpha, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(sf_point), upper_CI
         return sf
@@ -908,7 +908,7 @@ class Loglogistic_Distribution:
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(np.exp(-CI_y)), upper_CI
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 chf_point = zeroise_below_gamma(
                     X=CI_x,
                     Y=np.log(1 + ((CI_x - self.gamma) / self.alpha) ** self.beta),

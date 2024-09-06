@@ -510,7 +510,7 @@ class Lognormal_Distribution:
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.quantile(CI_y), upper_CI
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 cdf_point = ss.lognorm.cdf(CI_x, self.sigma, self.gamma, np.exp(self.mu))
                 return lower_CI, unpack_single_arrays(cdf_point), upper_CI
         return cdf
@@ -647,7 +647,7 @@ class Lognormal_Distribution:
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(CI_y), upper_CI
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 sf_point = ss.lognorm.sf(CI_x, self.sigma, self.gamma, np.exp(self.mu))
                 return lower_CI, unpack_single_arrays(sf_point), upper_CI
         return sf
@@ -864,7 +864,7 @@ class Lognormal_Distribution:
         if lower_CI is not None and upper_CI is not None:
             if CI_type == "time":
                 return lower_CI, self.inverse_SF(np.exp(-CI_y)), upper_CI
-            elif CI_type == "reliability":
+            if CI_type == "reliability":
                 chf_point = -np.log(ss.lognorm.sf(CI_x, self.sigma, self.gamma, np.exp(self.mu)))
                 return lower_CI, unpack_single_arrays(chf_point), upper_CI
         return chf

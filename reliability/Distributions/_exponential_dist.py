@@ -459,7 +459,7 @@ class Exponential_Distribution:
         if lower_CI is not None and upper_CI is not None:
             if CI_y is not None:
                 return lower_CI, self.quantile(CI_y), upper_CI
-            elif CI_x is not None:
+            if CI_x is not None:
                 cdf_point = ss.expon.cdf(CI_x, scale=1 / self.Lambda, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(cdf_point), upper_CI
         return cdf
@@ -585,7 +585,7 @@ class Exponential_Distribution:
         if lower_CI is not None and upper_CI is not None:
             if CI_y is not None:
                 return lower_CI, self.inverse_SF(CI_y), upper_CI
-            elif CI_x is not None:
+            if CI_x is not None:
                 sf_point = ss.expon.sf(CI_x, scale=1 / self.Lambda, loc=self.gamma)
                 return lower_CI, unpack_single_arrays(sf_point), upper_CI
         return sf
@@ -796,7 +796,7 @@ class Exponential_Distribution:
         if lower_CI is not None and upper_CI is not None:
             if CI_y is not None:
                 return lower_CI, self.inverse_SF(np.exp(-CI_y)), upper_CI
-            elif CI_x is not None:
+            if CI_x is not None:
                 chf_point: npt.NDArray[np.float64] = zeroise_below_gamma(
                     X=CI_x, Y=(CI_x - self.gamma) * self.Lambda, gamma=self.gamma
                 )

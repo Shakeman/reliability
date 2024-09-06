@@ -80,7 +80,6 @@ ignore = [
     "TRY003", #raise-vanilla-args
     "N802", #invalid function ame
     "ANN201", #missing-return-type
-    #"PLR2004", #magic value comparison
     "D401", #first line should be in imperative mood
     "D205", #1 blank line required between summary line and description
     "FA102", #future required-type-annotation
@@ -110,7 +109,6 @@ ignore = [
     "E501",  # line too long, handled by black
     "FBT003",# Boolean positional value in function call"
     "C901",  # too complex
-    "S101",    # Use of `assert` detected
     "ANN101", #missing-type-self
     "N806", #non-lowercase-variable-in-function
     "T201", # print statement
@@ -119,7 +117,7 @@ ignore = [
     "ANN001", #missing-type-function-argument
     "ANN202", #missing-return-type-private-function
     "FBT002", #boolean-default-value-positional-argument
-    "TCH002", # Move third-party import
+    #"TCH002", # Move third-party import
     "D100", # Missing docstring in public module
     "INP001",
 ]
@@ -136,7 +134,7 @@ section-order = ["future", "standard-library", "third-party", "first-party", "lo
 known-first-party = []
 
 [tool.ruff.lint.per-file-ignores]
-"test_*.py" = ["PLR2004"] # magic value comparison
+"test_*.py" = ["PLR2004","S101"]
 
 [tool.ruff.format]
 # Like Black, use double quotes for strings.

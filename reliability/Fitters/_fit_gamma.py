@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,7 +11,6 @@ import scipy.stats as ss
 from autograd.differential_operators import hessian
 from autograd.scipy.special import gamma as agamma
 from autograd_gamma import gammaincc
-from matplotlib.figure import Figure
 from numpy.linalg import LinAlgError
 
 from reliability.Distributions import (
@@ -25,6 +26,9 @@ from reliability.Utils import (
     fitters_input_checking,
     round_and_string,
 )
+
+if TYPE_CHECKING:
+    from matplotlib.figure import Figure
 
 anp.seterr("ignore")
 dec = 3  # number of decimals to use when rounding fitted parameters in labels

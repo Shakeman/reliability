@@ -1,7 +1,6 @@
 import warnings
+from typing import TYPE_CHECKING
 
-import numpy as np
-import numpy.typing as npt
 from numpy.testing import assert_allclose
 
 from reliability.Distributions import (
@@ -12,6 +11,10 @@ from reliability.Fitters import (
     Fit_Exponential_2P,
 )
 from reliability.Other_functions import make_right_censored_data
+
+if TYPE_CHECKING:
+    import numpy as np
+    import numpy.typing as npt
 
 # I would like to make these smaller but the slight differences in different python versions (3.6-3.9) mean that tight tolerances result in test failures
 atol = 1e-3

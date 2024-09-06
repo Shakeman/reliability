@@ -1,7 +1,8 @@
+from typing import TYPE_CHECKING
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from _pytest.capture import CaptureResult
 from numpy.testing import assert_allclose
 
 from reliability.Datasets import MCF_1
@@ -12,6 +13,9 @@ from reliability.Repairable_systems import (
     optimal_replacement_time,
     reliability_growth,
 )
+
+if TYPE_CHECKING:
+    from _pytest.capture import CaptureResult
 
 atol = 1e-8
 rtol = 1e-7

@@ -758,8 +758,8 @@ class RankAdjustment:
 
     def __init__(
         self,
-        failures: npt.NDArray[np.float64] | list[float],
-        right_censored: npt.NDArray[np.float64] | list[float] | None,
+        failures: npt.NDArray[np.float64] | list[float] | list[int],
+        right_censored: npt.NDArray[np.float64] | list[float] | list[int] | None,
         plotting_hueristic: float = 0.3,
         CI: float = 0.95,
     ):

@@ -1782,50 +1782,53 @@ class fracture_mechanics_crack_growth:
 
     def __init__(
         self,
-        Kc: float,
+        fracture_toughness: float,
         C: float,
         m: float,
-        P: float,
-        W: float,
-        t: float,
-        Kt: float = 1.0,
+        external_load: float,
+        plate_width: float,
+        plate_thickness: float,
+        stress_concentration: float = 1.0,
         a_initial: float = 1.0,
-        D: float = 0.0,
+        notch_depth: float = 0.0,
         a_final: float | None = None,
         crack_type: str = "edge",
     ):
-        if m == 2:
+        INVALID_MATERIAL_CONSTANT = 2
+        if m == INVALID_MATERIAL_CONSTANT:
             raise ValueError("m can not be 2")
         if crack_type not in ["center", "edge", "centre"]:
             raise ValueError("crack_type must be either edge or center. default is center")
-        if W - 2 * D < 0:
+        if plate_width - 2 * notch_depth < 0:
             error_str = str(
                 "The specified geometry is invalid. A doubly notched specimen with specified values of the d = "
-                + str(D)
+                + str(notch_depth)
                 + "mm will have notches deeper than the width of the plate W = "
-                + str(W)
+                + str(plate_width)
                 + "mm. This would result in a negative cross sectional area.",
             )
             raise ValueError(error_str)
         # Simplified method (assuming fg, S_max, af to be constant)
-        S_max: float = P / (t * (W - 2 * D)) * 10**6
+        S_max: float = external_load / (plate_thickness * (plate_width - 2 * notch_depth)) * 10**6
         if crack_type == "edge":
             f_g_fixed = 1.12
         elif crack_type in ["center", "centre"]:
             f_g_fixed = 1.0
         m_exp: float = -0.5 * m + 1
-        a_crit: float = 1 / np.pi * (Kc / (S_max * f_g_fixed)) ** 2 + D / 1000  # critical crack length to cause failure
+        a_crit: float = (
+            1 / np.pi * (fracture_toughness / (S_max * f_g_fixed)) ** 2 + notch_depth / 1000
+        )  # critical crack length to cause failure
         if a_final is None:
             a_f: float = a_crit
-        elif a_final < a_crit * 1000 - D:  # this is approved early stopping
-            a_f = (a_final + D) / 1000
+        elif a_final < a_crit * 1000 - notch_depth:  # this is approved early stopping
+            a_f = (a_final + notch_depth) / 1000
         else:
             colorprint(
                 str(
                     "WARNING: In the simplified method, the specified a_final ("
                     + str(a_final)
                     + " mm) is greater than the critical crack length to cause failure ("
-                    + str(round(a_crit * 1000 - D, 5))
+                    + str(round(a_crit * 1000 - notch_depth, 5))
                     + " mm).",
                 ),
                 text_color="red",
@@ -1835,12 +1838,14 @@ class fracture_mechanics_crack_growth:
                 text_color="red",
             )
             a_f = a_crit
-        lt: float = D / ((1.12 * Kt / f_g_fixed) ** 2 - 1) / 1000  # find the transition length due to the notch
+        lt: float = (
+            notch_depth / ((1.12 * stress_concentration / f_g_fixed) ** 2 - 1) / 1000
+        )  # find the transition length due to the notch
         if lt > a_initial / 1000:  # two step process due to local stress concentration
             Nf_1: float = (lt**m_exp - (a_initial / 1000) ** m_exp) / (
                 m_exp * C * S_max**m * np.pi ** (0.5 * m) * f_g_fixed**m
             )
-            a_i: float = lt + D / 1000  # new initial length for stage 2
+            a_i: float = lt + notch_depth / 1000  # new initial length for stage 2
         else:
             a_i = a_initial / 1000
             Nf_1 = 0
@@ -1849,23 +1854,23 @@ class fracture_mechanics_crack_growth:
         self.Nf_stage_1_simplified: float = Nf_1
         self.Nf_stage_2_simplified: float = Nf_2
         self.Nf_total_simplified: float = Nf_tot
-        self.final_crack_length_simplified: float = a_f * 1000 - D
+        self.final_crack_length_simplified: float = a_f * 1000 - notch_depth
         self.transition_length_simplified: float = lt * 1000
 
         # Iterative method (recalculating fg, S_max, af at each iteration)
         a: float = a_initial
-        a_effective = a_initial + D
+        a_effective = a_initial + notch_depth
         if crack_type in ["center", "centre"]:
-            f_g: float = (1 / np.cos(np.pi * a_effective / W)) ** 0.5
+            f_g: float = (1 / np.cos(np.pi * a_effective / plate_width)) ** 0.5
         elif crack_type == "edge":
             f_g: float = (
                 1.12
-                - 0.231 * (a_effective / W)
-                + 10.55 * (a_effective / W) ** 2
-                - 21.72 * (a_effective / W) ** 3
-                + 30.39 * (a_effective / W) ** 4
+                - 0.231 * (a_effective / plate_width)
+                + 10.55 * (a_effective / plate_width) ** 2
+                - 21.72 * (a_effective / plate_width) ** 3
+                + 30.39 * (a_effective / plate_width) ** 4
             )
-        lt2: float = D / ((1.12 * Kt / f_g) ** 2 - 1)
+        lt2: float = notch_depth / ((1.12 * stress_concentration / f_g) ** 2 - 1)
         self.transition_length_iterative: float = lt2
         self.Nf_stage_1_iterative = 0
         N = 0
@@ -1874,25 +1879,35 @@ class fracture_mechanics_crack_growth:
         a_crit_array = []
         N_array = []
         while growth_finished is False:
-            area: float = t * (W - 2 * D - a)
-            S: float = (P / area) * 10**6  # local stress due to reducing cross-sectional area
+            area: float = plate_thickness * (plate_width - 2 * notch_depth - a)
+            S: float = (external_load / area) * 10**6  # local stress due to reducing cross-sectional area
             if a < lt2:  # crack growth slowed by transition length
                 if crack_type in ["center", "centre"]:
-                    f_g = (1 / np.cos(np.pi * a / W)) ** 0.5  # Ref: p92 of Bannantine, et al. (1997).
+                    f_g = (1 / np.cos(np.pi * a / plate_width)) ** 0.5  # Ref: p92 of Bannantine, et al. (1997).
                 elif crack_type == "edge":
                     f_g = (
-                        1.12 - 0.231 * (a / W) + 10.55 * (a / W) ** 2 - 21.72 * (a / W) ** 3 + 30.39 * (a / W) ** 4
+                        1.12
+                        - 0.231 * (a / plate_width)
+                        + 10.55 * (a / plate_width) ** 2
+                        - 21.72 * (a / plate_width) ** 3
+                        + 30.39 * (a / plate_width) ** 4
                     )  # Ref: p92 of Bannantine, et al. (1997).
                 delta_K: float = f_g * S * (np.pi * a / 1000) ** 0.5
             else:
                 if crack_type in ["center", "centre"]:
-                    f_g = (1 / np.cos(np.pi * a / W)) ** 0.5
+                    f_g = (1 / np.cos(np.pi * a / plate_width)) ** 0.5
                 elif crack_type == "edge":
-                    f_g = 1.12 - 0.231 * (a / W) + 10.55 * (a / W) ** 2 - 21.72 * (a / W) ** 3 + 30.39 * (a / W) ** 4
+                    f_g = (
+                        1.12
+                        - 0.231 * (a / plate_width)
+                        + 10.55 * (a / plate_width) ** 2
+                        - 21.72 * (a / plate_width) ** 3
+                        + 30.39 * (a / plate_width) ** 4
+                    )
                 delta_K: float = f_g * S * (np.pi * a_effective / 1000) ** 0.5
             da: float = (C * delta_K**m) * 1000
-            a_crit = 1 / np.pi * (Kc / (f_g * S)) ** 2 + D / 1000
-            a_crit_array.append(a_crit * 1000 - D)
+            a_crit = 1 / np.pi * (fracture_toughness / (f_g * S)) ** 2 + notch_depth / 1000
+            a_crit_array.append(a_crit * 1000 - notch_depth)
             a_effective += da  # grow the crack by da
             a += da  # grow the crack by da
             N += 1
@@ -1902,10 +1917,10 @@ class fracture_mechanics_crack_growth:
                 self.Nf_stage_1_iterative: int = N - 1
             if a_effective > a_crit * 1000:
                 growth_finished = True
-            if a_final is not None and a_effective > a_final + D:
+            if a_final is not None and a_effective > a_final + notch_depth:
                 growth_finished = True
         self.Nf_total_iterative: int = N
-        self.final_crack_length_iterative: float = a_crit * 1000 - D
+        self.final_crack_length_iterative: float = a_crit * 1000 - notch_depth
         self.Nf_stage_2_iterative: int = N - self.Nf_stage_1_iterative
         if a_final is not None and a_final > self.final_crack_length_iterative:
             colorprint(
@@ -2123,7 +2138,8 @@ def creep_rupture_curves(temp_array, stress_array, TTF_array, stress_trace=None,
         raise ValueError(
             "You must enter both stress_trace and temp_trace to obtain the time to failure at a given stress and temperature.",
         )
-    if len(temp_array) < 2 or len(stress_array) < 2 or len(TTF_array) < 2:
+    MIN_DATA_POINTS = 2
+    if len(temp_array) < MIN_DATA_POINTS or len(stress_array) < MIN_DATA_POINTS or len(TTF_array) < MIN_DATA_POINTS:
         raise ValueError(
             "temp_array, stress_array, and TTF_array must each have at least 2 data points for a line to be fitted.",
         )

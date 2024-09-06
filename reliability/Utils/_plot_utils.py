@@ -1,4 +1,4 @@
-from typing import overload
+from typing import Literal, overload
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -157,10 +157,13 @@ def probability_plot_xyticks(yticks=None):
             The formatted string
 
         """
+        big_number = 10000
+        small_number = 0.0001
+        really_small_number = 0.0000001
         if value == 0:
             label = "0"
         elif (
-            abs(value) >= 10000 or abs(value) <= 0.0001
+            abs(value) >= big_number or abs(value) <= small_number
         ):  # small numbers and big numbers are formatted with scientific notation
             if value < 0:
                 sign = "-"
@@ -169,7 +172,7 @@ def probability_plot_xyticks(yticks=None):
                 sign = ""
             exponent = int(np.floor(np.log10(value)))
             multiplier = value / (10**exponent)
-            if multiplier % 1 < 0.0000001:
+            if multiplier % 1 < really_small_number:
                 multiplier = int(multiplier)
             if multiplier == 1:
                 label = str((r"$%s%s^{%d}$") % (sign, 10, exponent))
@@ -238,12 +241,16 @@ def probability_plot_xyticks(yticks=None):
     LogLocator = ticker.LogLocator()
     ax = plt.gca()
     xlower, xupper = plt.xlim()
+    TOO_SMALL_NUMBER = 0.1
+    TOO_BIG_NUMBER = 1000
+    TOO_SPREAD_OUT = 1.5
+    VERY_SMALL_NUMBER = 0.001
     if xlower <= 0:  # can't use log scale if 0 (gamma) or negative numbers (normal and gumbel)
         loc_x = MaxNLocator
-    elif xupper < 0.1:  # very small positive values
+    elif xupper < TOO_SMALL_NUMBER:  # very small positive values
         loc_x = ticker.LogLocator()
     elif (
-        xupper < 1000 or np.log10(xupper) - np.log10(xlower) < 1.5
+        xupper < TOO_BIG_NUMBER or np.log10(xupper) - np.log10(xlower) < TOO_SPREAD_OUT
     ):  # not too big and not too small OR it may be big but not too spread out
         loc_x = MaxNLocator
     else:  # it is really big (>1000) and spread out
@@ -252,9 +259,9 @@ def probability_plot_xyticks(yticks=None):
         raise ValueError("xupper must be greater than xlower")
     ax.xaxis.set_major_locator(loc_x)  # apply the tick locator
     # do not apply a minor locator. It is never as good as the default
-
+    MIN_EDGE_DISTANCE = 0.5
     if (
-        get_edge_distances() > 0.5
+        get_edge_distances() > MIN_EDGE_DISTANCE
     ):  # 0.5 means 50% of the axis is without ticks on either side. Above this is considered unacceptable. This has a weakness where there's only 1 tick it will return 0. Changing 0 to 1 can make things too crowded
         # find which locator is better
         ax.xaxis.set_major_locator(MaxNLocator)
@@ -269,10 +276,15 @@ def probability_plot_xyticks(yticks=None):
         ticker.FuncFormatter(customFormatter),
     )  # the custom formatter is always applied to the major ticks
 
-    num_major_x_ticks_shown = len(ax.get_xticks())
-    num_minor_x_xticks_shown = len(ax.get_xticks(minor=True))
-    max_minor_ticks = 15 if max(abs(xlower), abs(xupper)) < 1000 and min(abs(xlower), abs(xupper)) > 0.001 else 10
-    if num_major_x_ticks_shown < 2 and num_minor_x_xticks_shown <= max_minor_ticks:
+    num_major_x_ticks_shown: int = len(ax.get_xticks())
+    num_minor_x_xticks_shown: int = len(ax.get_xticks(minor=True))
+    max_minor_ticks: Literal[15, 10] = (
+        15
+        if max(abs(xlower), abs(xupper)) < TOO_BIG_NUMBER and min(abs(xlower), abs(xupper)) > VERY_SMALL_NUMBER
+        else 10
+    )
+    MIN_MAJOR_TICKS = 2
+    if num_major_x_ticks_shown < MIN_MAJOR_TICKS and num_minor_x_xticks_shown <= max_minor_ticks:
         ax.xaxis.set_minor_formatter(
             ticker.FuncFormatter(customFormatter),
         )  # if there are less than 2 major ticks within the plotting limits then the minor ticks should be labeled. Only do this if there aren't too many minor ticks
@@ -503,10 +515,13 @@ def restore_axes_limits(
     ################## YLIMS ########################
 
     top_spacing = 1.1  # the amount of space between the max value and the upper axis limit. 1.1 means the axis lies 10% above the max value
+    MIN_SAMPLES = 10
     if func in ["pdf", "PDF"]:
         if not np.isfinite(dist._pdf0) and not np.isfinite(Y[-1]):  # asymptote on the left and right
             ylim_upper = min(Y) * 5
-        elif not np.isfinite(Y[-1]) or dist._pdf0 == np.inf or dist._pdf0 > 10:  # asymptote on the right or on the left
+        elif (
+            not np.isfinite(Y[-1]) or dist._pdf0 == np.inf or dist._pdf0 > MIN_SAMPLES
+        ):  # asymptote on the right or on the left
             ylim_upper = max(Y)
         else:  # an increasing pdf. Not asymptote
             ylim_upper = max(Y) * top_spacing
@@ -515,7 +530,9 @@ def restore_axes_limits(
     elif func in ["hf", "HF"]:
         if not np.isfinite(dist._hf0) and not np.isfinite(Y[-1]):  # asymptote on the left and right
             ylim_upper = min(Y) * 5
-        elif not np.isfinite(Y[-1]) or dist._hf0 == np.inf or dist._hf0 > 10:  # asymptote of the right or on the left
+        elif (
+            not np.isfinite(Y[-1]) or dist._hf0 == np.inf or dist._hf0 > MIN_SAMPLES
+        ):  # asymptote of the right or on the left
             ylim_upper = max(Y)
         elif max(Y) > Y[-1]:  # a peaked hf
             ylim_upper = max(Y) * top_spacing

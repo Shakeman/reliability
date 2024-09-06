@@ -600,8 +600,8 @@ class ROCOF:
 
     def __init__(
         self,
-        times_between_failures: list[float] | npt.NDArray[np.float64] | None = None,
-        failure_times: list[float] | npt.NDArray[np.float64] | None = None,
+        times_between_failures: list[float] | list[int] | npt.NDArray[np.float64] | None = None,
+        failure_times: list[float] | list[int] | npt.NDArray[np.float64] | None = None,
         CI: float = 0.95,
         test_end: float | None = None,
     ):

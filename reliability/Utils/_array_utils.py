@@ -73,7 +73,7 @@ def unpack_single_arrays(array):
     return out
 
 
-def generate_X_array(dist, xvals=None, xmin=None, xmax=None):
+def generate_X_array(dist, xvals=None, xmin=None, xmax=None) -> npt.NDArray[np.float64]:
     """Generates the array of X values for each of the PDf, CDF, SF, HF, CHF
     functions within reliability.Distributions
 
@@ -309,7 +309,8 @@ def xy_downsample(x, y, downsample_factor=None, default_max_values=1000):
             downsample_factor = np.floor(len_x / (0.5 * default_max_values))
         elif not isinstance(downsample_factor, int):
             raise ValueError("downsample_factor must be an integer")
-        if len_x / downsample_factor < 2:
+        MINIMUM_POINTS = 2
+        if len_x / downsample_factor < MINIMUM_POINTS:
             return x, y
         else:
             indices = np.arange(start=0, stop=len_x, step=int(np.floor(downsample_factor)), dtype=int)
@@ -540,9 +541,10 @@ def no_reverse(x, CI_type, plot_type) -> npt.NDArray[np.float64]:
     """
     if type(x) not in [np.ndarray, list]:
         raise ValueError("x must be a list or array")
-    if len(x) < 2:
+    MIN_LENGTH = 2
+    if len(x) < MIN_LENGTH:
         raise ValueError("x must be a list or array with length greater than 1")
-    decreasing = not (CI_type == "time" and plot_type == "CHF")
+    decreasing: bool = not (CI_type == "time" and plot_type == "CHF")
 
     x = np.copy(np.asarray(x))
     if all(np.isfinite(x)):
@@ -613,7 +615,8 @@ def transform_spaced(
         y_lower, y_upper = y_upper, y_lower
     if y_lower <= 0 or y_upper >= 1:
         raise ValueError("y_lower and y_upper must be within the range 0 to 1")
-    if num <= 2:
+    MIN_NUM = 2
+    if num <= MIN_NUM:
         raise ValueError("num must be greater than 2")
     if transform in ["normal", "Normal", "norm", "Norm"]:
 
@@ -693,5 +696,5 @@ def transform_spaced(
     # generate the array in transform space
     arr: npt.NDArray[np.float64] = np.linspace(lower, upper, num, dtype=np.float64)
     # convert the array back from transform space
-    transform_array: npt.NDArray[np.float64] = inv(arr)
+    transform_array: npt.NDArray[np.float64] = inv(arr).astype(np.float64)
     return transform_array

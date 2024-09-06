@@ -3,6 +3,7 @@ from __future__ import annotations
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import scipy.stats as ss
 from autograd import value_and_grad
@@ -156,7 +157,7 @@ class Fit_Weibull_2P:
 
     def __init__(
         self,
-        failures=None,
+        failures: npt.NDArray[np.float64] | list[float],
         right_censored=None,
         show_probability_plot=True,
         print_results=True,
@@ -380,7 +381,8 @@ class Fit_Weibull_2P:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Weibull_2P (" + str(CI_rounded) + "% CI):"),
@@ -756,6 +758,8 @@ class Fit_Weibull_2P_grouped:
             n = sum(failure_qty) + sum(right_censored_qty)
             k = len(guess)
             initial_guess = guess
+            EPSILON = 0.001
+            MAX_ITERATIONS = 10
             if force_beta is None:
                 bnds = [
                     (0, None),
@@ -764,7 +768,8 @@ class Fit_Weibull_2P_grouped:
                 runs = 0
                 delta_BIC = 1
                 BIC_array = [1000000]
-                while delta_BIC > 0.001 and runs < 10:  # exits after BIC convergence or 10 iterations
+
+                while delta_BIC > EPSILON and runs < MAX_ITERATIONS:  # exits after BIC convergence or 10 iterations
                     runs += 1
                     result = minimize(
                         value_and_grad(Fit_Weibull_2P_grouped.LL),
@@ -798,7 +803,7 @@ class Fit_Weibull_2P_grouped:
                 BIC_array = [1000000]
                 guess = [guess[0]]
                 k = len(guess)
-                while delta_BIC > 0.001 and runs < 10:  # exits after BIC convergence or 5 iterations
+                while delta_BIC > EPSILON and runs < MAX_ITERATIONS:  # exits after BIC convergence or 5 iterations
                     runs += 1
                     result = minimize(
                         value_and_grad(Fit_Weibull_2P_grouped.LL_fb),
@@ -1021,7 +1026,8 @@ class Fit_Weibull_2P_grouped:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = sum(right_censored_qty) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Weibull_2P_grouped (" + str(CI_rounded) + "% CI):"),
@@ -1208,7 +1214,7 @@ class Fit_Weibull_3P:
 
     def __init__(
         self,
-        failures=None,
+        failures: npt.NDArray[np.float64] | list[float],
         right_censored=None,
         show_probability_plot=True,
         print_results=True,
@@ -1275,9 +1281,9 @@ class Fit_Weibull_3P:
             self.gamma = MLE_results.gamma
             self.method = "Maximum Likelihood Estimation (MLE)"
             self.optimizer = MLE_results.optimizer
-
+        MIN_GAMMA = 0.01
         if (
-            self.gamma < 0.01
+            self.gamma < MIN_GAMMA
         ):  # If the solver finds that gamma is very near zero then we should have used a Weibull_2P distribution. Can't proceed with Weibull_3P as the confidence interval calculations for gamma result in nan (Zero division error). Need to recalculate everything as the SE values will be incorrect for Weibull_3P
             weibull_2P_results = Fit_Weibull_2P(
                 failures=failures,
@@ -1433,7 +1439,8 @@ class Fit_Weibull_3P:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Weibull_3P (" + str(CI_rounded) + "% CI):"),
@@ -1469,7 +1476,8 @@ class Fit_Weibull_3P:
                 downsample_scatterplot=downsample_scatterplot,
                 **kwargs,
             )
-            if self.gamma < 0.01 and fig.axes[0].legend_ is not None:
+            MIN_GAMMA = 0.01
+            if self.gamma < MIN_GAMMA and fig.axes[0].legend_ is not None:
                 # manually change the legend to reflect that Weibull_3P was fitted. The default legend in the probability plot thinks Weibull_2P was fitted when gamma=0
                 fig.axes[0].legend_.get_texts()[0].set_text(
                     str(
@@ -1643,7 +1651,7 @@ class Fit_Weibull_Mixture:
 
     def __init__(
         self,
-        failures=None,
+        failures: npt.NDArray[np.float64] | list[float],
         right_censored=None,
         show_probability_plot=True,
         print_results=True,
@@ -1706,12 +1714,14 @@ class Fit_Weibull_Mixture:
 
         number_of_items_in_group_1 = len(np.where(failures < dividing_line)[0])
         number_of_items_in_group_2 = len(failures) - number_of_items_in_group_1
-        if number_of_items_in_group_1 < 2:
+        MIN_GROUP_ITEMS = 2
+        if number_of_items_in_group_1 < MIN_GROUP_ITEMS:
             failures_sorted = np.sort(failures)
             dividing_line = (
                 failures_sorted[1] + failures_sorted[2]
             ) / 2  # adjusts the dividing line in case there aren't enough failures in the first group
-        if number_of_items_in_group_2 < 2:
+
+        if number_of_items_in_group_2 < MIN_GROUP_ITEMS:
             failures_sorted = np.sort(failures)
             dividing_line = (
                 failures_sorted[-2] + failures_sorted[-3]
@@ -1893,7 +1903,7 @@ class Fit_Weibull_Mixture:
         )
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
-        self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
+        self.AD: float = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)
         GoF_data = {
             "Goodness of fit": ["Log-likelihood", "AICc", "BIC", "AD"],
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
@@ -1901,11 +1911,12 @@ class Fit_Weibull_Mixture:
         self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
 
         if print_results is True:
-            CI_rounded = CI * 100
+            CI_rounded: float = CI * 100
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
-            frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            frac_censored: float = len(right_censored) / n * 100
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Weibull_Mixture (" + str(CI_rounded) + "% CI):"),
@@ -2100,7 +2111,7 @@ class Fit_Weibull_CR:
 
     def __init__(
         self,
-        failures=None,
+        failures: npt.NDArray[np.float64] | list[float],
         right_censored=None,
         show_probability_plot=True,
         print_results=True,
@@ -2163,12 +2174,13 @@ class Fit_Weibull_CR:
 
         number_of_items_in_group_1 = len(np.where(failures < dividing_line)[0])
         number_of_items_in_group_2 = len(failures) - number_of_items_in_group_1
-        if number_of_items_in_group_1 < 2:
+        MIN_GROUP_ITEMS = 2
+        if number_of_items_in_group_1 < MIN_GROUP_ITEMS:
             failures_sorted = np.sort(failures)
             dividing_line = (
                 failures_sorted[1] + failures_sorted[2]
             ) / 2  # adjusts the dividing line in case there aren't enough failures in the first group
-        if number_of_items_in_group_2 < 2:
+        if number_of_items_in_group_2 < MIN_GROUP_ITEMS:
             failures_sorted = np.sort(failures)
             dividing_line = (
                 failures_sorted[-2] + failures_sorted[-3]
@@ -2324,7 +2336,8 @@ class Fit_Weibull_CR:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Weibull_CR (" + str(CI_rounded) + "% CI):"),
@@ -2666,7 +2679,8 @@ class Fit_Weibull_DSZI:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Weibull_DSZI (" + str(CI_rounded) + "% CI):"),
@@ -2849,7 +2863,7 @@ class Fit_Weibull_DS:
 
     def __init__(
         self,
-        failures=None,
+        failures: npt.NDArray[np.float64] | list[float],
         right_censored=None,
         show_probability_plot=True,
         print_results=True,
@@ -2986,7 +3000,8 @@ class Fit_Weibull_DS:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Weibull_DS (" + str(CI_rounded) + "% CI):"),
@@ -3307,7 +3322,8 @@ class Fit_Weibull_ZI:
         if CI_rounded % 1 == 0:
             CI_rounded = int(self.__CI * 100)
         frac_censored = len(self.__right_censored) / self.__n * 100
-        if frac_censored % 1 < 1e-10:
+        EPSILON = 1e-10
+        if frac_censored % 1 < EPSILON:
             frac_censored = int(frac_censored)
         colorprint(
             str("Results from Fit_Weibull_ZI (" + str(CI_rounded) + "% CI):"),

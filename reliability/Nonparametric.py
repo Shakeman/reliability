@@ -116,7 +116,8 @@ class KaplanMeier:
             right_censored = []  # create empty array so it can be added in hstack
         if CI < 0 or CI > 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals.")
-        if len(failures) < 2:
+        MIN_FAILURES = 2
+        if len(failures) < MIN_FAILURES:
             raise ValueError(
                 str(
                     "failures has a length of "
@@ -126,7 +127,7 @@ class KaplanMeier:
             )
 
         # turn the failures and right censored times into a two lists of times and censoring codes
-        times = np.hstack([failures, right_censored])
+        times: npt.NDArray[np.float64] = np.hstack([failures, right_censored])
         F: npt.NDArray[np.int32] = np.ones_like(failures)
         RC: npt.NDArray[np.int32] = np.zeros_like(right_censored)  # censored values are given the code of 0
         cens_code: npt.NDArray[np.int32] = np.hstack([F, RC])
@@ -436,7 +437,8 @@ class NelsonAalen:
             right_censored = []  # create empty array so it can be added in hstack
         if CI < 0 or CI > 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals.")
-        if len(failures) < 2:
+        MIN_FAILURES = 2
+        if len(failures) < MIN_FAILURES:
             raise ValueError(
                 str(
                     "failures has a length of "
@@ -756,18 +758,17 @@ class RankAdjustment:
 
     def __init__(
         self,
-        failures=None,
-        right_censored=None,
-        a=None,
-        CI=0.95,
+        failures: npt.NDArray[np.float64] | list[float],
+        right_censored: npt.NDArray[np.float64] | list[float] | None,
+        plotting_hueristic: float = 0.3,
+        CI: float = 0.95,
     ):
-        if failures is None:
-            raise ValueError("failures must be provided to calculate non-parametric estimates.")
         if right_censored is None:
             right_censored = []  # create empty array so it can be added in hstack
         if CI < 0 or CI > 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals.")
-        if len(failures) < 2:
+        MINIMUM_FAILURES = 2
+        if len(failures) < MINIMUM_FAILURES:
             raise ValueError(
                 str(
                     "failures has a length of "
@@ -795,7 +796,7 @@ class RankAdjustment:
             plotting_positions,
         )
 
-        x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a, sort=True)
+        x, y = plotting_positions(failures=failures, right_censored=right_censored, a=plotting_hueristic, sort=True)
         # create the stepwise plot using the plotting positions
         x_array = [0]
         y_array = [0]

@@ -1585,7 +1585,8 @@ class Fit_Everything_ALT:
                 frac_cens = (len(right_censored) / (len(failures) + len(right_censored))) * 100
             else:
                 frac_cens = 0
-            if frac_cens % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_cens % 1 < EPSILON:
                 frac_cens = int(frac_cens)
             colorprint("Results from Fit_Everything_ALT:", bold=True, underline=True)
             print("Analysis method: Maximum Likelihood Estimation (MLE)")
@@ -1638,11 +1639,11 @@ class Fit_Everything_ALT:
                 cols, rows, figsize = 3, 3, (12.5, 8)
             elif items in [5, 6]:
                 cols, rows, figsize = 3, 2, (12.5, 6)
-            elif items == 4:
+            elif items == 4:  # noqa: PLR2004
                 cols, rows, figsize = 2, 2, (10, 6)
-            elif items == 3:
+            elif items == 3:  # noqa: PLR2004
                 cols, rows, figsize = 3, 1, (12.5, 5)
-            elif items == 2:
+            elif items == 2:  # noqa: PLR2004
                 cols, rows, figsize = 2, 1, (10, 4)
             elif items == 1:
                 cols, rows, figsize = 1, 1, (7.5, 4)

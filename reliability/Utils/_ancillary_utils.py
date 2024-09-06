@@ -336,7 +336,8 @@ def print_dual_stress_fit_results(
     if CI_rounded % 1 == 0:
         CI_rounded = int(CI * 100)
     frac_censored = len_right_cens / n * 100
-    if frac_censored % 1 < 1e-10:
+    EPSILON = 1e-10
+    if frac_censored % 1 < EPSILON:
         frac_censored = int(frac_censored)
     colorprint(
         str("Results from " + dist_type + " (" + str(CI_rounded) + "% CI):"),

@@ -135,8 +135,9 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
         max(strength.quantile(1 - 1e-8), stress.quantile(1 - 1e-8)),
         trapezoids,
     )  # we take the min and max here since there may be cases when stress > strength
-
-    prob_of_failure = np.trapezoid(strength.PDF(x, show_plot=False) * stress.SF(x, show_plot=False), x)
+    strength_PDF: npt.NDArray[np.float64] = strength.PDF(x, show_plot=False)
+    stress_SF: npt.NDArray[np.float64] = stress.SF(x, show_plot=False)
+    prob_of_failure: np.float64 = np.trapezoid(strength_PDF * stress_SF, x)
     if prob_of_failure > 1:
         colorprint(
             "WARNING: The probability of failure is wrong. One of the distributions likely has an asymptote where the values along the y-axis approach infinity which has caused the integration to fail. There is no solution to this other than to use a distribution that does not have an asymptote.",
@@ -435,7 +436,11 @@ class similar_distributions:
                 "distribution must be a probability distribution object from the reliability.Distributions module. First define the distribution using Reliability.Distributions.___",
             )
 
-        if not isinstance(number_of_distributions_to_show, int) or number_of_distributions_to_show < 2:
+        MINIMUM_DISTRIBUTIONS_TO_SHOW = 2
+        if (
+            not isinstance(number_of_distributions_to_show, int)
+            or number_of_distributions_to_show < MINIMUM_DISTRIBUTIONS_TO_SHOW
+        ):
             raise ValueError("number_of_distributions_to_show must be an integer greater than 1")
 
         # sample the CDF from 0.001 to 0.999. These samples will be used to fit all other distributions.
@@ -445,7 +450,8 @@ class similar_distributions:
         # filter out negative values
         RVS_filtered = RVS[RVS >= 0]
         negative_values_error = RVS.min() < 0
-        if len(RVS_filtered) < 175:
+        MINIMUM_SAMPLES = 175
+        if len(RVS_filtered) < MINIMUM_SAMPLES:
             raise ValueError(
                 "The input distribution has more than 75% of its area in the negative domain (x<0). Comparison with distributions bounded by the positive domain (x>0) is not possible.",
             )
@@ -1049,7 +1055,8 @@ class make_ALT_data:
                 raise ValueError("stress_2 must be a list or array of the stress levels")
             stress_2 = np.asarray(stress_2)
             if use_level_stress is not None:
-                if len(use_level_stress) != 2:
+                EXPECTED_LENGTH = 2
+                if len(use_level_stress) != EXPECTED_LENGTH:
                     raise ValueError(
                         "use_level_stress must be a list or array with 2 elements if using a dual-stress model",
                     )
@@ -1367,7 +1374,8 @@ class crosshairs:
     @staticmethod
     def __hide_crosshairs(event):
         ax = event.inaxes  # this gets the axes where the event occurred.
-        if (len(ax.texts) >= 2) and (
+        MIN_TEXTS_COUNT = 2
+        if (len(ax.texts) >= MIN_TEXTS_COUNT) and (
             ax.texts[-1].get_position()[1] == 0 and ax.texts[-2].get_position()[0] == 0
         ):  # the lines can't be deleted if they haven't been drawn.
             # this identifies the texts (crosshair text coords) based on their combination of unique properties

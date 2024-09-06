@@ -374,7 +374,8 @@ class Fit_Weibull_Exponential:
         if CI_rounded % 1 == 0:
             CI_rounded = int(self.__CI * 100)
         frac_censored = len(self.__right_censored) / n * 100
-        if frac_censored % 1 < 1e-10:
+        EPSILON = 1e-10
+        if frac_censored % 1 < EPSILON:
             frac_censored = int(frac_censored)
         colorprint(
             str("Results from Fit_Weibull_Exponential (" + str(CI_rounded) + "% CI):"),
@@ -808,7 +809,8 @@ class Fit_Weibull_Eyring:
         if CI_rounded % 1 == 0:
             CI_rounded = int(self.__CI * 100)
         frac_censored: float = len(self.__right_censored) / n * 100
-        if frac_censored % 1 < 1e-10:
+        EPSILON = 1e-10
+        if frac_censored % 1 < EPSILON:
             frac_censored = int(frac_censored)
         colorprint(
             str("Results from Fit_Weibull_Eyring (" + str(CI_rounded) + "% CI):"),
@@ -1054,11 +1056,11 @@ class Fit_Weibull_Power:
         alphas_for_change_df = []
         for i in range(len(stresses_for_groups)):
             f: list[np.float64] = failure_groups[i]
-            rc = None if right_censored_groups is None else right_censored_groups[i]
+            rc: list[np.float64] | None = None if right_censored_groups is None else right_censored_groups[i]
 
             if len(f) > 1:
                 fit = Fit_Weibull_2P(
-                    failures=f,
+                    failures=f,  # type: ignore
                     right_censored=rc,
                     print_results=False,
                     show_probability_plot=False,
@@ -1242,7 +1244,8 @@ class Fit_Weibull_Power:
         if CI_rounded % 1 == 0:
             CI_rounded = int(self.__CI * 100)
         frac_censored: float = len(self.__right_censored) / n * 100
-        if frac_censored % 1 < 1e-10:
+        EPSILON = 1e-10
+        if frac_censored % 1 < EPSILON:
             frac_censored = int(frac_censored)
         colorprint(
             str("Results from Fit_Weibull_Power (" + str(CI_rounded) + "% CI):"),
@@ -1732,7 +1735,8 @@ class Fit_Weibull_Dual_Exponential:
         if CI_rounded % 1 == 0:
             CI_rounded = int(self.__CI * 100)
         frac_censored = len(self.__right_censored) / n * 100
-        if frac_censored % 1 < 1e-10:
+        EPSILON = 1e-10
+        if frac_censored % 1 < EPSILON:
             frac_censored = int(frac_censored)
         colorprint(
             str("Results from Fit_Weibull_Dual_Exponential (" + str(CI_rounded) + "% CI):"),
@@ -2225,7 +2229,8 @@ class Fit_Weibull_Power_Exponential:
         if CI_rounded % 1 == 0:
             CI_rounded = int(self.__CI * 100)
         frac_censored = len(self.__right_censored) / n * 100
-        if frac_censored % 1 < 1e-10:
+        EPSILON = 1e-10
+        if frac_censored % 1 < EPSILON:
             frac_censored = int(frac_censored)
         colorprint(
             str("Results from Fit_Weibull_Power_Exponential (" + str(CI_rounded) + "% CI):"),
@@ -2731,7 +2736,8 @@ class Fit_Weibull_Dual_Power:
         if CI_rounded % 1 == 0:
             CI_rounded = int(self.__CI * 100)
         frac_censored = len(self.__right_censored) / n * 100
-        if frac_censored % 1 < 1e-10:
+        EPSILON = 1e-10
+        if frac_censored % 1 < EPSILON:
             frac_censored = int(frac_censored)
         colorprint(
             str("Results from Fit_Weibull_Dual_Power (" + str(CI_rounded) + "% CI):"),

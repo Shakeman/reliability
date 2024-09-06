@@ -82,7 +82,7 @@ class distributions_input_checking:
         self,
         dist,
         func: str,
-        xvals: float | npt.NDArray[np.float64] | None,
+        xvals: list[float] | npt.NDArray[np.float64],
         xmin: None | float | np.float64,
         xmax: None | float | np.float64,
         show_plot: None | bool = None,
@@ -156,11 +156,11 @@ class distributions_input_checking:
 
         # default values
         if xmin is None and xmax is None and xvals is not None and type(xvals) not in [list, np.ndarray, type(None)]:
-            X = xvals
+            X = np.asarray(xvals)
             show_plot = False
         else:
-            X: npt.NDArray[np.float64] | float = generate_X_array(dist=dist, xvals=xvals, xmin=xmin, xmax=xmax)
-        self.X: npt.NDArray[np.float64] | float = X
+            X: npt.NDArray[np.float64] = generate_X_array(dist=dist, xvals=xvals, xmin=xmin, xmax=xmax)
+        self.X: npt.NDArray[np.float64] = X
         if CI is None and dist.Z is None:
             CI = 0.95
         elif CI is not None:  # CI takes precedence over Z
@@ -350,9 +350,9 @@ class fitters_input_checking:
     def __init__(
         self,
         dist: str,
-        failures: npt.NDArray[np.float64],
+        failures: npt.NDArray[np.float64] | list[float],
         method: str | None = None,
-        right_censored: npt.NDArray[np.float64] | None = None,
+        right_censored: npt.NDArray[np.float64] | list[float] | None = None,
         optimizer: str | None = None,
         CI: float = 0.95,
         quantiles: bool | str | list | np.ndarray | None = False,
@@ -872,11 +872,13 @@ class ALT_fitters_input_checking:
 
         # check the number of unique stresses
         unique_stresses_1 = np.unique(failure_stress_1)
-        if len(unique_stresses_1) < 2:
+        MIN_UNIQUE_STRESSES = 2
+
+        if len(unique_stresses_1) < MIN_UNIQUE_STRESSES:
             raise ValueError("failure_stress_1 must have at least 2 unique stresses.")
         if is_dual_stress is True:
             unique_stresses_2 = np.unique(failure_stress_2)
-            if len(unique_stresses_2) < 2:
+            if len(unique_stresses_2) < MIN_UNIQUE_STRESSES:
                 raise ValueError(
                     "failure_stress_2 must have at least 2 unique stresses when using a dual stress model.",
                 )
@@ -1048,7 +1050,9 @@ class ALT_fitters_input_checking:
                 raise ValueError(
                     "use_level_stress must be an array or list of the use level stresses. eg. use_level_stress = [stress_1, stress_2].",
                 )
-            if len(use_level_stress) != 2:
+            EXPECTED_USE_LEVEL_STRESS_LENGTH = 2
+
+            if len(use_level_stress) != EXPECTED_USE_LEVEL_STRESS_LENGTH:
                 raise ValueError(
                     "use_level_stress must be an array or list of length 2 with the use level stresses. eg. use_level_stress = [stress_1, stress_2].",
                 )
@@ -1248,10 +1252,12 @@ class alt_fitters_dual_stress_input_checking:
 
         # check the number of unique stresses
         unique_stresses_1 = np.unique(failure_stress_1)
-        if len(unique_stresses_1) < 2:
+        MIN_UNIQUE_STRESSES = 2
+
+        if len(unique_stresses_1) < MIN_UNIQUE_STRESSES:
             raise ValueError("failure_stress_1 must have at least 2 unique stresses.")
         unique_stresses_2 = np.unique(failure_stress_2)
-        if len(unique_stresses_2) < 2:
+        if len(unique_stresses_2) < MIN_UNIQUE_STRESSES:
             raise ValueError(
                 "failure_stress_2 must have at least 2 unique stresses when using a dual stress model.",
             )
@@ -1343,7 +1349,8 @@ class alt_fitters_dual_stress_input_checking:
                 raise ValueError(
                     "use_level_stress must be an array or list of the use level stresses. eg. use_level_stress = [stress_1, stress_2].",
                 )
-            if len(use_level_stress) != 2:
+            EXPECTED_USE_LEVEL_STRESS_LENGTH = 2
+            if len(use_level_stress) != EXPECTED_USE_LEVEL_STRESS_LENGTH:
                 raise ValueError(
                     "use_level_stress must be an array or list of length 2 with the use level stresses. eg. use_level_stress = [stress_1, stress_2].",
                 )
@@ -1446,9 +1453,9 @@ class alt_single_stress_fitters_input_checking:
         failure_stress_1,
         right_censored=None,
         right_censored_stress_1=None,
-        CI=0.95,
+        CI: float = 0.95,
         use_level_stress=None,
-        optimizer=None,
+        optimizer: str | None = None,
     ):
         if dist not in ["Exponential", "Weibull", "Lognormal", "Normal"]:
             raise ValueError("dist must be one of Exponential, Weibull, Lognormal, Normal.")
@@ -1506,7 +1513,9 @@ class alt_single_stress_fitters_input_checking:
 
         # check the number of unique stresses
         unique_stresses_1 = np.unique(failure_stress_1)
-        if len(unique_stresses_1) < 2:
+        MIN_UNIQUE_STRESSES = 2
+
+        if len(unique_stresses_1) < MIN_UNIQUE_STRESSES:
             raise ValueError("failure_stress_1 must have at least 2 unique stresses.")
 
         error_msg = str(
@@ -1539,8 +1548,8 @@ class alt_single_stress_fitters_input_checking:
         self.failure_stress_1 = failure_stress_1
         self.right_censored = right_censored
         self.right_censored_stress_1 = right_censored_stress_1
-        self.CI = CI
-        self.optimizer = optimizer
+        self.CI: float = CI
+        self.optimizer: str | None = optimizer
         self.use_level_stress: float | None = use_level_stress
         self.failure_groups = failure_groups[::-1]
         if right_censored_groups is None:

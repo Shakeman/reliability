@@ -296,7 +296,8 @@ class Mixture_Model:
         plt.suptitle(text_title, fontsize=15)
 
         plt.subplot(231)
-        self.__pdf[self.__pdf > 1e100] = 1e100
+        PDF_CEILING = 1e100
+        self.__pdf[self.__pdf > PDF_CEILING] = PDF_CEILING
         plt.plot(self.__xvals, self.__pdf)
         restore_axes_limits(
             ((0, 1), (0, 1), False),
@@ -339,7 +340,8 @@ class Mixture_Model:
         plt.title("Survival Function")
 
         plt.subplot(234)
-        self.__hf[self.__hf > 1e100] = 1e100
+        MAX_HF_VALUE = 1e100
+        self.__hf[self.__hf > MAX_HF_VALUE] = MAX_HF_VALUE
         plt.plot(self.__xvals, self.__hf)
         restore_axes_limits(
             ((0, 1), (0, 1), False),
@@ -431,7 +433,8 @@ class Mixture_Model:
         """
         Mixture_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
-        if len(self.__xvals) < 2:
+        MIN_XVALS_LENGTH = 2
+        if len(self.__xvals) < MIN_XVALS_LENGTH:
             show_plot = False
 
         if show_plot is True:
@@ -445,7 +448,8 @@ class Mixture_Model:
             textlabel = kwargs.pop("label") if "label" in kwargs else "Mixture model"
 
             limits = get_axes_limits()
-            self.__pdf[self.__pdf > 1e100] = 1e100
+            MAX_PDF_VALUE = 1e100
+            self.__pdf[self.__pdf > MAX_PDF_VALUE] = MAX_PDF_VALUE
             plt.plot(self.__xvals, self.__pdf, label=textlabel, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Probability density")
@@ -503,7 +507,8 @@ class Mixture_Model:
         """
         Mixture_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
-        if len(self.__xvals) < 2:
+        MIN_XVALS_LENGTH = 2
+        if len(self.__xvals) < MIN_XVALS_LENGTH:
             show_plot = False
 
         if show_plot is True:
@@ -573,7 +578,8 @@ class Mixture_Model:
         """
         Mixture_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
-        if len(self.__xvals) < 2:
+        MIN_XVALS_LENGTH = 2
+        if len(self.__xvals) < MIN_XVALS_LENGTH:
             show_plot = False
 
         if show_plot is True:
@@ -643,7 +649,8 @@ class Mixture_Model:
         """
         Mixture_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
-        if len(self.__xvals) < 2:
+        MIN_XVALS_LENGTH = 2
+        if len(self.__xvals) < MIN_XVALS_LENGTH:
             show_plot = False
 
         if show_plot is True:
@@ -656,7 +663,8 @@ class Mixture_Model:
                     else:
                         dist.HF(xvals=self.__xvals, label=dist.param_title_long)
             textlabel = kwargs.pop("label") if "label" in kwargs else "Mixture model"
-            self.__hf[self.__hf > 1e100] = 1e100
+            MAX_HF_VALUE = 1e100
+            self.__hf[self.__hf > MAX_HF_VALUE] = MAX_HF_VALUE
             plt.plot(self.__xvals, self.__hf, label=textlabel, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Hazard")
@@ -713,8 +721,8 @@ class Mixture_Model:
 
         """
         Mixture_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
-
-        if len(self.__xvals) < 2:
+        MAX_XVALS_LENGTH = 2
+        if len(self.__xvals) < MAX_XVALS_LENGTH:
             show_plot = False
 
         if show_plot is True:

@@ -211,7 +211,8 @@ class Fit_Everything:
             raise ValueError(
                 'exclude must be a list or array or strings that match the names of the distributions to be excluded. eg "Weibull_2P".',
             )
-        if len(failures) < 3:
+        MIN_FAILURES = 3
+        if len(failures) < MIN_FAILURES:
             exclude.extend(
                 [
                     "Weibull_3P",
@@ -1305,7 +1306,7 @@ class Fit_Everything:
         items = len(self.results.index.values)  # number of items fitted
         xx1, yy1 = 2.5, 2  # multipliers for easy adjustment of window sizes
         xx2, yy2 = 0.5, 0.5
-        if items == 16:
+        if items == 16:  # noqa: PLR2004
             # figsizes are in (w,h) format using the above multipliers
             cols, rows, figsize, figsizePP = (
                 6,
@@ -1341,21 +1342,21 @@ class Fit_Everything:
                 (xx1 * 5, yy1 * 3),
                 (xx2 * 13, yy2 * 11),
             )
-        elif items == 4:
+        elif items == 4:  # noqa: PLR2004
             cols, rows, figsize, figsizePP = (
                 2,
                 2,
                 (xx1 * 4, yy1 * 3),
                 (xx2 * 12, yy2 * 11),
             )
-        elif items == 3:
+        elif items == 3:  # noqa: PLR2004
             cols, rows, figsize, figsizePP = (
                 3,
                 1,
                 (xx1 * 5, yy1 * 2.5),
                 (xx2 * 20, yy2 * 8),
             )
-        elif items == 2:
+        elif items == 2:  # noqa: PLR2004
             cols, rows, figsize, figsizePP = (
                 2,
                 1,
@@ -1413,7 +1414,8 @@ class Fit_Everything:
         )
         ls = "-"
         for counter, item in enumerate(plotting_order):
-            if counter > 10:
+            MAX_COUNTER = 10
+            if counter > MAX_COUNTER:
                 ls = "--"
             if item == "Weibull_2P":
                 self.__Weibull_2P_params.distribution.PDF(label=r"Weibull_2P ($\alpha , \beta$)", linestyle=ls)
@@ -1501,7 +1503,8 @@ class Fit_Everything:
         ls = "-"
         for item in plotting_order:
             counter += 1
-            if counter > 10:
+            MAX_COUNTER = 10
+            if counter > MAX_COUNTER:
                 ls = "--"
             if item == "Weibull_2P":
                 self.__Weibull_2P_params.distribution.CDF(plot_CI=False, linestyle=ls)

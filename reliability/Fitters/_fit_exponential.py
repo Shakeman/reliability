@@ -130,7 +130,7 @@ class Fit_Exponential_1P:
 
     def __init__(
         self,
-        failures: npt.NDArray[np.float64] | None = None,
+        failures: npt.NDArray[np.float64],
         right_censored: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         quantiles: bool | str | list | np.ndarray | None = None,
@@ -307,7 +307,8 @@ class Fit_Exponential_1P:
         if CI_rounded % 1 == 0:
             CI_rounded = int(self.__CI * 100)
         frac_censored = len(self.__right_censored) / self.__n * 100
-        if frac_censored % 1 < 1e-10:
+        EPSILON = 1e-10
+        if frac_censored % 1 < EPSILON:
             frac_censored = int(frac_censored)
         colorprint(
             str("Results from Fit_Exponential_1P (" + str(CI_rounded) + "% CI):"),
@@ -489,7 +490,7 @@ class Fit_Exponential_2P:
 
     def __init__(
         self,
-        failures=None,
+        failures: npt.NDArray[np.float64] | list[float],
         right_censored=None,
         CI=0.95,
         quantiles=None,
@@ -700,7 +701,8 @@ class Fit_Exponential_2P:
         if CI_rounded % 1 == 0:
             CI_rounded = int(self.__CI * 100)
         frac_censored = len(self.__right_censored) / self.__n * 100
-        if frac_censored % 1 < 1e-10:
+        EPSILON = 1e-10
+        if frac_censored % 1 < EPSILON:
             frac_censored = int(frac_censored)
         colorprint(
             str("Results from Fit_Exponential_2P (" + str(CI_rounded) + "% CI):"),

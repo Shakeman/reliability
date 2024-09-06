@@ -1,4 +1,3 @@
-
 import numpy as np
 from autograd import value_and_grad  # type: ignore
 from scipy.optimize import minimize  # type: ignore
@@ -55,7 +54,7 @@ class LS_optimization:
         LL_func,
         failures,
         right_censored,
-        method: str | None ="LS",
+        method: str | None = "LS",
         force_shape=None,
         LL_func_force=None,
     ):
@@ -274,7 +273,9 @@ class MLE_optimization:
                 args = (failures, right_censored)
 
             if force_shape is None:
-                while delta_LL > 0.001 and runs < 5:
+                EPSILON = 0.001
+                MAX_RUNS = 5
+                while delta_LL > EPSILON and runs < MAX_RUNS:
                     # exits after LL convergence or 5 iterations
                     runs += 1
                     result = minimize(
@@ -296,11 +297,13 @@ class MLE_optimization:
                     else:
                         LL2 = 2 * LL_func(guess, failures, right_censored)
                     LL_array.append(np.abs(LL2))
-                    delta_LL = abs(LL_array[-1] - LL_array[-2])
+                    delta_LL: int = abs(LL_array[-1] - LL_array[-2])
             else:  # this will only be run for Weibull_2P, Normal_2P, and Lognormal_2P so the guess is structured with this in mind
                 bounds = [bounds[0]]
                 guess = [guess[0]]
-                while delta_LL > 0.001 and runs < 5:  # exits after LL convergence or 5 iterations
+                EPSILON = 0.001
+                MAX_RUNS = 5
+                while delta_LL > EPSILON and runs < MAX_RUNS:  # exits after LL convergence or 5 iterations
                     runs += 1
                     result = minimize(
                         value_and_grad(LL_func_force),
@@ -318,7 +321,7 @@ class MLE_optimization:
             return result.success, LL_array[-1], result.x
 
         # generate the bounds on the solution
-        gamma0 = max(0, min(np.hstack([failures, right_censored])) - 0.0001)
+        gamma0: int = max(0, min(np.hstack([failures, right_censored])) - 0.0001)
         if func_name in ["Weibull_2P", "Gamma_2P", "Beta_2P", "Loglogistic_2P"]:
             bounds = [(0, None), (0, None)]
         elif func_name in ["Weibull_3P", "Gamma_3P", "Loglogistic_3P"]:
@@ -699,10 +702,12 @@ class ALT_MLE_optimization:
 
             """
             delta_LL = 1
-            LL_array = [1000000]
+            LL_array: list[int] = [1000000]
             runs = 0
             guess = initial_guess  # set the current guess as the initial guess and then update the current guess each iteration
-            while delta_LL > 0.001 and runs < 5:  # exits after BIC convergence or 5 iterations
+            EPSILON = 0.001
+            MAX_ITERATIONS = 5
+            while delta_LL > EPSILON and runs < MAX_ITERATIONS:  # exits after BIC convergence or 5 iterations
                 runs += 1
                 # single stress model
                 if dual_stress is False:

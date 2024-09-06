@@ -83,17 +83,17 @@ class Loglogistic_Distribution:
             self.mean: float = float(ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="m"))
         else:
             self.mean = r"no mean when $\beta \leq 1$"
-        if self.beta > 2:
+        if self.beta > 2:  # noqa: PLR2004
             self.variance: float = float(ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="v"))
             self.standard_deviation: float = self.variance**0.5
         else:
             self.variance = r"no variance when $\beta \leq 2$"
             self.standard_deviation = r"no stdev when $\beta \leq 2$"
-        if self.beta > 3:
+        if self.beta > 3:  # noqa: PLR2004
             self.skewness: float = float(ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="s"))
         else:
             self.skewness = r"no skewness when $\beta \leq 3$"
-        if self.beta > 4:
+        if self.beta > 4:  # noqa: PLR2004
             self.excess_kurtosis = float(ss.fisk.stats(self.beta, scale=self.alpha, loc=self.gamma, moments="k"))
             self.kurtosis: float = self.excess_kurtosis + 3
         else:
@@ -181,7 +181,7 @@ class Loglogistic_Distribution:
             loc=0,
         )  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
-    def plot(self, xvals=None, xmin=None, xmax=None):
+    def plot(self, xvals: list[float] | npt.NDArray[np.float64] | None = None, xmin=None, xmax=None):
         """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
         in a single figure
 
@@ -419,7 +419,7 @@ class Loglogistic_Distribution:
 
     def CDF(
         self,
-        xvals: npt.NDArray[np.float64] | None = None,
+        xvals: npt.NDArray[np.float64] | list[float] | None = None,
         xmin: np.float64 | None = None,
         xmax: np.float64 | None = None,
         show_plot: bool = True,
@@ -693,7 +693,9 @@ class Loglogistic_Distribution:
                 return lower_CI, unpack_single_arrays(sf_point), upper_CI
         return sf
 
-    def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
+    def HF(
+        self, xvals: list[float] | npt.NDArray[np.float64] | None = None, xmin=None, xmax=None, show_plot=True, **kwargs
+    ):
         """Plots the HF (hazard function)
 
         Parameters

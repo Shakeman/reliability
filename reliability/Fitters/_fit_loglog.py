@@ -3,6 +3,7 @@ from __future__ import annotations
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import scipy.stats as ss
 from autograd.differential_operators import hessian
@@ -146,7 +147,7 @@ class Fit_Loglogistic_2P:
 
     def __init__(
         self,
-        failures=None,
+        failures: npt.NDArray[np.float64] | list[float],
         right_censored=None,
         show_probability_plot=True,
         print_results=True,
@@ -323,7 +324,8 @@ class Fit_Loglogistic_2P:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Loglogistic_2P (" + str(CI_rounded) + "% CI):"),
@@ -503,7 +505,7 @@ class Fit_Loglogistic_3P:
 
     def __init__(
         self,
-        failures=None,
+        failures: npt.NDArray[np.float64] | list[float],
         right_censored=None,
         show_probability_plot=True,
         print_results=True,
@@ -571,9 +573,9 @@ class Fit_Loglogistic_3P:
             self.gamma = MLE_results.gamma
             self.method = "Maximum Likelihood Estimation (MLE)"
             self.optimizer = MLE_results.optimizer
-
+        MIN_GAMMA = 0.01
         if (
-            self.gamma < 0.01
+            self.gamma < MIN_GAMMA
         ):  # If the solver finds that gamma is very near zero then we should have used a Loglogistic_2P distribution. Can't proceed with Loglogistic_3P as the confidence interval calculations for gamma result in nan (Zero division error). Need to recalculate everything as the SE values will be incorrect for Loglogistic_3P
             loglogistic_2P_results = Fit_Loglogistic_2P(
                 failures=failures,
@@ -730,7 +732,8 @@ class Fit_Loglogistic_3P:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Loglogistic_3P (" + str(CI_rounded) + "% CI):"),
@@ -766,7 +769,8 @@ class Fit_Loglogistic_3P:
                 downsample_scatterplot=downsample_scatterplot,
                 **kwargs,
             )
-            if self.gamma < 0.01 and fig.axes[0].legend_ is not None:
+            MIN_GAMMA = 0.01
+            if self.gamma < MIN_GAMMA and fig.axes[0].legend_ is not None:
                 # manually change the legend to reflect that Loglogistic_3P was fitted. The default legend in the probability plot thinks Loglogistic_2P was fitted when gamma=0
                 fig.axes[0].legend_.get_texts()[0].set_text(
                     str(

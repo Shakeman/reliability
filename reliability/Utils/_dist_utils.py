@@ -616,7 +616,8 @@ class distribution_confidence_intervals:
                 x=x,
             )
             # artificially correct for any reversals
-            if (x is None or q is None) and len(Y_lower) > 2 and len(Y_upper) > 2:
+            MIN_LENGTH = 2
+            if (x is None or q is None) and len(Y_lower) > MIN_LENGTH and len(Y_upper) > MIN_LENGTH:
                 Y_lower = no_reverse(Y_lower, CI_type=None, plot_type=func)
                 Y_upper = no_reverse(Y_upper, CI_type=None, plot_type=func)
 
@@ -752,7 +753,8 @@ class distribution_confidence_intervals:
                 x=x,
             )
             # artificially correct for any reversals
-            if (x is None or q is None) and len(Y_lower) > 2 and len(Y_upper) > 2:
+            MIN_LENGTH = 2
+            if (x is None or q is None) and len(Y_lower) > MIN_LENGTH and len(Y_upper) > MIN_LENGTH:
                 Y_lower = no_reverse(Y_lower, CI_type=None, plot_type=func)
                 Y_upper = no_reverse(Y_upper, CI_type=None, plot_type=func)
 
@@ -924,7 +926,8 @@ class distribution_confidence_intervals:
                     q=q,
                 )
                 # artificially correct for any reversals
-                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                MIN_LENGTH = 2
+                if q is None and len(t_lower) > MIN_LENGTH and len(t_upper) > MIN_LENGTH:
                     t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
                     t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
 
@@ -965,7 +968,8 @@ class distribution_confidence_intervals:
                     x=x,
                 )
                 # artificially correct for any reversals
-                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                MIN_LENGTH = 2
+                if x is None and len(Y_lower) > MIN_LENGTH and len(Y_upper) > MIN_LENGTH:
                     Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
                 if x is not None:
@@ -1144,7 +1148,8 @@ class distribution_confidence_intervals:
                     q=q,
                 )
                 # artificially correct for any reversals
-                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                MIN_LENGTH = 2
+                if q is None and len(t_lower) > MIN_LENGTH and len(t_upper) > MIN_LENGTH:
                     t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
                     t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
 
@@ -1217,7 +1222,8 @@ class distribution_confidence_intervals:
                     x=x,
                 )
                 # artificially correct for any reversals
-                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                MIN_LENGTH = 2
+                if x is None and len(Y_lower) > MIN_LENGTH and len(Y_upper) > MIN_LENGTH:
                     Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
 
@@ -1357,6 +1363,7 @@ class distribution_confidence_intervals:
                 )
 
             # Confidence bounds on time (in terms of reliability)
+            THRESHOLD_VALUE = 3
             if CI_type == "time":
                 # Y is reliability (R)
                 if func == "CHF":
@@ -1364,7 +1371,7 @@ class distribution_confidence_intervals:
                     Y = np.exp(-chf_array)
                 elif q is not None:
                     Y = q
-                elif dist.beta > 3:
+                elif dist.beta > THRESHOLD_VALUE:
                     Y = transform_spaced(
                         "gamma",
                         y_lower=1e-8,
@@ -1392,7 +1399,8 @@ class distribution_confidence_intervals:
                     q=q,
                 )
                 # artificially correct for any reversals
-                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                MIN_LENGTH = 2
+                if q is None and len(t_lower) > MIN_LENGTH and len(t_upper) > MIN_LENGTH:
                     t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
                     t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
 
@@ -1434,7 +1442,8 @@ class distribution_confidence_intervals:
                     x=x,
                 )
                 # artificially correct for any reversals
-                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                MIN_LENGTH = 2
+                if x is None and len(Y_lower) > MIN_LENGTH and len(Y_upper) > MIN_LENGTH:
                     Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
 
@@ -1586,6 +1595,7 @@ class distribution_confidence_intervals:
                 )
 
             # Confidence bounds on time (in terms of reliability)
+            THRESHOLD = 3
             if CI_type == "time":
                 # Y is reliability (R)
                 if func == "CHF":
@@ -1593,7 +1603,7 @@ class distribution_confidence_intervals:
                     Y = np.exp(-chf_array)
                 elif q is not None:
                     Y = q
-                elif dist.beta > 3:
+                elif dist.beta > THRESHOLD:
                     Y = transform_spaced(
                         "gamma",
                         y_lower=1e-8,
@@ -1621,7 +1631,8 @@ class distribution_confidence_intervals:
                     q=q,
                 )
                 # artificially correct for any reversals
-                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                MIN_LENGTH = 2
+                if q is None and len(t_lower) > MIN_LENGTH and len(t_upper) > MIN_LENGTH:
                     t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
                     t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
 
@@ -1693,7 +1704,8 @@ class distribution_confidence_intervals:
                     x=x,
                 )
                 # artificially correct for any reversals
-                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                MIN_LENGTH = 2
+                if x is None and len(Y_lower) > MIN_LENGTH and len(Y_upper) > MIN_LENGTH:
                     Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
 
@@ -1861,7 +1873,8 @@ class distribution_confidence_intervals:
                     q=q,
                 )
                 # artificially correct for any reversals
-                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                MIN_LENGTH = 2
+                if q is None and len(t_lower) > MIN_LENGTH and len(t_upper) > MIN_LENGTH:
                     t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
                     t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
 
@@ -1890,7 +1903,8 @@ class distribution_confidence_intervals:
                     x=x,
                 )
                 # artificially correct for any reversals
-                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                THRESHOLD = 2
+                if x is None and len(Y_lower) > THRESHOLD and len(Y_upper) > THRESHOLD:
                     Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
 
@@ -2064,7 +2078,8 @@ class distribution_confidence_intervals:
                     q=q,
                 )
                 # artificially correct for any reversals
-                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                MIN_LENGTH = 2
+                if q is None and len(t_lower) > MIN_LENGTH and len(t_upper) > MIN_LENGTH:
                     t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
                     t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
 
@@ -2124,7 +2139,8 @@ class distribution_confidence_intervals:
                     x=x,
                 )
                 # artificially correct for any reversals
-                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                MIN_LENGTH = 2
+                if x is None and len(Y_lower) > MIN_LENGTH and len(Y_upper) > MIN_LENGTH:
                     Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
 
@@ -2283,7 +2299,8 @@ class distribution_confidence_intervals:
                     q=q,
                 )
                 # artificially correct for any reversals
-                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                MIN_LENGTH = 2
+                if q is None and len(t_lower) > MIN_LENGTH and len(t_upper) > MIN_LENGTH:
                     t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
                     t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
 
@@ -2323,7 +2340,8 @@ class distribution_confidence_intervals:
                     x=x,
                 )
                 # artificially correct for any reversals
-                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                MIN_LENGTH = 2
+                if x is None and len(Y_lower) > MIN_LENGTH and len(Y_upper) > MIN_LENGTH:
                     Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
 
@@ -2501,7 +2519,8 @@ class distribution_confidence_intervals:
                     q=q,
                 )
                 # artificially correct for any reversals
-                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                MIN_LENGTH = 2
+                if q is None and len(t_lower) > MIN_LENGTH and len(t_upper) > MIN_LENGTH:
                     t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
                     t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
 
@@ -2571,7 +2590,8 @@ class distribution_confidence_intervals:
                     x=x,
                 )
                 # artificially correct for any reversals
-                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                MIN_LENGTH = 2
+                if x is None and len(Y_lower) > MIN_LENGTH and len(Y_upper) > MIN_LENGTH:
                     Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
 
@@ -2736,7 +2756,8 @@ class distribution_confidence_intervals:
                     q=q,
                 )
                 # artificially correct for any reversals
-                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                MIN_LENGTH = 2
+                if q is None and len(t_lower) > MIN_LENGTH and len(t_upper) > MIN_LENGTH:
                     t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
                     t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
 
@@ -2777,7 +2798,8 @@ class distribution_confidence_intervals:
                     x=x,
                 )
                 # artificially correct for any reversals
-                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                MIN_LENGTH = 2
+                if x is None and len(Y_lower) > MIN_LENGTH and len(Y_upper) > MIN_LENGTH:
                     Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
 
@@ -2954,7 +2976,8 @@ class distribution_confidence_intervals:
                     q=q,
                 )
                 # artificially correct for any reversals
-                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                MIN_LENGTH = 2
+                if q is None and len(t_lower) > MIN_LENGTH and len(t_upper) > MIN_LENGTH:
                     t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
                     t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
 
@@ -3026,7 +3049,8 @@ class distribution_confidence_intervals:
                     x=x,
                 )
                 # artificially correct for any reversals
-                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                MIN_LENGTH = 2
+                if x is None and len(Y_lower) > MIN_LENGTH and len(Y_upper) > MIN_LENGTH:
                     Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
 
@@ -3188,7 +3212,8 @@ class distribution_confidence_intervals:
                     q=q,
                 )
                 # artificially correct for any reversals
-                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                MIN_LENGTH = 2
+                if q is None and len(t_lower) > MIN_LENGTH and len(t_upper) > MIN_LENGTH:
                     t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
                     t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
 
@@ -3217,7 +3242,8 @@ class distribution_confidence_intervals:
                     x=x,
                 )
                 # artificially correct for any reversals
-                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                MIN_LENGTH = 2
+                if x is None and len(Y_lower) > MIN_LENGTH and len(Y_upper) > MIN_LENGTH:
                     Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
 
@@ -3390,7 +3416,8 @@ class distribution_confidence_intervals:
                     q=q,
                 )
                 # artificially correct for any reversals
-                if q is None and len(t_lower) > 2 and len(t_upper) > 2:
+                MIN_LENGTH = 2
+                if q is None and len(t_lower) > MIN_LENGTH and len(t_upper) > MIN_LENGTH:
                     t_lower = no_reverse(t_lower, CI_type=CI_type, plot_type=func)
                     t_upper = no_reverse(t_upper, CI_type=CI_type, plot_type=func)
 
@@ -3450,7 +3477,8 @@ class distribution_confidence_intervals:
                     x=x,
                 )
                 # artificially correct for any reversals
-                if x is None and len(Y_lower) > 2 and len(Y_upper) > 2:
+                MIN_LENGTH = 2
+                if x is None and len(Y_lower) > MIN_LENGTH and len(Y_upper) > MIN_LENGTH:
                     Y_lower = no_reverse(Y_lower, CI_type=CI_type, plot_type=func)
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
 

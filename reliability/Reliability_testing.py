@@ -175,7 +175,8 @@ def two_proportion_test(
         it is a statistically significant difference.
 
     """
-    if CI < 0.5 or CI >= 1:
+    MIN_CI = 0.5
+    if CI < MIN_CI or CI >= 1:
         raise ValueError("CI must be between 0.5 and 1. Default is 0.95")
     if sample_1_trials is None or sample_1_successes is None or sample_2_trials is None or sample_2_successes is None:
         raise ValueError("You must specify the number of trials and successes for both samples.")
@@ -259,7 +260,8 @@ def sample_size_no_failures(reliability, CI=0.95, lifetimes=1, weibull_shape=1, 
         (rounded up).
 
     """
-    if CI < 0.5 or CI >= 1:
+    MIN_CI = 0.5
+    if CI < MIN_CI or CI >= 1:
         raise ValueError("CI must be between 0.5 and 1")
     if reliability <= 0 or reliability >= 1:
         raise ValueError("Reliability must be between 0 and 1")
@@ -267,7 +269,8 @@ def sample_size_no_failures(reliability, CI=0.95, lifetimes=1, weibull_shape=1, 
         raise ValueError(
             "Weibull shape must be greater than 0. Default (exponential distribution) is 1. If unknown then use 1.",
         )
-    if lifetimes > 5:
+    MAX_LIFETIMES = 5
+    if lifetimes > MAX_LIFETIMES:
         print("Testing for greater than 5 lifetimes is highly unlikely to result in zero failures.")
     if lifetimes <= 0:
         raise ValueError("lifetimes must be >0. Default is 1. No more than 5 is recommended due to test feasibility.")
@@ -579,7 +582,8 @@ class reliability_test_planner:
     ):
         print_CI_warn = False  # used later if the CI is calculated
         if CI is not None:
-            if CI < 0.5 or CI >= 1:
+            MIN_CI = 0.5
+            if CI < MIN_CI or CI >= 1:
                 raise ValueError(
                     "CI must be between 0.5 and 1. For example, specify CI=0.95 for 95% confidence interval",
                 )
@@ -639,7 +643,8 @@ class reliability_test_planner:
             CI_calc = ss.chi2.cdf(test_duration / (MTBF * 0.5), 2 * number_of_failures + p)
             CI = CI_calc if one_sided is True else (1 - (2 * (1 - CI_calc)))
             # this can give negative numbers, but only when the inputs result in an impossible CI.
-            if CI < 0.5:
+            MIN_CI = 0.5
+            if CI < MIN_CI:
                 print_CI_warn = True
 
         elif MTBF is not None and number_of_failures is not None and CI is not None and test_duration is None:
@@ -737,9 +742,10 @@ class reliability_test_duration:
         one_sided=True,
         time_terminated=True,
     ):
-        if consumer_risk <= 0 or consumer_risk > 0.5:
+        MAX_RISK = 0.5
+        if consumer_risk <= 0 or consumer_risk > MAX_RISK:
             raise ValueError("consumer_risk must be between 0 and 0.5")
-        if producer_risk <= 0 or producer_risk > 0.5:
+        if producer_risk <= 0 or producer_risk > MAX_RISK:
             raise ValueError("producer_risk must be between 0 and 0.5")
         if MTBF_design <= MTBF_required:
             raise ValueError("MTBF_design must exceed MTBF_required")
@@ -962,7 +968,8 @@ class chi2test:
                 "data contains values below 0 which is not appropriate when the distribution is not a Normal or Gumbel Distribution",
             )
 
-        if significance <= 0 or significance > 0.5:
+        MAX_SIGNIFICANCE = 0.5
+        if significance <= 0 or significance > MAX_SIGNIFICANCE:
             raise ValueError("significance should be between 0 and 0.5. Default is 0.05 which gives 95% confidence")
 
         if bins is None:
@@ -1108,7 +1115,8 @@ class chi2test:
             xmax = max(self.__distribution.quantile(0.9999), max(self.__data))  # type: ignore
             xmin = min(self.__distribution.quantile(0.0001), min(self.__data))  # type: ignore
 
-        if xmin > 0 and xmin / (xmax - xmin) < 0.05:  # if xmin is near zero then set it to zero
+        THRESHOLD = 0.05
+        if xmin > 0 and xmin / (xmax - xmin) < THRESHOLD:  # if xmin is near zero then set it to zero
             xmin = 0
         plt.xlim(xmin, xmax)
         plt.ylim(0, 1.1)
@@ -1179,7 +1187,8 @@ class KStest:
                 "data contains values below 0 which is not appropriate when the distribution is not a Normal or Gumbel Distribution",
             )
 
-        if significance <= 0 or significance > 0.5:
+        MAX_SIGNIFICANCE = 0.5
+        if significance <= 0 or significance > MAX_SIGNIFICANCE:
             raise ValueError("significance should be between 0 and 0.5. Default is 0.05 which gives 95% confidence")
 
         # need to sort data to ensure it is ascending
@@ -1271,13 +1280,14 @@ class KStest:
         plt.plot(SN_plot_x, SN_plot_y, label="Empirical CDF")
 
         if isinstance(self.__distribution, DSZI_Model):
-            xmax = max(self.__data) * 1.2
-            xmin = min(self.__data)
+            xmax: float = max(self.__data) * 1.2
+            xmin: float = min(self.__data)
         else:
             xmax = max(self.__distribution.quantile(0.9999), max(self.__data))
             xmin = min(self.__distribution.quantile(0.0001), min(self.__data))
 
-        if xmin > 0 and xmin / (xmax - xmin) < 0.05:  # if xmin is near zero then set it to zero
+        THRESHOLD = 0.05
+        if xmin > 0 and xmin / (xmax - xmin) < THRESHOLD:  # if xmin is near zero then set it to zero
             xmin = 0
         plt.xlim(xmin, xmax)
         plt.ylim(0, 1.1)

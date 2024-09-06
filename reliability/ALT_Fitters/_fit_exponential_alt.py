@@ -355,7 +355,8 @@ class Fit_Exponential_Exponential:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Exponential_Exponential (" + str(CI_rounded) + "% CI):"),
@@ -768,7 +769,8 @@ class Fit_Exponential_Eyring:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Exponential_Eyring (" + str(CI_rounded) + "% CI):"),
@@ -1175,7 +1177,8 @@ class Fit_Exponential_Power:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Exponential_Power (" + str(CI_rounded) + "% CI):"),
@@ -1642,7 +1645,8 @@ class Fit_Exponential_Dual_Exponential:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Exponential_Dual_Exponential (" + str(CI_rounded) + "% CI):"),
@@ -2112,7 +2116,8 @@ class Fit_Exponential_Power_Exponential:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Exponential_Power_Exponential (" + str(CI_rounded) + "% CI):"),
@@ -2579,7 +2584,8 @@ class Fit_Exponential_Dual_Power:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Exponential_Dual_Power (" + str(CI_rounded) + "% CI):"),

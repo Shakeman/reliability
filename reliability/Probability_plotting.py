@@ -69,7 +69,7 @@ dec = 3  # number of decimals to use when rounding fitted parameters in labels
 def plotting_positions(
     failures=None,
     right_censored=None,
-    a: float | None = None,
+    a: float = 0.3,
     sort: bool = False,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """Calculates the plotting positions for plotting on probability paper.
@@ -251,7 +251,8 @@ def Weibull_probability_plot(
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    if len(failures) < 2 and _fitted_dist_params is None:
+    MINIMUM_DATA_POINTS = 2
+    if len(failures) < MINIMUM_DATA_POINTS and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
     if type(failures) not in [np.ndarray, list]:
         raise ValueError("failures must be a list or an array")
@@ -471,7 +472,8 @@ def Loglogistic_probability_plot(
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    if len(failures) < 2 and _fitted_dist_params is None:
+    MINIMUM_DATA_POINTS = 2
+    if len(failures) < MINIMUM_DATA_POINTS and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -888,7 +890,8 @@ def Gumbel_probability_plot(
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    if len(failures) < 2 and _fitted_dist_params is None:
+    MIN_DATA_POINTS = 2
+    if len(failures) < MIN_DATA_POINTS and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -1052,7 +1055,8 @@ def Normal_probability_plot(
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    if len(failures) < 2 and _fitted_dist_params is None:
+    MINIMUM_FAILURES = 2
+    if len(failures) < MINIMUM_FAILURES and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -1217,7 +1221,8 @@ def Lognormal_probability_plot(
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    if len(failures) < 2 and _fitted_dist_params is None:
+    MINIMUM_FAILURES = 2
+    if len(failures) < MINIMUM_FAILURES and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -1431,7 +1436,8 @@ def Beta_probability_plot(
     """
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    if len(failures) < 2 and _fitted_dist_params is None:
+    MIN_FAILURES = 2
+    if len(failures) < MIN_FAILURES and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -1584,7 +1590,8 @@ def Gamma_probability_plot(
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
         raise ValueError("failures must be a list or array of the failure data.")
-    if len(failures) < 2 and _fitted_dist_params is None:
+    MIN_FAILURES = 2
+    if len(failures) < MIN_FAILURES and _fitted_dist_params is None:
         raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
 
     if type(failures) not in [np.ndarray, list]:
@@ -2361,7 +2368,7 @@ def PP_plot_semiparametric(
         RA = RankAdjustment(
             failures=X_data_failures,
             right_censored=X_data_right_censored,
-            a=a,
+            plotting_hueristic=a,
         )
         df = RA.results
         failure_rows = df.loc[df["Censoring code (censored=0)"] == 1.0]
@@ -2533,7 +2540,7 @@ def QQ_plot_semiparametric(
         RA = RankAdjustment(
             failures=X_data_failures,
             right_censored=X_data_right_censored,
-            a=a,
+            plotting_hueristic=a,
         )
         df = RA.results
         failure_rows = df.loc[df["Censoring code (censored=0)"] == 1.0]

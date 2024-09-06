@@ -280,7 +280,8 @@ class Competing_Risks_Model:
         plt.suptitle(text_title, fontsize=15)
 
         plt.subplot(231)
-        self.__pdf[self.__pdf > 1e100] = 1e100
+        MAX_VALUE = 1e100
+        self.__pdf[self.__pdf > MAX_VALUE] = MAX_VALUE
         plt.plot(self.__xvals, self.__pdf)
         restore_axes_limits(
             ((0, 1), (0, 1), False),
@@ -323,7 +324,8 @@ class Competing_Risks_Model:
         plt.title("Survival Function")
 
         plt.subplot(234)
-        self.__hf[self.__hf > 1e100] = 1e100
+        MAX_VALUE = 1e100
+        self.__hf[self.__hf > MAX_VALUE] = MAX_VALUE
         plt.plot(self.__xvals, self.__hf)
         restore_axes_limits(
             ((0, 1), (0, 1), False),
@@ -415,7 +417,8 @@ class Competing_Risks_Model:
         """
         Competing_Risks_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
-        if len(self.__xvals) < 2:
+        MIN_XVALS_LENGTH = 2
+        if len(self.__xvals) < MIN_XVALS_LENGTH:
             show_plot = False
 
         if show_plot is True:
@@ -428,7 +431,8 @@ class Competing_Risks_Model:
                         dist.PDF(xvals=self.__xvals, label=dist.param_title_long)
             textlabel = kwargs.pop("label") if "label" in kwargs else "Competing risks model"
             limits = get_axes_limits()
-            self.__pdf[self.__pdf > 1e100] = 1e100
+            MAX_VALUE = 1e100
+            self.__pdf[self.__pdf > MAX_VALUE] = MAX_VALUE
             plt.plot(self.__xvals, self.__pdf, label=textlabel, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Probability density")
@@ -486,7 +490,8 @@ class Competing_Risks_Model:
         """
         Competing_Risks_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
-        if len(self.__xvals) < 2:
+        MIN_XVALS_LENGTH = 2
+        if len(self.__xvals) < MIN_XVALS_LENGTH:
             show_plot = False
 
         if show_plot is True:
@@ -556,7 +561,8 @@ class Competing_Risks_Model:
         """
         Competing_Risks_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
-        if len(self.__xvals) < 2:
+        MIN_XVALS_LENGTH = 2
+        if len(self.__xvals) < MIN_XVALS_LENGTH:
             show_plot = False
 
         if show_plot is True:
@@ -626,7 +632,8 @@ class Competing_Risks_Model:
         """
         Competing_Risks_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
-        if len(self.__xvals) < 2:
+        MIN_XVALS_LENGTH = 2
+        if len(self.__xvals) < MIN_XVALS_LENGTH:
             show_plot = False
 
         if show_plot is True:
@@ -639,7 +646,8 @@ class Competing_Risks_Model:
                         dist.HF(xvals=self.__xvals, label=dist.param_title_long)
             textlabel = kwargs.pop("label") if "label" in kwargs else "Competing risks model"
             limits = get_axes_limits()
-            self.__hf[self.__hf > 1e100] = 1e100
+            MAX_VALUE = 1e100
+            self.__hf[self.__hf > MAX_VALUE] = MAX_VALUE
             plt.plot(self.__xvals, self.__hf, label=textlabel, **kwargs)
             plt.xlabel("x values")
             plt.ylabel("Hazard")
@@ -697,7 +705,8 @@ class Competing_Risks_Model:
         """
         Competing_Risks_Model.__combiner(self, xvals=xvals, xmin=xmin, xmax=xmax)
 
-        if len(self.__xvals) < 2:
+        MIN_XVALS_LENGTH = 2
+        if len(self.__xvals) < MIN_XVALS_LENGTH:
             show_plot = False
 
         if show_plot is True:

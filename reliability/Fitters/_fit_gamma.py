@@ -3,6 +3,7 @@ from __future__ import annotations
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import scipy.stats as ss
 from autograd.differential_operators import hessian
@@ -170,7 +171,7 @@ class Fit_Gamma_2P:
 
     def __init__(
         self,
-        failures=None,
+        failures: npt.NDArray[np.float64] | list[float],
         right_censored=None,
         show_probability_plot=True,
         print_results=True,
@@ -369,7 +370,8 @@ class Fit_Gamma_2P:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Gamma_2P (" + str(CI_rounded) + "% CI):"),
@@ -587,7 +589,7 @@ class Fit_Gamma_3P:
 
     def __init__(
         self,
-        failures=None,
+        failures: npt.NDArray[np.float64] | list[float],
         right_censored=None,
         show_probability_plot=True,
         print_results=True,
@@ -655,9 +657,9 @@ class Fit_Gamma_3P:
             self.gamma = MLE_results_abg.gamma
             self.method = "Maximum Likelihood Estimation (MLE)"
             self.optimizer = MLE_results_abg.optimizer
-
+        MIN_GAMMA = 0.01
         if (
-            self.gamma < 0.01
+            self.gamma < MIN_GAMMA
         ):  # If the solver finds that gamma is very near zero then we should have used a Gamma_2P distribution. Can't proceed with Gamma_3P as the confidence interval calculations for gamma result in nan (Zero division error). Need to recalculate everything as the SE values will be incorrect for Gamma_3P
             gamma_2P_results = Fit_Gamma_2P(
                 failures=failures,
@@ -837,7 +839,8 @@ class Fit_Gamma_3P:
             if CI_rounded % 1 == 0:
                 CI_rounded = int(CI * 100)
             frac_censored = len(right_censored) / n * 100
-            if frac_censored % 1 < 1e-10:
+            EPSILON = 1e-10
+            if frac_censored % 1 < EPSILON:
                 frac_censored = int(frac_censored)
             colorprint(
                 str("Results from Fit_Gamma_3P (" + str(CI_rounded) + "% CI):"),
@@ -873,7 +876,8 @@ class Fit_Gamma_3P:
                 downsample_scatterplot=downsample_scatterplot,
                 **kwargs,
             )
-            if self.gamma < 0.01 and fig.axes[0].legend_ is not None:
+            THRESHOLD = 0.01
+            if self.gamma < THRESHOLD and fig.axes[0].legend_ is not None:
                 fig.axes[0].legend_.get_texts()[0].set_text(
                     str(
                         "Fitted Gamma_3P\n(α="

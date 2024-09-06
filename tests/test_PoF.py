@@ -261,7 +261,16 @@ def test_fracture_mechanics_crack_initiation():
 
 @pytest.mark.filterwarnings("ignore::UserWarning")
 def test_fracture_mechanics():
-    results = fracture_mechanics_crack_growth(Kc=66, C=6.91 * 10**-12, m=3, P=0.15, W=100, t=5, Kt=2.41, D=10)
+    results = fracture_mechanics_crack_growth(
+        fracture_toughness=66,
+        C=6.91 * 10**-12,
+        m=3,
+        external_load=0.15,
+        plate_width=100,
+        plate_thickness=5,
+        stress_concentration=2.41,
+        notch_depth=10,
+    )
     results.print_results()
     results.plot()
     assert_allclose(results.Nf_stage_1_iterative, 7576, rtol=rtol, atol=atol)

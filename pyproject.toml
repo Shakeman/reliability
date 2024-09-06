@@ -80,7 +80,7 @@ ignore = [
     "TRY003", #raise-vanilla-args
     "N802", #invalid function ame
     "ANN201", #missing-return-type
-    "PLR2004", #magic value comparison
+    #"PLR2004", #magic value comparison
     "D401", #first line should be in imperative mood
     "D205", #1 blank line required between summary line and description
     "FA102", #future required-type-annotation
@@ -99,7 +99,6 @@ ignore = [
     "PD901", #   pandas-df-variable-name
     "D107", #    undocumented-public-init"
     "RET503",# implicit-return"
-    #"RET504",# unnecessary-assign
     "RET505",# superfluous-else-return
     "ERA001",#  commented-out-code"
     "PD011",#   pandas-use-of-dot-values"
@@ -135,6 +134,9 @@ relative-imports-order = "closest-to-furthest"
 extra-standard-library = ["typing"]
 section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
 known-first-party = []
+
+[tool.ruff.lint.per-file-ignores]
+"test_*.py" = ["PLR2004"] # magic value comparison
 
 [tool.ruff.format]
 # Like Black, use double quotes for strings.

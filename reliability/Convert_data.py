@@ -106,7 +106,8 @@ class xlsx_to_XCN:
             else:
                 C_upper.append(item)  # for numbers
         C_unique = np.unique(C_upper)
-        if len(C_unique) > 2:
+        MAX_UNIQUE_VALUES = 2
+        if len(C_unique) > MAX_UNIQUE_VALUES:
             error_str = str(
                 "xlsx_to_XCN assumes the second column is C (censoring code). A maximum of 2 unique censoring codes are allowed. Within this column there were "
                 + str(len(C_unique))
@@ -156,12 +157,12 @@ class xlsx_to_XCN:
                 )
         C = np.array(C_out)
 
-        if len(cols) > 2:
+        if len(cols) > 2:  # noqa: PLR2004
             N = df[cols[2]].to_numpy()
             N = removeNaNs(N)
         else:
             N = np.ones_like(X)  # if N is missing then it is assumed as all ones
-        if len(cols) > 3:
+        if len(cols) > 3:  # noqa: PLR2004
             colorprint(
                 "WARNING: xlsx_to_XCN assumes the first three columns in the excel file are being used for 'X' (event times), 'C' (censoring codes), 'N' (number of items at each event time). All other columns have been ignored",
                 text_color="red",
@@ -259,7 +260,8 @@ class xlsx_to_FR:
             Data = {"failures": self.failures}
             self.__df = pd.DataFrame(Data, columns=["failures"])
 
-        if len(cols) > 2:
+        MAX_COLS = 2
+        if len(cols) > MAX_COLS:
             colorprint(
                 "WARNING: xlsx_to_FR assumes the first two columns in the excel file are 'failures' and 'right censored'. All other columns have been ignored",
                 text_color="red",
@@ -329,7 +331,7 @@ class xlsx_to_FNRN:
             raise ValueError(
                 "xlsx_to_FNRN assumes the first and second columns in the excel file are 'failures' and 'number of failures'. These must be the same length.",
             )
-        if len(cols) == 2:
+        if len(cols) == 2:  # noqa: PLR2004
             right_censored = None
             num_right_censored = None
         else:
@@ -341,7 +343,8 @@ class xlsx_to_FNRN:
                 raise ValueError(
                     "xlsx_to_FNRN assumes the third and fourth columns in the excel file are 'right censored' and 'number of right censored'. These must be the same length.",
                 )
-        if len(cols) > 4:
+        MAX_COLS = 4
+        if len(cols) > MAX_COLS:
             colorprint(
                 "WARNING: xlsx_to_FNRN assumes the first four columns in the excel file are 'failures', 'number of failures', 'right censored', 'number of right censored'. All other columns have been ignored",
                 text_color="red",
@@ -620,7 +623,8 @@ class XCN_to_FR:
             else:
                 C_upper.append(item)  # for numbers
         C_unique = np.unique(C_upper)
-        if len(C_unique) > 2:
+        MAX_UNIQUE_VALUES = 2
+        if len(C_unique) > MAX_UNIQUE_VALUES:
             error_str = str(
                 "A maximum of 2 unique censoring codes are allowed. Within C there were "
                 + str(len(C_unique))

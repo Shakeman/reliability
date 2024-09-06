@@ -29,7 +29,7 @@ class Mixture_Model:
     proportion (where the proportions sum to 1). The model is obtained using the
     sum of the cumulative distribution functions:
 
-    :math:`CDF_{total} = (CDF_1 × p_1) + (CDF_2 × p_2) + (CDF_3 × p_3) + ... + (CDF_n × p_n)`
+    :math:`CDF_{total} = (CDF_1 x p_1) + (CDF_2 x p_2) + (CDF_3 x p_3) + ... + (CDF_n x p_n)`
 
     The output API is similar to the other probability distributions (Weibull,
     Normal, etc.) as shown below.

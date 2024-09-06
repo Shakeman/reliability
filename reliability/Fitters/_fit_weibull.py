@@ -1619,10 +1619,10 @@ class Fit_Weibull_Mixture:
     proportion rather than being the product as is the case in the Weibull
     Competing Risks Model.
 
-    Mixture Model: :math:`SF_{model} = (proportion_1 × SF_1) +
-    ((1-proportion_1) × SF_2)`
+    Mixture Model: :math:`SF_{model} = (proportion_1 x SF_1) +
+    ((1-proportion_1) x SF_2)`
 
-    Competing Risks Model: :math:`SF_{model} = SF_1 × SF_2`
+    Competing Risks Model: :math:`SF_{model} = SF_1 x SF_2`
 
     Similar to the competing risks model, you can use this model when you think
     there are multiple failure modes acting to create the failure data.
@@ -2084,10 +2084,10 @@ class Fit_Weibull_CR:
     Function is the product of the individual Survival Functions rather than
     being the sum as is the case in the Weibull Mixture Model.
 
-    Mixture Model: :math:`SF_{model} = (proportion_1 × SF_1) +
-    ((1-proportion_1) × SF_2)`
+    Mixture Model: :math:`SF_{model} = (proportion_1 x SF_1) +
+    ((1-proportion_1) x SF_2)`
 
-    Competing Risks Model: :math:`SF_{model} = SF_1 × SF_2`
+    Competing Risks Model: :math:`SF_{model} = SF_1 x SF_2`
 
     Whilst some failure modes may not be fitted as well by a Weibull
     distribution as they may be by another distribution, it is unlikely that

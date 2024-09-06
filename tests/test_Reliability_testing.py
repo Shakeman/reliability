@@ -39,7 +39,7 @@ def test_two_proportion_test():
 
 
 def test_sample_size_no_faillures():
-    sample_size = sample_size_no_failures(reliability=0.999)
+    sample_size: int = sample_size_no_failures(reliability=0.999)
     assert sample_size == 2995
 
 
@@ -49,6 +49,10 @@ def test_reliability_test_planner():
     assert_allclose(test_plan.MTBF, 1658.3248534993454, rtol=rtol, atol=atol)
     assert_allclose(test_plan.number_of_failures, 7, rtol=rtol, atol=atol)
     assert_allclose(test_plan.test_duration, 19520, rtol=rtol, atol=atol)
+
+    # Test Case 2 for supplying MTBF
+    mtbf = reliability_test_planner(test_duration=19520, CI=0.8, MTBF=1660, one_sided=False)
+    assert_allclose(mtbf.number_of_failures, 6, rtol=rtol, atol=atol)
 
 
 def test_reliability_test_duration():

@@ -4,7 +4,6 @@ from typing import Iterator
 import numpy as np
 import pandas as pd
 import pytest
-from pytest import MonkeyPatch
 
 from reliability.Utils._ancillary_utils import (
     colorprint,
@@ -24,7 +23,7 @@ def test_is_allowed_character():
     assert is_allowed_character("Z") is False
 
 
-def test_validate_yes_no_prompt(monkeypatch: MonkeyPatch):
+def test_validate_yes_no_prompt(monkeypatch: pytest.MonkeyPatch):
     # Test valid input 'Y'
     monkeypatch.setattr("builtins.input", lambda _: "Y")
     assert validate_yes_no_prompt("Are you sure?") == "Y"
@@ -197,7 +196,7 @@ def test_colorprint():
     assert str(e.value) == "Unknown text_color. Options are grey, red, green, yellow, blue, pink, turquoise."
 
 
-def test_write_df_to_xlsx(monkeypatch: MonkeyPatch):
+def test_write_df_to_xlsx(monkeypatch: pytest.MonkeyPatch):
     current_path: Path = Path.cwd()
     folder_path: Path = current_path / "tests"
     folder_path: Path = folder_path / "_excel_files"

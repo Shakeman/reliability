@@ -600,10 +600,10 @@ class ROCOF:
 
     def __init__(
         self,
-        times_between_failures=None,
-        failure_times=None,
-        CI=0.95,
-        test_end=None,
+        times_between_failures: list[float] | npt.NDArray[np.float64] | None = None,
+        failure_times: list[float] | npt.NDArray[np.float64] | None = None,
+        CI: float = 0.95,
+        test_end: float | None = None,
     ):
         if times_between_failures is not None and failure_times is not None:
             raise ValueError(
@@ -636,8 +636,8 @@ class ROCOF:
         if CI <= 0 or CI >= 1:
             raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence interval.")
         if test_end is None:
-            tn = sum(ti)
-            n = len(ti) - 1
+            tn: float = sum(ti)
+            n: int = len(ti) - 1
         else:
             tn = test_end
             n = len(ti)

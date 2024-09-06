@@ -875,7 +875,7 @@ class FNRN_to_XCN:
                 raise ValueError("right_censored must be a list or array.")
             if type(num_right_censored) not in [list, np.ndarray] and num_right_censored is not None:
                 raise ValueError("num_right_censored must be a list or array.")
-            if len(right_censored) != len(num_right_censored):
+            if num_right_censored is not None and len(right_censored) != len(num_right_censored):
                 raise ValueError("right_censored and num_right_censored must be the same length.")
             FR = FNRN_to_FR(
                 failures=failures,

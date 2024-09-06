@@ -48,7 +48,7 @@ def test_reliability_growth_crow_amsaa():
 
 
 def test_ROCOF():
-    times = [
+    times: list[int] = [
         104,
         131,
         1597,

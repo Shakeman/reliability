@@ -99,6 +99,12 @@ def test_FR_to_XCN():
     XCN.print()
     XCN.write_to_xlsx(file_name)
     file_name.unlink()
+    no_right_censored = FR_to_XCN(
+        failures=[1, 1, 2, 2, 3],
+    )
+    assert ([1, 2, 3] == no_right_censored.X).all()
+    assert (["F", "F", "F"] == no_right_censored.C).all()
+    assert ([2, 2, 1] == no_right_censored.N).all()
 
 
 def test_FNRN_to_XCN():
@@ -116,6 +122,14 @@ def test_FNRN_to_XCN():
     XCN.print()
     XCN.write_to_xlsx(file_name)
     file_name.unlink()
+
+    no_right_censored = FNRN_to_XCN(
+        failures=[1, 2, 3],
+        num_failures=[2, 2, 1],
+    )
+    assert ([1, 2, 3] == no_right_censored.X).all()
+    assert (["F", "F", "F"] == no_right_censored.C).all()
+    assert ([2, 2, 1] == no_right_censored.N).all()
 
 
 def test_xlsx_to_XCN() -> None:

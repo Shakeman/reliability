@@ -108,12 +108,11 @@ ignore = [
     "PLW3301",# nested min-max
     "TRY004",# type-check-without-type-error
     "FBT001", # " boolean-type-hint-positional-argument"
-    "PT013",
     "E501",  # line too long, handled by black
     "FBT003",# Boolean positional value in function call"
     "C901",  # too complex
     "RUF001",  # ambiguous unicode string
-    "RUF002",  # ambiguous unicode string
+    #"RUF002",  # ambiguous unicode string
     "S101",    # Use of `assert` detected
     "ANN101", #missing-type-self
     "N806", #non-lowercase-variable-in-function
@@ -127,7 +126,7 @@ ignore = [
     "D100", # Missing docstring in public module
     "INP001",
 ]
-
+allowed-confusables = ["x", "α", "σ"]
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
 unfixable = []

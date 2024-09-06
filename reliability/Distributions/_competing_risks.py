@@ -27,7 +27,7 @@ class Competing_Risks_Model:
     (expressed as probability distributions) that act on a system over time.
     The model is obtained using the product of the survival functions:
 
-    :math:`SF_{total} = SF_1 × SF_2 × SF_3 × ... × SF_n`
+    :math:`SF_{total} = SF_1 x SF_2 x SF_3 x ... x SF_n`
 
     The output API is similar to the other probability distributions (Weibull,
     Normal, etc.) as shown below.

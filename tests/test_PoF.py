@@ -75,6 +75,40 @@ def test_strain_life_diagram():
     assert_allclose(results.min_strain, -0.0029, rtol=rtol, atol=atol)
     assert_allclose(results.max_stress, 377.9702002307027, rtol=rtol, atol=atol)
     assert_allclose(results.min_stress, -321.06700330271457, rtol=rtol, atol=atol)
+    results = strain_life_diagram(
+        E=210000,
+        sigma_f=1000,
+        epsilon_f=1.1,
+        b=-0.1,
+        c=-0.6,
+        K=1200,
+        n=0.2,
+        max_strain=0.0049,
+        min_strain=-0.0029,
+        mean_stress_correction_method="morrow",
+    )
+    assert_allclose(results.cycles_to_failure, 15153.311134383992, rtol=rtol, atol=atol)  # only chnage
+    assert_allclose(results.max_strain, 0.0049, rtol=rtol, atol=atol)
+    assert_allclose(results.min_strain, -0.0029, rtol=rtol, atol=atol)
+    assert_allclose(results.max_stress, 377.9702002307027, rtol=rtol, atol=atol)
+    assert_allclose(results.min_stress, -321.06700330271457, rtol=rtol, atol=atol)
+    results = strain_life_diagram(
+        E=210000,
+        sigma_f=1000,
+        epsilon_f=1.1,
+        b=-0.1,
+        c=-0.6,
+        K=1200,
+        n=0.2,
+        max_strain=0.0049,
+        min_strain=-0.0029,
+        mean_stress_correction_method="modified_morrow",
+    )
+    assert_allclose(results.cycles_to_failure, 11723.59213651, rtol=rtol, atol=atol)
+    assert_allclose(results.max_strain, 0.0049, rtol=rtol, atol=atol)
+    assert_allclose(results.min_strain, -0.0029, rtol=rtol, atol=atol)
+    assert_allclose(results.max_stress, 377.9702002307027, rtol=rtol, atol=atol)
+    assert_allclose(results.min_stress, -321.06700330271457, rtol=rtol, atol=atol)
     plt.close()
 
 
@@ -103,6 +137,126 @@ def test_fracture_mechanics_crack_initiation():
     assert_allclose(results.sigma_mean, -5.684341886080802e-14, rtol=rtol, atol=atol)
     assert_allclose(results.sigma_min, -506.7290859876518, rtol=rtol, atol=atol)
     plt.close()
+
+    # Test Case 3 for morrow
+    results = fracture_mechanics_crack_initiation(
+        P=0.15,
+        A=5 * 80,
+        Kt=2.41,
+        q=0.9857,
+        Sy=690,
+        E=210000,
+        K=1060,
+        n=0.14,
+        b=-0.081,
+        c=-0.65,
+        sigma_f=1160,
+        epsilon_f=1.1,
+        mean_stress_correction_method="morrow",
+    )
+
+    assert_allclose(results.cycles_to_failure, 2175.880043525626, rtol=rtol, atol=atol)  # only changed line
+    assert_allclose(results.epsilon_max, 0.007547514721969089, rtol=rtol, atol=atol)
+    assert_allclose(results.epsilon_mean, 8.673617379884035e-19, rtol=rtol, atol=atol)
+    assert_allclose(results.epsilon_min, -0.007547514721969087, rtol=rtol, atol=atol)
+    assert_allclose(results.sigma_max, 506.7290859876517, rtol=rtol, atol=atol)
+    assert_allclose(results.sigma_mean, -5.684341886080802e-14, rtol=rtol, atol=atol)
+    assert_allclose(results.sigma_min, -506.7290859876518, rtol=rtol, atol=atol)
+
+    # Test Case 3 for modified morrow
+    results = fracture_mechanics_crack_initiation(
+        P=0.15,
+        A=5 * 80,
+        Kt=2.41,
+        q=0.9857,
+        Sy=690,
+        E=210000,
+        K=1060,
+        n=0.14,
+        b=-0.081,
+        c=-0.65,
+        sigma_f=1160,
+        epsilon_f=1.1,
+        mean_stress_correction_method="modified_morrow",
+    )
+
+    assert_allclose(results.cycles_to_failure, 2175.880043525626, rtol=rtol, atol=atol)  # no changes
+    assert_allclose(results.epsilon_max, 0.007547514721969089, rtol=rtol, atol=atol)
+    assert_allclose(results.epsilon_mean, 8.673617379884035e-19, rtol=rtol, atol=atol)
+    assert_allclose(results.epsilon_min, -0.007547514721969087, rtol=rtol, atol=atol)
+    assert_allclose(results.sigma_max, 506.7290859876517, rtol=rtol, atol=atol)
+    assert_allclose(results.sigma_mean, -5.684341886080802e-14, rtol=rtol, atol=atol)
+    assert_allclose(results.sigma_min, -506.7290859876518, rtol=rtol, atol=atol)
+
+    # Test Case 4 full elastic
+    results = fracture_mechanics_crack_initiation(
+        P=0.15,
+        A=5 * 80,
+        Kt=1.5,
+        q=0.9857,
+        Sy=690,
+        E=210000,
+        K=1060,
+        n=0.14,
+        b=-0.081,
+        c=-0.65,
+        sigma_f=1160,
+        epsilon_f=1.1,
+        mean_stress_correction_method="SWT",
+    )
+    assert_allclose(results.cycles_to_failure, 4029.7033730349535, rtol=rtol, atol=atol)  # no changes
+    assert_allclose(results.epsilon_max, 0.00266580357142863, rtol=rtol, atol=atol)
+    assert_allclose(results.epsilon_mean, 5.854691731421724e-17, rtol=rtol, atol=atol)
+    assert_allclose(results.epsilon_min, -0.002665803571428513, rtol=rtol, atol=atol)
+    assert_allclose(results.sigma_max, 559.8187499999877, rtol=rtol, atol=atol)
+    assert_allclose(results.sigma_mean, -1.2278178473934531e-11, rtol=rtol, atol=atol)
+    assert_allclose(results.sigma_min, -559.8187500000123, rtol=rtol, atol=atol)
+    # Test Case 5 full elastic morrow
+    results = fracture_mechanics_crack_initiation(
+        P=0.15,
+        A=5 * 80,
+        Kt=1.5,
+        q=0.9857,
+        Sy=690,
+        E=210000,
+        K=1060,
+        n=0.14,
+        b=-0.081,
+        c=-0.65,
+        sigma_f=1160,
+        epsilon_f=1.1,
+        mean_stress_correction_method="morrow",
+    )
+    assert_allclose(results.cycles_to_failure, 4029.7033730349394, rtol=rtol, atol=atol)  # no changes
+    assert_allclose(results.epsilon_max, 0.00266580357142863, rtol=rtol, atol=atol)
+    assert_allclose(results.epsilon_mean, 5.854691731421724e-17, rtol=rtol, atol=atol)
+    assert_allclose(results.epsilon_min, -0.002665803571428513, rtol=rtol, atol=atol)
+    assert_allclose(results.sigma_max, 559.8187499999877, rtol=rtol, atol=atol)
+    assert_allclose(results.sigma_mean, -1.2278178473934531e-11, rtol=rtol, atol=atol)
+    assert_allclose(results.sigma_min, -559.8187500000123, rtol=rtol, atol=atol)
+    # Test Case 6 full elastic modified morrow
+    results = fracture_mechanics_crack_initiation(
+        P=0.15,
+        A=5 * 80,
+        Kt=1.5,
+        q=0.9857,
+        Sy=690,
+        E=210000,
+        K=1060,
+        n=0.14,
+        b=-0.081,
+        c=-0.65,
+        sigma_f=1160,
+        epsilon_f=1.1,
+        mean_stress_correction_method="modified_morrow",
+    )
+    assert_allclose(results.cycles_to_failure, 4029.7033730349394, rtol=rtol, atol=atol)  # no changes
+    assert_allclose(results.epsilon_max, 0.00266580357142863, rtol=rtol, atol=atol)
+    assert_allclose(results.epsilon_mean, 5.854691731421724e-17, rtol=rtol, atol=atol)
+    assert_allclose(results.epsilon_min, -0.002665803571428513, rtol=rtol, atol=atol)
+    assert_allclose(results.sigma_max, 559.8187499999877, rtol=rtol, atol=atol)
+    assert_allclose(results.sigma_mean, -1.2278178473934531e-11, rtol=rtol, atol=atol)
+    assert_allclose(results.sigma_min, -559.8187500000123, rtol=rtol, atol=atol)
 
 
 @pytest.mark.filterwarnings("ignore::UserWarning")
@@ -203,6 +357,24 @@ def test_palmgren_miner_linear_damage():
 def test_acceleration_factor():
     results = acceleration_factor(T_use=60, T_acc=100, Ea=1.2)
     results.print_results()
+    assert_allclose(results.AF, 88.29574588463338, rtol=rtol, atol=atol)
+    assert_allclose(results.Ea, 1.2, rtol=rtol, atol=atol)
+    assert_allclose(results.T_acc, 100, rtol=rtol, atol=atol)
+    assert_allclose(results.T_use, 60, rtol=rtol, atol=atol)
+
+    results = acceleration_factor(AF=88.29574588463338, T_use=60, T_acc=100)
+    assert_allclose(results.AF, 88.29574588463338, rtol=rtol, atol=atol)
+    assert_allclose(results.Ea, 1.2, rtol=rtol, atol=atol)
+    assert_allclose(results.T_acc, 100, rtol=rtol, atol=atol)
+    assert_allclose(results.T_use, 60, rtol=rtol, atol=atol)
+
+    results = acceleration_factor(AF=88.29574588463338, T_use=60, Ea=1.2)
+    assert_allclose(results.AF, 88.29574588463338, rtol=rtol, atol=atol)
+    assert_allclose(results.Ea, 1.2, rtol=rtol, atol=atol)
+    assert_allclose(results.T_acc, 100, rtol=rtol, atol=atol)
+    assert_allclose(results.T_use, 60, rtol=rtol, atol=atol)
+
+    results = acceleration_factor(AF=88.29574588463338, T_use=60, T_acc=100, Ea=1.2)
     assert_allclose(results.AF, 88.29574588463338, rtol=rtol, atol=atol)
     assert_allclose(results.Ea, 1.2, rtol=rtol, atol=atol)
     assert_allclose(results.T_acc, 100, rtol=rtol, atol=atol)

@@ -60,7 +60,7 @@ def update_path(path: Path) -> Path:
 
 def write_df_to_xlsx(df, path: Path, **kwargs) -> None:
     """Writes a dataframe to an xlsx file
-    For use exclusively by the Convert_data module
+    For use exclusively by the Convert_data module.
 
     Parameters
     ----------
@@ -112,7 +112,7 @@ def round_and_string(
     small_scientific_limit: float = 1e-4,
 ) -> str:
     """This function is used to round a number to a specified number of decimals and convert to string.
-    It is used heavily in the formatting of the parameter titles within reliability.Distributions
+    It is used heavily in the formatting of the parameter titles within reliability.Distributions.
 
     The rules applied are slightly different than rounding to a number of significant figures as it keeps more
     preceeding zeros. Special formatting rules are applied when:

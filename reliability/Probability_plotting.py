@@ -1,4 +1,4 @@
-"""Probability plotting
+"""Probability plotting.
 
 This module contains the functions required to generate linearized probability
 plots of the 8 standard distributions included in reliability. The most common

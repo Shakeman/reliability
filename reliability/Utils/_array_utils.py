@@ -54,7 +54,7 @@ def unpack_single_arrays(array: npt.NDArray[np.float64]) -> npt.NDArray[np.float
 
 
 def unpack_single_arrays(array):
-    """Unpacks arrays with a single element to return just that element
+    """Unpacks arrays with a single element to return just that element.
 
     Parameters
     ----------
@@ -77,7 +77,7 @@ def unpack_single_arrays(array):
 
 def generate_X_array(dist, xvals=None, xmin=None, xmax=None) -> npt.NDArray[np.float64]:
     """Generates the array of X values for each of the PDf, CDF, SF, HF, CHF
-    functions within reliability.Distributions
+    functions within reliability.Distributions.
 
     This is done with a variety of cases in order to ensure that for regions of
     high gradient (particularly asymptotes to inf) the points are more

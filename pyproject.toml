@@ -82,13 +82,12 @@ ignore = [
     "ANN201", #missing-return-type
     "D401", #first line should be in imperative mood
     "D205", #1 blank line required between summary line and description
-    #"FA102", #future required-type-annotation
     "D103", # Missing docstring in public function
     "PT011", # `pytest.raises(ValueError)` is too broad, set the `match` parameter or use a more specific exception
     "PLR0913", # too-many-arguments
     "ANN205", # missing-return-type-static-method
-    "D400", # ends-in-period
-    "D415", #  ends-in-punctuation
+    #"D400", # ends-in-period
+    #"D415", #  ends-in-punctuation
     "PLR0915", #too-many-statements
     "PLR0912", #too-many-branches
     "ANN003", #  missing-type-kwargs

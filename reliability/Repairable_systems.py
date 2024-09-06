@@ -1,4 +1,4 @@
-"""Repairable systems
+"""Repairable systems.
 
 reliability_growth - Fits a reliability growth model to failure data using
     either the Duane model or the Crow-AMSAA model.

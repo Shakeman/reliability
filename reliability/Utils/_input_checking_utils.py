@@ -15,7 +15,7 @@ from reliability.Utils._array_utils import (
 
 class distributions_input_checking:
     """Performs checks and sets default values for the inputs to distributions
-    sub function (PDF, CDF, SF, HF, CHF)
+    sub function (PDF, CDF, SF, HF, CHF).
 
     Parameters
     ----------

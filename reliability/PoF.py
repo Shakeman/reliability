@@ -1,4 +1,4 @@
-"""Physics of Failure
+"""Physics of Failure.
 
 Within the module PoF, are the following functions:
 

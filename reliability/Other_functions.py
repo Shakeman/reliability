@@ -1,4 +1,4 @@
-"""Other Functions
+"""Other Functions.
 
 This is a collection of several other functions that did not otherwise fit
 within their own module. Included functions are:
@@ -1183,7 +1183,7 @@ class make_ALT_data:
 
 
 class crosshairs:
-    """Adds interactive crosshairs to matplotlib plots
+    """Adds interactive crosshairs to matplotlib plots.
 
     Parameters
     ----------

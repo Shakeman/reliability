@@ -146,7 +146,7 @@ def probability_plot_xyticks(yticks=None):
     """
 
     def customFormatter(value, _):
-        """Provides custom string formatting that is used for the xticks
+        """Provides custom string formatting that is used for the xticks.
 
         Parameters
         ----------
@@ -215,7 +215,7 @@ def probability_plot_xyticks(yticks=None):
 
     def get_edge_distances():
         """Finds the sum of the distance (in axes coords (0 to 1)) of the distances
-        from the edge ticks to the edges
+        from the edge ticks to the edges.
 
         Parameters
         ----------

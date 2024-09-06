@@ -1,4 +1,4 @@
-"""Convert_data
+"""Convert_data.
 
 This module contains converters to easily convert data between multiple formats
 The formats used within reliability are:
@@ -192,7 +192,7 @@ class xlsx_to_XCN:
         self.__df = pd.DataFrame(data=Data, columns=["event time", "censor code", "number of events"])
 
     def print(self):
-        """This will print a dataframe of the data in XCN format to the console"""
+        """This will print a dataframe of the data in XCN format to the console."""
         colorprint("Data (XCN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -270,7 +270,7 @@ class xlsx_to_FR:
             )
 
     def print(self):
-        """This will print a dataframe of the data in FR format to the console"""
+        """This will print a dataframe of the data in FR format to the console."""
         colorprint("Data (FR format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -403,7 +403,7 @@ class xlsx_to_FNRN:
             self.__df = pd.DataFrame(Data, columns=["failures", "number of failures"])
 
     def print(self):
-        """This will print a dataframe of the data in FNRN format to the console"""
+        """This will print a dataframe of the data in FNRN format to the console."""
         colorprint("Data (FNRN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -524,7 +524,7 @@ class XCN_to_FNRN:
             self.__df = pd.DataFrame(Data, columns=["failures", "number of failures"])
 
     def print(self):
-        """This will print a dataframe of the data in FNRN format to the console"""
+        """This will print a dataframe of the data in FNRN format to the console."""
         colorprint("Data (FNRN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -695,7 +695,7 @@ class XCN_to_FR:
             self.__df = pd.DataFrame(Data, columns=["failures"])
 
     def print(self):
-        """This will print a dataframe of the data in FR format to the console"""
+        """This will print a dataframe of the data in FR format to the console."""
         colorprint("Data (FR format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -788,7 +788,7 @@ class FR_to_XCN:
         self.__df = pd.DataFrame(data=Data, columns=["event time", "censor code", "number of events"])
 
     def print(self):
-        """This will print a dataframe of the data in XCN format to the console"""
+        """This will print a dataframe of the data in XCN format to the console."""
         colorprint("Data (XCN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -917,7 +917,7 @@ class FNRN_to_XCN:
         self.__df = pd.DataFrame(data=Data, columns=["event time", "censor code", "number of events"])
 
     def print(self):
-        """This will print a dataframe of the data in XCN format to the console"""
+        """This will print a dataframe of the data in XCN format to the console."""
         colorprint("Data (XCN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -936,7 +936,7 @@ class FNRN_to_XCN:
 
 
 class FR_to_FNRN:
-    """Converts data from FR format to FNRN format
+    """Converts data from FR format to FNRN format.
 
     Parameters
     ----------
@@ -1032,7 +1032,7 @@ class FR_to_FNRN:
             self.__df = pd.DataFrame(Data, columns=["failures", "number of failures"])
 
     def print(self):
-        """This will print a dataframe of the data in FNRN format to the console"""
+        """This will print a dataframe of the data in FNRN format to the console."""
         colorprint("Data (FNRN format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 
@@ -1051,7 +1051,7 @@ class FR_to_FNRN:
 
 
 class FNRN_to_FR:
-    """Converts data from FNRN format to FR format
+    """Converts data from FNRN format to FR format.
 
     Parameters
     ----------
@@ -1149,7 +1149,7 @@ class FNRN_to_FR:
             self.__df = pd.DataFrame(Data, columns=["failures"])
 
     def print(self):
-        """This will print a dataframe of the data in FR format to the console"""
+        """This will print a dataframe of the data in FR format to the console."""
         colorprint("Data (FR format)", bold=True, underline=True)
         print(self.__df.to_string(index=False), "\n")
 

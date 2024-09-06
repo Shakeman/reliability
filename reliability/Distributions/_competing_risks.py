@@ -28,7 +28,7 @@ np.seterr(divide="ignore", invalid="ignore")  # ignore the divide by zero warnin
 class Competing_Risks_Model:
     """The competing risks model is used to model the effect of multiple risks
     (expressed as probability distributions) that act on a system over time.
-    The model is obtained using the product of the survival functions:
+    The model is obtained using the product of the survival functions.
 
     :math:`SF_{total} = SF_1 x SF_2 x SF_3 x ... x SF_n`
 
@@ -251,7 +251,7 @@ class Competing_Risks_Model:
 
     def plot(self, xvals=None, xmin=None, xmax=None):
         """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
-        in a single figure
+        in a single figure.
 
         Parameters
         ----------
@@ -383,7 +383,7 @@ class Competing_Risks_Model:
         plt.show()
 
     def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """Plots the PDF (probability density function)
+        """Plots the PDF (probability density function).
 
         Parameters
         ----------
@@ -456,7 +456,7 @@ class Competing_Risks_Model:
         return unpack_single_arrays(self.__pdf)
 
     def CDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """Plots the CDF (cumulative distribution function)
+        """Plots the CDF (cumulative distribution function).
 
         Parameters
         ----------
@@ -527,7 +527,7 @@ class Competing_Risks_Model:
         return unpack_single_arrays(self.__cdf)
 
     def SF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """Plots the SF (survival function)
+        """Plots the SF (survival function).
 
         Parameters
         ----------
@@ -598,7 +598,7 @@ class Competing_Risks_Model:
         return unpack_single_arrays(self.__sf)
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """Plots the HF (hazard function)
+        """Plots the HF (hazard function).
 
         Parameters
         ----------
@@ -671,7 +671,7 @@ class Competing_Risks_Model:
         return unpack_single_arrays(self.__hf)
 
     def CHF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """Plots the CHF (cumulative hazard function)
+        """Plots the CHF (cumulative hazard function).
 
         Parameters
         ----------
@@ -742,7 +742,7 @@ class Competing_Risks_Model:
         return unpack_single_arrays(self.__chf)
 
     def quantile(self, q):
-        """Quantile calculator
+        """Quantile calculator.
 
         Parameters
         ----------
@@ -768,7 +768,7 @@ class Competing_Risks_Model:
         return unpack_single_arrays(ppf)
 
     def inverse_SF(self, q):
-        """Inverse survival function calculator
+        """Inverse survival function calculator.
 
         Parameters
         ----------
@@ -822,7 +822,7 @@ class Competing_Risks_Model:
         print("Excess kurtosis =", self.excess_kurtosis)
 
     def mean_residual_life(self, t: float) -> float:
-        """Mean Residual Life calculator
+        """Mean Residual Life calculator.
 
         Parameters
         ----------
@@ -838,7 +838,7 @@ class Competing_Risks_Model:
 
         def __subcombiner(X: npt.NDArray[np.float64] | np.float64 | float) -> npt.NDArray[np.float64] | np.float64:
             """This function does what __combiner does but more efficiently and
-            also accepts single values
+            also accepts single values.
             """
             if isinstance(X, np.ndarray):
                 sf: npt.NDArray[np.float64] | np.float64 = np.ones_like(X)
@@ -881,7 +881,7 @@ class Competing_Risks_Model:
         return MRL
 
     def random_samples(self, number_of_samples, seed=None):
-        """Draws random samples from the probability distribution
+        """Draws random samples from the probability distribution.
 
         Parameters
         ----------

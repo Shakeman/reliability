@@ -2338,7 +2338,7 @@ class Fit_Weibull_Power_Exponential:
 
 
 class Fit_Weibull_Dual_Power:
-    """Fit_Weibull_Dual_Power
+    """Fit_Weibull_Dual_Power.
 
     This function will Fit the Weibull_Dual_Power life-stress model to the data
     provided. Please see the online documentation for the equations of this

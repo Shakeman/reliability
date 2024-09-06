@@ -98,7 +98,7 @@ class Beta_Distribution:
 
     def plot(self, xvals=None, xmin=None, xmax=None):
         """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
-        in a single figure
+        in a single figure.
 
         Parameters
         ----------
@@ -236,7 +236,7 @@ class Beta_Distribution:
         plt.show()
 
     def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """Plots the PDF (probability density function)
+        """Plots the PDF (probability density function).
 
         Parameters
         ----------
@@ -309,7 +309,7 @@ class Beta_Distribution:
         return pdf
 
     def CDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """Plots the CDF (cumulative distribution function)
+        """Plots the CDF (cumulative distribution function).
 
         Parameters
         ----------
@@ -375,7 +375,7 @@ class Beta_Distribution:
         return cdf
 
     def SF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """Plots the SF (survival function)
+        """Plots the SF (survival function).
 
         Parameters
         ----------
@@ -448,7 +448,7 @@ class Beta_Distribution:
         return sf
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """Plots the HF (hazard function)
+        """Plots the HF (hazard function).
 
         Parameters
         ----------
@@ -521,7 +521,7 @@ class Beta_Distribution:
         return hf
 
     def CHF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """Plots the CHF (cumulative hazard function)
+        """Plots the CHF (cumulative hazard function).
 
         Parameters
         ----------
@@ -596,7 +596,7 @@ class Beta_Distribution:
         return chf
 
     def quantile(self, q):
-        """Quantile calculator
+        """Quantile calculator.
 
         Parameters
         ----------
@@ -622,7 +622,7 @@ class Beta_Distribution:
         return unpack_single_arrays(ppf)
 
     def inverse_SF(self, q):
-        """Inverse survival function calculator
+        """Inverse survival function calculator.
 
         Parameters
         ----------
@@ -647,7 +647,7 @@ class Beta_Distribution:
         return unpack_single_arrays(isf)
 
     def mean_residual_life(self, t: float) -> float:
-        """Mean Residual Life calculator
+        """Mean Residual Life calculator.
 
         Parameters
         ----------
@@ -703,7 +703,7 @@ class Beta_Distribution:
         print("Excess kurtosis =", self.excess_kurtosis)
 
     def random_samples(self, number_of_samples, seed=None):
-        """Draws random samples from the probability distribution
+        """Draws random samples from the probability distribution.
 
         Parameters
         ----------

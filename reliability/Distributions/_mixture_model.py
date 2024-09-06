@@ -27,7 +27,7 @@ class Mixture_Model:
     multiple distributions. This allows for a more complex model to be
     constructed as the sum of other distributions, each multiplied by a
     proportion (where the proportions sum to 1). The model is obtained using the
-    sum of the cumulative distribution functions:
+    sum of the cumulative distribution functions.
 
     :math:`CDF_{total} = (CDF_1 x p_1) + (CDF_2 x p_2) + (CDF_3 x p_3) + ... + (CDF_n x p_n)`
 
@@ -264,7 +264,7 @@ class Mixture_Model:
 
     def plot(self, xvals=None, xmin=None, xmax=None):
         """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
-        in a single figure
+        in a single figure.
 
         Parameters
         ----------
@@ -397,7 +397,7 @@ class Mixture_Model:
         plt.show()
 
     def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """Plots the PDF (probability density function)
+        """Plots the PDF (probability density function).
 
         Parameters
         ----------
@@ -471,7 +471,7 @@ class Mixture_Model:
         return unpack_single_arrays(self.__pdf)
 
     def CDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """Plots the CDF (cumulative distribution function)
+        """Plots the CDF (cumulative distribution function).
 
         Parameters
         ----------
@@ -542,7 +542,7 @@ class Mixture_Model:
         return unpack_single_arrays(self.__cdf)
 
     def SF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """Plots the SF (survival function)
+        """Plots the SF (survival function).
 
         Parameters
         ----------
@@ -613,7 +613,7 @@ class Mixture_Model:
         return unpack_single_arrays(self.__sf)
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """Plots the HF (hazard function)
+        """Plots the HF (hazard function).
 
         Parameters
         ----------
@@ -686,7 +686,7 @@ class Mixture_Model:
         return unpack_single_arrays(self.__hf)
 
     def CHF(self, xvals=None, xmin=None, xmax=None, show_plot=True, plot_components=False, **kwargs):
-        """Plots the CHF (cumulative hazard function)
+        """Plots the CHF (cumulative hazard function).
 
         Parameters
         ----------
@@ -757,7 +757,7 @@ class Mixture_Model:
         return unpack_single_arrays(self.__chf)
 
     def quantile(self, q):
-        """Quantile calculator
+        """Quantile calculator.
 
         Parameters
         ----------
@@ -783,7 +783,7 @@ class Mixture_Model:
         return unpack_single_arrays(ppf)
 
     def inverse_SF(self, q):
-        """Inverse survival function calculator
+        """Inverse survival function calculator.
 
         Parameters
         ----------
@@ -833,7 +833,7 @@ class Mixture_Model:
         print("Excess kurtosis =", self.excess_kurtosis)
 
     def mean_residual_life(self, t):
-        """Mean Residual Life calculator
+        """Mean Residual Life calculator.
 
         Parameters
         ----------
@@ -890,7 +890,7 @@ class Mixture_Model:
         return MRL
 
     def random_samples(self, number_of_samples, seed=None):
-        """Draws random samples from the probability distribution
+        """Draws random samples from the probability distribution.
 
         Parameters
         ----------

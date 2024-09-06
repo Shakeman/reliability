@@ -1,4 +1,4 @@
-"""Probability Distributions Module
+"""Probability Distributions Module.
 
 Standard distributions are:
     Weibull_Distribution

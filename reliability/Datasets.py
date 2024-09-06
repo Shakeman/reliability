@@ -1,4 +1,4 @@
-"""Datasets
+"""Datasets.
 
 This file contains several datasets that are useful for testing and
 experimenting.

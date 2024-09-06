@@ -1,4 +1,4 @@
-"""Reliability_testing
+"""Reliability_testing.
 
 This is a collection of several statistical tests and reliability test planners.
 Included functions are:

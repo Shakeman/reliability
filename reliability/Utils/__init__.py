@@ -1,4 +1,4 @@
-"""Utils (utilities)
+"""Utils (utilities).
 
 This is a collection of utilities that are used throughout the python
 reliability library. Functions have been placed here as to declutter the

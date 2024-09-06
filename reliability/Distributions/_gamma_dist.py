@@ -179,7 +179,7 @@ class Gamma_Distribution:
 
     def plot(self, xvals=None, xmin=None, xmax=None):
         """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
-        in a single figure
+        in a single figure.
 
         Parameters
         ----------
@@ -314,7 +314,7 @@ class Gamma_Distribution:
         plt.show()
 
     def PDF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """Plots the PDF (probability density function)
+        """Plots the PDF (probability density function).
 
         Parameters
         ----------
@@ -399,7 +399,7 @@ class Gamma_Distribution:
         CI_x: np.float64 | None = None,
         **kwargs,
     ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
-        """Plots the CDF (cumulative distribution function)
+        """Plots the CDF (cumulative distribution function).
 
         Parameters
         ----------
@@ -536,7 +536,7 @@ class Gamma_Distribution:
         CI_x=None,
         **kwargs,
     ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
-        """Plots the SF (survival function)
+        """Plots the SF (survival function).
 
         Parameters
         ----------
@@ -661,7 +661,7 @@ class Gamma_Distribution:
         return sf
 
     def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
-        """Plots the HF (hazard function)
+        """Plots the HF (hazard function).
 
         Parameters
         ----------
@@ -751,7 +751,7 @@ class Gamma_Distribution:
         CI_x=None,
         **kwargs,
     ) -> npt.NDArray[np.float64] | tuple[npt.NDArray[np.float64], np.float64, npt.NDArray[np.float64]]:
-        """Plots the CHF (cumulative hazard function)
+        """Plots the CHF (cumulative hazard function).
 
         Parameters
         ----------
@@ -878,7 +878,7 @@ class Gamma_Distribution:
         return chf
 
     def quantile(self, q):
-        """Quantile calculator
+        """Quantile calculator.
 
         Parameters
         ----------
@@ -904,7 +904,7 @@ class Gamma_Distribution:
         return unpack_single_arrays(ppf)
 
     def inverse_SF(self, q):
-        """Inverse survival function calculator
+        """Inverse survival function calculator.
 
         Parameters
         ----------
@@ -929,7 +929,7 @@ class Gamma_Distribution:
         return unpack_single_arrays(isf)
 
     def mean_residual_life(self, t: float) -> float:
-        """Mean Residual Life calculator
+        """Mean Residual Life calculator.
 
         Parameters
         ----------
@@ -999,7 +999,7 @@ class Gamma_Distribution:
         print("Excess kurtosis =", self.excess_kurtosis)
 
     def random_samples(self, number_of_samples, seed=None) -> npt.NDArray[np.float64]:
-        """Draws random samples from the probability distribution
+        """Draws random samples from the probability distribution.
 
         Parameters
         ----------

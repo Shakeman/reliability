@@ -423,7 +423,7 @@ class Fit_Lognormal_Exponential:
             )
 
     def probability_plot(self, ax: bool | Axes = True):
-        prob_plot = ALT_prob_plot(
+        return ALT_prob_plot(
             dist="Lognormal",
             model="Exponential",
             stresses_for_groups=self.__stresses_for_groups,
@@ -436,10 +436,9 @@ class Fit_Lognormal_Exponential:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return prob_plot
 
     def life_stress_plot(self, ax: bool | Axes = True):
-        life_stress = life_stress_plot(
+        return life_stress_plot(
             dist="Lognormal",
             model="Exponential",
             life_func=self.life_func,
@@ -448,7 +447,6 @@ class Fit_Lognormal_Exponential:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return life_stress
 
     def life_func(self, S1):
         return self.b * np.exp(self.a / S1)
@@ -860,7 +858,7 @@ class Fit_Lognormal_Eyring:
             )
 
     def probability_plot(self, ax: bool | Axes = True) -> Axes | None:
-        prob_plot = ALT_prob_plot(
+        return ALT_prob_plot(
             dist="Lognormal",
             model="Eyring",
             stresses_for_groups=self.__stresses_for_groups,
@@ -873,7 +871,6 @@ class Fit_Lognormal_Eyring:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return prob_plot
 
     def life_stress_plot(self, ax: bool | Axes = True) -> Axes | None:
         life_stress: Axes | None = life_stress_plot(
@@ -1296,7 +1293,7 @@ class Fit_Lognormal_Power:
             )
 
     def probability_plot(self, ax: bool | Axes = True) -> Axes | None:
-        prob_plot = ALT_prob_plot(
+        return ALT_prob_plot(
             dist="Lognormal",
             model="Power",
             stresses_for_groups=self.__stresses_for_groups,
@@ -1309,10 +1306,9 @@ class Fit_Lognormal_Power:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return prob_plot
 
     def life_stress_plot(self, ax: bool | Axes = True) -> Axes | None:
-        life_stress = life_stress_plot(
+        return life_stress_plot(
             dist="Lognormal",
             model="Power",
             life_func=self.life_func,
@@ -1321,7 +1317,6 @@ class Fit_Lognormal_Power:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return life_stress
 
     def life_func(self, S1):
         return self.a * S1**self.n
@@ -1792,7 +1787,7 @@ class Fit_Lognormal_Dual_Exponential:
             )
 
     def probability_plot(self, ax: bool | Axes = True) -> Axes | None:
-        prob_plot = ALT_prob_plot(
+        return ALT_prob_plot(
             dist="Lognormal",
             model="Dual_Exponential",
             stresses_for_groups=self.__stresses_for_groups,
@@ -1805,10 +1800,9 @@ class Fit_Lognormal_Dual_Exponential:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return prob_plot
 
     def life_stress_plot(self, ax: bool | Axes = True) -> Axes | None:
-        life_stress = life_stress_plot(
+        return life_stress_plot(
             dist="Lognormal",
             model="Dual_Exponential",
             life_func=self.life_func,
@@ -1817,7 +1811,6 @@ class Fit_Lognormal_Dual_Exponential:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return life_stress
 
     def life_func(self, S1, S2):
         return self.c * np.exp(self.a / S1 + self.b / S2)

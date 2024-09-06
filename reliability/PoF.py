@@ -1100,9 +1100,9 @@ class strain_life_diagram:
                     + str(round(E, 4))
                     + "}(2N_f)^{("
                     + str(round(b, 4))
-                    + "×2)} + "
+                    + "x2)} + "
                     + str(round(sigma_f, 4))
-                    + "×"
+                    + "x"
                     + str(round(epsilon_f, 4))
                     + "(2N_f)^{("
                     + str(round(b, 4))

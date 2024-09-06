@@ -646,7 +646,7 @@ class Beta_Distribution:
         isf = ss.beta.isf(q, self.alpha, self.beta, 0, 1)
         return unpack_single_arrays(isf)
 
-    def mean_residual_life(self, t):
+    def mean_residual_life(self, t: float) -> float:
         """Mean Residual Life calculator
 
         Parameters
@@ -665,7 +665,7 @@ class Beta_Distribution:
             return ss.beta.sf(x, self.alpha, self.beta, 0, 1)
 
         integral_R, error = integrate.quad(R, t, np.inf)
-        MRL = integral_R / R(t)
+        MRL: float = integral_R / R(t)
         return MRL
 
     def stats(self):

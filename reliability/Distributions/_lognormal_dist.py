@@ -735,7 +735,7 @@ class Lognormal_Distribution:
         xmax=None,
         show_plot=True,
         plot_CI=True,
-        CI_type=None,
+        CI_type: None | Literal["time", "reliability"] = None,
         CI=None,
         CI_y=None,
         CI_x=None,
@@ -937,7 +937,7 @@ class Lognormal_Distribution:
             return ss.lognorm.sf(x, self.sigma, self.gamma, np.exp(self.mu))
 
         integral_R, error = integrate.quad(R, t, np.inf)
-        MRL = integral_R / R(t)
+        MRL: float = integral_R / R(t)
         return MRL
 
     def stats(self):
@@ -1012,5 +1012,7 @@ class Lognormal_Distribution:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             rng = np.random.default_rng(seed)
-        RVS = ss.lognorm.rvs(self.sigma, self.gamma, np.exp(self.mu), size=number_of_samples, random_state=rng)
+        RVS: npt.NDArray[np.float64] = ss.lognorm.rvs(
+            self.sigma, self.gamma, np.exp(self.mu), size=number_of_samples, random_state=rng
+        )
         return RVS

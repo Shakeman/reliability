@@ -2363,7 +2363,7 @@ class Fit_Weibull_CR:
                     + round_and_string(self.alpha_1, dec)
                     + r", $\beta_1=$"
                     + round_and_string(self.beta_1, dec)
-                    + ") ×\n                            "
+                    + ") x\n                            "
                     + r" ($\alpha_2=$"
                     + round_and_string(self.alpha_2, dec)
                     + r", $\beta_2=$"

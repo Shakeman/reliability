@@ -695,7 +695,7 @@ class DSZI_Model:
         isf = self.__xvals_init[np.argmin(abs((1 - self.__cdf_init) - q))]
         return unpack_single_arrays(isf)
 
-    def mean_residual_life(self, t):
+    def mean_residual_life(self, t: float) -> float:
         """Mean Residual Life calculator
 
         Parameters
@@ -713,7 +713,7 @@ class DSZI_Model:
         If DS < 1 the MRL will return np.inf
 
         """
-        MRL = np.inf if self.DS < 1 else self.__base_distribution.mean_residual_life(t=t)
+        MRL: float = np.inf if self.DS < 1 else self.__base_distribution.mean_residual_life(t=t)
         # infinite life if the CDF never reaches 1
         # the MRL of the scaled distribution is the same as that of the base distribution
         return MRL

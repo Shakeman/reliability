@@ -179,7 +179,7 @@ def probability_plot_xyticks(yticks=None):
             label = str(f"{value:g}")
         return label
 
-    def customPercentFormatter(value, _):
+    def customPercentFormatter(value: float, _) -> str:
         """Provides custom percent string formatting that is used for the yticks
         This function is slightly different than matplotlib's PercentFormatter
         as it does not force a particular number of decimals. ie. in this
@@ -196,16 +196,16 @@ def probability_plot_xyticks(yticks=None):
             The formatted string
 
         """
-        value100 = value * 100
-        value100dec = round(
+        value100: float = value * 100
+        value100dec: float = round(
             value100 % 1,
             8,
         )  # this breaks down after 8 decimal places due to python's auto rounding. Not likely to be an issue as we're rarely dealing with this many decimals
         if value100dec == 0:
             value100dec = int(value100dec)
         value100whole = int(value100 - value100dec)
-        combined = value100dec + value100whole
-        label = str(str(combined) + "%")
+        combined: float = value100dec + value100whole
+        label: str = str(str(combined) + "%")
         return label
 
     def get_edge_distances():

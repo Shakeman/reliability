@@ -83,14 +83,14 @@ class distributions_input_checking:
         dist,
         func: str,
         xvals: float | npt.NDArray[np.float64] | None,
-        xmin: None | float,
-        xmax: None | float,
+        xmin: None | float | np.float64,
+        xmax: None | float | np.float64,
         show_plot: None | bool = None,
         plot_CI: None | bool = None,
-        CI_type: None | str = None,
-        CI: None | float = None,
-        CI_y: None | list[float] | npt.NDArray[np.float64] | float = None,
-        CI_x: None | list[float] | npt.NDArray[np.float64] | float = None,
+        CI_type: None | Literal["time", "reliability"] = None,
+        CI: None | float | np.float64 = None,
+        CI_y: None | list[float] | npt.NDArray[np.float64] | float | np.float64 = None,
+        CI_x: None | list[float] | npt.NDArray[np.float64] | float | np.float64 = None,
     ):
         """Initialize the object with the given parameters.
 

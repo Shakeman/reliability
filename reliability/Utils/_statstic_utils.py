@@ -154,7 +154,7 @@ def Weibull_2P_guess(x, y, method, force_shape) -> list[np.float64]:
     slope, intercept = linear_regression(xlin, ylin, slope=force_shape, RRX_or_RRY=method)
     LS_beta: np.float64 = slope
     LS_alpha: np.float64 = np.exp(-intercept / LS_beta)
-    guess = [LS_alpha, LS_beta]
+    guess: list[np.float64] = [LS_alpha, LS_beta]
     return guess
 
 
@@ -350,7 +350,7 @@ def Normal_2P_guess(x, y, method, force_shape) -> list[np.float64]:
     slope, intercept = linear_regression(x, ylin, slope=force_shape, RRX_or_RRY=method)
     LS_sigma = 1 / slope
     LS_mu = -intercept * LS_sigma
-    guess = [LS_mu, LS_sigma]
+    guess: list[np.float64] = [LS_mu, LS_sigma]
     return guess
 
 
@@ -372,7 +372,7 @@ def Gumbel_2P_guess(x, y, method) -> list[np.float64]:
     slope, intercept = linear_regression(x, ylin, RRX_or_RRY=method)
     LS_sigma = 1 / slope
     LS_mu = -intercept * LS_sigma
-    guess = [LS_mu, LS_sigma]
+    guess: list[np.float64] = [LS_mu, LS_sigma]
     return guess
 
 
@@ -398,7 +398,7 @@ def Lognormal_2P_guess(x, y, method, force_shape) -> list[np.float64]:
     slope, intercept = linear_regression(xlin, ylin, slope=force_shape, RRX_or_RRY=method)
     LS_sigma = 1 / slope
     LS_mu = -intercept * LS_sigma
-    guess = [LS_mu, LS_sigma]
+    guess: list[np.float64] = [LS_mu, LS_sigma]
     return guess
 
 
@@ -775,7 +775,7 @@ def Beta_2P_guess(x, y, failures) -> list[np.float64]:
         )  # This is the non-linear least squares method. p0 is the initial guess for [alpha,beta]
         NLLS_alpha: np.float64 = popt[0]
         NLLS_beta: np.float64 = popt[1]
-        guess = [NLLS_alpha, NLLS_beta]
+        guess: list[np.float64] = [NLLS_alpha, NLLS_beta]
     except (ValueError, LinAlgError, RuntimeError):
         colorprint(
             "WARNING: Non-linear least squares for Beta_2P failed. The result returned is an estimate that is likely to be incorrect.",
@@ -785,7 +785,7 @@ def Beta_2P_guess(x, y, failures) -> list[np.float64]:
     return guess
 
 
-def __gamma_optimizer(gamma_guess, x, y):
+def __gamma_optimizer(gamma_guess: float, x, y) -> float:
     """Optimizes the gamma parameter by performing a linear regression on transformed data.
 
     Parameters
@@ -802,11 +802,11 @@ def __gamma_optimizer(gamma_guess, x, y):
     xlin = np.log(x - gamma_guess)
     ylin = ss.norm.ppf(y)
     _, _, r, _, _ = ss.linregress(xlin, ylin)
-    opt_gamma = 1 - (r**2)
+    opt_gamma: float = 1 - (r**2)
     return opt_gamma
 
 
-def __normal_2P_CDF(t, mu, sigma):
+def __normal_2P_CDF(t: float, mu: float, sigma: float) -> float:
     """Calculate the cumulative distribution function (CDF) for a two-parameter normal distribution.
 
     Parameters
@@ -820,11 +820,11 @@ def __normal_2P_CDF(t, mu, sigma):
     - cdf (float): The value of the CDF at the given input value.
 
     """
-    cdf = (1 + erf(((t - mu) / sigma) / 2**0.5)) / 2
+    cdf: float = (1 + erf(((t - mu) / sigma) / 2**0.5)) / 2
     return cdf
 
 
-def __loglogistic_3P_CDF(t, alpha, beta, gamma):
+def __loglogistic_3P_CDF(t: float, alpha: float, beta: float, gamma: float) -> float:
     """Calculate the cumulative distribution function (CDF) of the 3-parameter log-logistic distribution.
 
     Parameters
@@ -839,11 +839,11 @@ def __loglogistic_3P_CDF(t, alpha, beta, gamma):
     - cdf (float): The value of the CDF at the given input.
 
     """
-    cdf = 1 / (1 + ((t - gamma) / alpha) ** -beta)
+    cdf: float = 1 / (1 + ((t - gamma) / alpha) ** -beta)
     return cdf
 
 
-def __gamma_2P_CDF(t, alpha, beta):
+def __gamma_2P_CDF(t: float, alpha: float, beta: float) -> float:
     """Calculate the cumulative distribution function (CDF) of a two-parameter gamma distribution.
 
     Parameters
@@ -857,11 +857,11 @@ def __gamma_2P_CDF(t, alpha, beta):
     float: The CDF value at the given value `t`.
 
     """
-    cdf = gammainc(beta, t / alpha)
+    cdf: float = gammainc(beta, t / alpha)
     return cdf
 
 
-def __gamma_3P_CDF(t, alpha, beta, gamma):
+def __gamma_3P_CDF(t: float, alpha: float, beta: float, gamma: float) -> float:
     """Calculate the cumulative distribution function (CDF) of a 3-parameter gamma distribution.
 
     Parameters
@@ -876,11 +876,11 @@ def __gamma_3P_CDF(t, alpha, beta, gamma):
     - cdf (float): The value of the CDF at the given input value.
 
     """
-    cdf = gammainc(beta, (t - gamma) / alpha)
+    cdf: float = gammainc(beta, (t - gamma) / alpha)
     return cdf
 
 
-def __beta_2P_CDF(t, alpha, beta):
+def __beta_2P_CDF(t: float, alpha: float, beta: float) -> float:
     """Calculate the cumulative distribution function (CDF) of a 2-parameter beta distribution.
 
     Parameters
@@ -894,7 +894,7 @@ def __beta_2P_CDF(t, alpha, beta):
     - cdf (float): The value of the CDF at the given value `t`.
 
     """
-    cdf = betainc(alpha, beta, t)
+    cdf: float = betainc(alpha, beta, t)
     return cdf
 
 
@@ -1034,7 +1034,7 @@ def exponential_ALT_least_squares(S1, L) -> list[np.float64]:
     """
     m, c = linear_regression(x=1 / S1, y=np.log(L), RRX_or_RRY="RRY")
     b = np.exp(c)
-    output = [m, b]  # y=mx+b
+    output: list[np.float64] = [m, b]  # y=mx+b
     return output
 
 
@@ -1055,7 +1055,7 @@ def eyring_ALT_least_squares(S1, L) -> list[np.float64]:
     """
     m, c = linear_regression(x=1 / S1, y=np.log(L) + np.log(S1), RRX_or_RRY="RRY")
     b = -c
-    output = [m, b]  # a,c
+    output: list[np.float64] = [m, b]  # a,c
     return output
 
 
@@ -1073,8 +1073,7 @@ def power_ALT_least_squares(S1, L) -> list[np.float64]:
 
     """
     m, c = linear_regression(x=np.log(S1), y=np.log(L), RRX_or_RRY="RRY")
-    output = [np.exp(c), m]  # a,n
-    return output
+    return [np.exp(c), m]  # a,n
 
 
 def dual_exponential_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
@@ -1099,8 +1098,7 @@ def dual_exponential_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
     xx = np.array([np.ones_like(X), X, Y]).T
     # linear regression formula for RRY
     solution = non_invertable_handler(xx, yy, model)
-    output = [solution[1], solution[2], np.exp(solution[0])]  # a,b,c
-    return output
+    return [solution[1], solution[2], np.exp(solution[0])]  # a,b,c
 
 
 def power_exponential_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
@@ -1127,8 +1125,7 @@ def power_exponential_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
     xx = np.array([np.ones_like(X), X, Y]).T
     # linear regression formula for RRY
     solution = non_invertable_handler(xx, yy, model)
-    output = [solution[1], np.exp(solution[0]), solution[2]]  # a,c,n
-    return output
+    return [solution[1], np.exp(solution[0]), solution[2]]  # a,c,n
 
 
 def dual_power_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
@@ -1154,5 +1151,4 @@ def dual_power_ALT_least_squares(L, S1, S2, model) -> list[np.float64]:
     yy = Z.T
     xx = np.array([np.ones_like(X), X, Y]).T
     solution = non_invertable_handler(xx, yy, model)
-    output = [np.exp(solution[0]), solution[1], solution[2]]  # c,m,n
-    return output
+    return [np.exp(solution[0]), solution[1], solution[2]]  # c,m,n

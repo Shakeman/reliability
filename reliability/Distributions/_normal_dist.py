@@ -798,7 +798,7 @@ class Normal_Distribution:
                 return lower_CI, unpack_single_arrays(chf_point), upper_CI
         return chf
 
-    def quantile(self, q):
+    def quantile(self, q) -> float:
         """Quantile calculator
 
         Parameters
@@ -821,10 +821,10 @@ class Normal_Distribution:
                 raise ValueError("Quantile must be between 0 and 1")
         else:
             raise ValueError("Quantile must be of type float, list, array")
-        ppf = ss.norm.ppf(q, loc=self.mu, scale=self.sigma)
+        ppf: float = ss.norm.ppf(q, loc=self.mu, scale=self.sigma)
         return ppf
 
-    def inverse_SF(self, q):
+    def inverse_SF(self, q) -> float:
         """Inverse survival function calculator
 
         Parameters
@@ -846,10 +846,10 @@ class Normal_Distribution:
                 raise ValueError("Quantile must be between 0 and 1")
         else:
             raise ValueError("Quantile must be of type float, list, array")
-        isf = ss.norm.isf(q, loc=self.mu, scale=self.sigma)
+        isf: float = ss.norm.isf(q, loc=self.mu, scale=self.sigma)
         return isf
 
-    def mean_residual_life(self, t):
+    def mean_residual_life(self, t: float) -> float:
         """Mean Residual Life calculator
 
         Parameters
@@ -867,8 +867,8 @@ class Normal_Distribution:
         def R(x):
             return ss.norm.sf(x, loc=self.mu, scale=self.sigma)
 
-        integral_R, error = integrate.quad(R, t, np.inf)
-        MRL = integral_R / R(t)
+        integral_R, _ = integrate.quad(R, t, np.inf)
+        MRL: float = integral_R / R(t)
         return MRL
 
     def stats(self):

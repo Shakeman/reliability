@@ -878,7 +878,7 @@ class Mixture_Model:
         t_full = np.linspace(t, self.__xmax_inf, 1000000)
         sf_full = __subcombiner(t_full)
         sf_single = __subcombiner(t)
-        MRL = integrate.simpson(sf_full, x=t_full) / sf_single
+        MRL: float = integrate.simpson(sf_full, x=t_full) / sf_single
         return MRL
 
     def random_samples(self, number_of_samples, seed=None):

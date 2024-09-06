@@ -852,7 +852,7 @@ class Exponential_Distribution:
         isf = ss.expon.isf(q, scale=1 / self.Lambda, loc=self.gamma)
         return unpack_single_arrays(isf)
 
-    def mean_residual_life(self, t):
+    def mean_residual_life(self, t) -> float:
         """Mean Residual Life calculator
 
         Parameters
@@ -870,8 +870,8 @@ class Exponential_Distribution:
         def R(x):
             return ss.expon.sf(x, scale=1 / self.Lambda, loc=self.gamma)
 
-        integral_R, error = integrate.quad(R, t, np.inf)
-        MRL = integral_R / R(t)
+        integral_R, _ = integrate.quad(R, t, np.inf)
+        MRL: float = integral_R / R(t)
         return MRL
 
     def stats(self):
@@ -915,7 +915,7 @@ class Exponential_Distribution:
         print("Skewness =", self.skewness)
         print("Excess kurtosis =", self.excess_kurtosis)
 
-    def random_samples(self, number_of_samples, seed=None):
+    def random_samples(self, number_of_samples: int, seed=None) -> npt.NDArray[np.float64]:
         """Draws random samples from the probability distribution
 
         Parameters
@@ -939,5 +939,7 @@ class Exponential_Distribution:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             rng = np.random.default_rng(seed)
-        RVS = ss.expon.rvs(scale=1 / self.Lambda, loc=self.gamma, size=number_of_samples, random_state=rng)
+        RVS: npt.NDArray[np.float64] = ss.expon.rvs(
+            scale=1 / self.Lambda, loc=self.gamma, size=number_of_samples, random_state=rng
+        )
         return RVS

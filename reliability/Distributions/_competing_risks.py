@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 from scipy import integrate
 
 from reliability.Distributions._beta_dist import Beta_Distribution
@@ -809,7 +810,7 @@ class Competing_Risks_Model:
         print("Skewness =", self.skewness)
         print("Excess kurtosis =", self.excess_kurtosis)
 
-    def mean_residual_life(self, t):
+    def mean_residual_life(self, t: float) -> float:
         """Mean Residual Life calculator
 
         Parameters
@@ -824,15 +825,15 @@ class Competing_Risks_Model:
 
         """
 
-        def __subcombiner(X):
+        def __subcombiner(X: npt.NDArray[np.float64] | np.float64 | float) -> npt.NDArray[np.float64] | np.float64:
             """This function does what __combiner does but more efficiently and
             also accepts single values
             """
             if isinstance(X, np.ndarray):
-                sf = np.ones_like(X)
-                X_positive = X[X >= 0]
-                X_negative = X[X < 0]
-                Y_negative = np.ones_like(X_negative)
+                sf: npt.NDArray[np.float64] | np.float64 = np.ones_like(X)
+                X_positive: npt.NDArray[np.float64] = X[X >= 0]
+                X_negative: npt.NDArray[np.float64] = X[X < 0]
+                Y_negative: npt.NDArray[np.float64] = np.ones_like(X_negative)
                 for i in range(len(self.distributions)):
                     if type(self.distributions[i]) in [
                         Normal_Distribution,
@@ -846,8 +847,8 @@ class Competing_Risks_Model:
                                 self.distributions[i].SF(X_positive, show_plot=False),
                             ],
                         )
-            else:
-                sf = 1
+            elif isinstance(X, (float, int)) or issubclass(X.dtype.type, np.floating):
+                sf = np.float64(1)
                 for i in range(len(self.distributions)):
                     if (
                         type(self.distributions[i])
@@ -858,12 +859,14 @@ class Competing_Risks_Model:
                         or X > 0
                     ):
                         sf *= self.distributions[i].SF(X, show_plot=False)
+            else:
+                raise ValueError("X must be a float or a numpy array of floats")
             return sf
 
-        t_full = np.linspace(t, self.__xmax_inf, 1000000)
-        sf_full = __subcombiner(t_full)
-        sf_single = __subcombiner(t)
-        MRL = integrate.simpson(sf_full, x=t_full) / sf_single
+        t_full: npt.NDArray[np.float64] | np.float64 = np.linspace(t, self.__xmax_inf, 1000000)
+        sf_full: npt.NDArray[np.float64] | np.float64 = __subcombiner(t_full)
+        sf_single: npt.NDArray[np.float64] | np.float64 = __subcombiner(t)
+        MRL: float = integrate.simpson(sf_full, x=t_full) / sf_single
         return MRL
 
     def random_samples(self, number_of_samples, seed=None):

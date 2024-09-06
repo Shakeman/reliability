@@ -419,7 +419,7 @@ class Fit_Weibull_Exponential:
             )
 
     def probability_plot(self, ax: bool | Axes = True):
-        prob_plot = ALT_prob_plot(
+        return ALT_prob_plot(
             dist="Weibull",
             model="Exponential",
             stresses_for_groups=self.__stresses_for_groups,
@@ -432,10 +432,9 @@ class Fit_Weibull_Exponential:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return prob_plot
 
     def life_stress_plot(self, ax: bool | Axes = True):
-        life_stress = life_stress_plot(
+        return life_stress_plot(
             dist="Weibull",
             model="Exponential",
             life_func=self.life_func,
@@ -444,11 +443,9 @@ class Fit_Weibull_Exponential:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return life_stress
 
     def life_func(self, S1):
-        life = self.b * np.exp(self.a / S1)
-        return life
+        return self.b * np.exp(self.a / S1)
 
     @staticmethod
     def logf(t, T, a, b, beta):  # Log PDF
@@ -851,7 +848,7 @@ class Fit_Weibull_Eyring:
             )
 
     def probability_plot(self, ax: bool | Axes = True):
-        prob_plot = ALT_prob_plot(
+        return ALT_prob_plot(
             dist="Weibull",
             model="Eyring",
             stresses_for_groups=self.__stresses_for_groups,
@@ -864,10 +861,9 @@ class Fit_Weibull_Eyring:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return prob_plot
 
     def life_stress_plot(self, ax: bool | Axes = True):
-        life_stress = life_stress_plot(
+        return life_stress_plot(
             dist="Weibull",
             model="Eyring",
             life_func=self.life_func,
@@ -876,11 +872,9 @@ class Fit_Weibull_Eyring:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return life_stress
 
     def life_func(self, S1):
-        life = 1 / S1 * np.exp(-(self.c - self.a / S1))
-        return life
+        return 1 / S1 * np.exp(-(self.c - self.a / S1))
 
     @staticmethod
     def logf(t, T, a, c, beta):  # Log PDF
@@ -1288,7 +1282,7 @@ class Fit_Weibull_Power:
             )
 
     def probability_plot(self, ax: bool | Axes = True):
-        prob_plot = ALT_prob_plot(
+        return ALT_prob_plot(
             dist="Weibull",
             model="Power",
             stresses_for_groups=self.__stresses_for_groups,
@@ -1301,10 +1295,9 @@ class Fit_Weibull_Power:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return prob_plot
 
     def life_stress_plot(self, ax: bool | Axes = True):
-        life_stress = life_stress_plot(
+        return life_stress_plot(
             dist="Weibull",
             model="Power",
             life_func=self.life_func,
@@ -1313,11 +1306,9 @@ class Fit_Weibull_Power:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return life_stress
 
     def life_func(self, S1):
-        life = self.a * S1**self.n
-        return life
+        return self.a * S1**self.n
 
     @staticmethod
     def logf(t, T, a, n, beta):  # Log PDF
@@ -1783,7 +1774,7 @@ class Fit_Weibull_Dual_Exponential:
             )
 
     def probability_plot(self, ax: bool | Axes = True):
-        prob_plot = ALT_prob_plot(
+        return ALT_prob_plot(
             dist="Weibull",
             model="Dual_Exponential",
             stresses_for_groups=self.__stresses_for_groups,
@@ -1796,10 +1787,9 @@ class Fit_Weibull_Dual_Exponential:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return prob_plot
 
     def life_stress_plot(self, ax: bool | Axes = True):
-        life_stress = life_stress_plot(
+        return life_stress_plot(
             dist="Weibull",
             model="Dual_Exponential",
             life_func=self.life_func,
@@ -1808,11 +1798,9 @@ class Fit_Weibull_Dual_Exponential:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return life_stress
 
     def life_func(self, S1, S2):
-        life = self.c * np.exp(self.a / S1 + self.b / S2)
-        return life
+        return self.c * np.exp(self.a / S1 + self.b / S2)
 
     @staticmethod
     def logf(t, S1, S2, a, b, c, beta):  # Log PDF
@@ -2279,7 +2267,7 @@ class Fit_Weibull_Power_Exponential:
             )
 
     def probability_plot(self, ax: bool | Axes = True):
-        prob_plot = ALT_prob_plot(
+        return ALT_prob_plot(
             dist="Weibull",
             model="Power_Exponential",
             stresses_for_groups=self.__stresses_for_groups,
@@ -2292,10 +2280,9 @@ class Fit_Weibull_Power_Exponential:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return prob_plot
 
     def life_stress_plot(self, ax: bool | Axes = True):
-        life_stress = life_stress_plot(
+        return life_stress_plot(
             dist="Weibull",
             model="Power_Exponential",
             life_func=self.life_func,
@@ -2304,11 +2291,9 @@ class Fit_Weibull_Power_Exponential:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return life_stress
 
     def life_func(self, S1, S2):
-        life = self.c * (S2**self.n) * np.exp(self.a / S1)
-        return life
+        return self.c * (S2**self.n) * np.exp(self.a / S1)
 
     @staticmethod
     def logf(t, S1, S2, a, c, n, beta):  # Log PDF
@@ -2788,7 +2773,7 @@ class Fit_Weibull_Dual_Power:
             )
 
     def probability_plot(self, ax: bool | Axes = True):
-        prob_plot = ALT_prob_plot(
+        return ALT_prob_plot(
             dist="Weibull",
             model="Dual_Power",
             stresses_for_groups=self.__stresses_for_groups,
@@ -2801,10 +2786,9 @@ class Fit_Weibull_Dual_Power:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return prob_plot
 
     def life_stress_plot(self, ax: bool | Axes = True):
-        life_stress = life_stress_plot(
+        return life_stress_plot(
             dist="Weibull",
             model="Dual_Power",
             life_func=self.life_func,
@@ -2813,11 +2797,9 @@ class Fit_Weibull_Dual_Power:
             use_level_stress=self.__use_level_stress,
             ax=ax,
         )
-        return life_stress
 
     def life_func(self, S1, S2):
-        life = self.c * (S1**self.m) * (S2**self.n)
-        return life
+        return self.c * (S1**self.m) * (S2**self.n)
 
     @staticmethod
     def logf(t, S1, S2, c, m, n, beta):  # Log PDF

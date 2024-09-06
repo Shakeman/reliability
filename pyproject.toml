@@ -99,7 +99,7 @@ ignore = [
     "PD901", #   pandas-df-variable-name
     "D107", #    undocumented-public-init"
     "RET503",# implicit-return"
-    "RET504",# unnecessary-assign
+    #"RET504",# unnecessary-assign
     "RET505",# superfluous-else-return
     "ERA001",#  commented-out-code"
     "PD011",#   pandas-use-of-dot-values"
@@ -111,8 +111,6 @@ ignore = [
     "E501",  # line too long, handled by black
     "FBT003",# Boolean positional value in function call"
     "C901",  # too complex
-    "RUF001",  # ambiguous unicode string
-    #"RUF002",  # ambiguous unicode string
     "S101",    # Use of `assert` detected
     "ANN101", #missing-type-self
     "N806", #non-lowercase-variable-in-function
@@ -126,7 +124,7 @@ ignore = [
     "D100", # Missing docstring in public module
     "INP001",
 ]
-allowed-confusables = ["x", "α", "σ"]
+allowed-confusables = ["x", "α", "σ", "α", "γ"]
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
 unfixable = []

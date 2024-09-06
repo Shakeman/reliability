@@ -67,7 +67,9 @@ def unpack_single_arrays(array):
         match the input
 
     """
-    out = (array[0] if len(array) == 1 else array) if isinstance(array, np.ndarray) else array
+    out: np.float64 | npt.NDArray[np.float64] = (
+        (array[0] if len(array) == 1 else array) if isinstance(array, np.ndarray) else array
+    )
     return out
 
 
@@ -565,7 +567,7 @@ def transform_spaced(
     num: int = 1000,
     alpha: float | None = None,
     beta: float | None = None,
-):
+) -> npt.NDArray[np.float64]:
     """Creates linearly spaced array based on a specified transform.
 
     This is similar to np.linspace or np.logspace but is designed for weibull
@@ -691,5 +693,5 @@ def transform_spaced(
     # generate the array in transform space
     arr: npt.NDArray[np.float64] = np.linspace(lower, upper, num, dtype=np.float64)
     # convert the array back from transform space
-    transform_array = inv(arr)
+    transform_array: npt.NDArray[np.float64] = inv(arr)
     return transform_array

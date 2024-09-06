@@ -871,7 +871,7 @@ class Gumbel_Distribution:
         isf = ss.gumbel_l.isf(q, loc=self.mu, scale=self.sigma)
         return unpack_single_arrays(isf)
 
-    def mean_residual_life(self, t):
+    def mean_residual_life(self, t: float) -> float:
         """Mean Residual Life calculator
 
         Parameters
@@ -890,7 +890,7 @@ class Gumbel_Distribution:
             return ss.gumbel_l.sf(x, loc=self.mu, scale=self.sigma)
 
         integral_R, error = integrate.quad(R, t, np.inf)
-        MRL = integral_R / R(t)
+        MRL: float = integral_R / R(t)
         return MRL
 
     def stats(self):
@@ -927,7 +927,7 @@ class Gumbel_Distribution:
         print("Skewness =", self.skewness)
         print("Excess kurtosis =", self.excess_kurtosis)
 
-    def random_samples(self, number_of_samples, seed=None):
+    def random_samples(self, number_of_samples, seed=None) -> npt.NDArray[np.float64]:
         """Draws random samples from the probability distribution
 
         Parameters
@@ -951,5 +951,7 @@ class Gumbel_Distribution:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             rng = np.random.default_rng(seed)
-        RVS = ss.gumbel_l.rvs(loc=self.mu, scale=self.sigma, size=number_of_samples, random_state=rng)
+        RVS: npt.NDArray[np.float64] = ss.gumbel_l.rvs(
+            loc=self.mu, scale=self.sigma, size=number_of_samples, random_state=rng
+        )
         return RVS

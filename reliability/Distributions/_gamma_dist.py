@@ -926,7 +926,7 @@ class Gamma_Distribution:
         isf = ss.gamma.isf(q, self.beta, scale=self.alpha, loc=self.gamma)
         return unpack_single_arrays(isf)
 
-    def mean_residual_life(self, t):
+    def mean_residual_life(self, t: float) -> float:
         """Mean Residual Life calculator
 
         Parameters
@@ -945,7 +945,7 @@ class Gamma_Distribution:
             return ss.gamma.sf(x, self.beta, scale=self.alpha, loc=self.gamma)
 
         integral_R, error = integrate.quad(R, t, np.inf)
-        MRL = integral_R / R(t)
+        MRL: float = integral_R / R(t)
         return MRL
 
     def stats(self):
@@ -996,7 +996,7 @@ class Gamma_Distribution:
         print("Skewness =", self.skewness)
         print("Excess kurtosis =", self.excess_kurtosis)
 
-    def random_samples(self, number_of_samples, seed=None):
+    def random_samples(self, number_of_samples, seed=None) -> npt.NDArray[np.float64]:
         """Draws random samples from the probability distribution
 
         Parameters
@@ -1020,5 +1020,7 @@ class Gamma_Distribution:
             raise ValueError("number_of_samples must be an integer greater than 0")
         if seed is not None:
             rng = np.random.default_rng(seed)
-        RVS = ss.gamma.rvs(self.beta, scale=self.alpha, loc=self.gamma, size=number_of_samples, random_state=rng)
+        RVS: npt.NDArray[np.float64] = ss.gamma.rvs(
+            self.beta, scale=self.alpha, loc=self.gamma, size=number_of_samples, random_state=rng
+        )
         return RVS

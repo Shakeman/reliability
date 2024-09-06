@@ -35,11 +35,14 @@ plot_points - plots the failure points on a scatter plot. Useful to overlay
     with methods like dist.SF()
 """
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
-from matplotlib.figure import Figure
 from matplotlib.transforms import blended_transform_factory
 
 from reliability.Distributions import (
@@ -61,6 +64,9 @@ from reliability.Utils import (
     round_and_string,
     xy_downsample,
 )
+
+if TYPE_CHECKING:
+    from matplotlib.figure import Figure
 
 np.seterr("ignore")
 dec = 3  # number of decimals to use when rounding fitted parameters in labels

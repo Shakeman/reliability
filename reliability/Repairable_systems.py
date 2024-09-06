@@ -14,6 +14,8 @@ MCF_parametric - Mean Cumulative Function Parametric. Fits a parametric model to
     the data obtained from MCF_nonparametric
 """
 
+from __future__ import annotations
+
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt

@@ -1,4 +1,6 @@
-from typing import Literal
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Literal
 
 import autograd.numpy as anp
 import numpy as np
@@ -7,7 +9,6 @@ import pandas as pd
 import scipy.stats as ss
 from autograd.differential_operators import hessian
 from autograd.scipy.special import erf
-from matplotlib.axes._axes import Axes
 from numpy.linalg import LinAlgError
 
 from reliability.Distributions import (
@@ -24,6 +25,9 @@ from reliability.Utils import (
     life_stress_plot,
     round_and_string,
 )
+
+if TYPE_CHECKING:
+    from matplotlib.axes._axes import Axes
 
 pd.set_option("display.width", 200)  # prevents wrapping after default 80 characters
 pd.set_option("display.max_columns", 9)  # shows the dataframe without ... truncation

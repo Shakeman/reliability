@@ -30,6 +30,8 @@ values (ie. every event is assumed to have a quantity of 1). XCN may not be just
 X as this is the same as F from FR format.
 """
 
+from __future__ import annotations
+
 import numpy as np
 import numpy.typing as npt
 import pandas as pd

@@ -1,4 +1,6 @@
-from typing import Literal
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Literal
 
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
@@ -10,7 +12,6 @@ from autograd_gamma import gammaincc as agammaincc
 from autograd_gamma import gammainccinv as agammainccinv
 from matplotlib import colors
 from matplotlib.axes import _axes
-from matplotlib.axes._axes import Axes
 
 from reliability.Utils._ancillary_utils import colorprint, round_and_string
 from reliability.Utils._array_utils import (
@@ -22,6 +23,9 @@ from reliability.Utils._input_checking_utils import (
     validate_CI_params,
 )
 from reliability.Utils._plot_utils import fill_no_autoscale, line_no_autoscale
+
+if TYPE_CHECKING:
+    from matplotlib.axes._axes import Axes
 
 
 def life_stress_plot(

@@ -20,6 +20,8 @@ distribution_explorer - generates an interactive window to explore probability
     distributions using sliders for their parameters
 """
 
+from __future__ import annotations
+
 import time
 import warnings
 

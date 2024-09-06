@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import autograd.numpy as anp
 import numpy as np
 import numpy.typing as npt

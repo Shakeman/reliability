@@ -23,6 +23,8 @@ KStest - performs the Kolmogorov-Smirnov goodness of fit test to determine if we
     can accept or reject the hypothesis that data is from a distribution.
 """
 
+from __future__ import annotations
+
 import math
 import time
 

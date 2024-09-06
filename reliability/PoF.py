@@ -14,6 +14,8 @@ Within the module PoF, are the following functions:
 - acceleration_factor - Given T_use and two out of the three values for AF, T_acc, Ea, it will find the third value.
 """
 
+from __future__ import annotations
+
 import warnings
 
 import matplotlib.pyplot as plt

@@ -56,7 +56,7 @@ class make_fitted_dist_params_for_ALT_probplots:
 
     """
 
-    def __init__(self, dist, params):
+    def __init__(self, dist, params) -> None:
         if dist == "Weibull":
             self.alpha = params[0]
             self.beta = params[1]

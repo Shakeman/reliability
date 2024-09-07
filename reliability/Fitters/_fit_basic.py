@@ -167,7 +167,7 @@ class Fit_Normal_2P:
         CI_type: str | None = "time",
         method: str | None = "MLE",
         force_sigma: float | None = None,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Normal_2P",
             failures=failures,
@@ -581,7 +581,7 @@ class Fit_Gumbel_2P:
         optimizer=None,
         downsample_scatterplot=True,
         **kwargs,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Gumbel_2P",
             failures=failures,
@@ -922,7 +922,7 @@ class Fit_Beta_2P:
         optimizer=None,
         downsample_scatterplot=True,
         **kwargs,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Beta_2P",
             failures=failures,

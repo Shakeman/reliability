@@ -93,7 +93,7 @@ class distributions_input_checking:
         CI: None | float | np.float64 = None,
         CI_y: None | list[float] | npt.NDArray[np.float64] | float | np.float64 = None,
         CI_x: None | list[float] | npt.NDArray[np.float64] | float | np.float64 = None,
-    ):
+    ) -> None:
         """Initialize the object with the given parameters.
 
         Parameters
@@ -377,7 +377,7 @@ class fitters_input_checking:
         force_beta: float | None = None,
         force_sigma: float | None = None,
         CI_type: str | None = None,
-    ):
+    ) -> None:
         if dist not in [
             "Everything",
             "Weibull_2P",
@@ -749,7 +749,7 @@ class ALT_fitters_input_checking:
         CI=0.95,
         use_level_stress: float | npt.NDArray[np.float64] | None = None,
         optimizer=None,
-    ):
+    ) -> None:
         if dist not in ["Exponential", "Weibull", "Lognormal", "Normal", "Everything"]:
             msg = "dist must be one of Exponential, Weibull, Lognormal, Normal, Everything."
             raise ValueError(msg)
@@ -1232,7 +1232,7 @@ class alt_fitters_dual_stress_input_checking:
         CI=0.95,
         use_level_stress=None,
         optimizer=None,
-    ):
+    ) -> None:
         if dist not in ["Exponential", "Weibull", "Lognormal", "Normal"]:
             msg = "dist must be one of Exponential, Weibull, Lognormal, Normal."
             raise ValueError(msg)
@@ -1534,7 +1534,7 @@ class alt_single_stress_fitters_input_checking:
         CI: float = 0.95,
         use_level_stress=None,
         optimizer: str | None = None,
-    ):
+    ) -> None:
         if dist not in ["Exponential", "Weibull", "Lognormal", "Normal"]:
             msg = "dist must be one of Exponential, Weibull, Lognormal, Normal."
             raise ValueError(msg)

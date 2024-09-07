@@ -69,7 +69,7 @@ class Weibull_Distribution:
 
     """
 
-    def __init__(self, alpha=None, beta=None, gamma: float | np.float64 = 0.0, **kwargs):
+    def __init__(self, alpha=None, beta=None, gamma: float | np.float64 = 0.0, **kwargs) -> None:
         self.name = "Weibull"
         if alpha is None or beta is None:
             msg = "Parameters alpha and beta must be specified. Eg. Weibull_Distribution(alpha=5,beta=2)"

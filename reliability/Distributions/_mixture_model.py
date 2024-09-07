@@ -87,7 +87,7 @@ class Mixture_Model:
 
     """
 
-    def __init__(self, distributions, proportions=None):
+    def __init__(self, distributions, proportions=None) -> None:
         if type(distributions) not in [list, np.ndarray]:
             msg = "distributions must be a list or array of distribution objects."
             raise ValueError(msg)

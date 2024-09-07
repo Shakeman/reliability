@@ -61,7 +61,7 @@ class LS_optimization:
         method: Literal["RRX", "RRY", "LS", "NLLS"] = "LS",
         force_shape=None,
         LL_func_force=None,
-    ):
+    ) -> None:
         if method not in ["RRX", "RRY", "LS", "NLLS"]:
             msg = "method must be either RRX, RRY, LS, or NLLS. Default is LS"
             raise ValueError(msg)
@@ -210,7 +210,7 @@ class MLE_optimization:
         optimizer: str | None,
         force_shape=None,
         LL_func_force=None,
-    ):
+    ) -> None:
         # this sub-function does the actual optimization. It is called each time a new optimizer is tried
         def loglik_optimizer(
             LL_func,
@@ -643,7 +643,7 @@ class ALT_MLE_optimization:
         right_censored=None,
         right_censored_stress_1=None,
         right_censored_stress_2=None,
-    ):
+    ) -> None:
         def loglik_optimizer(
             initial_guess,
             dual_stress,

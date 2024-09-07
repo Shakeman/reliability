@@ -157,7 +157,7 @@ class Fit_Lognormal_Exponential:
         use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
-    ):
+    ) -> None:
         inputs = alt_single_stress_fitters_input_checking(
             dist="Lognormal",
             life_stress_model="Exponential",
@@ -599,7 +599,7 @@ class Fit_Lognormal_Eyring:
         use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
-    ):
+    ) -> None:
         inputs = alt_single_stress_fitters_input_checking(
             dist="Lognormal",
             life_stress_model="Eyring",
@@ -1035,7 +1035,7 @@ class Fit_Lognormal_Power:
         use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
-    ):
+    ) -> None:
         inputs = alt_single_stress_fitters_input_checking(
             dist="Lognormal",
             life_stress_model="Power",
@@ -1493,7 +1493,7 @@ class Fit_Lognormal_Dual_Exponential:
         use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
-    ):
+    ) -> None:
         inputs = alt_fitters_dual_stress_input_checking(
             dist="Lognormal",
             life_stress_model="Dual_Exponential",
@@ -2006,7 +2006,7 @@ class Fit_Lognormal_Power_Exponential:
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
-    ):
+    ) -> None:
         inputs = alt_fitters_dual_stress_input_checking(
             dist="Lognormal",
             life_stress_model="Power_Exponential",
@@ -2508,7 +2508,7 @@ class Fit_Lognormal_Dual_Power:
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
-    ):
+    ) -> None:
         inputs = alt_fitters_dual_stress_input_checking(
             dist="Lognormal",
             life_stress_model="Dual_Power",

@@ -599,7 +599,7 @@ class reliability_test_planner:
         one_sided=True,
         time_terminated=True,
         print_results=True,
-    ):
+    ) -> None:
         print_CI_warn = False  # used later if the CI is calculated
         if CI is not None:
             MIN_CI = 0.5
@@ -769,7 +769,7 @@ class reliability_test_duration:
         producer_risk,
         one_sided=True,
         time_terminated=True,
-    ):
+    ) -> None:
         MAX_RISK = 0.5
         if consumer_risk <= 0 or consumer_risk > MAX_RISK:
             msg = "consumer_risk must be between 0 and 0.5"
@@ -964,7 +964,7 @@ class chi2test:
         data: list[float] | npt.NDArray[np.float64],
         significance=0.05,
         bins=None,
-    ):
+    ) -> None:
         # ensure the input is a distribution object
         standard_distributions = [
             Weibull_Distribution,
@@ -1194,7 +1194,7 @@ class KStest:
 
     """
 
-    def __init__(self, distribution, data, significance=0.05):
+    def __init__(self, distribution, data, significance=0.05) -> None:
         # ensure the input is a distribution object
         standard_distributions = [
             Weibull_Distribution,

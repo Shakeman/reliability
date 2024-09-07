@@ -70,7 +70,13 @@ class Loglogistic_Distribution:
 
     """
 
-    def __init__(self, alpha: np.float64 | float, beta: np.float64 | float, gamma: np.float64 | float = 0.0, **kwargs):
+    def __init__(
+        self,
+        alpha: np.float64 | float,
+        beta: np.float64 | float,
+        gamma: np.float64 | float = 0.0,
+        **kwargs,
+    ) -> None:
         self.name = "Loglogistic"
         if alpha is None or beta is None:
             msg = "Parameters alpha and beta must be specified. Eg. Loglogistic_Distribution(alpha=5,beta=2)"

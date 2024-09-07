@@ -59,7 +59,7 @@ class Beta_Distribution:
 
     """
 
-    def __init__(self, alpha=None, beta=None):
+    def __init__(self, alpha=None, beta=None) -> None:
         self.name = "Beta"
         self.name2 = "Beta_2P"
         if alpha is None or beta is None:

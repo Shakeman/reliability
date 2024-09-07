@@ -42,7 +42,7 @@ class automotive:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.failures = [5248, 7454, 16890, 17200, 38700, 45000, 49390, 69040, 72280, 131900]
         self.right_censored = [
             3961,
@@ -112,7 +112,7 @@ class mileage:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.failures = [
             32797,
             47119,
@@ -257,7 +257,7 @@ class system_growth:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.failures = [
             2.7,
             10.3,
@@ -328,7 +328,7 @@ class defective_sample:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.failures = [
             81,
             163,
@@ -14022,7 +14022,7 @@ class mixture:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.failures = [
             9907,
             11573,
@@ -17467,7 +17467,7 @@ class electronics:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         time = [220, 179, 123, 146, 199, 181, 191, 216, 1, 73, 44798, 62715, 81474, 80632, 62716]
         quantity = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 817, 823, 815, 813, 804]
         category = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "C", "C", "C", "C", "C"]
@@ -17528,7 +17528,7 @@ class MCF_1:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.times = [
             [5, 10, 15, 17],
             [6, 13, 17, 19],
@@ -17567,7 +17567,7 @@ class MCF_2:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.times = [
             [
                 1276,
@@ -17718,7 +17718,7 @@ class ALT_temperature:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.failures = [
             1298,
             1390,
@@ -18058,7 +18058,7 @@ class ALT_temperature2:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.failures = [
             29.1,
             80.7,
@@ -18198,7 +18198,7 @@ class ALT_temperature3:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.failures = [
             3850,
             4340,
@@ -18314,7 +18314,7 @@ class ALT_temperature4:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.failures = [
             267,
             443,
@@ -18412,7 +18412,7 @@ class ALT_load:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.failures = [
             250,
             460,
@@ -18514,7 +18514,7 @@ class ALT_load2:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.failures = [245, 312, 409, 110, 180, 200, 222, 50, 70, 88, 112, 140, 160]
         self.failure_stresses = [100, 100, 100, 200, 200, 200, 200, 300, 300, 300, 300, 300, 300]
         self.right_censored = [500, 500, 500, 250, 250]
@@ -18574,7 +18574,7 @@ class ALT_temperature_voltage:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.failures = [620, 632, 685, 822, 380, 416, 460, 596, 216, 146, 332, 400]
         self.failure_stress_temp = [348, 348, 348, 348, 348, 348, 348, 348, 378, 378, 378, 378]
         self.failure_stress_voltage = [3, 3, 3, 3, 5, 5, 5, 5, 3, 3, 3, 3]
@@ -18634,7 +18634,7 @@ class ALT_temperature_voltage2:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.failures = [
             1200,
             1205,
@@ -18734,7 +18734,7 @@ class ALT_temperature_humidity:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.failures = [310, 316, 329, 411, 190, 208, 230, 298, 108, 123, 166, 200]
         self.failure_stress_temp = [378, 378, 378, 378, 378, 378, 378, 378, 398, 398, 398, 398]
         self.failure_stress_humidity = [0.4, 0.4, 0.4, 0.4, 0.8, 0.8, 0.8, 0.8, 0.4, 0.4, 0.4, 0.4]

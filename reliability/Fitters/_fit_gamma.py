@@ -186,7 +186,7 @@ class Fit_Gamma_2P:
         CI_type: str | None = "time",
         downsample_scatterplot=True,
         **kwargs,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Gamma_2P",
             failures=failures,
@@ -604,7 +604,7 @@ class Fit_Gamma_3P:
         CI_type="time",
         downsample_scatterplot=True,
         **kwargs,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Gamma_3P",
             failures=failures,

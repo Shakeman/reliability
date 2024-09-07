@@ -165,7 +165,7 @@ class Fit_Everything:
         show_probability_plot=True,
         show_best_distribution_probability_plot=True,
         downsample_scatterplot=True,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Everything",
             failures=failures,

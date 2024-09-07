@@ -107,7 +107,7 @@ class KaplanMeier:
         failures: npt.NDArray[np.float64] | list[int] | None = None,
         right_censored: npt.NDArray[np.float64] | list[int] | None = None,
         CI=0.95,
-    ):
+    ) -> None:
         np.seterr(divide="ignore")  # divide by zero occurs if last detapoint is a failure so risk set is zero
 
         if failures is None:
@@ -770,7 +770,7 @@ class RankAdjustment:
         right_censored: npt.NDArray[np.float64] | list[float] | list[int] | None,
         plotting_hueristic: float = 0.3,
         CI: float = 0.95,
-    ):
+    ) -> None:
         if right_censored is None:
             right_censored = []  # create empty array so it can be added in hstack
         if CI < 0 or CI > 1:

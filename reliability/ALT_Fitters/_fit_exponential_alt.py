@@ -146,7 +146,7 @@ class Fit_Exponential_Exponential:
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
-    ):
+    ) -> None:
         inputs = alt_single_stress_fitters_input_checking(
             dist="Exponential",
             life_stress_model="Exponential",
@@ -560,7 +560,7 @@ class Fit_Exponential_Eyring:
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
-    ):
+    ) -> None:
         inputs = alt_single_stress_fitters_input_checking(
             dist="Exponential",
             life_stress_model="Eyring",
@@ -968,7 +968,7 @@ class Fit_Exponential_Power:
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
-    ):
+    ) -> None:
         inputs = alt_single_stress_fitters_input_checking(
             dist="Exponential",
             life_stress_model="Power",
@@ -1399,7 +1399,7 @@ class Fit_Exponential_Dual_Exponential:
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
-    ):
+    ) -> None:
         inputs = alt_fitters_dual_stress_input_checking(
             dist="Exponential",
             life_stress_model="Dual_Exponential",
@@ -1870,7 +1870,7 @@ class Fit_Exponential_Power_Exponential:
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
-    ):
+    ) -> None:
         inputs = alt_fitters_dual_stress_input_checking(
             dist="Exponential",
             life_stress_model="Power_Exponential",
@@ -2338,7 +2338,7 @@ class Fit_Exponential_Dual_Power:
         show_probability_plot=True,
         show_life_stress_plot=True,
         print_results=True,
-    ):
+    ) -> None:
         inputs = alt_fitters_dual_stress_input_checking(
             dist="Exponential",
             life_stress_model="Dual_Power",

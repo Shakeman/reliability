@@ -65,7 +65,7 @@ class Exponential_Distribution:
 
     """
 
-    def __init__(self, Lambda: float | np.float64 | None = None, gamma: float | np.float64 = 0.0, **kwargs):
+    def __init__(self, Lambda: float | np.float64 | None = None, gamma: float | np.float64 = 0.0, **kwargs) -> None:
         self.name = "Exponential"
         if Lambda is None:
             msg = "Parameter Lambda must be specified. Eg. Exponential_Distribution(Lambda=3)"

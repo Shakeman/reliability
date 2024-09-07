@@ -345,7 +345,7 @@ class optimal_replacement_time:
         weibull_alpha: float,
         weibull_beta: float,
         q: int = 0,
-    ):
+    ) -> None:
         if cost_PM > cost_CM:
             msg = "Cost_PM must be less than Cost_CM otherwise preventative maintenance should not be conducted."
             raise ValueError(
@@ -612,7 +612,7 @@ class ROCOF:
         failure_times: list[float] | list[int] | npt.NDArray[np.float64] | None = None,
         CI: float = 0.95,
         test_end: float | None = None,
-    ):
+    ) -> None:
         if times_between_failures is not None and failure_times is not None:
             msg = "You have specified both times_between_failures and failure times. You can specify one but not both. Use times_between_failures for failure interarrival times, and failure_times for the actual failure times. failure_times should be the same as np.cumsum(times_between_failures)"
             raise ValueError(
@@ -881,7 +881,7 @@ class MCF_nonparametric:
 
     """
 
-    def __init__(self, data, CI=0.95):
+    def __init__(self, data, CI=0.95) -> None:
         """Initializes the Repairable_systems class.
 
         Parameters
@@ -1248,7 +1248,7 @@ class MCF_parametric:
 
     """
 
-    def __init__(self, data, CI=0.95):
+    def __init__(self, data, CI=0.95) -> None:
         """Initializes an instance of the Repairable_systems class.
 
         Parameters

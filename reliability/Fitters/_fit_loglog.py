@@ -158,7 +158,7 @@ class Fit_Loglogistic_2P:
         optimizer=None,
         downsample_scatterplot=True,
         **kwargs,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Loglogistic_2P",
             failures=failures,
@@ -516,7 +516,7 @@ class Fit_Loglogistic_3P:
         quantiles=None,
         downsample_scatterplot=True,
         **kwargs,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Loglogistic_3P",
             failures=failures,

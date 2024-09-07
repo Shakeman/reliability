@@ -64,6 +64,8 @@ select = [
     "RUF", # RUF-specific rules
 ]
 ignore = [
+    "COM812", # Added for ruff format conflict
+    "ISC001", # Added for ruff format conflict
     "FIX002", #flags on TODOs
     "ISC003", #do not enfore removing + for concatenating string literals
     "TD002", # missing-todo-author
@@ -79,7 +81,7 @@ ignore = [
     "D103", # Missing docstring in public function
     "ANN205", # missing-return-type-static-method
     "ANN003", #  missing-type-kwargs
-    "ANN204", #missing-return-type-special-method
+    #"ANN204", #missing-return-type-special-method
     "N801", #invalid-class-name
     "D404", #docstring-starts-with-this
     "PD901", #   pandas-df-variable-name

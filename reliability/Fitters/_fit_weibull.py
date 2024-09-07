@@ -171,7 +171,7 @@ class Fit_Weibull_2P:
         force_beta=None,
         downsample_scatterplot=True,
         **kwargs,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Weibull_2P",
             failures=failures,
@@ -614,7 +614,7 @@ class Fit_Weibull_2P_grouped:
         CI_type="time",
         downsample_scatterplot=True,
         **kwargs,
-    ):
+    ) -> None:
         if dataframe is None or type(dataframe) is not pd.core.frame.DataFrame:
             msg = 'dataframe must be a pandas dataframe with the columns "category" (F for failure or C for censored), "time" (the failure times), and "quantity" (the number of events at each time)'
             raise ValueError(
@@ -1230,7 +1230,7 @@ class Fit_Weibull_3P:
         method: Literal["MLE", "RRX", "RRY", "LS"] = "MLE",
         downsample_scatterplot=True,
         **kwargs,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Weibull_3P",
             failures=failures,
@@ -1664,7 +1664,7 @@ class Fit_Weibull_Mixture:
         optimizer=None,
         downsample_scatterplot=True,
         **kwargs,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Weibull_Mixture",
             failures=failures,
@@ -2124,7 +2124,7 @@ class Fit_Weibull_CR:
         optimizer=None,
         downsample_scatterplot=True,
         **kwargs,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Weibull_CR",
             failures=failures,
@@ -2526,7 +2526,7 @@ class Fit_Weibull_DSZI:
         optimizer=None,
         downsample_scatterplot=True,
         **kwargs,
-    ):
+    ) -> None:
         # need to remove zeros before passing to fitters input checking
         failures = np.asarray(failures)
         failures_no_zeros = failures[failures != 0]
@@ -2876,7 +2876,7 @@ class Fit_Weibull_DS:
         optimizer=None,
         downsample_scatterplot=True,
         **kwargs,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Weibull_DS",
             failures=failures,
@@ -3174,7 +3174,7 @@ class Fit_Weibull_ZI:
         right_censored=None,
         CI=0.95,
         optimizer=None,
-    ):
+    ) -> None:
         # need to remove zeros before passing to fitters input checking
         failures = np.asarray(failures)
         failures_no_zeros = failures[failures != 0]

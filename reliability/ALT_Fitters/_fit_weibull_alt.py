@@ -156,7 +156,7 @@ class Fit_Weibull_Exponential:
         use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
-    ):
+    ) -> None:
         inputs = alt_single_stress_fitters_input_checking(
             dist="Weibull",
             life_stress_model="Exponential",
@@ -591,7 +591,7 @@ class Fit_Weibull_Eyring:
         use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
-    ):
+    ) -> None:
         inputs = alt_single_stress_fitters_input_checking(
             dist="Weibull",
             life_stress_model="Eyring",
@@ -1020,7 +1020,7 @@ class Fit_Weibull_Power:
         use_level_stress: float | None = None,
         CI: float = 0.95,
         optimizer: None | str = None,
-    ):
+    ) -> None:
         inputs = alt_single_stress_fitters_input_checking(
             dist="Weibull",
             life_stress_model="Power",
@@ -1478,7 +1478,7 @@ class Fit_Weibull_Dual_Exponential:
         use_level_stress: npt.NDArray[np.float64] | list[float] | None = None,
         CI=0.95,
         optimizer=None,
-    ):
+    ) -> None:
         inputs = alt_fitters_dual_stress_input_checking(
             dist="Weibull",
             life_stress_model="Dual_Exponential",
@@ -1972,7 +1972,7 @@ class Fit_Weibull_Power_Exponential:
         use_level_stress: npt.NDArray[np.float64] | list[float] | None = None,
         CI=0.95,
         optimizer=None,
-    ):
+    ) -> None:
         inputs = alt_fitters_dual_stress_input_checking(
             dist="Weibull",
             life_stress_model="Power_Exponential",
@@ -2479,7 +2479,7 @@ class Fit_Weibull_Dual_Power:
         use_level_stress: npt.NDArray[np.float64] | list[float] | None = None,
         CI=0.95,
         optimizer=None,
-    ):
+    ) -> None:
         inputs = alt_fitters_dual_stress_input_checking(
             dist="Weibull",
             life_stress_model="Dual_Power",

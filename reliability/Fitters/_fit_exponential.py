@@ -136,7 +136,7 @@ class Fit_Exponential_1P:
         quantiles: bool | str | list | np.ndarray | None = None,
         method: str | None = "MLE",
         optimizer: str | None = None,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Exponential_1P",
             failures=failures,
@@ -496,7 +496,7 @@ class Fit_Exponential_2P:
         quantiles=None,
         method: str | None = "MLE",
         optimizer=None,
-    ):
+    ) -> None:
         # To obtain the confidence intervals of the parameters, the gamma parameter is estimated by optimizing the log-likelihood function but
         # it is assumed as fixed because the variance-covariance matrix of the estimated parameters cannot be determined numerically. By assuming
         # the standard error in gamma is zero, we can use Exponential_1P to obtain the confidence intervals for Lambda. This is the same procedure

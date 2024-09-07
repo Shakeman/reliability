@@ -164,7 +164,7 @@ class Fit_Lognormal_2P:
         force_sigma=None,
         downsample_scatterplot=True,
         **kwargs,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Lognormal_2P",
             failures=failures,
@@ -574,7 +574,7 @@ class Fit_Lognormal_3P:
         method: str | None = "MLE",
         downsample_scatterplot=True,
         **kwargs,
-    ):
+    ) -> None:
         inputs = fitters_input_checking(
             dist="Lognormal_3P",
             failures=failures,

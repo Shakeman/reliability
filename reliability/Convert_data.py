@@ -93,7 +93,7 @@ class xlsx_to_XCN:
         censor_code_in_XCN="C",
         failure_code_in_XCN="F",
         **kwargs,
-    ):
+    ) -> None:
         df = pd.read_excel(io=path, **kwargs)
         cols = df.columns
         X = df[cols[0]].to_numpy()
@@ -242,7 +242,7 @@ class xlsx_to_FR:
 
     """
 
-    def __init__(self, path, **kwargs):
+    def __init__(self, path, **kwargs) -> None:
         df = pd.read_excel(io=path, **kwargs)
         cols = df.columns
         failures = df[cols[0]].to_numpy()
@@ -324,7 +324,7 @@ class xlsx_to_FNRN:
 
     """
 
-    def __init__(self, path, **kwargs):
+    def __init__(self, path, **kwargs) -> None:
         df = pd.read_excel(io=path, **kwargs)
         cols = df.columns
         failures = df[cols[0]].to_numpy()
@@ -485,7 +485,7 @@ class XCN_to_FNRN:
 
     """
 
-    def __init__(self, X, C, N, censor_code=None, failure_code=None):
+    def __init__(self, X, C, N, censor_code=None, failure_code=None) -> None:
         FR = XCN_to_FR(X=X, C=C, quantities=N, censor_code=censor_code, failure_code=failure_code)
         FNRN = FR_to_FNRN(failures=FR.failures, right_censored=FR.right_censored)
         self.failures = FNRN.failures
@@ -608,7 +608,7 @@ class XCN_to_FR:
         quantities: list[int] | npt.NDArray[np.float64],
         censor_code=None,
         failure_code=None,
-    ):
+    ) -> None:
         if quantities is None:
             quantities = np.ones_like(X)  # assume a quantity of 1 if not specified
         if type(quantities) not in [list, np.ndarray]:
@@ -771,7 +771,7 @@ class FR_to_XCN:
 
     """
 
-    def __init__(self, failures, right_censored=None, censor_code="C", failure_code="F"):
+    def __init__(self, failures, right_censored=None, censor_code="C", failure_code="F") -> None:
         if type(failures) not in [list, np.ndarray]:
             msg = "failures must be a list or array."
             raise ValueError(msg)
@@ -883,7 +883,7 @@ class FNRN_to_XCN:
         num_right_censored: list[int] | None = None,
         censor_code="C",
         failure_code="F",
-    ):
+    ) -> None:
         if type(failures) not in [list, np.ndarray]:
             msg = "failures must be a list or array."
             raise ValueError(msg)
@@ -1009,7 +1009,7 @@ class FR_to_FNRN:
         self,
         failures: list[int] | npt.NDArray[np.float64],
         right_censored: list[int] | npt.NDArray[np.float64] | None = None,
-    ):
+    ) -> None:
         if type(failures) not in [list, np.ndarray]:
             msg = "failures must be a list or array."
             raise ValueError(msg)
@@ -1135,7 +1135,7 @@ class FNRN_to_FR:
         num_failures,
         right_censored=None,
         num_right_censored: npt.NDArray | list[int] | None = None,
-    ):
+    ) -> None:
         if type(failures) not in [list, np.ndarray]:
             msg = "failures must be a list or array."
             raise ValueError(msg)

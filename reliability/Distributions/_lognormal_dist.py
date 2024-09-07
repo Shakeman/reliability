@@ -68,7 +68,7 @@ class Lognormal_Distribution:
 
     """
 
-    def __init__(self, mu=None, sigma=None, gamma: float | np.float64 = 0.0, **kwargs):
+    def __init__(self, mu=None, sigma=None, gamma: float | np.float64 = 0.0, **kwargs) -> None:
         self.name = "Lognormal"
         if mu is None or sigma is None:
             msg = "Parameters mu and sigma must be specified. Eg. Lognormal_Distribution(mu=5,sigma=2)"

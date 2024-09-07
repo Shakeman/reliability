@@ -426,7 +426,7 @@ class similar_distributions:
         show_plot=True,
         print_results=True,
         number_of_distributions_to_show=3,
-    ):
+    ) -> None:
         # ensure the input is a distribution object
         if type(distribution) not in [
             Weibull_Distribution,
@@ -903,7 +903,13 @@ class make_right_censored_data:
 
     """
 
-    def __init__(self, data: npt.NDArray[np.float64] | list[int], threshold=None, fraction_censored=None, seed=None):
+    def __init__(
+        self,
+        data: npt.NDArray[np.float64] | list[int],
+        threshold=None,
+        fraction_censored=None,
+        seed=None,
+    ) -> None:
         if type(data) not in [list, np.ndarray]:
             msg = "data must be a list or array"
             raise ValueError(msg)
@@ -1039,7 +1045,7 @@ class make_ALT_data:
         number_of_samples=100,
         fraction_censored=0.5,
         seed=None,
-    ):
+    ) -> None:
         # input error checking
         life_stress_model = life_stress_model.title()
         if life_stress_model in ["Exponential", "Eyring", "Power"]:
@@ -1252,7 +1258,7 @@ class crosshairs:
 
     """
 
-    def __init__(self, xlabel=None, ylabel=None, decimals=2, dateformat=None, **kwargs):
+    def __init__(self, xlabel=None, ylabel=None, decimals=2, dateformat=None, **kwargs) -> None:
         if type(dateformat) not in [str, type(None)]:
             msg = "dateformat type must be str or None. For acceptable strings see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes"
             raise TypeError(
@@ -1454,7 +1460,7 @@ class distribution_explorer:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         # initialise the 5 plots
         plt.figure("Distribution Explorer", figsize=(12, 7))
         self.name = "Weibull"  # starting value

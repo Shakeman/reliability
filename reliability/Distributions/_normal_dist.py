@@ -74,7 +74,7 @@ class Normal_Distribution:
     sigma_standard_error: float | np.float64 | None = None
     Cov_mu_sigma: float | np.float64 | None = None
 
-    def __post_init__(self):
+    def __post_init__(self):  # noqa: ANN204
         self.mean: float = self.mu
         self.variance: float = self.sigma**2
         self.standard_deviation: float = self.sigma

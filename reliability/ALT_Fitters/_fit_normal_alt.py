@@ -157,7 +157,7 @@ class Fit_Normal_Exponential:
         use_level_stress: float | None = None,
         CI: float = 0.95,
         optimizer: str | None = None,
-    ):
+    ) -> None:
         inputs = alt_single_stress_fitters_input_checking(
             dist="Normal",
             life_stress_model="Exponential",
@@ -579,7 +579,7 @@ class Fit_Normal_Eyring:
         use_level_stress: float | None = None,
         CI=0.95,
         optimizer=None,
-    ):
+    ) -> None:
         inputs = alt_single_stress_fitters_input_checking(
             dist="Normal",
             life_stress_model="Eyring",
@@ -1010,7 +1010,7 @@ class Fit_Normal_Power:
         use_level_stress: float | None = None,
         CI=0.95,
         optimizer: str | None = None,
-    ):
+    ) -> None:
         inputs = alt_single_stress_fitters_input_checking(
             dist="Normal",
             life_stress_model="Power",
@@ -1464,7 +1464,7 @@ class Fit_Normal_Dual_Exponential:
         use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
-    ):
+    ) -> None:
         inputs = alt_fitters_dual_stress_input_checking(
             dist="Normal",
             life_stress_model="Dual_Exponential",
@@ -1958,7 +1958,7 @@ class Fit_Normal_Power_Exponential:
         use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
-    ):
+    ) -> None:
         inputs = alt_fitters_dual_stress_input_checking(
             dist="Normal",
             life_stress_model="Power_Exponential",
@@ -2447,7 +2447,7 @@ class Fit_Normal_Dual_Power:
         use_level_stress: npt.NDArray[np.float64] | None = None,
         CI=0.95,
         optimizer=None,
-    ):
+    ) -> None:
         inputs = alt_fitters_dual_stress_input_checking(
             dist="Normal",
             life_stress_model="Dual_Power",

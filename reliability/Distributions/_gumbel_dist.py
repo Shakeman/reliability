@@ -64,7 +64,7 @@ class Gumbel_Distribution:
 
     """
 
-    def __init__(self, mu=None, sigma=None, **kwargs):
+    def __init__(self, mu=None, sigma=None, **kwargs) -> None:
         self.name = "Gumbel"
         self.name2 = "Gumbel_2P"
         if mu is None or sigma is None:

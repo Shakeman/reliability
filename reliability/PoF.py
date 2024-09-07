@@ -351,7 +351,7 @@ class stress_strain_life_parameters_from_data:
 
     """
 
-    def __init__(self, strain, stress, E, cycles=None):
+    def __init__(self, strain, stress, E, cycles=None) -> None:
         # note that strain is the total strain (elastic strain + plastic strain)
         if isinstance(stress, np.ndarray):
             pass
@@ -599,7 +599,7 @@ class stress_strain_diagram:
         min_stress=None,
         min_strain=None,
         initial_load_direction="tension",
-    ):
+    ) -> None:
         if max_stress is not None and max_strain is not None:
             msg = "Do not specify both max_stress and max_strain as the corresponding value will be automatically calculated"
             raise ValueError(
@@ -884,7 +884,7 @@ class strain_life_diagram:
         max_stress: float | None = None,
         min_stress: float | None = None,
         show_plot: bool = True,
-    ):
+    ) -> None:
         if max_stress is not None and max_strain is not None:
             msg = "Do not specify both max_stress and max_strain as the corresponding value will be automatically calculated"
             raise ValueError(
@@ -1503,7 +1503,7 @@ class fracture_mechanics_crack_initiation:
         Kt: float = 1.0,
         q: float = 1.0,
         mean_stress_correction_method: str = "modified_morrow",
-    ):
+    ) -> None:
         if mean_stress_correction_method not in ["morrow", "modified_morrow", "SWT"]:
             msg = "mean_stress_correction_method must be either morrow,modified_morrow, or SWT. Default is modified_morrow."
             raise ValueError(
@@ -1834,7 +1834,7 @@ class fracture_mechanics_crack_growth:
         notch_depth: float = 0.0,
         a_final: float | None = None,
         crack_type: str = "edge",
-    ):
+    ) -> None:
         INVALID_MATERIAL_CONSTANT = 2
         if m == INVALID_MATERIAL_CONSTANT:
             msg = "m can not be 2"
@@ -2323,7 +2323,7 @@ class acceleration_factor:
 
     """
 
-    def __init__(self, AF=None, T_use=None, T_acc=None, Ea=None):
+    def __init__(self, AF=None, T_use=None, T_acc=None, Ea=None) -> None:
         if T_use is None:
             msg = "T_use must be specified"
             raise ValueError(msg)

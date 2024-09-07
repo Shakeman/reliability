@@ -89,7 +89,7 @@ class Competing_Risks_Model:
 
     """
 
-    def __init__(self, distributions):
+    def __init__(self, distributions) -> None:
         if type(distributions) not in [list, np.ndarray]:
             msg = "distributions must be a list or array of distribution objects."
             raise ValueError(msg)

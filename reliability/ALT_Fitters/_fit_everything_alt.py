@@ -205,7 +205,7 @@ class Fit_Everything_ALT:
         exclude=None,
         sort_by="BIC",
         **kwargs,
-    ):
+    ) -> None:
         # check kwargs for failure_stress and right_censored_stress
         if "failure_stress" in kwargs and failure_stress_1 is None:
             failure_stress_1 = kwargs.pop("failure_stress")

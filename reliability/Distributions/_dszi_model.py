@@ -78,7 +78,7 @@ class DSZI_Model:
 
     """
 
-    def __init__(self, distribution, DS=None, ZI=None):
+    def __init__(self, distribution, DS=None, ZI=None) -> None:
         if DS is None and ZI is None:
             msg = "DS and ZI cannot both be unspecified. Please specify one or both of these parameters to create a DS, ZI, or DSZI model."
             raise ValueError(

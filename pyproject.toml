@@ -65,9 +65,6 @@ select = [
 ]
 ignore = [
     "FIX002", #flags on TODOs
-    #"COM812",
-    "ISC001",
-    "PT004",
     "ISC003", #do not enfore removing + for concatenating string literals
     "TD002", # missing-todo-author
     "TD003", #missing issue link for TODO

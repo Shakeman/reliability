@@ -92,11 +92,10 @@ ignore = [
     "ERA001",#  commented-out-code"
     "D417",#    undocumented-param"
     "PLW0128", # redeclared-assigned-name"
-    #"PLW3301",# nested min-max
     "FBT001", # " boolean-type-hint-positional-argument"
     "E501",  # line too long, handled by black
     "FBT003",# Boolean positional value in function call"
-    "C901",  # too complex
+    #"C901",  # too complex
     "ANN101", #missing-type-self
     "N806", #non-lowercase-variable-in-function
     "T201", # print statement
@@ -130,7 +129,7 @@ max-args = 16
 max-branches = 80
 max-statements = 400
 [tool.ruff.lint.mccabe]
-max-complexity = 50
+max-complexity = 80
 
 [tool.ruff.format]
 # Like Black, use double quotes for strings.

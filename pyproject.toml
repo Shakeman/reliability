@@ -64,7 +64,7 @@ select = [
     "RUF", # RUF-specific rules
 ]
 ignore = [
-    "SIM300",
+    #"SIM300",
     "FIX002", #flags on TODOs
     "COM812",
     "ISC001",
@@ -76,7 +76,6 @@ ignore = [
     "D203", #choosing D211 no blank line before class
     "N999", #invalid module-name
     "PGH003",# Use specific rule codes when ignoring type issues
-    "TRY003", #raise-vanilla-args
     "N802", #invalid function ame
     "ANN201", #missing-return-type
     "D401", #first line should be in imperative mood
@@ -95,7 +94,6 @@ ignore = [
     "FBT001", # " boolean-type-hint-positional-argument"
     "E501",  # line too long, handled by black
     "FBT003",# Boolean positional value in function call"
-    #"C901",  # too complex
     "ANN101", #missing-type-self
     "N806", #non-lowercase-variable-in-function
     "T201", # print statement

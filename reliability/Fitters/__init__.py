@@ -38,6 +38,7 @@ and the fit might not be successful. Generally the fit achieved by autograd is
 highly successful, and whenever it fails the initial guess will be used and a
 warning will be displayed.
 """
+
 from reliability.Fitters._fit_basic import Fit_Beta_2P, Fit_Gumbel_2P, Fit_Normal_2P
 from reliability.Fitters._fit_everything import Fit_Everything
 from reliability.Fitters._fit_exponential import Fit_Exponential_1P, Fit_Exponential_2P

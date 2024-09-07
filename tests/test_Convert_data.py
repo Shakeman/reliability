@@ -91,9 +91,9 @@ def test_XCN_to_FNRN():
 
 def test_FR_to_XCN():
     XCN = FR_to_XCN(failures=[1, 1, 2, 2, 3], right_censored=[9, 9, 9, 9, 8, 8, 7])
-    assert ([1, 2, 3, 7, 8, 9] == XCN.X).all()
-    assert (["F", "F", "F", "C", "C", "C"] == XCN.C).all()
-    assert ([2, 2, 1, 1, 2, 4] == XCN.N).all()
+    assert (XCN.X == [1, 2, 3, 7, 8, 9]).all()
+    assert (XCN.C == ["F", "F", "F", "C", "C", "C"]).all()
+    assert (XCN.N == [2, 2, 1, 1, 2, 4]).all()
     current_directory: Path = Path.cwd()
     file_name: Path = current_directory / "tests/_excel_files/FR_to_XCN.xlsx"
     XCN.print()
@@ -102,9 +102,9 @@ def test_FR_to_XCN():
     no_right_censored = FR_to_XCN(
         failures=[1, 1, 2, 2, 3],
     )
-    assert ([1, 2, 3] == no_right_censored.X).all()
-    assert (["F", "F", "F"] == no_right_censored.C).all()
-    assert ([2, 2, 1] == no_right_censored.N).all()
+    assert (no_right_censored.X == [1, 2, 3]).all()
+    assert (no_right_censored.C == ["F", "F", "F"]).all()
+    assert (no_right_censored.N == [2, 2, 1]).all()
 
 
 def test_FNRN_to_XCN():
@@ -114,9 +114,9 @@ def test_FNRN_to_XCN():
         right_censored=[9, 8, 7],
         num_right_censored=[3, 2, 1],
     )
-    assert ([1, 2, 3, 7, 8, 9] == XCN.X).all()
-    assert (["F", "F", "F", "C", "C", "C"] == XCN.C).all()
-    assert ([2, 2, 1, 1, 2, 3] == XCN.N).all()
+    assert (XCN.X == [1, 2, 3, 7, 8, 9]).all()
+    assert (XCN.C == ["F", "F", "F", "C", "C", "C"]).all()
+    assert (XCN.N == [2, 2, 1, 1, 2, 3]).all()
     current_directory: Path = Path.cwd()
     file_name: Path = current_directory / "tests/_excel_files/FNRN_to_XCN.xlsx"
     XCN.print()
@@ -127,9 +127,9 @@ def test_FNRN_to_XCN():
         failures=[1, 2, 3],
         num_failures=[2, 2, 1],
     )
-    assert ([1, 2, 3] == no_right_censored.X).all()
-    assert (["F", "F", "F"] == no_right_censored.C).all()
-    assert ([2, 2, 1] == no_right_censored.N).all()
+    assert (no_right_censored.X == [1, 2, 3]).all()
+    assert (no_right_censored.C == ["F", "F", "F"]).all()
+    assert (no_right_censored.N == [2, 2, 1]).all()
 
 
 def test_xlsx_to_XCN() -> None:

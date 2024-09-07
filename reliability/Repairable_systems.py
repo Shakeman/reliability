@@ -882,6 +882,43 @@ class MCF_nonparametric:
     """
 
     def __init__(self, data, CI=0.95):
+        """Initializes the Repairable_systems class.
+
+        Parameters
+        ----------
+        - data: list or numpy array
+            The input data containing repair and end times for each system.
+        - CI: float, optional
+            The confidence interval for calculating MCF. Default is 0.95.
+
+        Raises
+        ------
+        - TypeError: If data is not a list or numpy array.
+        - TypeError: If any item in the data is not a list, numpy array, int, or float.
+        - ValueError: If CI is not between 0 and 1.
+        - ValueError: If the final end time is less than the final repair time.
+
+        Attributes
+        ----------
+        - results: pandas DataFrame
+            The results of the MCF calculations.
+        - time: numpy array
+            The sorted times from the results DataFrame.
+        - MCF: numpy array
+            The MCF values from the results DataFrame.
+        - lower: numpy array
+            The lower bounds of the MCF values from the results DataFrame.
+        - upper: numpy array
+            The upper bounds of the MCF values from the results DataFrame.
+        - variance: numpy array
+            The variances of the MCF values from the results DataFrame.
+        - last_time: float
+            The maximum end time from the input data.
+        - CI_rounded: int
+            The rounded value of CI multiplied by 100.
+
+        """
+        # code implementation
         # check input is a list
         if isinstance(data, list):
             pass
@@ -1212,6 +1249,15 @@ class MCF_parametric:
     """
 
     def __init__(self, data, CI=0.95):
+        """Initializes an instance of the Repairable_systems class.
+
+        Parameters
+        ----------
+        - data: The data used for the calculations.
+        - CI: The confidence interval. Must be between 0 and 1. Default is 0.95 for a 95% confidence interval.
+
+        """
+        # Rest of the code...
         if CI <= 0 or CI >= 1:
             msg = "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
             raise ValueError(msg)

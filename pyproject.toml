@@ -76,14 +76,12 @@ ignore = [
     "D203", #choosing D211 no blank line before class
     "N999", #invalid module-name
     "PGH003",# Use specific rule codes when ignoring type issues
-    #"EM101", #raw-string-in-exceptions
     "TRY003", #raise-vanilla-args
     "N802", #invalid function ame
     "ANN201", #missing-return-type
     "D401", #first line should be in imperative mood
     "D205", #1 blank line required between summary line and description
     "D103", # Missing docstring in public function
-    "PT011", # `pytest.raises(ValueError)` is too broad, set the `match` parameter or use a more specific exception
     "ANN205", # missing-return-type-static-method
     "ANN003", #  missing-type-kwargs
     "ANN204", #missing-return-type-special-method
@@ -123,7 +121,7 @@ section-order = ["future", "standard-library", "third-party", "first-party", "lo
 known-first-party = []
 
 [tool.ruff.lint.per-file-ignores]
-"test_*.py" = ["PLR2004","S101", "SLF001", "INP001", "ANN202"]
+"test_*.py" = ["PLR2004","S101", "SLF001", "INP001", "ANN202","PT011"]
 "conftest*.py" = ["INP001", "ANN202"]
 "*_utils.py" = ["SLF001"] #TODO: Refactor Utils functions to not access private memebrs
 "_fit_everything_alt.py" = ["PLR0912", "PLR0915"] #TODO:Refactor fit_everything_alt into two fucntions for single and dual stress

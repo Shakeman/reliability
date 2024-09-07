@@ -111,11 +111,13 @@ class KaplanMeier:
         np.seterr(divide="ignore")  # divide by zero occurs if last detapoint is a failure so risk set is zero
 
         if failures is None:
-            raise ValueError("failures must be provided to calculate non-parametric estimates.")
+            msg = "failures must be provided to calculate non-parametric estimates."
+            raise ValueError(msg)
         if right_censored is None:
             right_censored = []  # create empty array so it can be added in hstack
         if CI < 0 or CI > 1:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals."
+            raise ValueError(msg)
         MIN_FAILURES = 2
         if len(failures) < MIN_FAILURES:
             raise ValueError(
@@ -268,7 +270,8 @@ class KaplanMeier:
         """
         xlim_upper = plt.xlim(auto=None)[1]
         if plot_type not in ["CDF", "SF", "CHF", "cdf", "sf", "chf"]:
-            raise ValueError("plot_type must be CDF, SF, or CHF. Default is SF.")
+            msg = "plot_type must be CDF, SF, or CHF. Default is SF."
+            raise ValueError(msg)
         if plot_type in ["SF", "sf"]:
             p = plt.plot(self.xvals, self.SF, **kwargs)
             if plot_CI is True:  # plots the confidence bounds
@@ -333,7 +336,8 @@ class KaplanMeier:
                 [0, max(ylims[1], self.CHF[-2] * 1.2)],
             )  # set the limits for y. Need to do this because the upper CI bound is inf.
         else:
-            raise ValueError("plot_type must be CDF, SF, CHF")
+            msg = "plot_type must be CDF, SF, CHF"
+            raise ValueError(msg)
 
     def print_results(self):
         """Prints the results from KaplanMeier analysis with confidence interval.
@@ -432,11 +436,13 @@ class NelsonAalen:
         np.seterr(divide="ignore")  # divide by zero occurs if last detapoint is a failure so risk set is zero
 
         if failures is None:
-            raise ValueError("failures must be provided to calculate non-parametric estimates.")
+            msg = "failures must be provided to calculate non-parametric estimates."
+            raise ValueError(msg)
         if right_censored is None:
             right_censored = []  # create empty array so it can be added in hstack
         if CI < 0 or CI > 1:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals."
+            raise ValueError(msg)
         MIN_FAILURES = 2
         if len(failures) < MIN_FAILURES:
             raise ValueError(
@@ -590,7 +596,8 @@ class NelsonAalen:
 
         """
         if plot_type not in ["CDF", "SF", "CHF", "cdf", "sf", "chf"]:
-            raise ValueError("plot_type must be CDF, SF, or CHF. Default is SF.")
+            msg = "plot_type must be CDF, SF, or CHF. Default is SF."
+            raise ValueError(msg)
         xlim_upper = plt.xlim(auto=None)[1]
         if plot_type in ["SF", "sf"]:
             p = plt.plot(self.xvals, self.SF, **kwargs)
@@ -656,7 +663,8 @@ class NelsonAalen:
                 [0, max(ylims[1], self.CHF[-2] * 1.2)],
             )  # set the limits for y. Need to do this because the upper CI bound is inf.
         else:
-            raise ValueError("plot_type must be CDF, SF, CHF")
+            msg = "plot_type must be CDF, SF, CHF"
+            raise ValueError(msg)
 
     def print_results(self):
         """Prints the results from NelsonAalen analysis with confidence interval.
@@ -766,7 +774,8 @@ class RankAdjustment:
         if right_censored is None:
             right_censored = []  # create empty array so it can be added in hstack
         if CI < 0 or CI > 1:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals."
+            raise ValueError(msg)
         MINIMUM_FAILURES = 2
         if len(failures) < MINIMUM_FAILURES:
             raise ValueError(
@@ -925,7 +934,8 @@ class RankAdjustment:
 
         """
         if plot_type not in ["CDF", "SF", "CHF", "cdf", "sf", "chf"]:
-            raise ValueError("plot_type must be CDF, SF, or CHF. Default is SF.")
+            msg = "plot_type must be CDF, SF, or CHF. Default is SF."
+            raise ValueError(msg)
         xlim_upper = plt.xlim(auto=None)[1]
         if plot_type in ["SF", "sf"]:
             p = plt.plot(self.xvals, self.SF, **kwargs)
@@ -995,7 +1005,8 @@ class RankAdjustment:
                 [0, max(ylims[1], self.CHF[-2] * 1.2)],
             )  # set the limits for y. Need to do this because the upper CI bound is inf.
         else:
-            raise ValueError("plot_type must be CDF, SF, CHF")
+            msg = "plot_type must be CDF, SF, CHF"
+            raise ValueError(msg)
 
     def print_results(self):
         """Prints the results from RankAdjustment analysis with confidence interval.

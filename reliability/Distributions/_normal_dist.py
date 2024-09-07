@@ -817,12 +817,15 @@ class Normal_Distribution:
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         ppf: float = ss.norm.ppf(q, loc=self.mu, scale=self.sigma)
         return ppf
 
@@ -842,12 +845,15 @@ class Normal_Distribution:
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         isf: float = ss.norm.isf(q, loc=self.mu, scale=self.sigma)
         return isf
 
@@ -928,7 +934,8 @@ class Normal_Distribution:
 
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
-            raise ValueError("number_of_samples must be an integer greater than 0")
+            msg = "number_of_samples must be an integer greater than 0"
+            raise ValueError(msg)
         if seed is not None:
             rng = np.random.default_rng(seed)
         RVS: npt.NDArray[np.float64] = ss.norm.rvs(

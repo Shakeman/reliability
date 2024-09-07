@@ -63,7 +63,8 @@ class Beta_Distribution:
         self.name = "Beta"
         self.name2 = "Beta_2P"
         if alpha is None or beta is None:
-            raise ValueError("Parameters alpha and beta must be specified. Eg. Beta_Distribution(alpha=5,beta=2)")
+            msg = "Parameters alpha and beta must be specified. Eg. Beta_Distribution(alpha=5,beta=2)"
+            raise ValueError(msg)
         self.alpha = float(alpha)
         self.beta = float(beta)
         self.parameters: npt.NDArray[np.float64] = np.array([self.alpha, self.beta])
@@ -612,12 +613,15 @@ class Beta_Distribution:
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         ppf = ss.beta.ppf(q, self.alpha, self.beta, 0, 1)
         return unpack_single_arrays(ppf)
 
@@ -637,12 +641,15 @@ class Beta_Distribution:
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         isf = ss.beta.isf(q, self.alpha, self.beta, 0, 1)
         return unpack_single_arrays(isf)
 
@@ -723,7 +730,8 @@ class Beta_Distribution:
 
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
-            raise ValueError("number_of_samples must be an integer greater than 0")
+            msg = "number_of_samples must be an integer greater than 0"
+            raise ValueError(msg)
         if seed is not None:
             rng = np.random.default_rng(seed)
         RVS = ss.beta.rvs(self.alpha, self.beta, 0, 1, size=number_of_samples, random_state=rng)

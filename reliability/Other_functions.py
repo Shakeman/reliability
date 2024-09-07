@@ -115,8 +115,9 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
         Mixture_Model,
         Competing_Risks_Model,
     ]:
+        msg = "Stress and Strength must both be probability distributions. First define the distribution using reliability.Distributions.___"
         raise ValueError(
-            "Stress and Strength must both be probability distributions. First define the distribution using reliability.Distributions.___",
+            msg,
         )
     if (
         isinstance(stress, Normal_Distribution) and isinstance(strength, Normal_Distribution) and warn is True
@@ -145,8 +146,9 @@ def stress_strength(stress, strength, show_plot=True, print_results=True, warn=T
             "WARNING: The probability of failure is wrong. One of the distributions likely has an asymptote where the values along the y-axis approach infinity which has caused the integration to fail. There is no solution to this other than to use a distribution that does not have an asymptote.",
             text_color="red",
         )
+        msg = "The probability of failure is greater than 1. This is likely due to an asymptote in one of the distributions."
         raise ValueError(
-            "The probability of failure is greater than 1. This is likely due to an asymptote in one of the distributions.",
+            msg,
         )
 
     if show_plot is True:
@@ -279,12 +281,14 @@ def stress_strength_normal(stress, strength, show_plot=True, print_results=True,
 
     """
     if type(stress) is not Normal_Distribution:
+        msg = "Both stress and strength must be a Normal_Distribution. If you need another distribution then use stress_strength rather than stress_strength_normal"
         raise ValueError(
-            "Both stress and strength must be a Normal_Distribution. If you need another distribution then use stress_strength rather than stress_strength_normal",
+            msg,
         )
     if type(strength) is not Normal_Distribution:
+        msg = "Both stress and strength must be a Normal_Distribution. If you need another distribution then use stress_strength rather than stress_strength_normal"
         raise ValueError(
-            "Both stress and strength must be a Normal_Distribution. If you need another distribution then use stress_strength rather than stress_strength_normal",
+            msg,
         )
     if stress.mean > strength.mean and warn is True:
         colorprint(
@@ -434,8 +438,9 @@ class similar_distributions:
             Loglogistic_Distribution,
             Gumbel_Distribution,
         ]:
+            msg = "distribution must be a probability distribution object from the reliability.Distributions module. First define the distribution using Reliability.Distributions.___"
             raise ValueError(
-                "distribution must be a probability distribution object from the reliability.Distributions module. First define the distribution using Reliability.Distributions.___",
+                msg,
             )
 
         MINIMUM_DISTRIBUTIONS_TO_SHOW = 2
@@ -443,7 +448,8 @@ class similar_distributions:
             not isinstance(number_of_distributions_to_show, int)
             or number_of_distributions_to_show < MINIMUM_DISTRIBUTIONS_TO_SHOW
         ):
-            raise ValueError("number_of_distributions_to_show must be an integer greater than 1")
+            msg = "number_of_distributions_to_show must be an integer greater than 1"
+            raise ValueError(msg)
 
         # sample the CDF from 0.001 to 0.999. These samples will be used to fit all other distributions.
         RVS = distribution.quantile(np.linspace(0.001, 0.999, 698))
@@ -454,8 +460,9 @@ class similar_distributions:
         negative_values_error = RVS.min() < 0
         MINIMUM_SAMPLES = 175
         if len(RVS_filtered) < MINIMUM_SAMPLES:
+            msg = "The input distribution has more than 75% of its area in the negative domain (x<0). Comparison with distributions bounded by the positive domain (x>0) is not possible."
             raise ValueError(
-                "The input distribution has more than 75% of its area in the negative domain (x<0). Comparison with distributions bounded by the positive domain (x>0) is not possible.",
+                msg,
             )
 
         if negative_values_error is True:
@@ -806,13 +813,16 @@ def histogram(data, white_above=None, bins=None, density=True, cumulative=False,
 
     """
     if type(data) not in [np.ndarray, list]:
-        raise ValueError("data must be an array or list")
+        msg = "data must be an array or list"
+        raise ValueError(msg)
 
     if white_above is not None:
         if type(white_above) not in [int, float, np.float64]:
-            raise ValueError("white_above must be int or float")
+            msg = "white_above must be int or float"
+            raise ValueError(msg)
         if white_above < min(data):
-            raise ValueError("white_above must be greater than min(data)")
+            msg = "white_above must be greater than min(data)"
+            raise ValueError(msg)
 
     if bins is None:
         bins = "auto"  # uses numpy to calculate bin edges: https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges
@@ -895,12 +905,14 @@ class make_right_censored_data:
 
     def __init__(self, data: npt.NDArray[np.float64] | list[int], threshold=None, fraction_censored=None, seed=None):
         if type(data) not in [list, np.ndarray]:
-            raise ValueError("data must be a list or array")
+            msg = "data must be a list or array"
+            raise ValueError(msg)
         data = np.asarray(data)
 
         if threshold is not None and fraction_censored is not None:
+            msg = "threshold is used to control censoring above a set limit. fraction_censored is used to control the fraction of the values that will be censored. These cannot both be specified as they are conflicting methods of censoring"
             raise ValueError(
-                "threshold is used to control censoring above a set limit. fraction_censored is used to control the fraction of the values that will be censored. These cannot both be specified as they are conflicting methods of censoring",
+                msg,
             )
         if threshold is None and fraction_censored is None:
             fraction_censored = 0.5  # default to 50% multiply censored
@@ -914,8 +926,9 @@ class make_right_censored_data:
                 or fraction_censored >= 1
                 or type(fraction_censored) not in [int, float, np.float64, np.int_]
             ):
+                msg = "fraction_censored must be >= 0 and < 1. The default is 0.5 which will right censor half the data"
                 raise ValueError(
-                    "fraction_censored must be >= 0 and < 1. The default is 0.5 which will right censor half the data",
+                    msg,
                 )
             number_of_items_to_censor = int(np.floor(len(data) * fraction_censored))
             rng = np.random.default_rng(seed=seed)
@@ -927,7 +940,8 @@ class make_right_censored_data:
             self.failures = data[data <= threshold]
             self.right_censored = np.ones_like(data[data > threshold]) * threshold
         else:
-            raise ValueError("An error occurred. Please check the inputs to make_right_censored_data")
+            msg = "An error occurred. Please check the inputs to make_right_censored_data"
+            raise ValueError(msg)
 
 
 class make_ALT_data:
@@ -1037,12 +1051,14 @@ class make_ALT_data:
         ]:
             dual_stress = True
         else:
+            msg = "life_stress_model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power"
             raise ValueError(
-                "life_stress_model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power",
+                msg,
             )
 
         if type(stress_1) not in [list, np.ndarray]:
-            raise ValueError("stress_1 must be a list or array of the stress levels")
+            msg = "stress_1 must be a list or array of the stress levels"
+            raise ValueError(msg)
         stress_1 = np.asarray(stress_1)
         num_stresses = len(stress_1)
 
@@ -1054,56 +1070,71 @@ class make_ALT_data:
 
         if dual_stress is True:
             if type(stress_2) not in [list, np.ndarray]:
-                raise ValueError("stress_2 must be a list or array of the stress levels")
+                msg = "stress_2 must be a list or array of the stress levels"
+                raise ValueError(msg)
             stress_2 = np.asarray(stress_2)
             if use_level_stress is not None:
                 EXPECTED_LENGTH = 2
                 if len(use_level_stress) != EXPECTED_LENGTH:
+                    msg = "use_level_stress must be a list or array with 2 elements if using a dual-stress model"
                     raise ValueError(
-                        "use_level_stress must be a list or array with 2 elements if using a dual-stress model",
+                        msg,
                     )
                 stress_2 = np.append(stress_2, use_level_stress[1])
 
             if len(stress_2) != len(stress_1):
-                raise ValueError("stress_1 and stress_2 must be the same length")
+                msg = "stress_1 and stress_2 must be the same length"
+                raise ValueError(msg)
 
         if fraction_censored < 0 or fraction_censored >= 1:
-            raise ValueError("fraction_censored must be 0 for no censoring or between 0 and 1 for right censoring")
+            msg = "fraction_censored must be 0 for no censoring or between 0 and 1 for right censoring"
+            raise ValueError(msg)
 
         # life stress model calculations
         if life_stress_model == "Exponential":
             if a is None or b is None:
-                raise ValueError("a and b must be specified for the Exponential life-stress model")
+                msg = "a and b must be specified for the Exponential life-stress model"
+                raise ValueError(msg)
             if b <= 0:
-                raise ValueError("b must be positive")
+                msg = "b must be positive"
+                raise ValueError(msg)
             life_model = b * np.exp(a / stress_1)
         elif life_stress_model == "Eyring":
             if a is None or c is None:
-                raise ValueError("a and c must be specified for the Eyring life-stress model")
+                msg = "a and c must be specified for the Eyring life-stress model"
+                raise ValueError(msg)
             life_model = (1 / stress_1) * np.exp(-(c - a / stress_1))
         elif life_stress_model == "Power":
             if a is None or n is None:
-                raise ValueError("a and n must be specified for the Power life-stress model")
+                msg = "a and n must be specified for the Power life-stress model"
+                raise ValueError(msg)
             if a <= 0:
-                raise ValueError("a must be positive")
+                msg = "a must be positive"
+                raise ValueError(msg)
             life_model = a * stress_1 ** float(n)
         elif life_stress_model == "Dual_Exponential":
             if a is None or b is None or c is None:
-                raise ValueError("a, b, and c must be specified for the Dual_Exponential life-stress model")
+                msg = "a, b, and c must be specified for the Dual_Exponential life-stress model"
+                raise ValueError(msg)
             if c <= 0:
-                raise ValueError("c must be positive")
+                msg = "c must be positive"
+                raise ValueError(msg)
             life_model = c * np.exp(a / stress_1 + b / stress_2)
         elif life_stress_model == "Power_Exponential" and stress_2 is not None:
             if a is None or c is None or n is None:
-                raise ValueError("a, c, and n must be specified for the Power_Exponential life-stress model")
+                msg = "a, c, and n must be specified for the Power_Exponential life-stress model"
+                raise ValueError(msg)
             if c <= 0:
-                raise ValueError("c must be positive")
+                msg = "c must be positive"
+                raise ValueError(msg)
             life_model = c * (stress_2 ** float(n)) * np.exp(a / stress_1)
         elif life_stress_model == "Dual_Power" and stress_2 is not None:
             if c is None or n is None or m is None:
-                raise ValueError("c, n, and m must be specified for the Dual_Power life-stress model")
+                msg = "c, n, and m must be specified for the Dual_Power life-stress model"
+                raise ValueError(msg)
             if c <= 0:
-                raise ValueError("c must be positive")
+                msg = "c must be positive"
+                raise ValueError(msg)
             life_model = c * (stress_1 ** float(m)) * (stress_2 ** float(n))
 
         # data sampling
@@ -1122,30 +1153,37 @@ class make_ALT_data:
         def __make_dist(life):
             if distribution == "Weibull":
                 if beta is None:
-                    raise ValueError("beta must be specified for the Weibull distribution")
+                    msg = "beta must be specified for the Weibull distribution"
+                    raise ValueError(msg)
                 dist = Weibull_Distribution(alpha=life, beta=beta)
             elif distribution == "Lognormal":
                 if sigma is None:
-                    raise ValueError("sigma must be specified for the Lognormal distribution")
+                    msg = "sigma must be specified for the Lognormal distribution"
+                    raise ValueError(msg)
                 dist = Lognormal_Distribution(mu=np.log(life), sigma=sigma)
             elif distribution == "Normal":
                 if sigma is None:
-                    raise ValueError("sigma must be specified for the Normal distribution")
+                    msg = "sigma must be specified for the Normal distribution"
+                    raise ValueError(msg)
                 dist = Normal_Distribution(mu=life, sigma=sigma)
             elif distribution == "Exponential":
                 dist = Exponential_Distribution(Lambda=1 / life)
             else:
-                raise ValueError("distribution must be one of Weibull, Lognormal, Normal, Exponential")
+                msg = "distribution must be one of Weibull, Lognormal, Normal, Exponential"
+                raise ValueError(msg)
             return dist
 
         for i in range(num_stresses):
             dist = __make_dist(life=life_model[i])
             raw_data = dist.random_samples(number_of_samples=number_of_samples, seed=seeds[i])
             if min(raw_data) <= 0:
-                raise ValueError(
+                msg = (
                     "The values entered for the ALT model will result in negative failure times.\n"
                     "While this is acceptable for a pure Normal Distribution, it is not acceptable for an ALT model utilising the Normal Distribution.\n"
-                    "Please modify your input parameters to create a model that does not result in the generation of negative failure times.",
+                    "Please modify your input parameters to create a model that does not result in the generation of negative failure times."
+                )
+                raise ValueError(
+                    msg,
                 )
 
             if fraction_censored == 0:
@@ -1216,15 +1254,19 @@ class crosshairs:
 
     def __init__(self, xlabel=None, ylabel=None, decimals=2, dateformat=None, **kwargs):
         if type(dateformat) not in [str, type(None)]:
+            msg = "dateformat type must be str or None. For acceptable strings see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes"
             raise ValueError(
-                "dateformat type must be str or None. For acceptable strings see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes",
+                msg,
             )
         if not isinstance(decimals, int):
-            raise ValueError("decimals must be int")
+            msg = "decimals must be int"
+            raise ValueError(msg)
         if type(xlabel) not in [str, type(None)]:
-            raise ValueError("xlabel must be string or None")
+            msg = "xlabel must be string or None"
+            raise ValueError(msg)
         if type(ylabel) not in [str, type(None)]:
-            raise ValueError("ylabel must be string or None")
+            msg = "ylabel must be string or None"
+            raise ValueError(msg)
 
         warnings.simplefilter(
             "ignore",

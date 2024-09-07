@@ -182,15 +182,20 @@ class Fit_Everything:
             method = "LS"
 
         if show_histogram_plot not in [True, False]:
-            raise ValueError("show_histogram_plot must be either True or False. Defaults to True.")
+            msg = "show_histogram_plot must be either True or False. Defaults to True."
+            raise ValueError(msg)
         if print_results not in [True, False]:
-            raise ValueError("print_results must be either True or False. Defaults to True.")
+            msg = "print_results must be either True or False. Defaults to True."
+            raise ValueError(msg)
         if show_PP_plot not in [True, False]:
-            raise ValueError("show_PP_plot must be either True or False. Defaults to True.")
+            msg = "show_PP_plot must be either True or False. Defaults to True."
+            raise ValueError(msg)
         if show_probability_plot not in [True, False]:
-            raise ValueError("show_probability_plot must be either True or False. Defaults to True.")
+            msg = "show_probability_plot must be either True or False. Defaults to True."
+            raise ValueError(msg)
         if show_best_distribution_probability_plot not in [True, False]:
-            raise ValueError("show_best_distribution_probability_plot must be either True or False. Defaults to True.")
+            msg = "show_best_distribution_probability_plot must be either True or False. Defaults to True."
+            raise ValueError(msg)
 
         self.failures = failures
         self.right_censored = right_censored
@@ -208,8 +213,9 @@ class Fit_Everything:
         if isinstance(exclude, np.ndarray):
             exclude = list(exclude)
         if type(exclude) not in [list, np.ndarray]:
+            msg = 'exclude must be a list or array or strings that match the names of the distributions to be excluded. eg "Weibull_2P".'
             raise ValueError(
-                'exclude must be a list or array or strings that match the names of the distributions to be excluded. eg "Weibull_2P".',
+                msg,
             )
         MIN_FAILURES = 3
         if len(failures) < MIN_FAILURES:
@@ -228,9 +234,12 @@ class Fit_Everything:
         unknown_exclusions = []
         for item in exclude:
             if type(item) not in [str, np.str_]:
-                raise ValueError(
+                msg = (
                     "exclude must be a list or array of strings that specified the distributions to be excluded from fitting. Available strings are:"
-                    "\nWeibull_2P\nWeibull_3P\nNormal_2P\nGamma_2P\nLoglogistic_2P\nGamma_3P\nLognormal_2P\nLognormal_3P\nLoglogistic_3P\nGumbel_2P\nExponential_2P\nExponential_1P\nBeta_2P\nWeibull_Mixture\nWeibull_CR\nWeibull_DS",
+                    "\nWeibull_2P\nWeibull_3P\nNormal_2P\nGamma_2P\nLoglogistic_2P\nGamma_3P\nLognormal_2P\nLognormal_3P\nLoglogistic_3P\nGumbel_2P\nExponential_2P\nExponential_1P\nBeta_2P\nWeibull_Mixture\nWeibull_CR\nWeibull_DS"
+                )
+                raise ValueError(
+                    msg,
                 )
             if item.upper() in ["WEIBULL_2P", "WEIBULL2P", "WEIBULL2"]:
                 excluded_distributions.append("Weibull_2P")
@@ -1170,8 +1179,9 @@ class Fit_Everything:
             sort_by = "BIC"
         # sort the dataframe by BIC, AICc, or AD. Smallest AICc, BIC, AD is better fit
         if not isinstance(sort_by, str):
+            msg = "Invalid input to sort_by. Options are 'BIC', 'AICc', 'AD', or 'Log-likelihood'. Default is 'BIC'."
             raise ValueError(
-                "Invalid input to sort_by. Options are 'BIC', 'AICc', 'AD', or 'Log-likelihood'. Default is 'BIC'.",
+                msg,
             )
         if sort_by.upper() == "BIC":
             df2 = df.sort_values(by="BIC")
@@ -1191,11 +1201,13 @@ class Fit_Everything:
             df2 = df.sort_values(by="LLabs")
             df2 = df2.drop("LLabs", axis=1)  # remove the column created just for sorting
         else:
+            msg = "Invalid input to sort_by. Options are 'BIC', 'AICc', 'AD', or 'Log-likelihood'. Default is 'BIC'."
             raise ValueError(
-                "Invalid input to sort_by. Options are 'BIC', 'AICc', 'AD', or 'Log-likelihood'. Default is 'BIC'.",
+                msg,
             )
         if len(df2.index.values) == 0:
-            raise ValueError("You have excluded all available distributions")
+            msg = "You have excluded all available distributions"
+            raise ValueError(msg)
         self.results = df2
 
         # creates a distribution object of the best fitting distribution and assigns its name

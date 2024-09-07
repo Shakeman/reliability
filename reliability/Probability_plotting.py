@@ -112,24 +112,28 @@ def plotting_positions(
     if type(failures) in [list, np.ndarray]:
         f: npt.NDArray[np.float64] = np.asarray(failures)
     else:
-        raise ValueError("failures must be specified as an array or list")
+        msg = "failures must be specified as an array or list"
+        raise ValueError(msg)
 
     if right_censored is None:
         rc: npt.NDArray[np.float64] = np.array([])
     elif type(right_censored) in [np.ndarray, list]:
         rc: npt.NDArray[np.float64] = np.asarray(right_censored)
     else:
-        raise ValueError("if specified, right_censored must be an array or list")
+        msg = "if specified, right_censored must be an array or list"
+        raise ValueError(msg)
 
     if a is None:
         a = 0.3
     elif a < 0 or a > 1:
+        msg = "a must be in the range 0 to 1. Default is 0.3 which gives the median rank. For more information see https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot#Heuristics"
         raise ValueError(
-            "a must be in the range 0 to 1. Default is 0.3 which gives the median rank. For more information see https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot#Heuristics",
+            msg,
         )
 
     if sort not in [True, False]:
-        raise ValueError("sort must be True or False. Default is False to keep the same order as the input.")
+        msg = "sort must be True or False. Default is False to keep the same order as the input."
+        raise ValueError(msg)
 
     # construct the dataframe for the rank adjustment method
     f_codes: npt.NDArray[np.float64] = np.ones_like(f)
@@ -256,17 +260,21 @@ def Weibull_probability_plot(
     """
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
-        raise ValueError("failures must be a list or array of the failure data.")
+        msg = "failures must be a list or array of the failure data."
+        raise ValueError(msg)
     MINIMUM_DATA_POINTS = 2
     if len(failures) < MINIMUM_DATA_POINTS and _fitted_dist_params is None:
-        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
+        msg = "Insufficient data to fit a distribution. Minimum number of points is 2"
+        raise ValueError(msg)
     if type(failures) not in [np.ndarray, list]:
-        raise ValueError("failures must be a list or an array")
+        msg = "failures must be a list or an array"
+        raise ValueError(msg)
     failures = np.asarray(failures)
 
     if right_censored is not None:
         if type(right_censored) not in [np.ndarray, list]:
-            raise ValueError("right_censored must be a list or an array")
+            msg = "right_censored must be a list or an array"
+            raise ValueError(msg)
         right_censored = np.asarray(right_censored)
 
     if show_fitted_distribution is False and fit_gamma is True:
@@ -279,9 +287,11 @@ def Weibull_probability_plot(
     xlabel = "Time"  # this will be overridden if gamma is fitted
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
+            raise ValueError(msg)
         if type(CI_type) not in [str, type(None)]:
-            raise ValueError('CI_type must be "time", "reliability", or "none"')
+            msg = 'CI_type must be "time", "reliability", or "none"'
+            raise ValueError(msg)
         if CI_type is not None:
             if CI_type.upper() in ["T", "TIME"]:
                 CI_type = "time"
@@ -290,7 +300,8 @@ def Weibull_probability_plot(
             elif CI_type.upper() in ["NONE", "OFF"]:
                 CI_type = "none"
             else:
-                raise ValueError('CI_type must be "time", "reliability", or "none"')
+                msg = 'CI_type must be "time", "reliability", or "none"'
+                raise ValueError(msg)
         if _fitted_dist_params is not None and _fitted_dist_params.gamma > 0:
             fit_gamma = True
 
@@ -477,18 +488,22 @@ def Loglogistic_probability_plot(
     """
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
-        raise ValueError("failures must be a list or array of the failure data.")
+        msg = "failures must be a list or array of the failure data."
+        raise ValueError(msg)
     MINIMUM_DATA_POINTS = 2
     if len(failures) < MINIMUM_DATA_POINTS and _fitted_dist_params is None:
-        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
+        msg = "Insufficient data to fit a distribution. Minimum number of points is 2"
+        raise ValueError(msg)
 
     if type(failures) not in [np.ndarray, list]:
-        raise ValueError("failures must be a list or an array")
+        msg = "failures must be a list or an array"
+        raise ValueError(msg)
     failures = np.asarray(failures)
 
     if right_censored is not None:
         if type(right_censored) not in [np.ndarray, list]:
-            raise ValueError("right_censored must be a list or an array")
+            msg = "right_censored must be a list or an array"
+            raise ValueError(msg)
         right_censored = np.asarray(right_censored)
 
     if show_fitted_distribution is False and fit_gamma is True:
@@ -501,9 +516,11 @@ def Loglogistic_probability_plot(
     xlabel = "Time"  # this will be overridden if gamma is fitted
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
+            raise ValueError(msg)
         if type(CI_type) not in [str, type(None)]:
-            raise ValueError('CI_type must be "time", "reliability", or "none"')
+            msg = 'CI_type must be "time", "reliability", or "none"'
+            raise ValueError(msg)
         if CI_type is not None:
             if CI_type.upper() in ["T", "TIME"]:
                 CI_type = "time"
@@ -512,7 +529,8 @@ def Loglogistic_probability_plot(
             elif CI_type.upper() in ["NONE", "OFF"]:
                 CI_type = "none"
             else:
-                raise ValueError('CI_type must be "time", "reliability", or "none"')
+                msg = 'CI_type must be "time", "reliability", or "none"'
+                raise ValueError(msg)
         if _fitted_dist_params is not None and _fitted_dist_params.gamma > 0:
             fit_gamma = True
 
@@ -712,17 +730,21 @@ def Exponential_probability_plot_Weibull_Scale(
     """
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
-        raise ValueError("failures must be a list or array of the failure data.")
+        msg = "failures must be a list or array of the failure data."
+        raise ValueError(msg)
     if len(failures) < 1 and _fitted_dist_params is None:
-        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 1")
+        msg = "Insufficient data to fit a distribution. Minimum number of points is 1"
+        raise ValueError(msg)
 
     if type(failures) not in [np.ndarray, list]:
-        raise ValueError("failures must be a list or an array")
+        msg = "failures must be a list or an array"
+        raise ValueError(msg)
     failures = np.asarray(failures)
 
     if right_censored is not None:
         if type(right_censored) not in [np.ndarray, list]:
-            raise ValueError("right_censored must be a list or an array")
+            msg = "right_censored must be a list or an array"
+            raise ValueError(msg)
         right_censored = np.asarray(right_censored)
 
     if show_fitted_distribution is False and fit_gamma is True:
@@ -735,7 +757,8 @@ def Exponential_probability_plot_Weibull_Scale(
     xlabel = "Time"  # this will be overridden if gamma is fitted
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
+            raise ValueError(msg)
 
         if _fitted_dist_params is not None and _fitted_dist_params.gamma > 0:
             fit_gamma = True
@@ -895,28 +918,34 @@ def Gumbel_probability_plot(
 
     """
     if failures is None or len(failures) == 0:
-        raise ValueError("failures must be a list or array of the failure data.")
+        msg = "failures must be a list or array of the failure data."
+        raise ValueError(msg)
     MIN_DATA_POINTS = 2
     if len(failures) < MIN_DATA_POINTS and _fitted_dist_params is None:
-        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
+        msg = "Insufficient data to fit a distribution. Minimum number of points is 2"
+        raise ValueError(msg)
 
     if type(failures) not in [np.ndarray, list]:
-        raise ValueError("failures must be a list or an array")
+        msg = "failures must be a list or an array"
+        raise ValueError(msg)
     failures = np.asarray(failures)
 
     if right_censored is not None:
         if type(right_censored) not in [np.ndarray, list]:
-            raise ValueError("right_censored must be a list or an array")
+            msg = "right_censored must be a list or an array"
+            raise ValueError(msg)
         right_censored = np.asarray(right_censored)
 
     data_color = kwargs.get("color") if "color" in kwargs else "k"
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
+            raise ValueError(msg)
 
         # error checking for CI_type
         if type(CI_type) not in [str, type(None)]:
-            raise ValueError('CI_type must be "time", "reliability", or "none"')
+            msg = 'CI_type must be "time", "reliability", or "none"'
+            raise ValueError(msg)
         if CI_type is not None:
             if CI_type.upper() in ["T", "TIME"]:
                 CI_type = "time"
@@ -925,7 +954,8 @@ def Gumbel_probability_plot(
             elif CI_type.upper() in ["NONE", "OFF"]:
                 CI_type = "none"
             else:
-                raise ValueError('CI_type must be "time", "reliability", or "none"')
+                msg = 'CI_type must be "time", "reliability", or "none"'
+                raise ValueError(msg)
         if _fitted_dist_params is not None:
             mu = _fitted_dist_params.mu
             sigma = _fitted_dist_params.sigma
@@ -1060,26 +1090,32 @@ def Normal_probability_plot(
 
     """
     if failures is None or len(failures) == 0:
-        raise ValueError("failures must be a list or array of the failure data.")
+        msg = "failures must be a list or array of the failure data."
+        raise ValueError(msg)
     MINIMUM_FAILURES = 2
     if len(failures) < MINIMUM_FAILURES and _fitted_dist_params is None:
-        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
+        msg = "Insufficient data to fit a distribution. Minimum number of points is 2"
+        raise ValueError(msg)
 
     if type(failures) not in [np.ndarray, list]:
-        raise ValueError("failures must be a list or an array")
+        msg = "failures must be a list or an array"
+        raise ValueError(msg)
     failures = np.asarray(failures)
 
     if right_censored is not None:
         if type(right_censored) not in [np.ndarray, list]:
-            raise ValueError("right_censored must be a list or an array")
+            msg = "right_censored must be a list or an array"
+            raise ValueError(msg)
         right_censored = np.asarray(right_censored)
 
     data_color = kwargs.get("color") if "color" in kwargs else "k"
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
+            raise ValueError(msg)
         if type(CI_type) not in [str, type(None)]:
-            raise ValueError('CI_type must be "time", "reliability", or "none"')
+            msg = 'CI_type must be "time", "reliability", or "none"'
+            raise ValueError(msg)
         if CI_type is not None:
             if CI_type.upper() in ["T", "TIME"]:
                 CI_type = "time"
@@ -1088,7 +1124,8 @@ def Normal_probability_plot(
             elif CI_type.upper() in ["NONE", "OFF"]:
                 CI_type = "none"
             else:
-                raise ValueError('CI_type must be "time", "reliability", or "none"')
+                msg = 'CI_type must be "time", "reliability", or "none"'
+                raise ValueError(msg)
         if _fitted_dist_params is not None:
             mu = _fitted_dist_params.mu
             sigma = _fitted_dist_params.sigma
@@ -1226,18 +1263,22 @@ def Lognormal_probability_plot(
 
     """
     if failures is None or len(failures) == 0:
-        raise ValueError("failures must be a list or array of the failure data.")
+        msg = "failures must be a list or array of the failure data."
+        raise ValueError(msg)
     MINIMUM_FAILURES = 2
     if len(failures) < MINIMUM_FAILURES and _fitted_dist_params is None:
-        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
+        msg = "Insufficient data to fit a distribution. Minimum number of points is 2"
+        raise ValueError(msg)
 
     if type(failures) not in [np.ndarray, list]:
-        raise ValueError("failures must be a list or an array")
+        msg = "failures must be a list or an array"
+        raise ValueError(msg)
     failures = np.asarray(failures)
 
     if right_censored is not None:
         if type(right_censored) not in [np.ndarray, list]:
-            raise ValueError("right_censored must be a list or an array")
+            msg = "right_censored must be a list or an array"
+            raise ValueError(msg)
         right_censored = np.asarray(right_censored)
 
     if show_fitted_distribution is False and fit_gamma is True:
@@ -1250,9 +1291,11 @@ def Lognormal_probability_plot(
     xlabel = "Time"  # this will be overridden if gamma is fitted
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
+            raise ValueError(msg)
         if type(CI_type) not in [str, type(None)]:
-            raise ValueError('CI_type must be "time", "reliability", or "none"')
+            msg = 'CI_type must be "time", "reliability", or "none"'
+            raise ValueError(msg)
         if CI_type is not None:
             if CI_type.upper() in ["T", "TIME"]:
                 CI_type = "time"
@@ -1261,7 +1304,8 @@ def Lognormal_probability_plot(
             elif CI_type.upper() in ["NONE", "OFF"]:
                 CI_type = "none"
             else:
-                raise ValueError('CI_type must be "time", "reliability", or "none"')
+                msg = 'CI_type must be "time", "reliability", or "none"'
+                raise ValueError(msg)
         if _fitted_dist_params is not None and _fitted_dist_params.gamma > 0:
             fit_gamma = True
 
@@ -1441,25 +1485,30 @@ def Beta_probability_plot(
 
     """
     if failures is None or len(failures) == 0:
-        raise ValueError("failures must be a list or array of the failure data.")
+        msg = "failures must be a list or array of the failure data."
+        raise ValueError(msg)
     MIN_FAILURES = 2
     if len(failures) < MIN_FAILURES and _fitted_dist_params is None:
-        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
+        msg = "Insufficient data to fit a distribution. Minimum number of points is 2"
+        raise ValueError(msg)
 
     if type(failures) not in [np.ndarray, list]:
-        raise ValueError("failures must be a list or an array")
+        msg = "failures must be a list or an array"
+        raise ValueError(msg)
     failures = np.asarray(failures)
 
     if right_censored is not None:
         if type(right_censored) not in [np.ndarray, list]:
-            raise ValueError("right_censored must be a list or an array")
+            msg = "right_censored must be a list or an array"
+            raise ValueError(msg)
         right_censored = np.asarray(right_censored)
 
     data_color = kwargs.get("color") if "color" in kwargs else "k"
 
     # We can't skip fitting when show_fitted_distribution = False because the axes scaling needs alpha and beta
     if CI <= 0 or CI >= 1:
-        raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
+        msg = "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
+        raise ValueError(msg)
 
     if _fitted_dist_params is not None:
         alpha = _fitted_dist_params.alpha
@@ -1595,18 +1644,22 @@ def Gamma_probability_plot(
     """
     # ensure the input data is arrays
     if failures is None or len(failures) == 0:
-        raise ValueError("failures must be a list or array of the failure data.")
+        msg = "failures must be a list or array of the failure data."
+        raise ValueError(msg)
     MIN_FAILURES = 2
     if len(failures) < MIN_FAILURES and _fitted_dist_params is None:
-        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 2")
+        msg = "Insufficient data to fit a distribution. Minimum number of points is 2"
+        raise ValueError(msg)
 
     if type(failures) not in [np.ndarray, list]:
-        raise ValueError("failures must be a list or an array")
+        msg = "failures must be a list or an array"
+        raise ValueError(msg)
     failures = np.asarray(failures)
 
     if right_censored is not None:
         if type(right_censored) not in [np.ndarray, list]:
-            raise ValueError("right_censored must be a list or an array")
+            msg = "right_censored must be a list or an array"
+            raise ValueError(msg)
         right_censored = np.asarray(right_censored)
 
     if show_fitted_distribution is False and fit_gamma is True:
@@ -1620,9 +1673,11 @@ def Gamma_probability_plot(
 
     # We can't skip fitting when show_fitted_distribution = False because the axes scaling needs beta
     if CI <= 0 or CI >= 1:
-        raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
+        msg = "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
+        raise ValueError(msg)
     if type(CI_type) not in [str, type(None)]:
-        raise ValueError('CI_type must be "time", "reliability", or "none"')
+        msg = 'CI_type must be "time", "reliability", or "none"'
+        raise ValueError(msg)
     if CI_type is not None:
         if CI_type.upper() in ["T", "TIME"]:
             CI_type = "time"
@@ -1631,7 +1686,8 @@ def Gamma_probability_plot(
         elif CI_type.upper() in ["NONE", "OFF"]:
             CI_type = "none"
         else:
-            raise ValueError('CI_type must be "time", "reliability", or "none"')
+            msg = 'CI_type must be "time", "reliability", or "none"'
+            raise ValueError(msg)
     if _fitted_dist_params is not None and _fitted_dist_params.gamma > 0:
         fit_gamma = True
 
@@ -1832,17 +1888,21 @@ def Exponential_probability_plot(
 
     """
     if failures is None or len(failures) == 0:
-        raise ValueError("failures must be a list or array of the failure data.")
+        msg = "failures must be a list or array of the failure data."
+        raise ValueError(msg)
     if len(failures) < 1 and _fitted_dist_params is None:
-        raise ValueError("Insufficient data to fit a distribution. Minimum number of points is 1")
+        msg = "Insufficient data to fit a distribution. Minimum number of points is 1"
+        raise ValueError(msg)
 
     if type(failures) not in [np.ndarray, list]:
-        raise ValueError("failures must be a list or an array")
+        msg = "failures must be a list or an array"
+        raise ValueError(msg)
     failures = np.asarray(failures)
 
     if right_censored is not None:
         if type(right_censored) not in [np.ndarray, list]:
-            raise ValueError("right_censored must be a list or an array")
+            msg = "right_censored must be a list or an array"
+            raise ValueError(msg)
         right_censored = np.asarray(right_censored)
 
     if show_fitted_distribution is False and fit_gamma is True:
@@ -1855,7 +1915,8 @@ def Exponential_probability_plot(
     xlabel = "Time"  # this will be overridden if gamma is fitted
     if show_fitted_distribution is True:
         if CI <= 0 or CI >= 1:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
+            raise ValueError(msg)
 
         if _fitted_dist_params is not None and _fitted_dist_params.gamma > 0:
             fit_gamma = True
@@ -1996,8 +2057,9 @@ def PP_plot_parametric(
 
     """
     if X_dist is None or Y_dist is None:
+        msg = "X_dist and Y_dist must both be specified as probability distributions generated using the Distributions module"
         raise ValueError(
-            "X_dist and Y_dist must both be specified as probability distributions generated using the Distributions module",
+            msg,
         )
     if type(X_dist) not in [
         Weibull_Distribution,
@@ -2018,8 +2080,9 @@ def PP_plot_parametric(
         Loglogistic_Distribution,
         Gumbel_Distribution,
     ]:
+        msg = "Invalid probability distribution. X_dist and Y_dist must both be specified as probability distributions generated using the Distributions module"
         raise ValueError(
-            "Invalid probability distribution. X_dist and Y_dist must both be specified as probability distributions generated using the Distributions module",
+            msg,
         )
 
     # extract certain keyword arguments or specify them if they are not set
@@ -2152,8 +2215,9 @@ def QQ_plot_parametric(
 
     """
     if X_dist is None or Y_dist is None:
+        msg = "dist_X and dist_Y must both be specified as probability distributions generated using the Distributions module"
         raise ValueError(
-            "dist_X and dist_Y must both be specified as probability distributions generated using the Distributions module",
+            msg,
         )
     if type(X_dist) not in [
         Weibull_Distribution,
@@ -2174,8 +2238,9 @@ def QQ_plot_parametric(
         Loglogistic_Distribution,
         Gumbel_Distribution,
     ]:
+        msg = "dist_X and dist_Y must both be specified as probability distributions generated using the Distributions module"
         raise ValueError(
-            "dist_X and dist_Y must both be specified as probability distributions generated using the Distributions module",
+            msg,
         )
     xvals = np.linspace(0.01, 0.99, 100)
 
@@ -2309,8 +2374,9 @@ def PP_plot_semiparametric(
 
     """
     if X_data_failures is None or Y_dist is None:
+        msg = "X_data_failures and Y_dist must both be specified. X_data_failures can be an array or list of failure times. Y_dist must be a probability distribution generated using the Distributions module"
         raise ValueError(
-            "X_data_failures and Y_dist must both be specified. X_data_failures can be an array or list of failure times. Y_dist must be a probability distribution generated using the Distributions module",
+            msg,
         )
     if type(Y_dist) not in [
         Weibull_Distribution,
@@ -2331,15 +2397,17 @@ def PP_plot_semiparametric(
         Loglogistic_Distribution,
         Gumbel_Distribution,
     ]:
+        msg = "Y_dist must be specified as a probability distribution generated using the Distributions module"
         raise ValueError(
-            "Y_dist must be specified as a probability distribution generated using the Distributions module",
+            msg,
         )
     if isinstance(X_data_failures, list):
         X_data_failures = np.sort(np.array(X_data_failures))
     elif isinstance(X_data_failures, np.ndarray):
         X_data_failures = np.sort(X_data_failures)
     else:
-        raise TypeError("X_data_failures must be an array or list")
+        msg = "X_data_failures must be an array or list"
+        raise TypeError(msg)
     if isinstance(X_data_right_censored, list):
         X_data_right_censored = np.sort(np.array(X_data_right_censored))
     elif isinstance(X_data_right_censored, np.ndarray):
@@ -2347,7 +2415,8 @@ def PP_plot_semiparametric(
     elif X_data_right_censored is None:
         pass
     else:
-        raise ValueError("X_data_right_censored must be an array or list")
+        msg = "X_data_right_censored must be an array or list"
+        raise ValueError(msg)
     # extract certain keyword arguments or specify them if they are not set
     a = kwargs.pop("a") if "a" in kwargs else 0.3  # rank adjustment heuristic
     color = kwargs.pop("color") if "color" in kwargs else "k"
@@ -2381,8 +2450,9 @@ def PP_plot_semiparametric(
         ecdf = 1 - np.array(failure_rows["Rank Adjustment Estimate"].values)
         xlabel = "Empirical CDF (Rank Adjustment estimate)"
     else:
+        msg = 'method must be "KM" for Kaplan-meier, "NA" for Nelson-Aalen, or "RA" for Rank Adjustment. Default is KM'
         raise ValueError(
-            'method must be "KM" for Kaplan-meier, "NA" for Nelson-Aalen, or "RA" for Rank Adjustment. Default is KM',
+            msg,
         )
 
     if show_diagonal_line is True:
@@ -2480,8 +2550,9 @@ def QQ_plot_semiparametric(
 
     """
     if X_data_failures is None or Y_dist is None:
+        msg = "X_data_failures and Y_dist must both be specified. X_data_failures can be an array or list of failure times. Y_dist must be a probability distribution generated using the Distributions module"
         raise ValueError(
-            "X_data_failures and Y_dist must both be specified. X_data_failures can be an array or list of failure times. Y_dist must be a probability distribution generated using the Distributions module",
+            msg,
         )
     if type(Y_dist) not in [
         Weibull_Distribution,
@@ -2502,15 +2573,17 @@ def QQ_plot_semiparametric(
         Loglogistic_Distribution,
         Gumbel_Distribution,
     ]:
+        msg = "Y_dist must be specified as a probability distribution generated using the Distributions module"
         raise ValueError(
-            "Y_dist must be specified as a probability distribution generated using the Distributions module",
+            msg,
         )
     if isinstance(X_data_failures, list):
         X_data_failures = np.sort(np.array(X_data_failures))
     elif isinstance(X_data_failures, np.ndarray):
         X_data_failures = np.sort(X_data_failures)
     else:
-        raise ValueError("X_data_failures must be an array or list")
+        msg = "X_data_failures must be an array or list"
+        raise ValueError(msg)
     if isinstance(X_data_right_censored, list):
         X_data_right_censored = np.sort(np.array(X_data_right_censored))
     elif isinstance(X_data_right_censored, np.ndarray):
@@ -2518,7 +2591,8 @@ def QQ_plot_semiparametric(
     elif X_data_right_censored is None:
         pass
     else:
-        raise ValueError("X_data_right_censored must be an array or list")
+        msg = "X_data_right_censored must be an array or list"
+        raise ValueError(msg)
     a = kwargs.pop("a") if "a" in kwargs else 0.3  # rank adjustment heuristic
     # extract certain keyword arguments or specify them if they are not set
     color = kwargs.pop("color") if "color" in kwargs else "k"
@@ -2553,8 +2627,9 @@ def QQ_plot_semiparametric(
         ecdf = 1 - np.array(failure_rows["Rank Adjustment Estimate"].values)
         method_str = "Rank Adjustment"
     else:
+        msg = 'method must be "KM" for Kaplan-meier, "NA" for Nelson-Aalen, or "RA" for Rank Adjustment. Default is KM'
         raise ValueError(
-            'method must be "KM" for Kaplan-meier, "NA" for Nelson-Aalen, or "RA" for Rank Adjustment. Default is KM',
+            msg,
         )
 
     # calculate the failure times at the given quantiles
@@ -2671,7 +2746,8 @@ def plot_points(
 
     """
     if failures is None or len(failures) < 1:
-        raise ValueError("failures must be an array or list with at least 1 failure time")
+        msg = "failures must be an array or list with at least 1 failure time"
+        raise ValueError(msg)
 
     x, y = plotting_positions(
         failures=failures, right_censored=right_censored, a=position_heuristic
@@ -2700,7 +2776,8 @@ def plot_points(
     elif func in ["chf", "CHF"]:
         y_adjusted = -np.log(1 - y)  # CHF = -ln(SF)
     else:
-        raise ValueError("func must be either PDF, CDF, SF, HF, or CHF. Default is CDF")
+        msg = "func must be either PDF, CDF, SF, HF, or CHF. Default is CDF"
+        raise ValueError(msg)
 
     # set plotting defaults for keywords
     color = kwargs.pop("color") if "color" in kwargs else "k"

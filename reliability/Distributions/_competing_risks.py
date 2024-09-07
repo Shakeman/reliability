@@ -91,7 +91,8 @@ class Competing_Risks_Model:
 
     def __init__(self, distributions):
         if type(distributions) not in [list, np.ndarray]:
-            raise ValueError("distributions must be a list or array of distribution objects.")
+            msg = "distributions must be a list or array of distribution objects."
+            raise ValueError(msg)
         contains_normal_or_gumbel = False
         for dist in distributions:
             if type(dist) not in [
@@ -104,8 +105,9 @@ class Competing_Risks_Model:
                 Loglogistic_Distribution,
                 Gumbel_Distribution,
             ]:
+                msg = "distributions must be an array or list of probability distributions. Each distribution must be created using the reliability.Distributions module."
                 raise ValueError(
-                    "distributions must be an array or list of probability distributions. Each distribution must be created using the reliability.Distributions module.",
+                    msg,
                 )
             if type(dist) in [Normal_Distribution, Gumbel_Distribution]:
                 contains_normal_or_gumbel = (
@@ -209,11 +211,13 @@ class Competing_Risks_Model:
         elif type(X) in [np.ndarray, list]:
             X = np.asarray(X)
         else:
-            raise ValueError("unexpected type in xvals. Must be  list, or array")
+            msg = "unexpected type in xvals. Must be  list, or array"
+            raise ValueError(msg)
 
         if min(X) < 0 and self.__contains_normal_or_gumbel is False:
+            msg = "xvals was found to contain values below 0. This is only allowed if some of the mixture components are Normal or Gumbel distributions."
             raise ValueError(
-                "xvals was found to contain values below 0. This is only allowed if some of the mixture components are Normal or Gumbel distributions.",
+                msg,
             )
 
         X_positive = X[X >= 0]
@@ -758,12 +762,15 @@ class Competing_Risks_Model:
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         ppf = self.__xvals_init[np.argmin(abs((1 - self.__sf_init) - q))]
         return unpack_single_arrays(ppf)
 
@@ -783,12 +790,15 @@ class Competing_Risks_Model:
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         isf = self.__xvals_init[np.argmin(abs(self.__sf_init - q))]
         return unpack_single_arrays(isf)
 
@@ -871,7 +881,8 @@ class Competing_Risks_Model:
                     ):
                         sf *= self.distributions[i].SF(X, show_plot=False)
             else:
-                raise ValueError("X must be a float or a numpy array of floats")
+                msg = "X must be a float or a numpy array of floats"
+                raise ValueError(msg)
             return sf
 
         t_full: npt.NDArray[np.float64] | np.float64 = np.linspace(t, self.__xmax_inf, 1000000)
@@ -901,7 +912,8 @@ class Competing_Risks_Model:
 
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
-            raise ValueError("number_of_samples must be an integer greater than 0")
+            msg = "number_of_samples must be an integer greater than 0"
+            raise ValueError(msg)
         rng = np.random.default_rng(seed)
         return rng.choice(
             a=self.__xvals_init,

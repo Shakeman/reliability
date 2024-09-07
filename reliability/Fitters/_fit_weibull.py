@@ -616,19 +616,22 @@ class Fit_Weibull_2P_grouped:
         **kwargs,
     ):
         if dataframe is None or type(dataframe) is not pd.core.frame.DataFrame:
+            msg = 'dataframe must be a pandas dataframe with the columns "category" (F for failure or C for censored), "time" (the failure times), and "quantity" (the number of events at each time)'
             raise ValueError(
-                'dataframe must be a pandas dataframe with the columns "category" (F for failure or C for censored), "time" (the failure times), and "quantity" (the number of events at each time)',
+                msg,
             )
         for item in dataframe.columns.to_numpy():
             if item not in ["category", "time", "quantity"]:
+                msg = 'The titles of the dataframe columns must be: "category" (F for failure or C for censored), "time" (the failure times), and "quantity" (the number of events at each time)'
                 raise ValueError(
-                    'The titles of the dataframe columns must be: "category" (F for failure or C for censored), "time" (the failure times), and "quantity" (the number of events at each time)',
+                    msg,
                 )
         categories = dataframe.category.unique()
         for item in categories:
             if item not in ["F", "C"]:
+                msg = 'The category column must have values "F" or "C" for failure or censored (right censored) respectively. Other values were detected.'
                 raise ValueError(
-                    'The category column must have values "F" or "C" for failure or censored (right censored) respectively. Other values were detected.',
+                    msg,
                 )
 
         # automatically filter out rows with zeros and print warning if zeros have been removed

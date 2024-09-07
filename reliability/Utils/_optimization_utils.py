@@ -63,7 +63,8 @@ class LS_optimization:
         LL_func_force=None,
     ):
         if method not in ["RRX", "RRY", "LS", "NLLS"]:
-            raise ValueError("method must be either RRX, RRY, LS, or NLLS. Default is LS")
+            msg = "method must be either RRX, RRY, LS, or NLLS. Default is LS"
+            raise ValueError(msg)
         if func_name in [
             "Weibull_3P",
             "Gamma_2P",
@@ -355,7 +356,8 @@ class MLE_optimization:
         elif func_name == "Weibull_ZI":
             bounds = [(0.0001, None), (0.0001, None), (0, 0.99999)]
         else:
-            raise ValueError('func_name is not recognised. Use the correct name e.g. "Weibull_2P"')
+            msg = 'func_name is not recognised. Use the correct name e.g. "Weibull_2P"'
+            raise ValueError(msg)
 
         # determine which optimizers to use
         stop_after_success = False
@@ -800,12 +802,14 @@ class ALT_MLE_optimization:
             ]  # c, m, n, shape
             dual_stress = True
         else:
+            msg = "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power"
             raise ValueError(
-                "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power",
+                msg,
             )
 
         if dist not in ["Weibull", "Exponential", "Lognormal", "Normal"]:
-            raise ValueError("dist must be one of Weibull, Exponential, Lognormal, Normal.")
+            msg = "dist must be one of Weibull, Exponential, Lognormal, Normal."
+            raise ValueError(msg)
 
         # remove the last bound as Exponential does not need a bound for shape
         if dist == "Exponential":

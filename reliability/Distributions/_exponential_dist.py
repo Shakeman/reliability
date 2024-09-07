@@ -68,7 +68,8 @@ class Exponential_Distribution:
     def __init__(self, Lambda: float | np.float64 | None = None, gamma: float | np.float64 = 0.0, **kwargs):
         self.name = "Exponential"
         if Lambda is None:
-            raise ValueError("Parameter Lambda must be specified. Eg. Exponential_Distribution(Lambda=3)")
+            msg = "Parameter Lambda must be specified. Eg. Exponential_Distribution(Lambda=3)"
+            raise ValueError(msg)
         self.Lambda: float = float(Lambda)
         self.gamma: float = float(gamma)
         self.parameters: npt.NDArray[np.float64] = np.array([self.Lambda, self.gamma])
@@ -820,12 +821,15 @@ class Exponential_Distribution:
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         ppf = ss.expon.ppf(q, scale=1 / self.Lambda, loc=self.gamma)
         return unpack_single_arrays(ppf)
 
@@ -845,12 +849,15 @@ class Exponential_Distribution:
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         isf = ss.expon.isf(q, scale=1 / self.Lambda, loc=self.gamma)
         return unpack_single_arrays(isf)
 
@@ -938,7 +945,8 @@ class Exponential_Distribution:
 
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
-            raise ValueError("number_of_samples must be an integer greater than 0")
+            msg = "number_of_samples must be an integer greater than 0"
+            raise ValueError(msg)
         if seed is not None:
             rng = np.random.default_rng(seed)
         RVS: npt.NDArray[np.float64] = ss.expon.rvs(

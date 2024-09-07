@@ -277,11 +277,14 @@ class Fit_Everything_ALT:
         self.__use_level_stress = use_level_stress
 
         if print_results not in [True, False]:
-            raise ValueError("print_results must be either True or False. Defaults is True.")
+            msg = "print_results must be either True or False. Defaults is True."
+            raise ValueError(msg)
         if show_probability_plot not in [True, False]:
-            raise ValueError("show_probability_plot must be either True or False. Default is True.")
+            msg = "show_probability_plot must be either True or False. Default is True."
+            raise ValueError(msg)
         if show_best_distribution_probability_plot not in [True, False]:
-            raise ValueError("show_best_distribution_probability_plot must be either True or False. Default is True.")
+            msg = "show_best_distribution_probability_plot must be either True or False. Default is True."
+            raise ValueError(msg)
 
         single_stress_ALT_models_list = [
             "Weibull_Exponential",
@@ -1385,8 +1388,9 @@ class Fit_Everything_ALT:
             sort_by = "BIC"
         # sort the dataframe by BIC, AICc, or log-likelihood. Smallest AICc, BIC, log-likelihood is better fit
         if not isinstance(sort_by, str):
+            msg = "Invalid input to sort_by. Options are 'BIC', 'AICc', or 'Log-likelihood'. Default is 'BIC'."
             raise ValueError(
-                "Invalid input to sort_by. Options are 'BIC', 'AICc', or 'Log-likelihood'. Default is 'BIC'.",
+                msg,
             )
         if sort_by.upper() == "BIC":
             df2 = df.sort_values(by="BIC")
@@ -1404,11 +1408,13 @@ class Fit_Everything_ALT:
             df2 = df.sort_values(by="LLabs")
             df2 = df2.drop("LLabs", axis=1)  # remove the column created just for sorting
         else:
+            msg = "Invalid input to sort_by. Options are 'BIC', 'AICc', or 'Log-likelihood'. Default is 'BIC'."
             raise ValueError(
-                "Invalid input to sort_by. Options are 'BIC', 'AICc', or 'Log-likelihood'. Default is 'BIC'.",
+                msg,
             )
         if len(df2.index.values) == 0:
-            raise ValueError("You have excluded all available ALT models")
+            msg = "You have excluded all available ALT models"
+            raise ValueError(msg)
         self.results = df2
 
         # creates a distribution object of the best fitting distribution and assigns its name
@@ -1939,7 +1945,8 @@ class Fit_Everything_ALT:
                     )
 
                 case _:
-                    raise ValueError("unknown item was fitted")
+                    msg = "unknown item was fitted"
+                    raise ValueError(msg)
 
             if best_only is False:
                 plt.title(item)

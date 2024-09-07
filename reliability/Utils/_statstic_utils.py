@@ -64,21 +64,25 @@ def least_squares(
 
     """
     if min(failures) <= 0 and dist not in ["Normal_2P", "Gumbel_2P"]:
+        msg = "failures contains zeros or negative values which are only suitable when dist is Normal_2P or Gumbel_2P"
         raise ValueError(
-            "failures contains zeros or negative values which are only suitable when dist is Normal_2P or Gumbel_2P",
+            msg,
         )
     if max(failures) >= 1 and dist == "Beta_2P":
+        msg = "failures contains values greater than or equal to one which is not allowed when dist is Beta_2P"
         raise ValueError(
-            "failures contains values greater than or equal to one which is not allowed when dist is Beta_2P",
+            msg,
         )
     if force_shape is not None and dist not in [
         "Weibull_2P",
         "Normal_2P",
         "Lognormal_2P",
     ]:
-        raise ValueError("force_shape can only be applied to Weibull_2P, Normal_2P, and Lognormal_2P")
+        msg = "force_shape can only be applied to Weibull_2P, Normal_2P, and Lognormal_2P"
+        raise ValueError(msg)
     if method not in ["RRX", "RRY"]:
-        raise ValueError('method must be either "RRX" or "RRY". Default is RRX.')
+        msg = 'method must be either "RRX" or "RRY". Default is RRX.'
+        raise ValueError(msg)
 
     from reliability.Probability_plotting import (
         plotting_positions,
@@ -132,7 +136,8 @@ def least_squares(
         case "Beta_2P":
             guess = Beta_2P_guess(x, y, failures)
         case _:
-            raise ValueError('Unknown dist. Use the correct name. eg. "Weibull_2P"')
+            msg = 'Unknown dist. Use the correct name. eg. "Weibull_2P"'
+            raise ValueError(msg)
     return guess
 
 
@@ -979,12 +984,14 @@ def ALT_least_squares(model, failures, stress_1_array, stress_2_array=None) -> l
         elif model == "Dual_Power":
             output = dual_power_ALT_least_squares(L, S1, S2, model)
         else:
+            msg = "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power."
             raise ValueError(
-                "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power.",
+                msg,
             )
     else:
+        msg = "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power."
         raise ValueError(
-            "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power.",
+            msg,
         )
     return output
 

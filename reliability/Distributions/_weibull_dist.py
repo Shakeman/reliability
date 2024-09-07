@@ -72,7 +72,8 @@ class Weibull_Distribution:
     def __init__(self, alpha=None, beta=None, gamma: float | np.float64 = 0.0, **kwargs):
         self.name = "Weibull"
         if alpha is None or beta is None:
-            raise ValueError("Parameters alpha and beta must be specified. Eg. Weibull_Distribution(alpha=5,beta=2)")
+            msg = "Parameters alpha and beta must be specified. Eg. Weibull_Distribution(alpha=5,beta=2)"
+            raise ValueError(msg)
         self.alpha = float(alpha)
         self.beta = float(beta)
         self.gamma = float(gamma)
@@ -898,12 +899,15 @@ class Weibull_Distribution:
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         ppf = ss.weibull_min.ppf(q, self.beta, scale=self.alpha, loc=self.gamma)
         return unpack_single_arrays(ppf)
 
@@ -923,12 +927,15 @@ class Weibull_Distribution:
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         isf = ss.weibull_min.isf(q, self.beta, scale=self.alpha, loc=self.gamma)
         return unpack_single_arrays(isf)
 
@@ -1023,7 +1030,8 @@ class Weibull_Distribution:
 
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
-            raise ValueError("number_of_samples must be an integer greater than 0")
+            msg = "number_of_samples must be an integer greater than 0"
+            raise ValueError(msg)
         rng = np.random.default_rng(seed)
         RVS: npt.NDArray[np.float64] = ss.weibull_min.rvs(
             self.beta, scale=self.alpha, loc=self.gamma, size=number_of_samples, random_state=rng

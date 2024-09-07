@@ -92,12 +92,15 @@ class reliability_growth:
         if type(times) in [list, np.ndarray]:
             times = np.sort(np.asarray(times))
         else:
-            raise ValueError("times must be an array or list of failure times")
+            msg = "times must be an array or list of failure times"
+            raise ValueError(msg)
 
         if min(times) <= 0:
-            raise ValueError("failure times cannot be negative. times must be an array or list of failure times")
+            msg = "failure times cannot be negative. times must be an array or list of failure times"
+            raise ValueError(msg)
         if not isinstance(model, str):
-            raise ValueError('model must be either "Duane" or "Crow-AMSAA".')
+            msg = 'model must be either "Duane" or "Crow-AMSAA".'
+            raise ValueError(msg)
         if model.upper() in ["DUANE", "D"]:
             model = "Duane"
         elif model.upper() in [
@@ -111,7 +114,8 @@ class reliability_growth:
         ]:
             model = "Crow-AMSAA"
         else:
-            raise ValueError('method must be either "Duane" or "Crow-AMSAA".')
+            msg = 'method must be either "Duane" or "Crow-AMSAA".'
+            raise ValueError(msg)
 
         self.__model = model
         self.__target_MTBF = target_MTBF
@@ -343,8 +347,9 @@ class optimal_replacement_time:
         q: int = 0,
     ):
         if cost_PM > cost_CM:
+            msg = "Cost_PM must be less than Cost_CM otherwise preventative maintenance should not be conducted."
             raise ValueError(
-                "Cost_PM must be less than Cost_CM otherwise preventative maintenance should not be conducted.",
+                msg,
             )
         if weibull_beta < 1:
             colorprint(
@@ -385,8 +390,9 @@ class optimal_replacement_time:
             min_cost = CPUT[idx]  # minimum cost per unit time
             ORT = t[idx]  # optimal replacement time
         else:
+            msg = 'q must be 0 or 1. Default is 0. Use 0 for "as good as new" and use 1 for "as good as old".'
             raise ValueError(
-                'q must be 0 or 1. Default is 0. Use 0 for "as good as new" and use 1 for "as good as old".',
+                msg,
             )
         self.ORT = ORT
         self.min_cost = min_cost
@@ -608,35 +614,42 @@ class ROCOF:
         test_end: float | None = None,
     ):
         if times_between_failures is not None and failure_times is not None:
+            msg = "You have specified both times_between_failures and failure times. You can specify one but not both. Use times_between_failures for failure interarrival times, and failure_times for the actual failure times. failure_times should be the same as np.cumsum(times_between_failures)"
             raise ValueError(
-                "You have specified both times_between_failures and failure times. You can specify one but not both. Use times_between_failures for failure interarrival times, and failure_times for the actual failure times. failure_times should be the same as np.cumsum(times_between_failures)",
+                msg,
             )
         if times_between_failures is not None:
             if any(t <= 0 for t in times_between_failures):
-                raise ValueError("times_between_failures cannot be less than zero")
+                msg = "times_between_failures cannot be less than zero"
+                raise ValueError(msg)
             if isinstance(times_between_failures, list):
                 ti = times_between_failures
             elif isinstance(times_between_failures, np.ndarray):
                 ti = list(times_between_failures)
             else:
-                raise ValueError("times_between_failures must be a list or array")
+                msg = "times_between_failures must be a list or array"
+                raise ValueError(msg)
         if failure_times is not None:
             if any(t <= 0 for t in failure_times):
-                raise ValueError("failure_times cannot be less than zero")
+                msg = "failure_times cannot be less than zero"
+                raise ValueError(msg)
             if isinstance(failure_times, list):
                 failure_times = np.sort(np.array(failure_times))
             elif isinstance(failure_times, np.ndarray):
                 failure_times = np.sort(failure_times)
             else:
-                raise ValueError("failure_times must be a list or array")
+                msg = "failure_times must be a list or array"
+                raise ValueError(msg)
             failure_times[1:] -= failure_times[:-1].copy()  # this is the opposite of np.cumsum
             ti = list(failure_times)
         if test_end is not None and type(test_end) not in [float, int]:
+            msg = "test_end should be a float or int. Use test_end to specify the end time of a test which was not failure terminated."
             raise ValueError(
-                "test_end should be a float or int. Use test_end to specify the end time of a test which was not failure terminated.",
+                msg,
             )
         if CI <= 0 or CI >= 1:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence interval.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval."
+            raise ValueError(msg)
         if test_end is None:
             tn: float = sum(ti)
             n: int = len(ti) - 1
@@ -644,7 +657,8 @@ class ROCOF:
             tn = test_end
             n = len(ti)
             if tn < sum(ti):
-                raise ValueError("test_end cannot be less than the final test time")
+                msg = "test_end cannot be less than the final test time"
+                raise ValueError(msg)
 
         tc = np.cumsum(ti[0:n])
         sum_tc = sum(tc)
@@ -874,7 +888,8 @@ class MCF_nonparametric:
         elif isinstance(data, np.ndarray):
             data = list(data)
         else:
-            raise ValueError("data must be a list or numpy array")
+            msg = "data must be a list or numpy array"
+            raise ValueError(msg)
 
         # check each item is a list and fix up any ndarrays to be lists.
         test_for_single_system = []
@@ -887,15 +902,17 @@ class MCF_nonparametric:
             elif isinstance(item, (int, float)):
                 test_for_single_system.append(True)
             else:
-                raise ValueError("Each item in the data must be a list or numpy array. eg. data = [[1,3,5],[3,6,8]]")
+                msg = "Each item in the data must be a list or numpy array. eg. data = [[1,3,5],[3,6,8]]"
+                raise ValueError(msg)
         # Wraps the data in another list if all elements were numbers.
         if all(test_for_single_system):  # checks if all are True
             data = [data]
         elif not any(test_for_single_system):  # checks if all are False
             pass
         else:
+            msg = "Mixed data types found in the data. Each item in the data must be a list or numpy array. eg. data = [[1,3,5],[3,6,8]]."
             raise ValueError(
-                "Mixed data types found in the data. Each item in the data must be a list or numpy array. eg. data = [[1,3,5],[3,6,8]].",
+                msg,
             )
 
         end_times = []
@@ -909,10 +926,12 @@ class MCF_nonparametric:
                     end_times.append(t)
 
         if CI < 0 or CI > 1:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals (two sided).")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% confidence intervals (two sided)."
+            raise ValueError(msg)
 
         if max(end_times) < max(repair_times):
-            raise ValueError("The final end time must not be less than the final repair time.")
+            msg = "The final end time must not be less than the final repair time."
+            raise ValueError(msg)
         last_time = max(end_times)
         C_array = ["C"] * len(end_times)
         F_array = ["F"] * len(repair_times)
@@ -1194,7 +1213,8 @@ class MCF_parametric:
 
     def __init__(self, data, CI=0.95):
         if CI <= 0 or CI >= 1:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
+            raise ValueError(msg)
 
         MCF_NP = MCF_nonparametric(
             data=data,

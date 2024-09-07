@@ -94,8 +94,9 @@ def life_stress_plot(
         elif model in ["Exponential", "Eyring", "Power"]:
             dual_stress = False
         else:
+            msg = "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power"
             raise ValueError(
-                "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power",
+                msg,
             )
 
         if isinstance(ax, _axes.Axes):
@@ -133,7 +134,8 @@ def life_stress_plot(
         elif dist == "Exponential":
             line_label = r"$1/\lambda$"
         else:
-            raise ValueError("dist must be either Weibull, Lognormal, Normal, Exponential")
+            msg = "dist must be either Weibull, Lognormal, Normal, Exponential"
+            raise ValueError(msg)
 
         if dual_stress is True:
             # collect all the stresses so we can find their min and max
@@ -243,9 +245,8 @@ def life_stress_plot(
                 plt.xlabel("Stress")
             for i, stress in enumerate(stresses_for_groups):
                 if isinstance(stress, list):
-                    raise ValueError(
-                        "stresses_for_groups must be a list of floats for single stress, not a list of lists."
-                    )
+                    msg = "stresses_for_groups must be a list of floats for single stress, not a list of lists."
+                    raise ValueError(msg)
                 failure_points = failure_groups[i]
                 stress_points = np.ones_like(failure_points) * stress
                 if swap_xy is True:
@@ -266,7 +267,8 @@ def life_stress_plot(
                     )
             if use_level_stress is not None:
                 if isinstance(use_level_stress, np.ndarray):
-                    raise ValueError("use_level_stress must be a float for single stress, not an array.")
+                    msg = "use_level_stress must be a float for single stress, not an array."
+                    raise ValueError(msg)
                 alpha_at_use_stress = life_func(S1=use_level_stress)
                 if swap_xy is True:
                     plt.plot(
@@ -343,7 +345,8 @@ def extract_CI(
 
     """
     if CI_y is not None and CI_x is not None:
-        raise ValueError("Both CI_x and CI_y have been provided. Please provide only one.")
+        msg = "Both CI_x and CI_y have been provided. Please provide only one."
+        raise ValueError(msg)
     if dist.name == "Exponential":
         if CI_y is not None:
             if func == "SF":
@@ -353,7 +356,8 @@ def extract_CI(
             elif func == "CHF":
                 q = np.exp(-np.asarray(CI_y))
             else:
-                raise ValueError("func must be CDF, SF, or CHF")
+                msg = "func must be CDF, SF, or CHF"
+                raise ValueError(msg)
             SF_time: tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]] = (
                 distribution_confidence_intervals.exponential_CI_only(dist=dist, CI=CI, q=q)
             )
@@ -367,18 +371,21 @@ def extract_CI(
             elif func == "CHF":
                 lower, upper = -np.log(SF_rel[0]), -np.log(SF_rel[1])
             else:
-                raise ValueError("func must be CDF, SF, or CHF")
+                msg = "func must be CDF, SF, or CHF"
+                raise ValueError(msg)
         else:
             lower, upper = None, None
     elif CI_type is None:
         lower, upper = None, None
     elif CI_x is not None and CI_y is None and CI_type == "time":
+        msg = "WARNING: If CI_type=time then CI_y must be specified in order to extract the confidence bounds on time."
         raise ValueError(
-            "WARNING: If CI_type=time then CI_y must be specified in order to extract the confidence bounds on time.",
+            msg,
         )
     elif CI_y is not None and CI_x is None and CI_type == "reliability":
+        msg = "WARNING: If CI_type=reliability then CI_x must be specified in order to extract the confidence bounds on reliability."
         raise ValueError(
-            "WARNING: If CI_type=reliability then CI_x must be specified in order to extract the confidence bounds on reliability.",
+            msg,
         )
     elif (CI_y is not None and CI_type == "time") or (CI_x is not None and CI_type == "reliability"):
         if CI_type == "time":
@@ -389,7 +396,8 @@ def extract_CI(
             elif func == "CHF":
                 q = np.exp(-np.asarray(CI_y))
             else:
-                raise ValueError("func must be CDF, SF, or CHF")
+                msg = "func must be CDF, SF, or CHF"
+                raise ValueError(msg)
         if dist.name == "Weibull":
             if CI_type == "time":
                 SF_time = distribution_confidence_intervals.weibull_CI_only(dist=dist, CI_type="time", CI=CI, q=q)
@@ -498,7 +506,8 @@ def extract_CI(
                 elif func == "CHF":
                     lower, upper = -np.log(SF_rel[1]), -np.log(SF_rel[0])
         else:
-            raise ValueError("Unknown distribution")
+            msg = "Unknown distribution"
+            raise ValueError(msg)
     else:
         lower, upper = None, None
     if lower is not None and upper is not None and len(lower) == 1:  # unpack arrays of length 1
@@ -579,11 +588,14 @@ class distribution_confidence_intervals:
 
         if dist.Lambda_SE is not None and dist.Z is not None and (q is not None or x is not None):
             if func not in ["CDF", "SF", "CHF"]:
-                raise ValueError("func must be either CDF, SF, or CHF")
+                msg = "func must be either CDF, SF, or CHF"
+                raise ValueError(msg)
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError("q must be a list or array of quantiles. Default is None")
+                msg = "q must be a list or array of quantiles. Default is None"
+                raise ValueError(msg)
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError("x must be a list or array of x-values. Default is None")
+                msg = "x must be a list or array of x-values. Default is None"
+                raise ValueError(msg)
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -632,9 +644,11 @@ class distribution_confidence_intervals:
                 return t_lower, t_upper
             if x is not None:
                 return Y_lower, Y_upper
-            raise ValueError("q or x values must be provided in order to calculate the confidence intervals.")
+            msg = "q or x values must be provided in order to calculate the confidence intervals."
+            raise ValueError(msg)
+        msg = "The Exponential distribution object must contain Lambda_SE, Z, and q or x values in order to calculate the confidence intervals."
         raise ValueError(
-            "The Exponential distribution object must contain Lambda_SE, Z, and q or x values in order to calculate the confidence intervals.",
+            msg,
         )
 
     @staticmethod
@@ -702,11 +716,14 @@ class distribution_confidence_intervals:
         # this section plots the confidence interval
         if dist.Lambda_SE is not None and dist.Z is not None and (plot_CI is True or q is not None or x is not None):
             if func not in ["CDF", "SF", "CHF"]:
-                raise ValueError("func must be either CDF, SF, or CHF")
+                msg = "func must be either CDF, SF, or CHF"
+                raise ValueError(msg)
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError("q must be a list or array of quantiles. Default is None")
+                msg = "q must be a list or array of quantiles. Default is None"
+                raise ValueError(msg)
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError("x must be a list or array of x-values. Default is None")
+                msg = "x must be a list or array of x-values. Default is None"
+                raise ValueError(msg)
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -866,11 +883,14 @@ class distribution_confidence_intervals:
             ]:
                 CI_type = "reliability"
             if func not in ["CDF", "SF", "CHF"]:
-                raise ValueError("func must be either CDF, SF, or CHF")
+                msg = "func must be either CDF, SF, or CHF"
+                raise ValueError(msg)
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError("q must be a list or array of quantiles. Default is None")
+                msg = "q must be a list or array of quantiles. Default is None"
+                raise ValueError(msg)
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError("x must be a list or array of x-values. Default is None")
+                msg = "x must be a list or array of x-values. Default is None"
+                raise ValueError(msg)
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -938,7 +958,8 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
-                raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+                msg = "q values must be provided in order to calculate the time confidence intervals."
+                raise ValueError(msg)
             # Confidence bounds on Reliability (in terms of time)
             if CI_type == "reliability":
                 if x is not None:
@@ -978,12 +999,15 @@ class distribution_confidence_intervals:
                     Y_upper = no_reverse(Y_upper, CI_type=CI_type, plot_type=func)
                 if x is not None:
                     return Y_lower, Y_upper
+                msg = "x values must be provided in order to calculate the reliability confidence intervals."
                 raise ValueError(
-                    "x values must be provided in order to calculate the reliability confidence intervals.",
+                    msg,
                 )
-            raise ValueError("CI_type must be either 'time' or 'reliability'")
+            msg = "CI_type must be either 'time' or 'reliability'"
+            raise ValueError(msg)
+        msg = "The Weibull distribution object must contain alpha_SE, beta_SE, Cov_alpha_beta, Z, and q or x values in order to calculate the confidence intervals."
         raise ValueError(
-            "The Weibull distribution object must contain alpha_SE, beta_SE, Cov_alpha_beta, Z, and q or x values in order to calculate the confidence intervals.",
+            msg,
         )
 
     @staticmethod
@@ -1073,11 +1097,14 @@ class distribution_confidence_intervals:
             ]:
                 CI_type = "reliability"
             if func not in ["CDF", "SF", "CHF"]:
-                raise ValueError("func must be either CDF, SF, or CHF")
+                msg = "func must be either CDF, SF, or CHF"
+                raise ValueError(msg)
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError("q must be a list or array of quantiles. Default is None")
+                msg = "q must be a list or array of quantiles. Default is None"
+                raise ValueError(msg)
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError("x must be a list or array of x-values. Default is None")
+                msg = "x must be a list or array of x-values. Default is None"
+                raise ValueError(msg)
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -1330,11 +1357,14 @@ class distribution_confidence_intervals:
             ]:
                 CI_type = "reliability"
             if func not in ["CDF", "SF", "CHF"]:
-                raise ValueError("func must be either CDF, SF, or CHF")
+                msg = "func must be either CDF, SF, or CHF"
+                raise ValueError(msg)
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError("q must be a list or array of quantiles. Default is None")
+                msg = "q must be a list or array of quantiles. Default is None"
+                raise ValueError(msg)
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError("x must be a list or array of x-values. Default is None")
+                msg = "x must be a list or array of x-values. Default is None"
+                raise ValueError(msg)
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -1411,7 +1441,8 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
-                raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+                msg = "q values must be provided in order to calculate the time confidence intervals."
+                raise ValueError(msg)
 
             # Confidence bounds on Reliability (in terms of time)
             if CI_type == "reliability":
@@ -1453,12 +1484,15 @@ class distribution_confidence_intervals:
 
                 if x is not None:
                     return Y_lower, Y_upper
+                msg = "x values must be provided in order to calculate the reliability confidence intervals."
                 raise ValueError(
-                    "x values must be provided in order to calculate the reliability confidence intervals.",
+                    msg,
                 )
-            raise ValueError("CI_type must be either 'time' or 'reliability'")
+            msg = "CI_type must be either 'time' or 'reliability'"
+            raise ValueError(msg)
+        msg = "The Gamma distribution object must contain mu_SE, beta_SE, Cov_mu_beta, CI, and q or x values in order to calculate the confidence intervals."
         raise ValueError(
-            "The Gamma distribution object must contain mu_SE, beta_SE, Cov_mu_beta, CI, and q or x values in order to calculate the confidence intervals.",
+            msg,
         )
 
     @staticmethod
@@ -1547,11 +1581,14 @@ class distribution_confidence_intervals:
             ]:
                 CI_type = "reliability"
             if func not in ["CDF", "SF", "CHF"]:
-                raise ValueError("func must be either CDF, SF, or CHF")
+                msg = "func must be either CDF, SF, or CHF"
+                raise ValueError(msg)
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError("q must be a list or array of quantiles. Default is None")
+                msg = "q must be a list or array of quantiles. Default is None"
+                raise ValueError(msg)
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError("x must be a list or array of x-values. Default is None")
+                msg = "x must be a list or array of x-values. Default is None"
+                raise ValueError(msg)
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -1732,10 +1769,12 @@ class distribution_confidence_intervals:
                     )
                 if x is not None:
                     return Y_lower, Y_upper
+                msg = "x values must be provided in order to calculate the reliability confidence intervals."
                 raise ValueError(
-                    "x values must be provided in order to calculate the reliability confidence intervals.",
+                    msg,
                 )
-            raise ValueError("CI_type must be either 'time' or 'reliability'")
+            msg = "CI_type must be either 'time' or 'reliability'"
+            raise ValueError(msg)
         return None
 
     @staticmethod
@@ -1813,11 +1852,14 @@ class distribution_confidence_intervals:
             ]:
                 CI_type = "reliability"
             if func not in ["CDF", "SF", "CHF"]:
-                raise ValueError("func must be either CDF, SF, or CHF")
+                msg = "func must be either CDF, SF, or CHF"
+                raise ValueError(msg)
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError("q must be a list or array of quantiles. Default is None")
+                msg = "q must be a list or array of quantiles. Default is None"
+                raise ValueError(msg)
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError("x must be a list or array of x-values. Default is None")
+                msg = "x must be a list or array of x-values. Default is None"
+                raise ValueError(msg)
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -1881,7 +1923,8 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
-                raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+                msg = "q values must be provided in order to calculate the time confidence intervals."
+                raise ValueError(msg)
             # Confidence bounds on Reliability (in terms of time)
             if CI_type == "reliability":
                 t = x if x is not None else np.linspace(dist.quantile(1e-05), dist.quantile(0.99999), points)
@@ -1910,13 +1953,16 @@ class distribution_confidence_intervals:
 
                 if x is not None:
                     return Y_lower, Y_upper
+                msg = "x values must be provided in order to calculate the reliability confidence intervals."
                 raise ValueError(
-                    "x values must be provided in order to calculate the reliability confidence intervals.",
+                    msg,
                 )
+            msg = "The confidence intervals cannot be calculated. Pleasesupply CI Type of time or reliability."
             raise ValueError(
-                "The confidence intervals cannot be calculated. Pleasesupply CI Type of time or reliability.",
+                msg,
             )
-        raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
+        msg = "The confidence intervals cannot be calculated. Please check the input parameters."
+        raise ValueError(msg)
 
     @staticmethod
     def normal_CI(
@@ -2003,11 +2049,14 @@ class distribution_confidence_intervals:
             ]:
                 CI_type = "reliability"
             if func not in ["CDF", "SF", "CHF"]:
-                raise ValueError("func must be either CDF, SF, or CHF")
+                msg = "func must be either CDF, SF, or CHF"
+                raise ValueError(msg)
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError("q must be a list or array of quantiles. Default is None")
+                msg = "q must be a list or array of quantiles. Default is None"
+                raise ValueError(msg)
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError("x must be a list or array of x-values. Default is None")
+                msg = "x must be a list or array of x-values. Default is None"
+                raise ValueError(msg)
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -2235,11 +2284,14 @@ class distribution_confidence_intervals:
             ]:
                 CI_type = "reliability"
             if func not in ["CDF", "SF", "CHF"]:
-                raise ValueError("func must be either CDF, SF, or CHF")
+                msg = "func must be either CDF, SF, or CHF"
+                raise ValueError(msg)
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError("q must be a list or array of quantiles. Default is None")
+                msg = "q must be a list or array of quantiles. Default is None"
+                raise ValueError(msg)
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError("x must be a list or array of x-values. Default is None")
+                msg = "x must be a list or array of x-values. Default is None"
+                raise ValueError(msg)
 
             if q is not None:
                 q = np.asarray(q)
@@ -2307,7 +2359,8 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
-                raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+                msg = "q values must be provided in order to calculate the time confidence intervals."
+                raise ValueError(msg)
 
             if CI_type == "reliability":
                 # Confidence bounds on Reliability (in terms of time)
@@ -2347,13 +2400,16 @@ class distribution_confidence_intervals:
 
                 if x is not None:
                     return Y_lower, Y_upper
+                msg = "x values must be provided in order to calculate the reliability confidence intervals."
                 raise ValueError(
-                    "x values must be provided in order to calculate the reliability confidence intervals.",
+                    msg,
                 )
+            msg = "The confidence intervals cannot be calculated. Please supply CI Type of time or reliability."
             raise ValueError(
-                "The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.",
+                msg,
             )
-        raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
+        msg = "The confidence intervals cannot be calculated. Please check the input parameters."
+        raise ValueError(msg)
 
     @staticmethod
     def lognormal_CI(
@@ -2440,11 +2496,14 @@ class distribution_confidence_intervals:
             ]:
                 CI_type = "reliability"
             if func not in ["CDF", "SF", "CHF"]:
-                raise ValueError("func must be either CDF, SF, or CHF")
+                msg = "func must be either CDF, SF, or CHF"
+                raise ValueError(msg)
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError("q must be a list or array of quantiles. Default is None")
+                msg = "q must be a list or array of quantiles. Default is None"
+                raise ValueError(msg)
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError("x must be a list or array of x-values. Default is None")
+                msg = "x must be a list or array of x-values. Default is None"
+                raise ValueError(msg)
 
             if q is not None:
                 q = np.asarray(q)
@@ -2693,11 +2752,14 @@ class distribution_confidence_intervals:
             ]:
                 CI_type = "reliability"
             if func not in ["CDF", "SF", "CHF"]:
-                raise ValueError("func must be either CDF, SF, or CHF")
+                msg = "func must be either CDF, SF, or CHF"
+                raise ValueError(msg)
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError("q must be a list or array of quantiles. Default is None")
+                msg = "q must be a list or array of quantiles. Default is None"
+                raise ValueError(msg)
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError("x must be a list or array of x-values. Default is None")
+                msg = "x must be a list or array of x-values. Default is None"
+                raise ValueError(msg)
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -2764,7 +2826,8 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
-                raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+                msg = "q values must be provided in order to calculate the time confidence intervals."
+                raise ValueError(msg)
 
             if CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
                 if x is not None:
@@ -2805,13 +2868,16 @@ class distribution_confidence_intervals:
 
                 if x is not None:
                     return Y_lower, Y_upper
+                msg = "x values must be provided in order to calculate the reliability confidence intervals."
                 raise ValueError(
-                    "x values must be provided in order to calculate the reliability confidence intervals.",
+                    msg,
                 )
+            msg = "The confidence intervals cannot be calculated. Please supply CI Type of time or reliability."
             raise ValueError(
-                "The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.",
+                msg,
             )
-        raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
+        msg = "The confidence intervals cannot be calculated. Please check the input parameters."
+        raise ValueError(msg)
 
     @staticmethod
     def loglogistic_CI(
@@ -2898,11 +2964,14 @@ class distribution_confidence_intervals:
             ]:
                 CI_type = "reliability"
             if func not in ["CDF", "SF", "CHF"]:
-                raise ValueError("func must be either CDF, SF, or CHF")
+                msg = "func must be either CDF, SF, or CHF"
+                raise ValueError(msg)
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError("q must be a list or array of quantiles. Default is None")
+                msg = "q must be a list or array of quantiles. Default is None"
+                raise ValueError(msg)
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError("x must be a list or array of x-values. Default is None")
+                msg = "x must be a list or array of x-values. Default is None"
+                raise ValueError(msg)
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -3153,11 +3222,14 @@ class distribution_confidence_intervals:
             ]:
                 CI_type = "reliability"
             if func not in ["CDF", "SF", "CHF"]:
-                raise ValueError("func must be either CDF, SF, or CHF")
+                msg = "func must be either CDF, SF, or CHF"
+                raise ValueError(msg)
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError("q must be a list or array of quantiles. Default is None")
+                msg = "q must be a list or array of quantiles. Default is None"
+                raise ValueError(msg)
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError("x must be a list or array of x-values. Default is None")
+                msg = "x must be a list or array of x-values. Default is None"
+                raise ValueError(msg)
             if q is not None:
                 q = np.asarray(q)
             if x is not None:
@@ -3220,7 +3292,8 @@ class distribution_confidence_intervals:
 
                 if q is not None:
                     return t_lower, t_upper
-                raise ValueError("q values must be provided in order to calculate the time confidence intervals.")
+                msg = "q values must be provided in order to calculate the time confidence intervals."
+                raise ValueError(msg)
 
             if CI_type == "reliability":  # Confidence bounds on Reliability (in terms of time)
                 t = x if x is not None else np.linspace(dist.quantile(1e-05), dist.quantile(0.99999), points)
@@ -3249,13 +3322,16 @@ class distribution_confidence_intervals:
 
                 if x is not None:
                     return Y_lower, Y_upper
+                msg = "x values must be provided in order to calculate the reliability confidence intervals."
                 raise ValueError(
-                    "x values must be provided in order to calculate the reliability confidence intervals.",
+                    msg,
                 )
+            msg = "The confidence intervals cannot be calculated. Please supply CI Type of time or reliability."
             raise ValueError(
-                "The confidence intervals cannot be calculated. Please supply CI Type of time or reliability.",
+                msg,
             )
-        raise ValueError("The confidence intervals cannot be calculated. Please check the input parameters.")
+        msg = "The confidence intervals cannot be calculated. Please check the input parameters."
+        raise ValueError(msg)
 
     @staticmethod
     def gumbel_CI(
@@ -3342,11 +3418,14 @@ class distribution_confidence_intervals:
             ]:
                 CI_type = "reliability"
             if func not in ["CDF", "SF", "CHF"]:
-                raise ValueError("func must be either CDF, SF, or CHF")
+                msg = "func must be either CDF, SF, or CHF"
+                raise ValueError(msg)
             if type(q) not in [list, np.ndarray, type(None)]:
-                raise ValueError("q must be a list or array of quantiles. Default is None")
+                msg = "q must be a list or array of quantiles. Default is None"
+                raise ValueError(msg)
             if type(x) not in [list, np.ndarray, type(None)]:
-                raise ValueError("x must be a list or array of x-values. Default is None")
+                msg = "x must be a list or array of x-values. Default is None"
+                raise ValueError(msg)
             if q is not None:
                 q = np.asarray(q)
             if x is not None:

@@ -80,8 +80,9 @@ class DSZI_Model:
 
     def __init__(self, distribution, DS=None, ZI=None):
         if DS is None and ZI is None:
+            msg = "DS and ZI cannot both be unspecified. Please specify one or both of these parameters to create a DS, ZI, or DSZI model."
             raise ValueError(
-                "DS and ZI cannot both be unspecified. Please specify one or both of these parameters to create a DS, ZI, or DSZI model.",
+                msg,
             )
         if DS is None:
             DS = float(1)
@@ -93,13 +94,16 @@ class DSZI_Model:
                 text_color="red",
             )
         if ZI > DS:
+            msg = "DS can not be greater than ZI. DS is the maximum of the CDF. ZI is the minimum of the CDF."
             raise ValueError(
-                "DS can not be greater than ZI. DS is the maximum of the CDF. ZI is the minimum of the CDF.",
+                msg,
             )
         if ZI >= 1 or ZI < 0:
-            raise ValueError("ZI must be >= 0 and < 1. ZI is the minimum of the CDF.")
+            msg = "ZI must be >= 0 and < 1. ZI is the minimum of the CDF."
+            raise ValueError(msg)
         if DS > 1 or DS <= 0:
-            raise ValueError("DS must be > 0 and <= 1. DS is the maximum of the CDF")
+            msg = "DS must be > 0 and <= 1. DS is the maximum of the CDF"
+            raise ValueError(msg)
 
         if type(distribution) not in [
             Weibull_Distribution,
@@ -111,8 +115,9 @@ class DSZI_Model:
             Loglogistic_Distribution,
             Gumbel_Distribution,
         ]:
+            msg = "distribution must be an array or list of probability distributions. Each distribution must be created using the reliability.Distributions module."
             raise ValueError(
-                "distribution must be an array or list of probability distributions. Each distribution must be created using the reliability.Distributions module.",
+                msg,
             )
 
         self.__base_distribution = distribution
@@ -666,7 +671,8 @@ class DSZI_Model:
                     "Quantile must be between ZI and DS. ZI = " + str(self.ZI) + ", DS = " + str(self.DS) + ".",
                 )
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         ppf = self.__xvals_init[np.argmin(abs(self.__cdf_init - q))]
         return unpack_single_arrays(ppf)
 
@@ -686,12 +692,15 @@ class DSZI_Model:
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         isf = self.__xvals_init[np.argmin(abs((1 - self.__cdf_init) - q))]
         return unpack_single_arrays(isf)
 
@@ -777,10 +786,12 @@ class DSZI_Model:
         """
         if right_censored_time is None:
             if self.DS < 1:
-                raise ValueError("right_censored_time must be provided if DS is not 1")
+                msg = "right_censored_time must be provided if DS is not 1"
+                raise ValueError(msg)
             right_censored_time = 1  # dummy value which is multiplied by an empty array.
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
-            raise ValueError("number_of_samples must be an integer greater than 0")
+            msg = "number_of_samples must be an integer greater than 0"
+            raise ValueError(msg)
         rng = np.random.default_rng(seed)
 
         samples0 = rng.choice(

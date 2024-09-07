@@ -71,7 +71,8 @@ class Lognormal_Distribution:
     def __init__(self, mu=None, sigma=None, gamma: float | np.float64 = 0.0, **kwargs):
         self.name = "Lognormal"
         if mu is None or sigma is None:
-            raise ValueError("Parameters mu and sigma must be specified. Eg. Lognormal_Distribution(mu=5,sigma=2)")
+            msg = "Parameters mu and sigma must be specified. Eg. Lognormal_Distribution(mu=5,sigma=2)"
+            raise ValueError(msg)
         self.mu = float(mu)
         self.sigma = float(sigma)
         self.gamma = float(gamma)
@@ -886,12 +887,15 @@ class Lognormal_Distribution:
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         ppf = ss.lognorm.ppf(q, self.sigma, self.gamma, np.exp(self.mu))
         return unpack_single_arrays(ppf)
 
@@ -911,12 +915,15 @@ class Lognormal_Distribution:
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         isf = ss.lognorm.isf(q, self.sigma, self.gamma, np.exp(self.mu))
         return unpack_single_arrays(isf)
 
@@ -1011,7 +1018,8 @@ class Lognormal_Distribution:
 
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
-            raise ValueError("number_of_samples must be an integer greater than 0")
+            msg = "number_of_samples must be an integer greater than 0"
+            raise ValueError(msg)
         if seed is not None:
             rng = np.random.default_rng(seed)
         RVS: npt.NDArray[np.float64] = ss.lognorm.rvs(

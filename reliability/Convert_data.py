@@ -154,8 +154,9 @@ class xlsx_to_XCN:
             ]:
                 C_out.append(censor_code_in_XCN)
             else:
+                msg = "Unrecognised value in the second column of the xlsx file. xlsx_to_XCN assumes the second column is C (censoring code). Common values are used as defaults but the xlsx file contained unrecognised values. You can fix this by specifying the arguments censor_code_in_xlsx  and failure_code_in_xlsx."
                 raise ValueError(
-                    "Unrecognised value in the second column of the xlsx file. xlsx_to_XCN assumes the second column is C (censoring code). Common values are used as defaults but the xlsx file contained unrecognised values. You can fix this by specifying the arguments censor_code_in_xlsx  and failure_code_in_xlsx.",
+                    msg,
                 )
         C = np.array(C_out)
 
@@ -170,8 +171,9 @@ class xlsx_to_XCN:
                 text_color="red",
             )
         if len(X) != len(C) or len(X) != len(N):
+            msg = "The lengths of the first 3 columns in the xlsx file do not match. This may be because some data is missing."
             raise ValueError(
-                "The lengths of the first 3 columns in the xlsx file do not match. This may be because some data is missing.",
+                msg,
             )
 
         FR = XCN_to_FR(
@@ -330,8 +332,9 @@ class xlsx_to_FNRN:
         failures = removeNaNs(failures)
         num_failures = removeNaNs(num_failures)
         if len(failures) != len(num_failures):
+            msg = "xlsx_to_FNRN assumes the first and second columns in the excel file are 'failures' and 'number of failures'. These must be the same length."
             raise ValueError(
-                "xlsx_to_FNRN assumes the first and second columns in the excel file are 'failures' and 'number of failures'. These must be the same length.",
+                msg,
             )
         if len(cols) == 2:  # noqa: PLR2004
             right_censored = None
@@ -342,8 +345,9 @@ class xlsx_to_FNRN:
             right_censored = removeNaNs(right_censored)
             num_right_censored = removeNaNs(num_right_censored)
             if len(right_censored) != len(num_right_censored):
+                msg = "xlsx_to_FNRN assumes the third and fourth columns in the excel file are 'right censored' and 'number of right censored'. These must be the same length."
                 raise ValueError(
-                    "xlsx_to_FNRN assumes the third and fourth columns in the excel file are 'right censored' and 'number of right censored'. These must be the same length.",
+                    msg,
                 )
         MAX_COLS = 4
         if len(cols) > MAX_COLS:
@@ -608,15 +612,20 @@ class XCN_to_FR:
         if quantities is None:
             quantities = np.ones_like(X)  # assume a quantity of 1 if not specified
         if type(quantities) not in [list, np.ndarray]:
-            raise ValueError("N must be a list or array.")
+            msg = "N must be a list or array."
+            raise ValueError(msg)
         if type(X) not in [list, np.ndarray]:
-            raise ValueError("X must be a list or array.")
+            msg = "X must be a list or array."
+            raise ValueError(msg)
         if type(C) not in [list, np.ndarray]:
-            raise ValueError("C must be a list or array.")
+            msg = "C must be a list or array."
+            raise ValueError(msg)
         if type(quantities) not in [list, np.ndarray]:
-            raise ValueError("N must be a list or array.")
+            msg = "N must be a list or array."
+            raise ValueError(msg)
         if quantities is not None and len(X) != len(quantities):
-            raise ValueError("The length of X, C and N must match.")
+            msg = "The length of X, C and N must match."
+            raise ValueError(msg)
 
         C_upper = []
         for item in C:
@@ -672,8 +681,9 @@ class XCN_to_FR:
             ]:
                 right_censored = np.append(right_censored, np.ones(int(quantities[i])) * X[i])
             else:
+                msg = "Unrecognised value in C. Common values are used as defaults but C contained an unrecognised values. You can fix this by specifying the arguments censor_code and failure_code."
                 raise ValueError(
-                    "Unrecognised value in C. Common values are used as defaults but C contained an unrecognised values. You can fix this by specifying the arguments censor_code and failure_code.",
+                    msg,
                 )
         if len(right_censored) == 0:
             right_censored = None
@@ -763,17 +773,21 @@ class FR_to_XCN:
 
     def __init__(self, failures, right_censored=None, censor_code="C", failure_code="F"):
         if type(failures) not in [list, np.ndarray]:
-            raise ValueError("failures must be a list or array.")
+            msg = "failures must be a list or array."
+            raise ValueError(msg)
         if right_censored is not None:
             if type(right_censored) not in [list, np.ndarray]:
-                raise ValueError("right_censored must be a list or array.")
+                msg = "right_censored must be a list or array."
+                raise ValueError(msg)
             FNRN = FR_to_FNRN(failures=failures, right_censored=right_censored)
             self.X = np.hstack([FNRN.failures, FNRN.right_censored])
             self.N = np.hstack([FNRN.num_failures, FNRN.num_right_censored])
             if type(failure_code) not in [str, float, int, np.float64]:
-                raise ValueError("failure_code must be a string or number. Default is 'F'")
+                msg = "failure_code must be a string or number. Default is 'F'"
+                raise ValueError(msg)
             if type(censor_code) not in [str, float, int, np.float64]:
-                raise ValueError("censor_code must be a string or number. Default is 'C'")
+                msg = "censor_code must be a string or number. Default is 'C'"
+                raise ValueError(msg)
             F_cens = [failure_code] * len(FNRN.failures)
             C_cens = [censor_code] * len(FNRN.right_censored)
             self.C = np.hstack([F_cens, C_cens])
@@ -782,7 +796,8 @@ class FR_to_XCN:
             self.X = FNRN.failures
             self.N = FNRN.num_failures
             if type(failure_code) not in [str, float, int, np.float64]:
-                raise ValueError("failure_code must be a string or number. Default is 'F'")
+                msg = "failure_code must be a string or number. Default is 'F'"
+                raise ValueError(msg)
             self.C = np.array([failure_code] * len(FNRN.failures))
         Data = {"event time": self.X, "censor code": self.C, "number of events": self.N}
         self.__df = pd.DataFrame(data=Data, columns=["event time", "censor code", "number of events"])
@@ -870,19 +885,25 @@ class FNRN_to_XCN:
         failure_code="F",
     ):
         if type(failures) not in [list, np.ndarray]:
-            raise ValueError("failures must be a list or array.")
+            msg = "failures must be a list or array."
+            raise ValueError(msg)
         if type(num_failures) not in [list, np.ndarray]:
-            raise ValueError("num_failures must be a list or array.")
+            msg = "num_failures must be a list or array."
+            raise ValueError(msg)
         if len(failures) != len(num_failures):
-            raise ValueError("failures and num_failures must be the same length.")
+            msg = "failures and num_failures must be the same length."
+            raise ValueError(msg)
 
         if right_censored is not None:
             if type(right_censored) not in [list, np.ndarray]:
-                raise ValueError("right_censored must be a list or array.")
+                msg = "right_censored must be a list or array."
+                raise ValueError(msg)
             if type(num_right_censored) not in [list, np.ndarray] and num_right_censored is not None:
-                raise ValueError("num_right_censored must be a list or array.")
+                msg = "num_right_censored must be a list or array."
+                raise ValueError(msg)
             if num_right_censored is not None and len(right_censored) != len(num_right_censored):
-                raise ValueError("right_censored and num_right_censored must be the same length.")
+                msg = "right_censored and num_right_censored must be the same length."
+                raise ValueError(msg)
             FR = FNRN_to_FR(
                 failures=failures,
                 num_failures=num_failures,
@@ -896,9 +917,11 @@ class FNRN_to_XCN:
             self.X = np.hstack([FNRN.failures, FNRN.right_censored])
             self.N = np.hstack([FNRN.num_failures, FNRN.num_right_censored])
             if type(failure_code) not in [str, float, int, np.float64]:
-                raise ValueError("failure_code must be a string or number. Default is 'F'")
+                msg = "failure_code must be a string or number. Default is 'F'"
+                raise ValueError(msg)
             if type(censor_code) not in [str, float, int, np.float64]:
-                raise ValueError("censor_code must be a string or number. Default is 'C'")
+                msg = "censor_code must be a string or number. Default is 'C'"
+                raise ValueError(msg)
             F_cens = [failure_code] * len(FNRN.failures)
             C_cens = [censor_code] * len(FNRN.right_censored)
             self.C = np.hstack([F_cens, C_cens])
@@ -910,7 +933,8 @@ class FNRN_to_XCN:
             self.X = FNRN.failures
             self.N = FNRN.num_failures
             if type(failure_code) not in [str, float, int, np.float64]:
-                raise ValueError("failure_code must be a string or number. Default is 'F'")
+                msg = "failure_code must be a string or number. Default is 'F'"
+                raise ValueError(msg)
             self.C = np.array([failure_code] * len(FNRN.failures))
         # make the dataframe for printing and writing to excel
         Data = {"event time": self.X, "censor code": self.C, "number of events": self.N}
@@ -987,11 +1011,13 @@ class FR_to_FNRN:
         right_censored: list[int] | npt.NDArray[np.float64] | None = None,
     ):
         if type(failures) not in [list, np.ndarray]:
-            raise ValueError("failures must be a list or array.")
+            msg = "failures must be a list or array."
+            raise ValueError(msg)
         self.failures, self.num_failures = np.unique(failures, return_counts=True)
         if right_censored is not None:
             if type(right_censored) not in [list, np.ndarray]:
-                raise ValueError("right_censored must be a list or array.")
+                msg = "right_censored must be a list or array."
+                raise ValueError(msg)
             self.right_censored, self.num_right_censored = np.unique(right_censored, return_counts=True)
         else:
             self.right_censored = []
@@ -1111,11 +1137,14 @@ class FNRN_to_FR:
         num_right_censored: npt.NDArray | list[int] | None = None,
     ):
         if type(failures) not in [list, np.ndarray]:
-            raise ValueError("failures must be a list or array.")
+            msg = "failures must be a list or array."
+            raise ValueError(msg)
         if type(num_failures) not in [list, np.ndarray]:
-            raise ValueError("num_failures must be a list or array.")
+            msg = "num_failures must be a list or array."
+            raise ValueError(msg)
         if len(failures) != len(num_failures):
-            raise ValueError("failures and num_failures must be the same length.")
+            msg = "failures and num_failures must be the same length."
+            raise ValueError(msg)
 
         failures_out = np.array([])
         for i, f in enumerate(failures):
@@ -1124,11 +1153,14 @@ class FNRN_to_FR:
 
         if right_censored is not None and num_right_censored is not None:
             if type(right_censored) not in [list, np.ndarray]:
-                raise ValueError("right_censored must be a list or array.")
+                msg = "right_censored must be a list or array."
+                raise ValueError(msg)
             if type(num_right_censored) not in [list, np.ndarray]:
-                raise ValueError("num_right_censored must be a list or array.")
+                msg = "num_right_censored must be a list or array."
+                raise ValueError(msg)
             if len(right_censored) != len(num_right_censored):
-                raise ValueError("right_censored and num_right_censored must be the same length.")
+                msg = "right_censored and num_right_censored must be the same length."
+                raise ValueError(msg)
             right_censored_out = np.array([])
             for i, rc in enumerate(right_censored):
                 right_censored_out = np.append(right_censored_out, np.ones(int(num_right_censored[i])) * rc)

@@ -34,7 +34,8 @@ def reshow_figure(handle: _axes.Axes | Figure | None) -> None:
     """
     if type(handle) is not Figure and not isinstance(handle, _axes.Axes):
         # check that the handle is either an axes or a figure
-        raise ValueError("handle must be an axes handle or a figure handle")
+        msg = "handle must be an axes handle or a figure handle"
+        raise ValueError(msg)
     if isinstance(handle, _axes.Axes):
         # if the handle is an axes then extract the Figure
         handle = handle.figure  # type: ignore
@@ -49,7 +50,8 @@ def reshow_figure(handle: _axes.Axes | Figure | None) -> None:
         handle.set_size_inches(figsize)  # type: ignore
         plt.show()
     else:
-        raise ValueError("handle is None. It must be a valid axes or figure handle")
+        msg = "handle is None. It must be a valid axes or figure handle"
+        raise ValueError(msg)
 
 
 def fill_no_autoscale(xlower, xupper, ylower, yupper, **kwargs) -> None:
@@ -258,7 +260,8 @@ def probability_plot_xyticks(yticks=None) -> None:
     else:  # it is really big (>1000) and spread out
         loc_x = ticker.LogLocator()
     if xupper < xlower:
-        raise ValueError("xupper must be greater than xlower")
+        msg = "xupper must be greater than xlower"
+        raise ValueError(msg)
     ax.xaxis.set_major_locator(loc_x)  # apply the tick locator
     # do not apply a minor locator. It is never as good as the default
     MIN_EDGE_DISTANCE = 0.5
@@ -367,9 +370,11 @@ def xy_transform(value, direction: str | None = "forward", axis: str | None = "x
 
     """
     if direction not in ["reverse", "inverse", "inv", "rev", "forward", "fwd"]:
-        raise ValueError('direction must be "forward" or "reverse"')
+        msg = 'direction must be "forward" or "reverse"'
+        raise ValueError(msg)
     if axis not in ["X", "x", "Y", "y"]:
-        raise ValueError("axis must be x or y. Default is x")
+        msg = "axis must be x or y. Default is x"
+        raise ValueError(msg)
 
     ax = plt.gca()
     if direction in ["reverse", "inverse", "inv", "rev"]:
@@ -394,7 +399,8 @@ def xy_transform(value, direction: str | None = "forward", axis: str | None = "x
                         ax.transData.inverted().transform((1, ax.transAxes.transform((1, item))[1]))[1],
                     )  # y transform
         else:
-            raise ValueError("type of value is not recognized")
+            msg = "type of value is not recognized"
+            raise ValueError(msg)
     elif type(value) in [int, float, np.float64]:
         if axis == "x":
             transformed_values = ax.transAxes.inverted().transform(ax.transData.transform((value, 0.5)))[
@@ -414,7 +420,8 @@ def xy_transform(value, direction: str | None = "forward", axis: str | None = "x
                     ax.transAxes.inverted().transform(ax.transData.transform((1, value)))[1],
                 )  # y transform
     else:
-        raise ValueError("type of value is not recognized")
+        msg = "type of value is not recognized"
+        raise ValueError(msg)
     return transformed_values
 
 
@@ -491,7 +498,8 @@ def restore_axes_limits(
                 # DSZI not required here as limits are same as base distribution
                 xlim_lower = min(X)
             else:
-                raise ValueError("Unrecognised distribution name")
+                msg = "Unrecognised distribution name"
+                raise ValueError(msg)
         else:
             xlim_lower = xmin
 
@@ -548,7 +556,8 @@ def restore_axes_limits(
         # else is the index of the chf where it is equal to b95
         ylim_upper = Y[idx] * top_spacing if np.isfinite(Y[idx]) else Y[idx - 1] * top_spacing
     else:
-        raise ValueError("func is invalid")
+        msg = "func is invalid"
+        raise ValueError(msg)
     ylim_lower = 0
 
     # determine what to set the ylims based on whether to use_prev_lims
@@ -654,15 +663,20 @@ def linear_regression(
     x = np.asarray(x)
     y = np.asarray(y)
     if len(x) != len(y):
-        raise ValueError("x and y are different lengths")
+        msg = "x and y are different lengths"
+        raise ValueError(msg)
     if RRX_or_RRY not in ["RRX", "RRY"]:
-        raise ValueError('RRX_or_RRY must be either "RRX" or "RRY". Default is "RRY".')
+        msg = 'RRX_or_RRY must be either "RRX" or "RRY". Default is "RRY".'
+        raise ValueError(msg)
     if x_intercept is not None and RRX_or_RRY == "RRY":
-        raise ValueError("RRY must use y_intercept not x_intercept")
+        msg = "RRY must use y_intercept not x_intercept"
+        raise ValueError(msg)
     if y_intercept is not None and RRX_or_RRY == "RRX":
-        raise ValueError("RRX must use x_intercept not y_intercept")
+        msg = "RRX must use x_intercept not y_intercept"
+        raise ValueError(msg)
     if slope is not None and (x_intercept is not None or y_intercept is not None):
-        raise ValueError("You can not specify both slope and intercept")
+        msg = "You can not specify both slope and intercept"
+        raise ValueError(msg)
 
     if RRX_or_RRY == "RRY":
         if y_intercept is not None:  # only the slope must be found
@@ -705,8 +719,9 @@ def linear_regression(
                 np.linalg.inv(xx.T.dot(xx)).dot(xx.T).dot(yy)
             )  # linear regression formula for RRY
         except LinAlgError:
+            msg = "An error has occurred when attempting to find the initial guess using least squares estimation.\nThis error is caused by a non-invertable matrix.\nThis can occur when there are only two very similar failure times like 10 and 10.000001.\nThere is no solution to this error, other than to use failure times that are more unique."
             raise RuntimeError(
-                "An error has occurred when attempting to find the initial guess using least squares estimation.\nThis error is caused by a non-invertable matrix.\nThis can occur when there are only two very similar failure times like 10 and 10.000001.\nThere is no solution to this error, other than to use failure times that are more unique.",
+                msg,
             ) from None
         if y_intercept is not None:
             m: np.float64 = solution[0]
@@ -721,8 +736,9 @@ def linear_regression(
         try:
             solution = np.linalg.inv(yy.T.dot(yy)).dot(yy.T).dot(xx)  # linear regression formula for RRX
         except LinAlgError:
+            msg = "An error has occurred when attempting to find the initial guess using least squares estimation.\nThis error is caused by a non-invertable matrix.\nThis can occur when there are only two very similar failure times like 10 and 10.000001.\nThere is no solution to this error, other than to use failure times that are more unique."
             raise RuntimeError(
-                "An error has occurred when attempting to find the initial guess using least squares estimation.\nThis error is caused by a non-invertable matrix.\nThis can occur when there are only two very similar failure times like 10 and 10.000001.\nThere is no solution to this error, other than to use failure times that are more unique.",
+                msg,
             ) from None
         if x_intercept is not None:
             m_x = solution[0]

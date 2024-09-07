@@ -84,13 +84,17 @@ def one_sample_proportion(trials=None, successes=None, CI=0.95, print_results=Tr
 
     """
     if trials is None or successes is None:
-        raise ValueError("You must specify the number of trials and successes.")
+        msg = "You must specify the number of trials and successes."
+        raise ValueError(msg)
     if not isinstance(trials, int):
-        raise ValueError("trials must be an integer")
+        msg = "trials must be an integer"
+        raise ValueError(msg)
     if not isinstance(successes, int) is not int:
-        raise ValueError("successes must be an integer")
+        msg = "successes must be an integer"
+        raise ValueError(msg)
     if successes > trials:
-        raise ValueError("successes cannot be greater than trials")
+        msg = "successes cannot be greater than trials"
+        raise ValueError(msg)
     n = 1 if (successes in (0, trials)) else 2  # calculate 1 sided CI in these cases
 
     V1_lower = 2 * successes
@@ -179,11 +183,14 @@ def two_proportion_test(
     """
     MIN_CI = 0.5
     if CI < MIN_CI or CI >= 1:
-        raise ValueError("CI must be between 0.5 and 1. Default is 0.95")
+        msg = "CI must be between 0.5 and 1. Default is 0.95"
+        raise ValueError(msg)
     if sample_1_trials is None or sample_1_successes is None or sample_2_trials is None or sample_2_successes is None:
-        raise ValueError("You must specify the number of trials and successes for both samples.")
+        msg = "You must specify the number of trials and successes for both samples."
+        raise ValueError(msg)
     if sample_1_successes > sample_1_trials or sample_2_successes > sample_2_trials:
-        raise ValueError("successes cannot be greater than trials")
+        msg = "successes cannot be greater than trials"
+        raise ValueError(msg)
     p1 = sample_1_successes / sample_1_trials
     p2 = sample_2_successes / sample_2_trials
     diff = p1 - p2
@@ -264,18 +271,22 @@ def sample_size_no_failures(reliability, CI=0.95, lifetimes=1, weibull_shape=1, 
     """
     MIN_CI = 0.5
     if CI < MIN_CI or CI >= 1:
-        raise ValueError("CI must be between 0.5 and 1")
+        msg = "CI must be between 0.5 and 1"
+        raise ValueError(msg)
     if reliability <= 0 or reliability >= 1:
-        raise ValueError("Reliability must be between 0 and 1")
+        msg = "Reliability must be between 0 and 1"
+        raise ValueError(msg)
     if weibull_shape < 0:
+        msg = "Weibull shape must be greater than 0. Default (exponential distribution) is 1. If unknown then use 1."
         raise ValueError(
-            "Weibull shape must be greater than 0. Default (exponential distribution) is 1. If unknown then use 1.",
+            msg,
         )
     MAX_LIFETIMES = 5
     if lifetimes > MAX_LIFETIMES:
         print("Testing for greater than 5 lifetimes is highly unlikely to result in zero failures.")
     if lifetimes <= 0:
-        raise ValueError("lifetimes must be >0. Default is 1. No more than 5 is recommended due to test feasibility.")
+        msg = "lifetimes must be >0. Default is 1. No more than 5 is recommended due to test feasibility."
+        raise ValueError(msg)
     n = int(
         np.ceil((np.log(1 - CI)) / (lifetimes**weibull_shape * np.log(reliability))),
     )  # rounds up to nearest integer
@@ -388,18 +399,23 @@ def sequential_sampling_chart(
     elif test_results is None:
         F = None
     else:
+        msg = "test_results must be a binary array or list with 1 as failures and 0 as successes. eg. [0 0 0 1] represents 3 successes and 1 failure."
         raise ValueError(
-            "test_results must be a binary array or list with 1 as failures and 0 as successes. eg. [0 0 0 1] represents 3 successes and 1 failure.",
+            msg,
         )
 
     if alpha <= 0 or alpha >= 1:
-        raise ValueError("alpha must be between 0 and 1")
+        msg = "alpha must be between 0 and 1"
+        raise ValueError(msg)
     if beta <= 0 or beta >= 1:
-        raise ValueError("beta must be between 0 and 1")
+        msg = "beta must be between 0 and 1"
+        raise ValueError(msg)
     if p1 <= 0 or p1 >= 1:
-        raise ValueError("p1 must be between 0 and 1")
+        msg = "p1 must be between 0 and 1"
+        raise ValueError(msg)
     if p2 <= 0 or p2 >= 1:
-        raise ValueError("p2 must be between 0 and 1")
+        msg = "p2 must be between 0 and 1"
+        raise ValueError(msg)
 
     a = 1 - alpha
     b = 1 - beta
@@ -458,8 +474,9 @@ def sequential_sampling_chart(
                     nx.append(sample_count)
                     ny.append(failure_count)
                 else:
+                    msg = "test_results must be an array or list with 0 as failures and 1 as successes. eg. [0 0 0 1] represents 3 successes and 1 failure."
                     raise ValueError(
-                        "test_results must be an array or list with 0 as failures and 1 as successes. eg. [0 0 0 1] represents 3 successes and 1 failure.",
+                        msg,
                     )
             plt.plot(nx, ny, label="test results")
 
@@ -586,8 +603,9 @@ class reliability_test_planner:
         if CI is not None:
             MIN_CI = 0.5
             if CI < MIN_CI or CI >= 1:
+                msg = "CI must be between 0.5 and 1. For example, specify CI=0.95 for 95% confidence interval"
                 raise ValueError(
-                    "CI must be between 0.5 and 1. For example, specify CI=0.95 for 95% confidence interval",
+                    msg,
                 )
             CI_adj = CI if one_sided is True else 1 - (1 - CI) / 2
 
@@ -596,8 +614,9 @@ class reliability_test_planner:
         elif time_terminated is False:
             p = 0
         else:
+            msg = "time_terminated must be True or False. Default is True for the time terminated test (a test stopped after a set time rather than after a set number of failures)."
             raise ValueError(
-                "time_terminated must be True or False. Default is True for the time terminated test (a test stopped after a set time rather than after a set number of failures).",
+                msg,
             )
 
         if one_sided is True:
@@ -605,13 +624,16 @@ class reliability_test_planner:
         elif one_sided is False:
             sides = 2
         else:
-            raise ValueError("one_sided must be True or False. Default is True for the one sided confidence interval.")
+            msg = "one_sided must be True or False. Default is True for the one sided confidence interval."
+            raise ValueError(msg)
 
         if print_results not in [True, False]:
-            raise ValueError("print_results must be True or False. Default is True.")
+            msg = "print_results must be True or False. Default is True."
+            raise ValueError(msg)
 
         if number_of_failures is not None and (number_of_failures % 1 != 0 or number_of_failures < 0):
-            raise ValueError("number_of_failures must be a positive integer")
+            msg = "number_of_failures must be a positive integer"
+            raise ValueError(msg)
 
         if MTBF is None and number_of_failures is not None and CI is not None and test_duration is not None:
             soln_type = "MTBF"
@@ -636,8 +658,9 @@ class reliability_test_planner:
                 2 * 0 + p,
             )  # checks that the maximum possible MTBF (when there are 0 failures) is within the test_duration
             if MTBF_check < MTBF:
+                msg = "The specified MTBF is not possible given the specified test_duration. You must increase your test_duration or decrease your MTBF."
                 raise ValueError(
-                    "The specified MTBF is not possible given the specified test_duration. You must increase your test_duration or decrease your MTBF.",
+                    msg,
                 )
 
         elif MTBF is not None and number_of_failures is not None and CI is None and test_duration is not None:
@@ -654,11 +677,13 @@ class reliability_test_planner:
             test_duration = ss.chi2.ppf(CI_adj, 2 * number_of_failures + p) * MTBF / 2
 
         elif MTBF is not None and number_of_failures is not None and CI is not None and test_duration is not None:
-            raise ValueError("All inputs were specified. Nothing to calculate.")
+            msg = "All inputs were specified. Nothing to calculate."
+            raise ValueError(msg)
 
         else:
+            msg = "More than one input was not specified. You must specify any 3 out of the 4 inputs (not including one_sided or print_results) and the remaining input will be calculated."
             raise ValueError(
-                "More than one input was not specified. You must specify any 3 out of the 4 inputs (not including one_sided or print_results) and the remaining input will be calculated.",
+                msg,
             )
 
         self.test_duration = test_duration
@@ -746,15 +771,20 @@ class reliability_test_duration:
     ):
         MAX_RISK = 0.5
         if consumer_risk <= 0 or consumer_risk > MAX_RISK:
-            raise ValueError("consumer_risk must be between 0 and 0.5")
+            msg = "consumer_risk must be between 0 and 0.5"
+            raise ValueError(msg)
         if producer_risk <= 0 or producer_risk > MAX_RISK:
-            raise ValueError("producer_risk must be between 0 and 0.5")
+            msg = "producer_risk must be between 0 and 0.5"
+            raise ValueError(msg)
         if MTBF_design <= MTBF_required:
-            raise ValueError("MTBF_design must exceed MTBF_required")
+            msg = "MTBF_design must exceed MTBF_required"
+            raise ValueError(msg)
         if one_sided not in [True, False]:
-            raise ValueError("one_sided must be True or False. Default is True")
+            msg = "one_sided must be True or False. Default is True"
+            raise ValueError(msg)
         if time_terminated not in [True, False]:
-            raise ValueError("time_terminated must be True or False. Default is True")
+            msg = "time_terminated must be True or False. Default is True"
+            raise ValueError(msg)
 
         duration_array = []
         producer_risk_array = []
@@ -952,8 +982,9 @@ class chi2test:
         ]
 
         if type(distribution) not in standard_distributions and type(distribution) not in special_distributions:
+            msg = "distribution must be a probability distribution object from the reliability.Distributions module. First define the distribution using reliability.Distributions.___"
             raise ValueError(
-                "distribution must be a probability distribution object from the reliability.Distributions module. First define the distribution using reliability.Distributions.___",
+                msg,
             )
         if type(distribution) in special_distributions:
             self.__dist_title = distribution.name2
@@ -961,24 +992,28 @@ class chi2test:
             self.__dist_title = distribution.param_title_long
         # ensure data is a list or array
         if type(data) not in [list, np.ndarray]:
-            raise ValueError("data must be a list or array")
+            msg = "data must be a list or array"
+            raise ValueError(msg)
         if min(data) < 0 and type(distribution) not in [
             Normal_Distribution,
             Gumbel_Distribution,
         ]:
+            msg = "data contains values below 0 which is not appropriate when the distribution is not a Normal or Gumbel Distribution"
             raise ValueError(
-                "data contains values below 0 which is not appropriate when the distribution is not a Normal or Gumbel Distribution",
+                msg,
             )
 
         MAX_SIGNIFICANCE = 0.5
         if significance <= 0 or significance > MAX_SIGNIFICANCE:
-            raise ValueError("significance should be between 0 and 0.5. Default is 0.05 which gives 95% confidence")
+            msg = "significance should be between 0 and 0.5. Default is 0.05 which gives 95% confidence"
+            raise ValueError(msg)
 
         if bins is None:
             bins = "auto"
         if type(bins) not in [str, list, np.ndarray]:
+            msg = "bins must be a list or array of the bin edges OR a string for the bin edge method from numpy. String options are auto, fd, doane, scott, stone, rice, sturges, or sqrt. For more information see the numpy documentation on numpy.histogram_bin_edges"
             raise ValueError(
-                "bins must be a list or array of the bin edges OR a string for the bin edge method from numpy. String options are auto, fd, doane, scott, stone, rice, sturges, or sqrt. For more information see the numpy documentation on numpy.histogram_bin_edges",
+                msg,
             )
         self.__distribution = distribution
         self.__significance = significance
@@ -1177,21 +1212,24 @@ class KStest:
         ]
 
         if type(distribution) not in standard_distributions and type(distribution) not in special_distributions:
+            msg = "distribution must be a probability distribution object from the reliability.Distributions module. First define the distribution using reliability.Distributions.___"
             raise ValueError(
-                "distribution must be a probability distribution object from the reliability.Distributions module. First define the distribution using reliability.Distributions.___",
+                msg,
             )
 
         if min(data) < 0 and type(distribution) not in [
             Normal_Distribution,
             Gumbel_Distribution,
         ]:
+            msg = "data contains values below 0 which is not appropriate when the distribution is not a Normal or Gumbel Distribution"
             raise ValueError(
-                "data contains values below 0 which is not appropriate when the distribution is not a Normal or Gumbel Distribution",
+                msg,
             )
 
         MAX_SIGNIFICANCE = 0.5
         if significance <= 0 or significance > MAX_SIGNIFICANCE:
-            raise ValueError("significance should be between 0 and 0.5. Default is 0.05 which gives 95% confidence")
+            msg = "significance should be between 0 and 0.5. Default is 0.05 which gives 95% confidence"
+            raise ValueError(msg)
 
         # need to sort data to ensure it is ascending
         if isinstance(data, list):
@@ -1199,7 +1237,8 @@ class KStest:
         elif type(data) is np.ndarray:
             data = np.sort(data)
         else:
-            raise ValueError("data must be an array or list")
+            msg = "data must be an array or list"
+            raise ValueError(msg)
         self.__distribution = distribution
         self.__significance: float = significance
         self.__data: list[float] | npt.NDArray[np.float64] = data

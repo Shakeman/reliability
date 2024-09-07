@@ -89,7 +89,8 @@ class Mixture_Model:
 
     def __init__(self, distributions, proportions=None):
         if type(distributions) not in [list, np.ndarray]:
-            raise ValueError("distributions must be a list or array of distribution objects.")
+            msg = "distributions must be a list or array of distribution objects."
+            raise ValueError(msg)
         contains_normal_or_gumbel = False
         for dist in distributions:
             if type(dist) not in [
@@ -102,8 +103,9 @@ class Mixture_Model:
                 Loglogistic_Distribution,
                 Gumbel_Distribution,
             ]:
+                msg = "distributions must be an array or list of probability distributions. Each distribution must be created using the reliability.Distributions module."
                 raise ValueError(
-                    "distributions must be an array or list of probability distributions. Each distribution must be created using the reliability.Distributions module.",
+                    msg,
                 )
             if type(dist) in [Normal_Distribution, Gumbel_Distribution]:
                 contains_normal_or_gumbel = (
@@ -113,9 +115,11 @@ class Mixture_Model:
 
         if proportions is not None:
             if np.sum(proportions) != 1:
-                raise ValueError("the sum of the proportions must be 1")
+                msg = "the sum of the proportions must be 1"
+                raise ValueError(msg)
             if len(proportions) != len(distributions):
-                raise ValueError("the length of the proportions array must match the length of the distributions array")
+                msg = "the length of the proportions array must match the length of the distributions array"
+                raise ValueError(msg)
         else:
             proportions = np.ones_like(distributions) / len(
                 distributions,
@@ -220,10 +224,12 @@ class Mixture_Model:
         elif type(X) in [np.ndarray, list]:
             X = np.asarray(X)
         else:
-            raise ValueError("unexpected type in xvals. Must be  list, or array")
+            msg = "unexpected type in xvals. Must be  list, or array"
+            raise ValueError(msg)
         if min(X) < 0 and self.__contains_normal_or_gumbel is False:
+            msg = "xvals was found to contain values below 0. This is only allowed if some of the mixture components are Normal or Gumbel distributions."
             raise ValueError(
-                "xvals was found to contain values below 0. This is only allowed if some of the mixture components are Normal or Gumbel distributions.",
+                msg,
             )
 
         X_positive = X[X >= 0]
@@ -773,12 +779,15 @@ class Mixture_Model:
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         ppf = self.__xvals_init[np.argmin(abs(self.__cdf_init - q))]
         return unpack_single_arrays(ppf)
 
@@ -798,12 +807,15 @@ class Mixture_Model:
         """
         if type(q) in [int, float, np.float64]:
             if q < 0 or q > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         elif type(q) in [list, np.ndarray]:
             if min(q) < 0 or max(q) > 1:
-                raise ValueError("Quantile must be between 0 and 1")
+                msg = "Quantile must be between 0 and 1"
+                raise ValueError(msg)
         else:
-            raise ValueError("Quantile must be of type float, list, array")
+            msg = "Quantile must be of type float, list, array"
+            raise ValueError(msg)
         isf = self.__xvals_init[np.argmin(abs((1 - self.__cdf_init) - q))]
         return unpack_single_arrays(isf)
 
@@ -910,7 +922,8 @@ class Mixture_Model:
 
         """
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
-            raise ValueError("number_of_samples must be an integer greater than 0")
+            msg = "number_of_samples must be an integer greater than 0"
+            raise ValueError(msg)
         generator = np.random.default_rng(seed=seed)
         return generator.choice(
             self.__xvals_init,

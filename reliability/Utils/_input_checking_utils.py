@@ -113,7 +113,8 @@ class distributions_input_checking:
         """
         # code implementation...
         if func not in ["PDF", "CDF", "SF", "HF", "CHF", "ALL"]:
-            raise ValueError("func must be either 'PDF','CDF', 'SF', 'HF', 'CHF', 'ALL'")
+            msg = "func must be either 'PDF','CDF', 'SF', 'HF', 'CHF', 'ALL'"
+            raise ValueError(msg)
 
         # type checking
         if type(xvals) not in [type(None), list, np.ndarray, int, float, np.float64]:
@@ -122,20 +123,25 @@ class distributions_input_checking:
             )
         self.xvals = xvals
         if type(xmin) not in [type(None), int, float]:
-            raise ValueError("xmin must be an int or float. Default is None")
+            msg = "xmin must be an int or float. Default is None"
+            raise ValueError(msg)
         self.xmin = xmin
         if type(xmax) not in [type(None), int, float]:
-            raise ValueError("xmax must be an int or float. Default is None")
+            msg = "xmax must be an int or float. Default is None"
+            raise ValueError(msg)
         self.xmax = xmax
         if type(show_plot) not in [type(None), bool]:
-            raise ValueError("show_plot must be True or False. Default is True")
+            msg = "show_plot must be True or False. Default is True"
+            raise ValueError(msg)
         if type(plot_CI) not in [type(None), bool]:
+            msg = "plot_CI must be True or False. Default is True. Only used if the distribution object was created by Fitters."
             raise ValueError(
-                "plot_CI must be True or False. Default is True. Only used if the distribution object was created by Fitters.",
+                msg,
             )
         if type(CI_type) not in [type(None), str]:
+            msg = 'CI_type must be "time" or "reliability". Default is "time". Only used if the distribution object was created by Fitters.'
             raise ValueError(
-                'CI_type must be "time" or "reliability". Default is "time". Only used if the distribution object was created by Fitters.',
+                msg,
             )
         if CI is True:
             CI = 0.95
@@ -144,16 +150,19 @@ class distributions_input_checking:
             plot_CI = False
         self.plot_CI: None | bool = plot_CI
         if type(CI) not in [type(None), float]:
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval. Only used if the distribution object was created by Fitters."
             raise ValueError(
-                "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval. Only used if the distribution object was created by Fitters.",
+                msg,
             )
         if type(CI_y) not in [type(None), list, np.ndarray, float, int]:
+            msg = 'CI_y must be a list, array, float, or int. Default is None. Only used if the distribution object was created by Fitters anc CI_type="time".'
             raise ValueError(
-                'CI_y must be a list, array, float, or int. Default is None. Only used if the distribution object was created by Fitters anc CI_type="time".',
+                msg,
             )
         if type(CI_x) not in [type(None), list, np.ndarray, float, int]:
+            msg = 'CI_x must be a list, array, float, or int. Default is None. Only used if the distribution object was created by Fitters anc CI_type="reliability".'
             raise ValueError(
-                'CI_x must be a list, array, float, or int. Default is None. Only used if the distribution object was created by Fitters anc CI_type="reliability".',
+                msg,
             )
 
         # default values
@@ -167,7 +176,8 @@ class distributions_input_checking:
             CI = 0.95
         elif CI is not None:  # CI takes precedence over Z
             if CI <= 0 or CI >= 1:
-                raise ValueError("CI must be between 0 and 1")
+                msg = "CI must be between 0 and 1"
+                raise ValueError(msg)
         else:  # CI is None and Z is not None
             CI = 1 - ss.norm.cdf(-dist.Z) * 2  # converts Z to CI
         self.CI: float = CI
@@ -224,27 +234,33 @@ class distributions_input_checking:
         if CI_x is not None:
             if isinstance(CI_x, float | int):
                 if CI_x <= 0 and dist.name not in ["Normal", "Gumbel"]:
-                    raise ValueError("CI_x must be greater than 0")
+                    msg = "CI_x must be greater than 0"
+                    raise ValueError(msg)
                 CI_x = np.array([np.float64(CI_x)])  # package as array. Will be unpacked later
             else:
                 CI_x = np.asarray(CI_x)
                 if min(CI_x) <= 0 and dist.name not in ["Normal", "Gumbel"]:
-                    raise ValueError("CI_x values must all be greater than 0")
+                    msg = "CI_x values must all be greater than 0"
+                    raise ValueError(msg)
         self.CI_x: npt.NDArray[np.float64] = CI_x
 
         if CI_y is not None:
             if isinstance(CI_y, float | int):
                 if CI_y <= 0:
-                    raise ValueError("CI_y must be greater than 0")
+                    msg = "CI_y must be greater than 0"
+                    raise ValueError(msg)
                 if CI_y >= 1 and func in ["CDF", "SF"]:
-                    raise ValueError("CI_y must be less than 1")
+                    msg = "CI_y must be less than 1"
+                    raise ValueError(msg)
                 CI_y = np.array([np.float64(CI_y)])  # package as array. Will be unpacked later
             else:
                 CI_y = np.asarray(CI_y)
                 if min(CI_y) <= 0:
-                    raise ValueError("CI_y values must all be above 0")
+                    msg = "CI_y values must all be above 0"
+                    raise ValueError(msg)
                 if max(CI_y) >= 1 and func in ["CDF", "SF"]:
-                    raise ValueError("CI_y values must all be below 1")
+                    msg = "CI_y values must all be below 1"
+                    raise ValueError(msg)
         self.CI_y: npt.NDArray[np.float64] = CI_y
 
 
@@ -383,7 +399,8 @@ class fitters_input_checking:
             "Weibull_DS",
             "Weibull_ZI",
         ]:
-            raise ValueError("incorrect dist specified. Use the correct name. eg. Weibull_2P")
+            msg = "incorrect dist specified. Use the correct name. eg. Weibull_2P"
+            raise ValueError(msg)
 
         # fill right_censored with empty list if not specified
         if right_censored is None:
@@ -391,9 +408,11 @@ class fitters_input_checking:
 
         # type checking and converting to arrays for failures and right_censored
         if type(failures) not in [list, np.ndarray]:
-            raise ValueError("failures must be a list or array of failure data")
+            msg = "failures must be a list or array of failure data"
+            raise ValueError(msg)
         if type(right_censored) not in [list, np.ndarray]:
-            raise ValueError("right_censored must be a list or array of right censored failure data")
+            msg = "right_censored must be a list or array of right censored failure data"
+            raise ValueError(msg)
         failures = np.asarray(failures).astype(float)
         right_censored = np.asarray(right_censored).astype(float)
 
@@ -402,9 +421,11 @@ class fitters_input_checking:
             # raise an error for values below zero
             all_data = np.hstack([failures, right_censored])
             if dist == "Beta_2P" and (min(all_data) < 0 or max(all_data) > 1):
-                raise ValueError("All failure and censoring times for the beta distribution must be between 0 and 1.")
+                msg = "All failure and censoring times for the beta distribution must be between 0 and 1."
+                raise ValueError(msg)
             if min(all_data) < 0:
-                raise ValueError("All failure and censoring times must be greater than zero.")
+                msg = "All failure and censoring times must be greater than zero."
+                raise ValueError(msg)
             # remove zeros and issue a warning. These are impossible since the pdf should be 0 at t=0. Leaving them in causes an error.
             rc0 = right_censored
             f0 = failures
@@ -459,15 +480,18 @@ class fitters_input_checking:
 
         # type and value checking for CI
         if type(CI) not in [float, np.float64]:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
+            raise ValueError(msg)
         if CI <= 0 or CI >= 1:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% Confidence interval."
+            raise ValueError(msg)
 
         # error checking for optimizer
         if optimizer is not None:
             if not isinstance(optimizer, str):
+                msg = 'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html'
                 raise ValueError(
-                    'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html',
+                    msg,
                 )
             if optimizer.upper() == "TNC":
                 optimizer = "TNC"
@@ -480,15 +504,17 @@ class fitters_input_checking:
             elif optimizer.upper() in ["ALL", "BEST"]:
                 optimizer = "best"
             else:
+                msg = 'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html'
                 raise ValueError(
-                    'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html',
+                    msg,
                 )
 
         # error checking for method
         if method is not None:
             if not isinstance(method, str):
+                msg = 'method must be either "MLE" (maximum likelihood estimation), "LS" (least squares), "RRX" (rank regression on X), or "RRY" (rank regression on Y).'
                 raise ValueError(
-                    'method must be either "MLE" (maximum likelihood estimation), "LS" (least squares), "RRX" (rank regression on X), or "RRY" (rank regression on Y).',
+                    msg,
                 )
             if method.upper() == "RRX":
                 method = "RRX"
@@ -505,8 +531,9 @@ class fitters_input_checking:
             ]:
                 method = "MLE"
             else:
+                msg = 'method must be either "MLE" (maximum likelihood estimation), "LS" (least squares), "RRX" (rank regression on X), or "RRY" (rank regression on Y).'
                 raise ValueError(
-                    'method must be either "MLE" (maximum likelihood estimation), "LS" (least squares), "RRX" (rank regression on X), or "RRY" (rank regression on Y).',
+                    msg,
                 )
 
         # quantiles error checking
@@ -516,20 +543,24 @@ class fitters_input_checking:
                 quantiles = np.array([0.01, 0.05, 0.1, 0.2, 0.25, 0.5, 0.75, 0.8, 0.9, 0.95, 0.99])
         elif quantiles is not None:
             if type(quantiles) not in [list, np.ndarray]:
-                raise ValueError("quantiles must be a list or array")
+                msg = "quantiles must be a list or array"
+                raise ValueError(msg)
             quantiles = np.asarray(quantiles)
             if max(quantiles) >= 1 or min(quantiles) <= 0:
-                raise ValueError("quantiles must be between 0 and 1")
+                msg = "quantiles must be between 0 and 1"
+                raise ValueError(msg)
 
         # force_beta and force_sigma error checking
         if force_beta is not None:
             if force_beta <= 0:
-                raise ValueError("force_beta must be greater than 0.")
+                msg = "force_beta must be greater than 0."
+                raise ValueError(msg)
             if isinstance(force_beta, int):
                 force_beta = float(force_beta)  # autograd needs floats. crashes with ints
         if force_sigma is not None:
             if force_sigma <= 0:
-                raise ValueError("force_sigma must be greater than 0.")
+                msg = "force_sigma must be greater than 0."
+                raise ValueError(msg)
             if isinstance(force_sigma, int):
                 force_sigma = float(force_sigma)  # autograd needs floats. crashes with ints
 
@@ -596,7 +627,8 @@ class fitters_input_checking:
 
         # error checking for CI_type
         if type(CI_type) not in [str, type(None)]:
-            raise ValueError('CI_type must be "time", "reliability", or "none"')
+            msg = 'CI_type must be "time", "reliability", or "none"'
+            raise ValueError(msg)
         if CI_type is not None:
             if CI_type.upper() in ["T", "TIME"]:
                 CI_type = "time"
@@ -605,7 +637,8 @@ class fitters_input_checking:
             elif CI_type.upper() in ["NONE", "OFF"]:
                 CI_type = "none"
             else:
-                raise ValueError('CI_type must be "time", "reliability", or "none"')
+                msg = 'CI_type must be "time", "reliability", or "none"'
+                raise ValueError(msg)
 
         # return everything
         self.failures = failures
@@ -718,7 +751,8 @@ class ALT_fitters_input_checking:
         optimizer=None,
     ):
         if dist not in ["Exponential", "Weibull", "Lognormal", "Normal", "Everything"]:
-            raise ValueError("dist must be one of Exponential, Weibull, Lognormal, Normal, Everything.")
+            msg = "dist must be one of Exponential, Weibull, Lognormal, Normal, Everything."
+            raise ValueError(msg)
         if life_stress_model not in [
             "Exponential",
             "Eyring",
@@ -728,8 +762,9 @@ class ALT_fitters_input_checking:
             "Dual_Power",
             "Everything",
         ]:
+            msg = "life_stess_model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power, Everything."
             raise ValueError(
-                "life_stess_model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power, Everything.",
+                msg,
             )
 
         if life_stress_model == "Everything":
@@ -752,10 +787,12 @@ class ALT_fitters_input_checking:
 
         # failure checks
         if is_dual_stress is True and (failure_stress_1 is None or failure_stress_2 is None):
-            raise ValueError("failure_stress_1 and failure_stress_2 must be provided for dual stress models.")
+            msg = "failure_stress_1 and failure_stress_2 must be provided for dual stress models."
+            raise ValueError(msg)
         if is_dual_stress is False:
             if failure_stress_1 is None:
-                raise ValueError("failure_stress_1 must be provided")
+                msg = "failure_stress_1 must be provided"
+                raise ValueError(msg)
             if failure_stress_2 is not None:
                 colorprint(
                     str(
@@ -784,12 +821,14 @@ class ALT_fitters_input_checking:
             right_censored_stress_2 = []
         else:
             if is_dual_stress is True and (right_censored_stress_1 is None or right_censored_stress_2 is None):
+                msg = "right_censored_stress_1 and right_censored_stress_2 must be provided for dual stress models."
                 raise ValueError(
-                    "right_censored_stress_1 and right_censored_stress_2 must be provided for dual stress models.",
+                    msg,
                 )
             if is_dual_stress is False:
                 if right_censored_stress_1 is None:
-                    raise ValueError("right_censored_stress_1 must be provided")
+                    msg = "right_censored_stress_1 must be provided"
+                    raise ValueError(msg)
                 if right_censored_stress_2 is not None:
                     colorprint(
                         str(
@@ -803,18 +842,24 @@ class ALT_fitters_input_checking:
 
         # type checking and converting to arrays for failures and right_censored
         if type(failures) not in [list, np.ndarray]:
-            raise ValueError("failures must be a list or array of failure data")
+            msg = "failures must be a list or array of failure data"
+            raise ValueError(msg)
         if type(failure_stress_1) not in [list, np.ndarray]:
-            raise ValueError("failure_stress_1 must be a list or array of failure stress data")
+            msg = "failure_stress_1 must be a list or array of failure stress data"
+            raise ValueError(msg)
         if type(failure_stress_2) not in [list, np.ndarray]:
-            raise ValueError("failure_stress_2 must be a list or array of failure stress data")
+            msg = "failure_stress_2 must be a list or array of failure stress data"
+            raise ValueError(msg)
 
         if type(right_censored) not in [list, np.ndarray]:
-            raise ValueError("right_censored must be a list or array of right censored failure data")
+            msg = "right_censored must be a list or array of right censored failure data"
+            raise ValueError(msg)
         if type(right_censored_stress_1) not in [list, np.ndarray]:
-            raise ValueError("right_censored_stress_1 must be a list or array of right censored failure stress data")
+            msg = "right_censored_stress_1 must be a list or array of right censored failure stress data"
+            raise ValueError(msg)
         if type(right_censored_stress_2) not in [list, np.ndarray]:
-            raise ValueError("right_censored_stress_2 must be a list or array of right censored failure stress data")
+            msg = "right_censored_stress_2 must be a list or array of right censored failure stress data"
+            raise ValueError(msg)
 
         failures = np.asarray(failures).astype(float)
         failure_stress_1 = np.asarray(failure_stress_1).astype(float)
@@ -826,36 +871,44 @@ class ALT_fitters_input_checking:
         # check that list lengths match
         if is_dual_stress is False:
             if len(failures) != len(failure_stress_1):
-                raise ValueError("failures must have the same number of elements as failure_stress_1")
+                msg = "failures must have the same number of elements as failure_stress_1"
+                raise ValueError(msg)
             if len(right_censored) != len(right_censored_stress_1):
-                raise ValueError("right_censored must have the same number of elements as right_censored_stress_1")
+                msg = "right_censored must have the same number of elements as right_censored_stress_1"
+                raise ValueError(msg)
         else:
             if len(failures) != len(failure_stress_1) or len(failures) != len(failure_stress_2):
+                msg = "failures must have the same number of elements as failure_stress_1 and failure_stress_2"
                 raise ValueError(
-                    "failures must have the same number of elements as failure_stress_1 and failure_stress_2",
+                    msg,
                 )
             if len(right_censored) != len(right_censored_stress_1) or len(right_censored) != len(
                 right_censored_stress_2,
             ):
+                msg = "right_censored must have the same number of elements as right_censored_stress_1 and right_censored_stress_2"
                 raise ValueError(
-                    "right_censored must have the same number of elements as right_censored_stress_1 and right_censored_stress_2",
+                    msg,
                 )
 
         # raise an error for values <= 0. Not even the Normal Distribution is allowed to have failures at negative life.
         if min(np.hstack([failures, right_censored])) <= 0:
-            raise ValueError("All failure and right censored values must be greater than zero.")
+            msg = "All failure and right censored values must be greater than zero."
+            raise ValueError(msg)
 
         # type and value checking for CI
         if type(CI) not in [float, np.float64]:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence interval.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval."
+            raise ValueError(msg)
         if CI <= 0 or CI >= 1:
-            raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence interval.")
+            msg = "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval."
+            raise ValueError(msg)
 
         # error checking for optimizer
         if optimizer is not None:
             if not isinstance(optimizer, str):
+                msg = 'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html'
                 raise ValueError(
-                    'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html',
+                    msg,
                 )
             if optimizer.upper() == "TNC":
                 optimizer = "TNC"
@@ -868,8 +921,9 @@ class ALT_fitters_input_checking:
             elif optimizer.upper() in ["ALL", "BEST"]:
                 optimizer = "best"
             else:
+                msg = 'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html'
                 raise ValueError(
-                    'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html',
+                    msg,
                 )
 
         # check the number of unique stresses
@@ -877,12 +931,14 @@ class ALT_fitters_input_checking:
         MIN_UNIQUE_STRESSES = 2
 
         if len(unique_stresses_1) < MIN_UNIQUE_STRESSES:
-            raise ValueError("failure_stress_1 must have at least 2 unique stresses.")
+            msg = "failure_stress_1 must have at least 2 unique stresses."
+            raise ValueError(msg)
         if is_dual_stress is True:
             unique_stresses_2 = np.unique(failure_stress_2)
             if len(unique_stresses_2) < MIN_UNIQUE_STRESSES:
+                msg = "failure_stress_2 must have at least 2 unique stresses when using a dual stress model."
                 raise ValueError(
-                    "failure_stress_2 must have at least 2 unique stresses when using a dual stress model.",
+                    msg,
                 )
 
         # group the failures into their failure_stresses and then check there are enough to fit the model
@@ -1045,18 +1101,21 @@ class ALT_fitters_input_checking:
         # check that use level stress is the correct type
         if is_dual_stress is False and use_level_stress is not None:
             if type(use_level_stress) in [list, tuple, np.ndarray, str, bool, dict]:
-                raise ValueError("use_level_stress must be a number")
+                msg = "use_level_stress must be a number"
+                raise ValueError(msg)
             use_level_stress = float(use_level_stress)
         elif is_dual_stress is True and use_level_stress is not None:
             if type(use_level_stress) not in [list, np.ndarray]:
+                msg = "use_level_stress must be an array or list of the use level stresses. eg. use_level_stress = [stress_1, stress_2]."
                 raise ValueError(
-                    "use_level_stress must be an array or list of the use level stresses. eg. use_level_stress = [stress_1, stress_2].",
+                    msg,
                 )
             EXPECTED_USE_LEVEL_STRESS_LENGTH = 2
 
             if len(use_level_stress) != EXPECTED_USE_LEVEL_STRESS_LENGTH:
+                msg = "use_level_stress must be an array or list of length 2 with the use level stresses. eg. use_level_stress = [stress_1, stress_2]."
                 raise ValueError(
-                    "use_level_stress must be an array or list of length 2 with the use level stresses. eg. use_level_stress = [stress_1, stress_2].",
+                    msg,
                 )
             use_level_stress = np.asarray(use_level_stress)
 
@@ -1175,20 +1234,23 @@ class alt_fitters_dual_stress_input_checking:
         optimizer=None,
     ):
         if dist not in ["Exponential", "Weibull", "Lognormal", "Normal"]:
-            raise ValueError("dist must be one of Exponential, Weibull, Lognormal, Normal.")
+            msg = "dist must be one of Exponential, Weibull, Lognormal, Normal."
+            raise ValueError(msg)
         if life_stress_model not in [
             "Dual_Exponential",
             "Power_Exponential",
             "Dual_Power",
         ]:
+            msg = "life_stess_model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power."
             raise ValueError(
-                "life_stess_model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power.",
+                msg,
             )
         min_failures_reqd = 4
 
         # failure checks
         if failure_stress_1 is None or failure_stress_2 is None:
-            raise ValueError("failure_stress_1 and failure_stress_2 must be provided for dual stress models.")
+            msg = "failure_stress_1 and failure_stress_2 must be provided for dual stress models."
+            raise ValueError(msg)
 
         # right_censored checks
         if right_censored is None:
@@ -1206,23 +1268,30 @@ class alt_fitters_dual_stress_input_checking:
             right_censored_stress_1 = []
             right_censored_stress_2 = []
         elif right_censored_stress_1 is None or right_censored_stress_2 is None:
+            msg = "right_censored_stress_1 and right_censored_stress_2 must be provided for dual stress models."
             raise ValueError(
-                "right_censored_stress_1 and right_censored_stress_2 must be provided for dual stress models.",
+                msg,
             )
 
         # type checking and converting to arrays for failures and right_censored
         if type(failures) not in [list, np.ndarray]:
-            raise ValueError("failures must be a list or array of failure data")
+            msg = "failures must be a list or array of failure data"
+            raise ValueError(msg)
         if type(failure_stress_1) not in [list, np.ndarray]:
-            raise ValueError("failure_stress_1 must be a list or array of failure stress data")
+            msg = "failure_stress_1 must be a list or array of failure stress data"
+            raise ValueError(msg)
         if type(failure_stress_2) not in [list, np.ndarray]:
-            raise ValueError("failure_stress_2 must be a list or array of failure stress data")
+            msg = "failure_stress_2 must be a list or array of failure stress data"
+            raise ValueError(msg)
         if type(right_censored) not in [list, np.ndarray]:
-            raise ValueError("right_censored must be a list or array of right censored failure data")
+            msg = "right_censored must be a list or array of right censored failure data"
+            raise ValueError(msg)
         if type(right_censored_stress_1) not in [list, np.ndarray]:
-            raise ValueError("right_censored_stress_1 must be a list or array of right censored failure stress data")
+            msg = "right_censored_stress_1 must be a list or array of right censored failure stress data"
+            raise ValueError(msg)
         if type(right_censored_stress_2) not in [list, np.ndarray]:
-            raise ValueError("right_censored_stress_2 must be a list or array of right censored failure stress data")
+            msg = "right_censored_stress_2 must be a list or array of right censored failure stress data"
+            raise ValueError(msg)
 
         failures = np.asarray(failures).astype(float)
         failure_stress_1 = np.asarray(failure_stress_1).astype(float)
@@ -1232,19 +1301,22 @@ class alt_fitters_dual_stress_input_checking:
         right_censored_stress_2 = np.asarray(right_censored_stress_2).astype(float)
 
         if len(failures) != len(failure_stress_1) or len(failures) != len(failure_stress_2):
+            msg = "failures must have the same number of elements as failure_stress_1 and failure_stress_2"
             raise ValueError(
-                "failures must have the same number of elements as failure_stress_1 and failure_stress_2",
+                msg,
             )
         if len(right_censored) != len(right_censored_stress_1) or len(right_censored) != len(
             right_censored_stress_2,
         ):
+            msg = "right_censored must have the same number of elements as right_censored_stress_1 and right_censored_stress_2"
             raise ValueError(
-                "right_censored must have the same number of elements as right_censored_stress_1 and right_censored_stress_2",
+                msg,
             )
 
         # raise an error for values <= 0. Not even the Normal Distribution is allowed to have failures at negative life.
         if min(np.hstack([failures, right_censored])) <= 0:
-            raise ValueError("All failure and right censored values must be greater than zero.")
+            msg = "All failure and right censored values must be greater than zero."
+            raise ValueError(msg)
 
         CI = check_confidence_interval(CI)
 
@@ -1257,11 +1329,13 @@ class alt_fitters_dual_stress_input_checking:
         MIN_UNIQUE_STRESSES = 2
 
         if len(unique_stresses_1) < MIN_UNIQUE_STRESSES:
-            raise ValueError("failure_stress_1 must have at least 2 unique stresses.")
+            msg = "failure_stress_1 must have at least 2 unique stresses."
+            raise ValueError(msg)
         unique_stresses_2 = np.unique(failure_stress_2)
         if len(unique_stresses_2) < MIN_UNIQUE_STRESSES:
+            msg = "failure_stress_2 must have at least 2 unique stresses when using a dual stress model."
             raise ValueError(
-                "failure_stress_2 must have at least 2 unique stresses when using a dual stress model.",
+                msg,
             )
 
         # group the failures into their failure_stresses and then check there are enough to fit the model
@@ -1348,13 +1422,15 @@ class alt_fitters_dual_stress_input_checking:
 
         if use_level_stress is not None:
             if type(use_level_stress) not in [list, np.ndarray]:
+                msg = "use_level_stress must be an array or list of the use level stresses. eg. use_level_stress = [stress_1, stress_2]."
                 raise ValueError(
-                    "use_level_stress must be an array or list of the use level stresses. eg. use_level_stress = [stress_1, stress_2].",
+                    msg,
                 )
             EXPECTED_USE_LEVEL_STRESS_LENGTH = 2
             if len(use_level_stress) != EXPECTED_USE_LEVEL_STRESS_LENGTH:
+                msg = "use_level_stress must be an array or list of length 2 with the use level stresses. eg. use_level_stress = [stress_1, stress_2]."
                 raise ValueError(
-                    "use_level_stress must be an array or list of length 2 with the use level stresses. eg. use_level_stress = [stress_1, stress_2].",
+                    msg,
                 )
             use_level_stress = np.asarray(use_level_stress)
 
@@ -1460,15 +1536,18 @@ class alt_single_stress_fitters_input_checking:
         optimizer: str | None = None,
     ):
         if dist not in ["Exponential", "Weibull", "Lognormal", "Normal"]:
-            raise ValueError("dist must be one of Exponential, Weibull, Lognormal, Normal.")
+            msg = "dist must be one of Exponential, Weibull, Lognormal, Normal."
+            raise ValueError(msg)
         if life_stress_model not in ["Exponential", "Eyring", "Power"]:
+            msg = "life_stess_model must be one of Exponential, Eyring, Power"
             raise ValueError(
-                "life_stess_model must be one of Exponential, Eyring, Power",
+                msg,
             )
         min_failures_reqd = 3
         # failure checks
         if failure_stress_1 is None:
-            raise ValueError("failure_stress_1 must be provided")
+            msg = "failure_stress_1 must be provided"
+            raise ValueError(msg)
         # right_censored checks
         if right_censored is None:
             if right_censored_stress_1 is not None:
@@ -1479,33 +1558,41 @@ class alt_single_stress_fitters_input_checking:
             right_censored = []
             right_censored_stress_1 = []
         elif right_censored_stress_1 is None:
-            raise ValueError("right_censored_stress_1 must be provided")
+            msg = "right_censored_stress_1 must be provided"
+            raise ValueError(msg)
 
         # type checking and converting to arrays for failures
         if type(failures) not in [list, np.ndarray]:
-            raise ValueError("failures must be a list or array of failure data")
+            msg = "failures must be a list or array of failure data"
+            raise ValueError(msg)
         if type(failure_stress_1) not in [list, np.ndarray]:
-            raise ValueError("failure_stress_1 must be a list or array of failure stress data")
+            msg = "failure_stress_1 must be a list or array of failure stress data"
+            raise ValueError(msg)
         failures = np.asarray(failures).astype(float)
         failure_stress_1 = np.asarray(failure_stress_1).astype(float)
         # check that list lengths match
         if len(failures) != len(failure_stress_1):
-            raise ValueError("failures must have the same number of elements as failure_stress_1")
+            msg = "failures must have the same number of elements as failure_stress_1"
+            raise ValueError(msg)
 
         # type checking and converting to arrays for failures right_censored
         if type(right_censored) not in [list, np.ndarray]:
-            raise ValueError("right_censored must be a list or array of right censored failure data")
+            msg = "right_censored must be a list or array of right censored failure data"
+            raise ValueError(msg)
         if type(right_censored_stress_1) not in [list, np.ndarray]:
-            raise ValueError("right_censored_stress_1 must be a list or array of right censored failure stress data")
+            msg = "right_censored_stress_1 must be a list or array of right censored failure stress data"
+            raise ValueError(msg)
         right_censored = np.asarray(right_censored).astype(float)
         right_censored_stress_1 = np.asarray(right_censored_stress_1).astype(float)
         # check that list lengths match
         if len(right_censored) != len(right_censored_stress_1):
-            raise ValueError("right_censored must have the same number of elements as right_censored_stress_1")
+            msg = "right_censored must have the same number of elements as right_censored_stress_1"
+            raise ValueError(msg)
 
         # raise an error for values <= 0. Not even the Normal Distribution is allowed to have failures at negative life.
         if min(np.hstack([failures, right_censored])) <= 0:
-            raise ValueError("All failure and right censored values must be greater than zero.")
+            msg = "All failure and right censored values must be greater than zero."
+            raise ValueError(msg)
 
         CI = check_confidence_interval(CI)
 
@@ -1518,7 +1605,8 @@ class alt_single_stress_fitters_input_checking:
         MIN_UNIQUE_STRESSES = 2
 
         if len(unique_stresses_1) < MIN_UNIQUE_STRESSES:
-            raise ValueError("failure_stress_1 must have at least 2 unique stresses.")
+            msg = "failure_stress_1 must have at least 2 unique stresses."
+            raise ValueError(msg)
 
         error_msg = str(
             "There must be at least "
@@ -1542,7 +1630,8 @@ class alt_single_stress_fitters_input_checking:
         # check that use level stress is the correct type
         if use_level_stress is not None:
             if type(use_level_stress) in [list, tuple, np.ndarray, str, bool, dict]:
-                raise ValueError("use_level_stress must be a number")
+                msg = "use_level_stress must be a number"
+                raise ValueError(msg)
             use_level_stress = float(use_level_stress)
 
         # returns everything
@@ -1579,8 +1668,9 @@ def check_optimizer(optimizer) -> str:
     """
     # error checking for optimizer
     if not isinstance(optimizer, str):
+        msg = 'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html'
         raise TypeError(
-            'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html',
+            msg,
         )
     if optimizer.upper() == "TNC":
         optimizer = "TNC"
@@ -1593,8 +1683,9 @@ def check_optimizer(optimizer) -> str:
     elif optimizer.upper() in ["ALL", "BEST"]:
         optimizer = "best"
     else:
+        msg = 'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html'
         raise ValueError(
-            'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html',
+            msg,
         )
     return optimizer
 
@@ -1617,9 +1708,11 @@ def check_confidence_interval(CI: float) -> float:
 
     """
     if type(CI) not in [float, np.float64]:
-        raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence interval.")
+        msg = "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval."
+        raise ValueError(msg)
     if CI <= 0 or CI >= 1:
-        raise ValueError("CI must be between 0 and 1. Default is 0.95 for 95% confidence interval.")
+        msg = "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval."
+        raise ValueError(msg)
     return CI
 
 

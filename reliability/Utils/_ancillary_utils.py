@@ -255,7 +255,8 @@ def colorprint(
     ITALIC = "\x1b[3m" if italic is True else "\x1b[23m"
 
     if type(text_color) not in [str, np.str_, type(None)]:
-        raise ValueError("text_color must be a string")
+        msg = "text_color must be a string"
+        raise ValueError(msg)
     if text_color is None:
         pass
     elif text_color.upper() in ["GREY", "GRAY", "GR"]:
@@ -282,10 +283,12 @@ def colorprint(
     ]:
         text_color = "turquoise"
     else:
-        raise ValueError("Unknown text_color. Options are grey, red, green, yellow, blue, pink, turquoise.")
+        msg = "Unknown text_color. Options are grey, red, green, yellow, blue, pink, turquoise."
+        raise ValueError(msg)
 
     if type(background_color) not in [str, np.str_, type(None)]:
-        raise ValueError("background_color must be a string")
+        msg = "background_color must be a string"
+        raise ValueError(msg)
     if background_color is None:
         pass
     elif background_color.upper() in ["GREY", "GRAY", "GR"]:
@@ -312,7 +315,8 @@ def colorprint(
     ]:
         background_color = "turquoise"
     else:
-        raise ValueError("Unknown text_color. Options are grey, red, green, yellow, blue, pink, turquoise.")
+        msg = "Unknown text_color. Options are grey, red, green, yellow, blue, pink, turquoise."
+        raise ValueError(msg)
 
     print(
         BOLD + ITALIC + UNDERLINE + background_colors[background_color] + text_colors[text_color] + string + "\033[0m",

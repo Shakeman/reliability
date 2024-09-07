@@ -108,38 +108,46 @@ def SN_diagram(
     elif isinstance(stress, list):
         stress = np.array(stress)
     else:
-        raise ValueError("stress must be an array or list")
+        msg = "stress must be an array or list"
+        raise ValueError(msg)
     if isinstance(cycles, np.ndarray):
         pass
     elif isinstance(cycles, list):
         cycles = np.array(cycles)
     else:
-        raise ValueError("cycles must be an array or list")
+        msg = "cycles must be an array or list"
+        raise ValueError(msg)
     if len(cycles) != len(stress):
-        raise ValueError("the number of datapoints for stress and cycles must be equal")
+        msg = "the number of datapoints for stress and cycles must be equal"
+        raise ValueError(msg)
 
     if stress_runout is not None and cycles_runout is not None:
         if len(cycles_runout) != len(stress_runout):
-            raise ValueError("the number of datapoints for stress_runout and cycles_runout must be equal")
+            msg = "the number of datapoints for stress_runout and cycles_runout must be equal"
+            raise ValueError(msg)
         if isinstance(stress_runout, np.ndarray):
             pass
         elif isinstance(stress_runout, list):
             stress_runout = np.array(stress_runout)
         else:
-            raise ValueError("stress_runout must be an array or list")
+            msg = "stress_runout must be an array or list"
+            raise ValueError(msg)
         if isinstance(cycles_runout, np.ndarray):
             pass
         elif isinstance(cycles_runout, list):
             cycles_runout = np.array(cycles_runout)
         else:
-            raise ValueError("cycles_runout must be an array or list")
+            msg = "cycles_runout must be an array or list"
+            raise ValueError(msg)
 
     if method_for_bounds not in ["statistical", "residual", None]:
-        raise ValueError("method_for_bounds must be either statistical,residual,or None (for no bounds).")
+        msg = "method_for_bounds must be either statistical,residual,or None (for no bounds)."
+        raise ValueError(msg)
 
     if CI <= 0 or CI >= 1:
+        msg = "CI must be between 0 and 1. Default is 0.95 for 95% Confidence intervals on statistical bounds"
         raise ValueError(
-            "CI must be between 0 and 1. Default is 0.95 for 95% Confidence intervals on statistical bounds",
+            msg,
         )
 
     if stress_runout is None and show_endurance_limit is None:
@@ -154,12 +162,15 @@ def SN_diagram(
         show_endurance_limit = True
 
     if xscale not in ["log", "linear"]:
-        raise ValueError("xscale must be log or linear. Default is log")
+        msg = "xscale must be log or linear. Default is log"
+        raise ValueError(msg)
 
     if stress_trace is not None and type(stress_trace) not in [np.ndarray, list]:
-        raise ValueError("stress_trace must be an array or list. Default is None")
+        msg = "stress_trace must be an array or list. Default is None"
+        raise ValueError(msg)
     if cycles_trace is not None and type(cycles_trace) not in [np.ndarray, list]:
-        raise ValueError("cycles_trace must be an array or list. Default is None")
+        msg = "cycles_trace must be an array or list. Default is None"
+        raise ValueError(msg)
 
     # fit the log-linear model
     log10_cycles = np.log10(cycles)
@@ -347,20 +358,23 @@ class stress_strain_life_parameters_from_data:
         elif isinstance(stress, list):
             stress = np.array(stress)
         else:
-            raise ValueError("stress must be an array or list")
+            msg = "stress must be an array or list"
+            raise ValueError(msg)
         if isinstance(strain, np.ndarray):
             pass
         elif isinstance(strain, list):
             strain = np.array(strain)
         else:
-            raise ValueError("strain must be an array or list")
+            msg = "strain must be an array or list"
+            raise ValueError(msg)
         if cycles is not None:
             if isinstance(cycles, np.ndarray):
                 cycles_2Nf = 2 * cycles
             elif isinstance(cycles, list):
                 cycles_2Nf = 2 * np.array(cycles)
             else:
-                raise ValueError("cycles must be an array or list")
+                msg = "cycles must be an array or list"
+                raise ValueError(msg)
 
         # fit the ramberg osgood relationship to the data
         elastic_strain = stress / E
@@ -587,17 +601,21 @@ class stress_strain_diagram:
         initial_load_direction="tension",
     ):
         if max_stress is not None and max_strain is not None:
+            msg = "Do not specify both max_stress and max_strain as the corresponding value will be automatically calculated"
             raise ValueError(
-                "Do not specify both max_stress and max_strain as the corresponding value will be automatically calculated",
+                msg,
             )
         if min_stress is not None and min_strain is not None:
+            msg = "Do not specify both min_stress and min_strain as the corresponding value will be automatically calculated"
             raise ValueError(
-                "Do not specify both min_stress and min_strain as the corresponding value will be automatically calculated",
+                msg,
             )
         if max_stress is None and max_strain is None:
-            raise ValueError("You must specify either max_stress OR max_strain for the cyclic loading")
+            msg = "You must specify either max_stress OR max_strain for the cyclic loading"
+            raise ValueError(msg)
         if initial_load_direction not in ["tension", "compression"]:
-            raise ValueError("initial_load_direction must be either tension or compression. Default is tension.")
+            msg = "initial_load_direction must be either tension or compression. Default is tension."
+            raise ValueError(msg)
 
         self.K = K
         self.n = n
@@ -868,16 +886,19 @@ class strain_life_diagram:
         show_plot: bool = True,
     ):
         if max_stress is not None and max_strain is not None:
+            msg = "Do not specify both max_stress and max_strain as the corresponding value will be automatically calculated"
             raise ValueError(
-                "Do not specify both max_stress and max_strain as the corresponding value will be automatically calculated",
+                msg,
             )
         if min_stress is not None and min_strain is not None:
+            msg = "Do not specify both min_stress and min_strain as the corresponding value will be automatically calculated"
             raise ValueError(
-                "Do not specify both min_stress and min_strain as the corresponding value will be automatically calculated",
+                msg,
             )
         if (max_stress is not None or max_strain is not None) and (K is None or n is None):
+            msg = "K and n must be specified if you specify max_stress or max_strain. These values are required to calculate the corresponding stress or strain"
             raise ValueError(
-                "K and n must be specified if you specify max_stress or max_strain. These values are required to calculate the corresponding stress or strain",
+                msg,
             )
         if mean_stress_correction_method not in [
             "morrow",
@@ -885,11 +906,13 @@ class strain_life_diagram:
             "modified morrow",
             "SWT",
         ]:
-            raise ValueError("mean_stress_correction_method must be either 'morrow', 'modified_morrow', or 'SWT'")
+            msg = "mean_stress_correction_method must be either 'morrow', 'modified_morrow', or 'SWT'"
+            raise ValueError(msg)
 
         if max_strain is not None or max_stress is not None:
             if K is None:
-                raise ValueError("K must be specified if max_stress or max_strain is specified")
+                msg = "K must be specified if max_stress or max_strain is specified"
+                raise ValueError(msg)
             if max_stress is not None and n is not None:  # we have stress. Need to find strain
                 self.max_stress: float = max_stress
                 self.max_strain: float = max_stress / E + (max_stress / K) ** (1 / n)
@@ -1357,7 +1380,8 @@ def palmgren_miner_linear_damage(rated_life, time_at_stress, stress):
 
     """
     if len(rated_life) != len(time_at_stress) or len(rated_life) != len(stress):
-        raise ValueError("All inputs must be of equal length.")
+        msg = "All inputs must be of equal length."
+        raise ValueError(msg)
 
     life_frac = []
     for i, x in enumerate(time_at_stress):
@@ -1481,8 +1505,9 @@ class fracture_mechanics_crack_initiation:
         mean_stress_correction_method: str = "modified_morrow",
     ):
         if mean_stress_correction_method not in ["morrow", "modified_morrow", "SWT"]:
+            msg = "mean_stress_correction_method must be either morrow,modified_morrow, or SWT. Default is modified_morrow."
             raise ValueError(
-                "mean_stress_correction_method must be either morrow,modified_morrow, or SWT. Default is modified_morrow.",
+                msg,
             )
         S_net: float = 10**6 * P / A
         Kf: float = 1 + q * (Kt - 1)
@@ -1516,8 +1541,9 @@ class fracture_mechanics_crack_initiation:
             delta_epsilon: float = delta_epsilon_delta_sigma / delta_sigma
 
             if delta_epsilon > 1:  # this checks that the delta_epsilon that was found is realistic
+                msg = "As a results of the inputs, delta_epsilon has been calculated to be greater than 1. This will result in immediate failure of the component. You should check your inputs to ensure they are in the correct units, especially for P (units of MPa) and A (units of mm^2)."
                 raise ValueError(
-                    "As a results of the inputs, delta_epsilon has been calculated to be greater than 1. This will result in immediate failure of the component. You should check your inputs to ensure they are in the correct units, especially for P (units of MPa) and A (units of mm^2).",
+                    msg,
                 )
 
             self.sigma_min: float = sigma - delta_sigma
@@ -1807,9 +1833,11 @@ class fracture_mechanics_crack_growth:
     ):
         INVALID_MATERIAL_CONSTANT = 2
         if m == INVALID_MATERIAL_CONSTANT:
-            raise ValueError("m can not be 2")
+            msg = "m can not be 2"
+            raise ValueError(msg)
         if crack_type not in ["center", "edge", "centre"]:
-            raise ValueError("crack_type must be either edge or center. default is center")
+            msg = "crack_type must be either edge or center. default is center"
+            raise ValueError(msg)
         if plate_width - 2 * notch_depth < 0:
             error_str = str(
                 "The specified geometry is invalid. A doubly notched specimen with specified values of the d = "
@@ -2146,16 +2174,19 @@ def creep_rupture_curves(temp_array, stress_array, TTF_array, stress_trace=None,
 
     """
     if (stress_trace is not None and temp_trace is None) or (stress_trace is None and temp_trace is not None):
+        msg = "You must enter both stress_trace and temp_trace to obtain the time to failure at a given stress and temperature."
         raise ValueError(
-            "You must enter both stress_trace and temp_trace to obtain the time to failure at a given stress and temperature.",
+            msg,
         )
     MIN_DATA_POINTS = 2
     if len(temp_array) < MIN_DATA_POINTS or len(stress_array) < MIN_DATA_POINTS or len(TTF_array) < MIN_DATA_POINTS:
+        msg = "temp_array, stress_array, and TTF_array must each have at least 2 data points for a line to be fitted."
         raise ValueError(
-            "temp_array, stress_array, and TTF_array must each have at least 2 data points for a line to be fitted.",
+            msg,
         )
     if len(temp_array) != len(stress_array) or len(temp_array) != len(TTF_array):
-        raise ValueError("The length of temp_array, stress_array, and TTF_array must all be equal")
+        msg = "The length of temp_array, stress_array, and TTF_array must all be equal"
+        raise ValueError(msg)
 
     xmin = 10 ** (int(np.floor(np.log10(min(TTF_array)))) - 1)
     xmax = 10 ** (int(np.ceil(np.log10(max(TTF_array)))) + 1)
@@ -2177,7 +2208,8 @@ def creep_rupture_curves(temp_array, stress_array, TTF_array, stress_trace=None,
     stress_indices.append(len(stress_array))
 
     if temp_trace not in unique_temps:
-        raise ValueError("temp_trace must be one of the temperatures provided in temp_array")
+        msg = "temp_trace must be one of the temperatures provided in temp_array"
+        raise ValueError(msg)
 
     for i, T in enumerate(unique_temps):
         xvalues: list[int] = TTF_array[stress_indices[i] : stress_indices[i + 1]]
@@ -2289,15 +2321,17 @@ class acceleration_factor:
 
     def __init__(self, AF=None, T_use=None, T_acc=None, Ea=None):
         if T_use is None:
-            raise ValueError("T_use must be specified")
+            msg = "T_use must be specified"
+            raise ValueError(msg)
         args = [AF, T_acc, Ea]
         nonecounter = 0
         for item in args:
             if item is None:
                 nonecounter += 1
         if nonecounter > 1:
+            msg = "You must specify two out of three of the optional inputs (T_acc, AF, Ea) and the third one will be found."
             raise ValueError(
-                "You must specify two out of three of the optional inputs (T_acc, AF, Ea) and the third one will be found.",
+                msg,
             )
 
         if AF is None and Ea is not None and T_acc is not None:
@@ -2327,7 +2361,8 @@ class acceleration_factor:
             self.T_acc = T_acc
             self.T_use = T_use
         else:
-            raise ValueError("Two of the three optional inputs must be specified")
+            msg = "Two of the three optional inputs must be specified"
+            raise ValueError(msg)
 
     def print_results(self):
         """Print the results from the acceleration_factor calculation.

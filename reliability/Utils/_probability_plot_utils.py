@@ -82,7 +82,8 @@ class make_fitted_dist_params_for_ALT_probplots:
             self.Lambda_SE = None
             self.gamma = 0
         else:
-            raise ValueError("dist must be one of Weibull, Normal, Lognormal, Exponential")
+            msg = "dist must be one of Weibull, Normal, Lognormal, Exponential"
+            raise ValueError(msg)
 
 
 def ALT_prob_plot(
@@ -163,15 +164,17 @@ def ALT_prob_plot(
                 Exponential_probability_plot_Weibull_Scale as probplot,
             )
         else:
-            raise ValueError("dist must be either Weibull, Lognormal, Normal, Exponential")
+            msg = "dist must be either Weibull, Lognormal, Normal, Exponential"
+            raise ValueError(msg)
 
         if model in ["Dual_Exponential", "Power_Exponential", "Dual_Power"]:
             dual_stress = True
         elif model in ["Exponential", "Eyring", "Power"]:
             dual_stress = False
         else:
+            msg = "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power"
             raise ValueError(
-                "model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power",
+                msg,
             )
 
         color_cycle = plt.rcParams["axes.prop_cycle"].by_key()["color"]  # gets the default color cycle
@@ -437,7 +440,8 @@ def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha
             xlim_lower = 0
             xlim_upper = xlim_upper * 2
     else:
-        raise ValueError("dist is unrecognised")
+        msg = "dist is unrecognised"
+        raise ValueError(msg)
     if xlim_lower < 0 and dist not in ["normal", "gumbel"]:
         xlim_lower = 0
     # set xlims
@@ -489,7 +493,8 @@ def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha
         ylim_lower = axes_transforms.loglogistic_inverse(min_y_tfm - dy_tfm * spacing)
         ylim_upper = axes_transforms.loglogistic_inverse(max_y_tfm + dy_tfm * spacing)
     else:
-        raise ValueError("dist is unrecognised")
+        msg = "dist is unrecognised"
+        raise ValueError(msg)
     if ylim_upper == ylim_lower:
         dx = min(1 - ylim_upper, ylim_upper - 1)
         ylim_upper = ylim_upper - spacing * dx

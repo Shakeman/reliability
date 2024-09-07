@@ -110,10 +110,12 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None) -> npt.NDArray[np.f
         X = xvals
         if type(X) in [float, int, np.float64]:
             if X < 0 and dist.name not in ["Normal", "Gumbel"]:
-                raise ValueError("the value given for xvals is less than 0")
+                msg = "the value given for xvals is less than 0"
+                raise ValueError(msg)
             if X > 1 and dist.name == "Beta":
+                msg = "the value given for xvals is greater than 1. The beta distribution is bounded between 0 and 1."
                 raise ValueError(
-                    "the value given for xvals is greater than 1. The beta distribution is bounded between 0 and 1.",
+                    msg,
                 )
             X = np.array([X])
         elif isinstance(X, list):
@@ -121,19 +123,23 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None) -> npt.NDArray[np.f
         elif type(X) is np.ndarray:
             pass
         else:
-            raise ValueError("unexpected type in xvals. Must be int, float, list, or array")
+            msg = "unexpected type in xvals. Must be int, float, list, or array"
+            raise ValueError(msg)
         if type(X) is np.ndarray and min(X) < 0 and dist.name not in ["Normal", "Gumbel"]:
-            raise ValueError("xvals was found to contain values below 0")
+            msg = "xvals was found to contain values below 0"
+            raise ValueError(msg)
         if type(X) is np.ndarray and max(X) > 1 and dist.name == "Beta":
+            msg = "xvals was found to contain values above 1. The beta distribution is bounded between 0 and 1."
             raise ValueError(
-                "xvals was found to contain values above 1. The beta distribution is bounded between 0 and 1.",
+                msg,
             )
     elif dist.name in ["Weibull", "Lognormal", "Loglogistic", "Exponential", "Gamma"]:
         if xmin is None:
             xmin = 0
         if xmin < 0:
+            msg = "xmin must be greater than or equal to 0 for all distributions except the Normal and Gumbel distributions"
             raise ValueError(
-                "xmin must be greater than or equal to 0 for all distributions except the Normal and Gumbel distributions",
+                msg,
             )
         if xmax is None:
             xmax = dist.quantile(0.9999)
@@ -250,7 +256,8 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None) -> npt.NDArray[np.f
         if xmax is None:
             xmax = 1
         if xmax > 1:
-            raise ValueError("xmax must be less than or equal to 1 for the beta distribution")
+            msg = "xmax must be less than or equal to 1 for the beta distribution"
+            raise ValueError(msg)
         if xmin > xmax:
             xmin, xmax = (
                 xmax,
@@ -258,7 +265,8 @@ def generate_X_array(dist, xvals=None, xmin=None, xmax=None) -> npt.NDArray[np.f
             )  # switch them if they are given in the wrong order
         X = np.linspace(xmin, xmax, points)
     else:
-        raise ValueError("Unrecognised distribution name")
+        msg = "Unrecognised distribution name"
+        raise ValueError(msg)
     return X
 
 
@@ -309,7 +317,8 @@ def xy_downsample(x, y, downsample_factor=None, default_max_values=1000):
     if downsample_factor in [None, True]:
         downsample_factor = np.floor(len_x / (0.5 * default_max_values))
     elif not isinstance(downsample_factor, int):
-        raise ValueError("downsample_factor must be an integer")
+        msg = "downsample_factor must be an integer"
+        raise ValueError(msg)
     MINIMUM_POINTS = 2
     if len_x / downsample_factor < MINIMUM_POINTS:
         return x, y
@@ -456,12 +465,14 @@ def clean_CI_arrays(xlower, xupper, ylower, yupper, plot_type="CDF", x=None, q=N
 
     # checks whether CI_x or CI_y was specified and resulted in values being deleted due to being illegal values. Raises a more detailed error for the user.
     if len(xlower_out3) != len(xlower) and x is not None:
+        msg = "The confidence intervals for CI_x cannot be returned because they are NaN. This may occur when the SF=0. Try specifying CI_x values closer to the mean of the distribution."
         raise ValueError(
-            "The confidence intervals for CI_x cannot be returned because they are NaN. This may occur when the SF=0. Try specifying CI_x values closer to the mean of the distribution.",
+            msg,
         )
     if len(ylower_out3) != len(ylower) and q is not None:
+        msg = "The confidence intervals for CI_y cannot be returned because they are NaN. This may occur when the CI_y is near 0 or 1. Try specifying CI_y values closer to 0.5."
         raise ValueError(
-            "The confidence intervals for CI_y cannot be returned because they are NaN. This may occur when the CI_y is near 0 or 1. Try specifying CI_y values closer to 0.5.",
+            msg,
         )
 
     # final error check for lengths matching and there still being at least 2 elements remaining
@@ -540,10 +551,12 @@ def no_reverse(x, CI_type, plot_type) -> npt.NDArray[np.float64]:
 
     """
     if type(x) not in [np.ndarray, list]:
-        raise ValueError("x must be a list or array")
+        msg = "x must be a list or array"
+        raise ValueError(msg)
     MIN_LENGTH = 2
     if len(x) < MIN_LENGTH:
-        raise ValueError("x must be a list or array with length greater than 1")
+        msg = "x must be a list or array with length greater than 1"
+        raise ValueError(msg)
     decreasing: bool = not (CI_type == "time" and plot_type == "CHF")
 
     x = np.copy(np.asarray(x))
@@ -558,7 +571,8 @@ def no_reverse(x, CI_type, plot_type) -> npt.NDArray[np.float64]:
             if idxmax < len(x) - 1:
                 x[idxmax::] = max(x)
         else:
-            raise ValueError("The parameter 'decreasing' must be True or False")
+            msg = "The parameter 'decreasing' must be True or False"
+            raise ValueError(msg)
     return x
 
 
@@ -614,10 +628,12 @@ def transform_spaced(
     if y_lower > y_upper:
         y_lower, y_upper = y_upper, y_lower
     if y_lower <= 0 or y_upper >= 1:
-        raise ValueError("y_lower and y_upper must be within the range 0 to 1")
+        msg = "y_lower and y_upper must be within the range 0 to 1"
+        raise ValueError(msg)
     MIN_NUM = 2
     if num <= MIN_NUM:
-        raise ValueError("num must be greater than 2")
+        msg = "num must be greater than 2"
+        raise ValueError(msg)
     if transform in ["normal", "Normal", "norm", "Norm"]:
 
         def fwd(x: float):
@@ -660,7 +676,8 @@ def transform_spaced(
 
     elif transform in ["gamma", "Gamma", "gam", "Gam"]:
         if beta is None:
-            raise ValueError("beta must be specified to use the gamma transform")
+            msg = "beta must be specified to use the gamma transform"
+            raise ValueError(msg)
 
         def fwd(x: float):
             return ss.gamma.ppf(x, a=beta)
@@ -670,7 +687,8 @@ def transform_spaced(
 
     elif transform in ["beta", "Beta"]:
         if alpha is None or beta is None:
-            raise ValueError("alpha and beta must be specified to use the beta transform")
+            msg = "alpha and beta must be specified to use the beta transform"
+            raise ValueError(msg)
 
         def fwd(x: float):
             return ss.beta.ppf(x, a=beta, b=alpha)
@@ -686,9 +704,11 @@ def transform_spaced(
         "lognorm",
         "Lognorm",
     ]:  # the transform is the same, it's just the xscale that is ln for lognormal
-        raise ValueError("the Lognormal transform is the same as the normal transform. Specify normal and try again")
+        msg = "the Lognormal transform is the same as the normal transform. Specify normal and try again"
+        raise ValueError(msg)
     else:
-        raise ValueError("transform must be either exponential, normal, weibull, loglogistic, gamma, or beta")
+        msg = "transform must be either exponential, normal, weibull, loglogistic, gamma, or beta"
+        raise ValueError(msg)
 
     # find the value of the bounds in tranform space
     upper = fwd(y_upper)

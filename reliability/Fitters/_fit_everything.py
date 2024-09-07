@@ -1166,7 +1166,7 @@ class Fit_Everything:
             )
 
         # change to sorting by BIC if there is insufficient data to get the AICc for everything that was fitted
-        if sort_by in ["AIC", "aic", "aicc", "AICc"] and "Insufficient data" in df["AICc"].values:
+        if sort_by in ["AIC", "aic", "aicc", "AICc"] and "Insufficient data" in df["AICc"].to_numpy():
             sort_by = "BIC"
         # sort the dataframe by BIC, AICc, or AD. Smallest AICc, BIC, AD is better fit
         if not isinstance(sort_by, str):
@@ -1199,7 +1199,7 @@ class Fit_Everything:
         self.results = df2
 
         # creates a distribution object of the best fitting distribution and assigns its name
-        best_dist = self.results["Distribution"].values[0]
+        best_dist = self.results["Distribution"].to_numpy()[0]
         self.best_distribution_name = best_dist
         if best_dist == "Weibull_2P":
             self.best_distribution = Weibull_Distribution(alpha=self.Weibull_2P_alpha, beta=self.Weibull_2P_beta)
@@ -1390,7 +1390,7 @@ class Fit_Everything:
 
         plt.figure(figsize=(12, 6))
         # this is the order to plot things so that the legend matches the results dataframe
-        plotting_order = self.results["Distribution"].values
+        plotting_order = self.results["Distribution"].to_numpy()
         iqr = np.subtract(*np.percentile(X, [75, 25]))  # interquartile range
         # Freedman-Diaconis rule ==> https://en.wikipedia.org/wiki/Freedman%E2%80%93Diaconis_rule
         bin_width = 2 * iqr * len(X) ** -(1 / 3)
@@ -1565,7 +1565,7 @@ class Fit_Everything:
 
         cols, rows, _, figsizePP = Fit_Everything.__probplot_layout(self)
         # this is the order to plot things which matches the results dataframe
-        plotting_order = self.results["Distribution"].values
+        plotting_order = self.results["Distribution"].to_numpy()
         plt.figure(figsize=figsizePP)
         plt.suptitle(
             "Semi-parametric Probability-Probability plots of each fitted distribution\nParametric (x-axis) vs Non-Parametric (y-axis)\n",
@@ -1684,11 +1684,11 @@ class Fit_Everything:
         if best_only is False:
             cols, rows, figsize, _ = Fit_Everything.__probplot_layout(self)
             # this is the order to plot to match the results dataframe
-            plotting_order = self.results["Distribution"].values
+            plotting_order = self.results["Distribution"].to_numpy()
             plt.suptitle("Probability plots of each fitted distribution\n\n")
             subplot_counter = 1
         else:
-            plotting_order = [self.results["Distribution"].values[0]]
+            plotting_order = [self.results["Distribution"].to_numpy()[0]]
 
         # xvals is used by Weibull_Mixture, Weibull_CR, and Weibull_DS
         xvals = np.logspace(np.log10(min(self.failures)) - 3, np.log10(max(self.failures)) + 1, 1000)

@@ -617,7 +617,7 @@ class Fit_Weibull_2P_grouped:
             raise ValueError(
                 'dataframe must be a pandas dataframe with the columns "category" (F for failure or C for censored), "time" (the failure times), and "quantity" (the number of events at each time)',
             )
-        for item in dataframe.columns.values:
+        for item in dataframe.columns.to_numpy():
             if item not in ["category", "time", "quantity"]:
                 raise ValueError(
                     'The titles of the dataframe columns must be: "category" (F for failure or C for censored), "time" (the failure times), and "quantity" (the number of events at each time)',
@@ -641,10 +641,10 @@ class Fit_Weibull_2P_grouped:
         # unpack the dataframe
         failures_df = dataframe[dataframe["category"] == "F"]
         right_censored_df = dataframe[dataframe["category"] == "C"]
-        failure_times = failures_df.time.values
-        failure_qty = failures_df.quantity.values
-        right_censored_times = right_censored_df.time.values
-        right_censored_qty = right_censored_df.quantity.values
+        failure_times = failures_df.time.to_numpy()
+        failure_qty = failures_df.quantity.to_numpy()
+        right_censored_times = right_censored_df.time.to_numpy()
+        right_censored_qty = right_censored_df.quantity.to_numpy()
 
         # recompile the data to get the plotting positions for the initial guess
         failures = np.repeat(failure_times, failure_qty)

@@ -714,7 +714,7 @@ class ALT_fitters_input_checking:
         right_censored_stress_1=None,
         right_censored_stress_2=None,
         CI=0.95,
-        use_level_stress=None,
+        use_level_stress: float | npt.NDArray[np.float64] | None = None,
         optimizer=None,
     ):
         if dist not in ["Exponential", "Weibull", "Lognormal", "Normal", "Everything"]:
@@ -1069,7 +1069,7 @@ class ALT_fitters_input_checking:
         self.right_censored_stress_2 = right_censored_stress_2
         self.CI = CI
         self.optimizer = optimizer
-        self.use_level_stress = use_level_stress
+        self.use_level_stress: float | npt.NDArray[np.float64] | None = use_level_stress
         self.failure_groups = failure_groups[::-1]
         if right_censored_groups is None:
             self.right_censored_groups = right_censored_groups
@@ -1651,7 +1651,7 @@ def group_right_censored(right_censored, right_censored_stress_1, unique_failure
 
         unique_right_censored_stresses = unique_right_censored_stresses_df.index.tolist()
 
-        right_censored_groups = right_censored_df_grouped["right_censored"].apply(list).values.tolist()
+        right_censored_groups = right_censored_df_grouped["right_censored"].apply(list).to_numpy().tolist()
 
         for keys, _ in right_censored_df_ungrouped.groupby(["right_censored_stress_1"]):
             key = keys[0]
@@ -1705,7 +1705,7 @@ def group_failure_stresses(failures, failure_stress_1, min_failures_reqd, error_
 
     total_unique_failures = unique_failures_df.sum().sum()
 
-    failure_groups = failure_df_grouped["failures"].apply(list).values.tolist()
+    failure_groups = failure_df_grouped["failures"].apply(list).to_numpy().tolist()
     # Check that there are enough failures to fit the model.
     # This does not mean 2 failures at each stress.
     # All we need is as many failures as there are parameters in the model.
@@ -1728,6 +1728,6 @@ def group_df_data(array_1, array_2):
 
     total_uniques = unique_df.sum().sum()
 
-    list_groups_in_df = df_grouped["array_1"].apply(list).values.tolist()
+    list_groups_in_df = df_grouped["array_1"].apply(list).to_numpy().tolist()
 
     return list_groups_in_df, unique_failure_stresses, total_uniques

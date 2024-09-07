@@ -117,8 +117,8 @@ class reliability_growth:
         self.__target_MTBF = target_MTBF
 
         n: int = len(times)
-        max_time: np.int32 = max(times)
-        failure_numbers: npt.NDArray[np.int32] = np.array(range(1, n + 1))
+        max_time: np.float64 = max(times)
+        failure_numbers: npt.NDArray[np.float64] = np.array(range(1, n + 1))
         MTBF_c: npt.NDArray[np.float64] = times / failure_numbers
 
         if model == "Crow-AMSAA":
@@ -161,8 +161,8 @@ class reliability_growth:
             print("Specify target_MTBF to obtain the time_to_target")
         self.__times = times
         self.__MTBF_c = MTBF_c
-        self.__t_target = t_target
-        self.__max_time = max_time
+        self.__t_target: np.float64 = t_target
+        self.__max_time: np.float64 = max_time
 
     def print_results(self) -> None:
         """Prints the results of the reliability growth model parameters and demonstrated metrics.
@@ -229,10 +229,10 @@ class reliability_growth:
 
         """
         if log_scale is True:
-            xmax = 10 ** np.ceil(np.log10(max(self.__max_time, self.__t_target)))
+            xmax = 10 ** np.ceil(np.log10(max(float(self.__max_time), float(self.__t_target))))
             x_array = np.geomspace(0.00001, xmax * 100, 1000)
         else:
-            xmax = max(self.__max_time, self.__t_target) * 2
+            xmax: float = max(float(self.__max_time), float(self.__t_target)) * 2
             x_array = np.linspace(0, xmax, 1000)
 
         if self.__model == "Crow-AMSAA":
@@ -928,8 +928,8 @@ class MCF_nonparametric:
             by=["times", "states"],
             ascending=[True, False],
         )  # sorts the df by times and then by states, ensuring that states are F then C where the same time occurs. This ensures a failure is counted then the item is retired.
-        times_sorted = df_sorted.times.values
-        states_sorted = df_sorted.states.values
+        times_sorted = df_sorted.times.to_numpy()
+        states_sorted = df_sorted.states.to_numpy()
 
         # MCF calculations
         MCF_array = []
@@ -997,11 +997,11 @@ class MCF_nonparametric:
 
         indices_to_drop = printable_results[printable_results["state"] == "C"].index
         plotting_results = printable_results.drop(indices_to_drop, inplace=False)
-        RESULTS_time = plotting_results.time.values
-        RESULTS_MCF = plotting_results.MCF.values
-        RESULTS_variance = plotting_results.variance.values
-        RESULTS_lower = plotting_results.MCF_lower.values
-        RESULTS_upper = plotting_results.MCF_upper.values
+        RESULTS_time = plotting_results.time.to_numpy()
+        RESULTS_MCF = plotting_results.MCF.to_numpy()
+        RESULTS_variance = plotting_results.variance.to_numpy()
+        RESULTS_lower = plotting_results.MCF_lower.to_numpy()
+        RESULTS_upper = plotting_results.MCF_upper.to_numpy()
 
         self.results = printable_results
         self.time = RESULTS_time

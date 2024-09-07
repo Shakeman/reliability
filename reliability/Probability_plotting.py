@@ -142,9 +142,9 @@ def plotting_positions(
     df_sorted: pd.DataFrame = df.sort_values(by="times")
     df_sorted["reverse_i"] = np.arange(1, n + 1)[::-1]
     failure_rows: pd.DataFrame = df_sorted.loc[df_sorted["cens_codes"] == 1.0]
-    reverse_i: list[int] = failure_rows["reverse_i"].values.tolist()
+    reverse_i: list[int] = failure_rows["reverse_i"].to_numpy().tolist()
     len_reverse_i: int = len(reverse_i)
-    leading_cens: int = np.where(df_sorted["cens_codes"].values == 1)[0][0].item()
+    leading_cens: int = np.where(df_sorted["cens_codes"].to_numpy() == 1)[0][0].item()
 
     if leading_cens > 0:  # there are censored items before the first failure
         k = np.arange(1, len_reverse_i + 1)
@@ -166,9 +166,9 @@ def plotting_positions(
 
     if sort is False:
         # restore the original order of the points using the index from the sorted dataframe
-        idx: npt.NDArray[np.int64] = failure_rows.index.values
+        idx: npt.NDArray[np.int64] = failure_rows.index.to_numpy()
         df2: pd.DataFrame = pd.DataFrame(
-            data={"x": failure_rows.times.values, "y": F, "idx": idx},
+            data={"x": failure_rows.times.to_numpy(), "y": F, "idx": idx},
             columns=["x", "y", "idx"],
         ).sort_values(by="idx")
         x: npt.NDArray[np.float64] = np.array(df2.x.values, dtype=np.float64)
@@ -184,7 +184,7 @@ def Weibull_probability_plot(
     right_censored=None,
     fit_gamma=False,
     _fitted_dist_params=None,
-    a=None,
+    position_heuristic: float = 0.3,
     CI=0.95,
     CI_type: str | None = "time",
     show_fitted_distribution=True,
@@ -375,7 +375,7 @@ def Weibull_probability_plot(
         )
 
     # plot the failure points and format the scale and axes
-    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
+    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=position_heuristic)
     if show_scatter_points is True:
         x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
@@ -405,7 +405,7 @@ def Loglogistic_probability_plot(
     right_censored: npt.NDArray[np.float64] | None = None,
     fit_gamma: bool = False,
     _fitted_dist_params=None,
-    a: float | None = None,
+    heuristic_constant: float = 0.3,
     CI: float = 0.95,
     CI_type: str | None = "time",
     show_fitted_distribution=True,
@@ -440,7 +440,7 @@ def Loglogistic_probability_plot(
         result in no downsampling. This functionality makes plotting faster when
         there are very large numbers of points. It only affects the scatterplot
         not the calculations.
-    a : float, int, optional
+    heuristic_constant : float, int, optional
         The heuristic constant for plotting positions of the form
         (k-a)/(n+1-2a). Default = 0.3 which is the median rank method (same as
         the default in Minitab). For more heuristics, see:
@@ -600,7 +600,7 @@ def Loglogistic_probability_plot(
         )
 
     # plot the failure points and format the scale and axes
-    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
+    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=heuristic_constant)
     if show_scatter_points is True:
         x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
@@ -635,7 +635,7 @@ def Exponential_probability_plot_Weibull_Scale(
     right_censored=None,
     fit_gamma=False,
     _fitted_dist_params=None,
-    a=None,
+    position_heuristic: float = 0.3,
     CI=0.95,
     show_fitted_distribution=True,
     show_scatter_points=True,
@@ -674,7 +674,7 @@ def Exponential_probability_plot_Weibull_Scale(
         result in no downsampling. This functionality makes plotting faster when
         there are very large numbers of points. It only affects the scatterplot
         not the calculations.
-    a : float, int, optional
+    position_heuristic : float, int, optional
         The heuristic constant for plotting positions of the form
         (k-a)/(n+1-2a). Default = 0.3 which is the median rank method (same as
         the default in Minitab). For more heuristics, see:
@@ -797,7 +797,7 @@ def Exponential_probability_plot_Weibull_Scale(
         ef = Exponential_Distribution(Lambda=Lambda, Lambda_SE=Lambda_SE, CI=CI)
 
     # plot the failure points and format the scale and axes
-    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
+    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=position_heuristic)
     if show_scatter_points is True:
         x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
@@ -828,7 +828,7 @@ def Gumbel_probability_plot(
     failures=None,
     right_censored=None,
     _fitted_dist_params=None,
-    a=None,
+    position_heuristic: float = 0.3,
     CI: float = 0.95,
     CI_type: str | None = "time",
     show_fitted_distribution: bool = True,
@@ -859,7 +859,7 @@ def Gumbel_probability_plot(
         result in no downsampling. This functionality makes plotting faster when
         there are very large numbers of points. It only affects the scatterplot
         not the calculations.
-    a : float, int, optional
+    position_heuristic : float, int, optional
         The heuristic constant for plotting positions of the form
         (k-a)/(n+1-2a). Default = 0.3 which is the median rank method (same as
         the default in Minitab). For more heuristics, see:
@@ -963,7 +963,7 @@ def Gumbel_probability_plot(
             CI_type=CI_type,
         )
 
-    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
+    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=position_heuristic)
     if show_scatter_points is True:
         x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
@@ -993,7 +993,7 @@ def Normal_probability_plot(
     failures=None,
     right_censored=None,
     _fitted_dist_params=None,
-    a=None,
+    position_heuristic=0.3,
     CI=0.95,
     CI_type: str | None = "time",
     show_fitted_distribution=True,
@@ -1124,7 +1124,7 @@ def Normal_probability_plot(
         )
 
     # plot the failure points and format the scale and axes
-    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
+    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=position_heuristic)
     if show_scatter_points is True:
         x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
@@ -1155,7 +1155,7 @@ def Lognormal_probability_plot(
     right_censored=None,
     fit_gamma=False,
     _fitted_dist_params=None,
-    a=None,
+    position_heuristic=0.3,
     CI=0.95,
     CI_type: str | None = "time",
     show_fitted_distribution=True,
@@ -1343,7 +1343,7 @@ def Lognormal_probability_plot(
         )
 
     # plot the failure points and format the scale and axes
-    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
+    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=position_heuristic)
     if show_scatter_points is True:
         x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
@@ -1374,7 +1374,7 @@ def Beta_probability_plot(
     failures=None,
     right_censored=None,
     _fitted_dist_params=None,
-    a=None,
+    position_heuristic=0.3,
     CI=0.95,
     show_fitted_distribution=True,
     show_scatter_points=True,
@@ -1484,7 +1484,7 @@ def Beta_probability_plot(
         beta=beta,
     )
 
-    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
+    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=position_heuristic)
     plt.grid(visible=True, which="major", color="k", alpha=0.3, linestyle="-")
     plt.grid(visible=True, which="minor", color="k", alpha=0.08, linestyle="-")
     if show_scatter_points is True:
@@ -1519,7 +1519,7 @@ def Gamma_probability_plot(
     right_censored=None,
     fit_gamma=False,
     _fitted_dist_params=None,
-    a=None,
+    position_heuristic=0.3,
     CI=0.95,
     CI_type: str | None = "time",
     show_fitted_distribution=True,
@@ -1724,7 +1724,7 @@ def Gamma_probability_plot(
     )
 
     # plot the failure points and format the scale and axes
-    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
+    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=position_heuristic)
     if show_scatter_points is True:
         x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
@@ -1759,7 +1759,7 @@ def Exponential_probability_plot(
     right_censored=None,
     fit_gamma=False,
     _fitted_dist_params=None,
-    a=None,
+    position_heuristic: float = 0.3,
     CI=0.95,
     show_fitted_distribution=True,
     show_scatter_points=True,
@@ -1798,7 +1798,7 @@ def Exponential_probability_plot(
         result in no downsampling. This functionality makes plotting faster when
         there are very large numbers of points. It only affects the scatterplot
         not the calculations.
-    a : float, int, optional
+    position_heuristic : float, int, optional
         The heuristic constant for plotting positions of the form
         (k-a)/(n+1-2a). Default = 0.3 which is the median rank method (same as
         the default in Minitab). For more heuristics, see:
@@ -1910,7 +1910,7 @@ def Exponential_probability_plot(
                 right_censored = right_censored - gamma
         ef = Exponential_Distribution(Lambda=Lambda, Lambda_SE=Lambda_SE, CI=CI)
 
-    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)
+    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=position_heuristic)
     if show_scatter_points is True:
         x_scatter, y_scatter = xy_downsample(x, y, downsample_factor=downsample_scatterplot)
         plt.scatter(x_scatter, y_scatter, marker=".", linewidth=2, c=data_color)
@@ -2349,7 +2349,7 @@ def PP_plot_semiparametric(
     else:
         raise ValueError("X_data_right_censored must be an array or list")
     # extract certain keyword arguments or specify them if they are not set
-    a = kwargs.pop("a") if "a" in kwargs else None  # rank adjustment heuristic
+    a = kwargs.pop("a") if "a" in kwargs else 0.3  # rank adjustment heuristic
     color = kwargs.pop("color") if "color" in kwargs else "k"
     marker = kwargs.pop("marker") if "marker" in kwargs else "."
     if method == "KM":
@@ -2519,7 +2519,7 @@ def QQ_plot_semiparametric(
         pass
     else:
         raise ValueError("X_data_right_censored must be an array or list")
-    a = kwargs.pop("a") if "a" in kwargs else None  # rank adjustment heuristic
+    a = kwargs.pop("a") if "a" in kwargs else 0.3  # rank adjustment heuristic
     # extract certain keyword arguments or specify them if they are not set
     color = kwargs.pop("color") if "color" in kwargs else "k"
     marker = kwargs.pop("marker") if "marker" in kwargs else "."
@@ -2611,7 +2611,9 @@ def QQ_plot_semiparametric(
     return plt.gcf(), [m, deg1[0], deg1[1]]
 
 
-def plot_points(failures=None, right_censored=None, func="CDF", a=None, downsample_scatterplot=False, **kwargs):
+def plot_points(
+    failures=None, right_censored=None, func="CDF", position_heuristic=0.3, downsample_scatterplot=False, **kwargs
+):
     """Plots the failure points as a scatter plot based on the plotting positions.
     This is similar to a probability plot, just without the axes scaling or the
     fitted distribution. It may be used to overlay the failure points with a
@@ -2671,7 +2673,9 @@ def plot_points(failures=None, right_censored=None, func="CDF", a=None, downsamp
     if failures is None or len(failures) < 1:
         raise ValueError("failures must be an array or list with at least 1 failure time")
 
-    x, y = plotting_positions(failures=failures, right_censored=right_censored, a=a)  # get the plotting positions
+    x, y = plotting_positions(
+        failures=failures, right_censored=right_censored, a=position_heuristic
+    )  # get the plotting positions
     y = np.array(y)
     x = np.array(x)
 

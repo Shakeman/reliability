@@ -455,8 +455,8 @@ class NelsonAalen:
         Data: dict[str, npt.NDArray[np.int32]] = {"times": times, "cens_code": cens_code}
         df = pd.DataFrame(Data, columns=["times", "cens_code"])
         df2: pd.DataFrame = df.sort_values(by="times")
-        d = df2["times"].values
-        c = df2["cens_code"].values
+        d = df2["times"].to_numpy()
+        c = df2["cens_code"].to_numpy()
 
         self.data = d
         self.censor_codes = c
@@ -785,8 +785,8 @@ class RankAdjustment:
         Data = {"times": times, "cens_code": cens_code}
         df = pd.DataFrame(Data, columns=["times", "cens_code"])
         df2 = df.sort_values(by="times")
-        d = df2["times"].values
-        c = df2["cens_code"].values
+        d = df2["times"].to_numpy()
+        c = df2["cens_code"].to_numpy()
         n = len(d)  # number of items
         failures_array = np.arange(1, n + 1)  # array of number of items (1 to n)
         remaining_array = failures_array[::-1]  # items remaining (n to 1)

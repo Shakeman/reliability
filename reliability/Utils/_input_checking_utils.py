@@ -84,7 +84,7 @@ class distributions_input_checking:
         self,
         dist,
         func: str,
-        xvals: list[float] | npt.NDArray[np.float64],
+        xvals: list[float] | npt.NDArray[np.float64] | None,
         xmin: None | float | np.float64,
         xmax: None | float | np.float64,
         show_plot: None | bool = None,

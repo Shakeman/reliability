@@ -36,7 +36,6 @@ pytest-rerunfailures = "^14.0"
 
 
 [tool.ruff]
-# Same as Black.
 line-length = 120
 
 [tool.ruff.lint]
@@ -44,23 +43,6 @@ exclude = ["docs/conf.py"]
 
 select = [
     "ALL",  # enable all rules
-    "F",  # pyflakes
-    "E",  # pycodestyle errors (settings from FastAPI, thanks, @tiangolo!)
-    "W",  # pycodestyle warnings
-    "I",  # isort
-    #"N",  # pep8-naming
-    "UP", # pyupgrade
-    "C",  # flake8-comprehensions
-    "B",  # flake8-bugbear
-    #"A",  # flake8-builtins
-    "COM",# flake8-commas
-    "C4", # flake8-comprehensions
-    "DTZ",# flake8-datetimez
-    "S",  # flake8-bandit
-    "SIM",# flake8-simplify
-    #"FURB", # refurb
-    #"LOG",# flake8-logging
-    "RUF", # RUF-specific rules
 ]
 ignore = [
     "COM812", # Added for ruff format conflict

@@ -608,14 +608,21 @@ class Normal_Distribution:
                 return lower_CI, unpack_single_arrays(sf_point), upper_CI
         return sf
 
-    def HF(self, xvals=None, xmin=None, xmax=None, show_plot=True, **kwargs):
+    def HF(
+        self,
+        xvals: list[float] | npt.NDArray[np.float64] | None = None,
+        xmin: float | None = None,
+        xmax: float | None = None,
+        show_plot: bool = True,
+        **kwargs,
+    ):
         """Plots the HF (hazard function).
 
         Parameters
         ----------
         show_plot : bool, optional
             True or False. Default = True
-        xvals : array, list, optional
+        xvals : array, list, optionalESSS
             x-values for plotting
         xmin : int, float, optional
             minimum x-value for plotting

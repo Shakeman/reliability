@@ -406,7 +406,17 @@ class Gumbel_Distribution:
 
         """
         input_check = distributions_input_checking(
-            self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+            self,
+            "CDF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
+            plot_CI,
+            CI_type,
+            CI,
+            CI_y,
+            CI_x,
         )
         (
             X,
@@ -543,7 +553,17 @@ class Gumbel_Distribution:
 
         """
         input_check = distributions_input_checking(
-            self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+            self,
+            "SF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
+            plot_CI,
+            CI_type,
+            CI,
+            CI_y,
+            CI_x,
         )
         (
             X,
@@ -753,7 +773,17 @@ class Gumbel_Distribution:
 
         """
         input_check = distributions_input_checking(
-            self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+            self,
+            "CHF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
+            plot_CI,
+            CI_type,
+            CI,
+            CI_y,
+            CI_x,
         )
         (
             X,
@@ -962,6 +992,9 @@ class Gumbel_Distribution:
         if seed is not None:
             rng = np.random.default_rng(seed)
         RVS: npt.NDArray[np.float64] = ss.gumbel_l.rvs(
-            loc=self.mu, scale=self.sigma, size=number_of_samples, random_state=rng
+            loc=self.mu,
+            scale=self.sigma,
+            size=number_of_samples,
+            random_state=rng,
         )
         return RVS

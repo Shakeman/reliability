@@ -102,7 +102,8 @@ def test_alt_temp2():
 
 def test_alt_temp3():
     results = Fit_Weibull_Exponential(
-        failures=ALT_temperature3().failures, failure_stress=ALT_temperature3().failure_stresses
+        failures=ALT_temperature3().failures,
+        failure_stress=ALT_temperature3().failure_stresses,
     )
     assert_allclose(results.a, 1862.6692701034315, rtol=rtol, atol=atol)
     assert_allclose(results.b, 58.83305869441037, rtol=rtol, atol=atol)
@@ -112,7 +113,8 @@ def test_alt_temp3():
 
 def test_alt_temp4():
     results = Fit_Weibull_Exponential(
-        failures=ALT_temperature4().failures, failure_stress=ALT_temperature4().failure_stresses
+        failures=ALT_temperature4().failures,
+        failure_stress=ALT_temperature4().failure_stresses,
     )
     assert_allclose(results.a, 5902.419825344584, rtol=rtol, atol=atol)
     assert_allclose(results.b, 0.00041397403586479676, rtol=rtol, atol=atol)
@@ -142,7 +144,9 @@ def test_alt_load2():
 def test_alt_temp_volt():
     data = ALT_temperature_voltage()
     results = Fit_Normal_Dual_Exponential(
-        failures=data.failures, failure_stress_1=data.failure_stress_temp, failure_stress_2=data.failure_stress_voltage
+        failures=data.failures,
+        failure_stress_1=data.failure_stress_temp,
+        failure_stress_2=data.failure_stress_voltage,
     )
     assert_allclose(results.a, 4345.647638568313, rtol=rtol, atol=atol)
     assert_allclose(results.b, 3.0514583174522096, rtol=rtol, atol=atol)
@@ -153,7 +157,9 @@ def test_alt_temp_volt():
 def test_alt_temp_volt2():
     data = ALT_temperature_voltage2()
     results = Fit_Normal_Dual_Exponential(
-        failures=data.failures, failure_stress_1=data.failure_stress_temp, failure_stress_2=data.failure_stress_voltage
+        failures=data.failures,
+        failure_stress_1=data.failure_stress_temp,
+        failure_stress_2=data.failure_stress_voltage,
     )
     assert_allclose(results.a, 3736.1347199847964, rtol=rtol, atol=atol)
     assert_allclose(results.b, -28.351882768859106, rtol=rtol, atol=atol)
@@ -164,7 +170,9 @@ def test_alt_temp_volt2():
 def test_alt_temp_humidity():
     data = ALT_temperature_humidity()
     results = Fit_Normal_Dual_Exponential(
-        failures=data.failures, failure_stress_1=data.failure_stress_temp, failure_stress_2=data.failure_stress_humidity
+        failures=data.failures,
+        failure_stress_1=data.failure_stress_temp,
+        failure_stress_2=data.failure_stress_humidity,
     )
     assert_allclose(results.a, 6398.279398789768, rtol=rtol, atol=atol)
     assert_allclose(results.b, 0.31744610580758836, rtol=rtol, atol=atol)

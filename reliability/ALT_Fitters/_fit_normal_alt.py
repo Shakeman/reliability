@@ -186,7 +186,9 @@ class Fit_Normal_Exponential:
 
         # obtain the initial guess for the life stress model and the life distribution
         life_stress_guess: list[np.float64] = ALT_least_squares(
-            model="Exponential", failures=failures, stress_1_array=failure_stress
+            model="Exponential",
+            failures=failures,
+            stress_1_array=failure_stress,
         )
         if right_censored_groups is None:
             right_censored_groups = []

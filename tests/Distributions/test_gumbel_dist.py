@@ -30,7 +30,7 @@ def test_Gumbel_Distribution():
             dist.quantile(0.9),
             dist.quantile(0.99),
             dist.quantile(0.999),
-        ]
+        ],
     )
     assert_allclose(
         dist.PDF(xvals=xvals, show_plot=True),

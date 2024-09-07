@@ -2687,7 +2687,12 @@ def QQ_plot_semiparametric(
 
 
 def plot_points(
-    failures=None, right_censored=None, func="CDF", position_heuristic=0.3, downsample_scatterplot=False, **kwargs
+    failures=None,
+    right_censored=None,
+    func="CDF",
+    position_heuristic=0.3,
+    downsample_scatterplot=False,
+    **kwargs,
 ):
     """Plots the failure points as a scatter plot based on the plotting positions.
     This is similar to a probability plot, just without the axes scaling or the
@@ -2750,7 +2755,9 @@ def plot_points(
         raise ValueError(msg)
 
     x, y = plotting_positions(
-        failures=failures, right_censored=right_censored, a=position_heuristic
+        failures=failures,
+        right_censored=right_censored,
+        a=position_heuristic,
     )  # get the plotting positions
     y = np.array(y)
     x = np.array(x)

@@ -1520,7 +1520,11 @@ class fracture_mechanics_crack_initiation:
                 return sigma / E + (sigma / K) ** (1 / n) - sigma_epsilon / sigma
 
             def monotonic_massing(
-                delta_sigma_delta_epsilon: float, delta_sigma: float, E: float, K: float, n: float
+                delta_sigma_delta_epsilon: float,
+                delta_sigma: float,
+                E: float,
+                K: float,
+                n: float,
             ) -> float:
                 return (
                     delta_sigma / (2 * E)

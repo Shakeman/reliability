@@ -409,7 +409,17 @@ class Exponential_Distribution:
                 text_color="red",
             )
         input_check = distributions_input_checking(
-            self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x
+            self,
+            "CDF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
+            plot_CI,
+            None,
+            CI,
+            CI_y,
+            CI_x,
         )
         X, xvals, xmin, xmax, show_plot, plot_CI, CI, CI_y, CI_x = (
             input_check.X,
@@ -536,7 +546,17 @@ class Exponential_Distribution:
                 text_color="red",
             )
         input_check = distributions_input_checking(
-            self, "SF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x
+            self,
+            "SF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
+            plot_CI,
+            None,
+            CI,
+            CI_y,
+            CI_x,
         )
         X, xvals, xmin, xmax, show_plot, plot_CI, CI, CI_y, CI_x = (
             input_check.X,
@@ -736,7 +756,17 @@ class Exponential_Distribution:
                 text_color="red",
             )
         input_check = distributions_input_checking(
-            self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, None, CI, CI_y, CI_x
+            self,
+            "CHF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
+            plot_CI,
+            None,
+            CI,
+            CI_y,
+            CI_x,
         )
         (
             X,
@@ -799,7 +829,9 @@ class Exponential_Distribution:
                 return lower_CI, self.inverse_SF(np.exp(-CI_y)), upper_CI
             if CI_x is not None:
                 chf_point: npt.NDArray[np.float64] = zeroise_below_gamma(
-                    X=CI_x, Y=(CI_x - self.gamma) * self.Lambda, gamma=self.gamma
+                    X=CI_x,
+                    Y=(CI_x - self.gamma) * self.Lambda,
+                    gamma=self.gamma,
                 )
                 return lower_CI, unpack_single_arrays(chf_point), upper_CI
         return chf
@@ -950,6 +982,9 @@ class Exponential_Distribution:
         if seed is not None:
             rng = np.random.default_rng(seed)
         RVS: npt.NDArray[np.float64] = ss.expon.rvs(
-            scale=1 / self.Lambda, loc=self.gamma, size=number_of_samples, random_state=rng
+            scale=1 / self.Lambda,
+            loc=self.gamma,
+            size=number_of_samples,
+            random_state=rng,
         )
         return RVS

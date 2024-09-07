@@ -204,7 +204,9 @@ def ALT_prob_plot(
                 if dist == "Exponential":
                     if scale_for_change_df[i] != "":
                         Exponential_Distribution(1 / scale_for_change_df[i]).CDF(
-                            linestyle="--", alpha=0.5, color=color_cycle[i]
+                            linestyle="--",
+                            alpha=0.5,
+                            color=color_cycle[i],
                         )
                 elif scale_for_change_df[i] != "":
                     Distribution(scale_for_change_df[i], shape_for_change_df[i]).CDF(
@@ -270,7 +272,9 @@ def ALT_prob_plot(
                 if dist == "Exponential":
                     if scale_for_change_df[i] != "":
                         Exponential_Distribution(1 / scale_for_change_df[i]).CDF(
-                            linestyle="--", alpha=0.5, color=color_cycle[i]
+                            linestyle="--",
+                            alpha=0.5,
+                            color=color_cycle[i],
                         )
                 elif scale_for_change_df[i] != "":
                     Distribution(scale_for_change_df[i], shape_for_change_df[i]).CDF(

@@ -64,9 +64,8 @@ select = [
     "RUF", # RUF-specific rules
 ]
 ignore = [
-    #"SIM300",
     "FIX002", #flags on TODOs
-    "COM812",
+    #"COM812",
     "ISC001",
     "PT004",
     "ISC003", #do not enfore removing + for concatenating string literals

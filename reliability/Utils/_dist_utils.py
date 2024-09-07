@@ -307,7 +307,12 @@ def life_stress_plot(
 
 
 def extract_CI(
-    dist, func="CDF", CI_type: Literal["time", "reliability"] | None = "time", CI=0.95, CI_y=None, CI_x=None
+    dist,
+    func="CDF",
+    CI_type: Literal["time", "reliability"] | None = "time",
+    CI=0.95,
+    CI_y=None,
+    CI_x=None,
 ):
     """Extracts the confidence bounds at CI_x or CI_y.
 

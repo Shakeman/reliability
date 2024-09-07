@@ -167,7 +167,10 @@ class Weibull_Distribution:
         )  # the hf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
 
     def plot(
-        self, xvals: npt.NDArray[np.float64] | float | None = None, xmin: None | float = None, xmax: None | float = None
+        self,
+        xvals: npt.NDArray[np.float64] | float | None = None,
+        xmin: None | float = None,
+        xmax: None | float = None,
     ):
         """Plots all functions (PDF, CDF, SF, HF, CHF) and descriptive statistics
         in a single figure.
@@ -457,7 +460,17 @@ class Weibull_Distribution:
 
         """
         input_check = distributions_input_checking(
-            self, "CDF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+            self,
+            "CDF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
+            plot_CI,
+            CI_type,
+            CI,
+            CI_y,
+            CI_x,
         )
         (
             X,
@@ -594,7 +607,17 @@ class Weibull_Distribution:
 
         """
         input_check = distributions_input_checking(
-            self, "SF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+            self,
+            "SF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
+            plot_CI,
+            CI_type,
+            CI,
+            CI_y,
+            CI_x,
         )
         (
             X,
@@ -807,7 +830,17 @@ class Weibull_Distribution:
 
         """
         input_check = distributions_input_checking(
-            self, "CHF", xvals, xmin, xmax, show_plot, plot_CI, CI_type, CI, CI_y, CI_x
+            self,
+            "CHF",
+            xvals,
+            xmin,
+            xmax,
+            show_plot,
+            plot_CI,
+            CI_type,
+            CI,
+            CI_y,
+            CI_x,
         )
         (
             X,
@@ -1034,6 +1067,10 @@ class Weibull_Distribution:
             raise ValueError(msg)
         rng = np.random.default_rng(seed)
         RVS: npt.NDArray[np.float64] = ss.weibull_min.rvs(
-            self.beta, scale=self.alpha, loc=self.gamma, size=number_of_samples, random_state=rng
+            self.beta,
+            scale=self.alpha,
+            loc=self.gamma,
+            size=number_of_samples,
+            random_state=rng,
         )
         return RVS

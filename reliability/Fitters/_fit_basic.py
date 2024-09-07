@@ -434,7 +434,9 @@ class Fit_Normal_2P:
 
     @staticmethod
     def LL(
-        params: list[np.float64], T_f: npt.NDArray[np.float64], T_rc: npt.NDArray[np.float64]
+        params: list[np.float64],
+        T_f: npt.NDArray[np.float64],
+        T_rc: npt.NDArray[np.float64],
     ) -> np.float64:  # log likelihood function (2 parameter Normal)
         LL_f: np.float64 = Fit_Normal_2P.logf(T_f, params[0], params[1]).sum()
         LL_rc: np.float64 = Fit_Normal_2P.logR(T_rc, params[0], params[1]).sum()

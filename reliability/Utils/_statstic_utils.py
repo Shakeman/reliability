@@ -142,7 +142,10 @@ def least_squares(
 
 
 def Weibull_2P_guess(
-    x: npt.NDArray[np.float64], y: npt.NDArray[np.float64], method: Literal["RRX", "RRY"], force_shape: float | None
+    x: npt.NDArray[np.float64],
+    y: npt.NDArray[np.float64],
+    method: Literal["RRX", "RRY"],
+    force_shape: float | None,
 ) -> tuple[np.float64, np.float64]:
     """Calculates the initial guess for the parameters of a 2-parameter Weibull distribution.
 
@@ -558,7 +561,10 @@ def Loglogistic_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
 
 
 def Gamma_2P_guess(
-    x: npt.NDArray[np.float64], y: npt.NDArray[np.float64], method, failures
+    x: npt.NDArray[np.float64],
+    y: npt.NDArray[np.float64],
+    method,
+    failures,
 ) -> tuple[np.float64, np.float64]:
     """Estimates the initial guess for the parameters of a Gamma distribution based on the given data.
 
@@ -637,7 +643,11 @@ def Gamma_2P_guess(
 
 
 def Gamma_3P_guess(
-    x: npt.NDArray[np.float64], y: npt.NDArray[np.float64], method, gamma0: float | np.float64, failures
+    x: npt.NDArray[np.float64],
+    y: npt.NDArray[np.float64],
+    method,
+    gamma0: float | np.float64,
+    failures,
 ) -> tuple[np.float64, np.float64, np.float64]:
     """Estimate the parameters for a three-parameter Gamma distribution based on given data.
 

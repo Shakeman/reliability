@@ -92,47 +92,47 @@ def least_squares(
     )  # initial guess for gamma when it is required for the 3P fitters
     if gamma0 < 0:
         gamma0 = np.float64(0.0)
+    match dist:
+        case "Weibull_2P":
+            guess = Weibull_2P_guess(x, y, method, force_shape)
 
-    if dist == "Weibull_2P":
-        guess = Weibull_2P_guess(x, y, method, force_shape)
+        case "Weibull_3P":
+            guess = Weibull_3P_guess(x, y, method, gamma0, failures, force_shape)
 
-    elif dist == "Weibull_3P":
-        guess = Weibull_3P_guess(x, y, method, gamma0, failures, force_shape)
+        case "Exponential_1P":
+            guess = Exponential_1P_guess(x, y, method)
 
-    elif dist == "Exponential_1P":
-        guess = Exponential_1P_guess(x, y, method)
+        case "Exponential_2P":
+            guess = Exponential_2P_guess(x, y, gamma0, failures)
 
-    elif dist == "Exponential_2P":
-        guess = Exponential_2P_guess(x, y, gamma0, failures)
+        case "Normal_2P":
+            guess = Normal_2P_guess(x, y, method, force_shape)
 
-    elif dist == "Normal_2P":
-        guess = Normal_2P_guess(x, y, method, force_shape)
+        case "Gumbel_2P":
+            guess = Gumbel_2P_guess(x, y, method)
 
-    elif dist == "Gumbel_2P":
-        guess = Gumbel_2P_guess(x, y, method)
+        case "Lognormal_2P":
+            guess = Lognormal_2P_guess(x, y, method, force_shape)
 
-    elif dist == "Lognormal_2P":
-        guess = Lognormal_2P_guess(x, y, method, force_shape)
+        case "Lognormal_3P":
+            guess = Lognormal_3P_guess(x, y, gamma0, failures)
 
-    elif dist == "Lognormal_3P":
-        guess = Lognormal_3P_guess(x, y, gamma0, failures)
+        case "Loglogistic_2P":
+            guess = Loglogistic_2P_guess(x, y, method)
 
-    elif dist == "Loglogistic_2P":
-        guess = Loglogistic_2P_guess(x, y, method)
+        case "Loglogistic_3P":
+            guess = Loglogistic_3P_guess(x, y, method, gamma0, failures)
 
-    elif dist == "Loglogistic_3P":
-        guess = Loglogistic_3P_guess(x, y, method, gamma0, failures)
+        case "Gamma_2P":
+            guess = Gamma_2P_guess(x, y, method, failures)
 
-    elif dist == "Gamma_2P":
-        guess = Gamma_2P_guess(x, y, method, failures)
+        case "Gamma_3P":
+            guess = Gamma_3P_guess(x, y, method, gamma0, failures)
 
-    elif dist == "Gamma_3P":
-        guess = Gamma_3P_guess(x, y, method, gamma0, failures)
-
-    elif dist == "Beta_2P":
-        guess = Beta_2P_guess(x, y, failures)
-    else:
-        raise ValueError('Unknown dist. Use the correct name. eg. "Weibull_2P"')
+        case "Beta_2P":
+            guess = Beta_2P_guess(x, y, failures)
+        case _:
+            raise ValueError('Unknown dist. Use the correct name. eg. "Weibull_2P"')
     return guess
 
 

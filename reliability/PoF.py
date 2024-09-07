@@ -826,9 +826,6 @@ class strain_life_diagram:
         If this is not -max_stress then specify it here. Optional input.
     min_strain : float, int, optional
         If this is not -max_strain then specify it here. Optional input.
-    print_results : bool, optional
-        Default is True. The cycles to failure will only be printed if
-        max_stress OR max_strain is specified.
     show_plot : bool, optional
         Default is True. The strain-life plot will be generated if show_plot =
         True. Use plt.show() to show it.
@@ -868,7 +865,6 @@ class strain_life_diagram:
         min_strain: float | None = None,
         max_stress: float | None = None,
         min_stress: float | None = None,
-        print_results: bool = True,
         show_plot: bool = True,
     ):
         if max_stress is not None and max_strain is not None:
@@ -1117,23 +1113,6 @@ class strain_life_diagram:
 
             self.cycles_to_failure: float = use_cycles_2Nf[0] / 2
 
-            if print_results is True:
-                colorprint("Results from strain_life_diagram:", underline=True, bold=True)
-                if max_strain is not None:
-                    print(
-                        "Failure will occur in",
-                        round(self.cycles_to_failure, 2),
-                        "cycles",
-                        str("(" + str(round(self.cycles_to_failure * 2, 2)) + " reversals)."),
-                    )
-                else:
-                    print(
-                        "Failure will occur in",
-                        round(self.cycles_to_failure, 2),
-                        "cycles",
-                        str("(" + str(round(self.cycles_to_failure * 2, 2)) + " reversals)."),
-                    )
-
             if show_plot is True:
                 strain_amplitude = (self.max_strain - self.min_strain) / 2
                 plt.loglog(
@@ -1294,6 +1273,36 @@ class strain_life_diagram:
             legend_texts2[0]._fontproperties = legend_texts2[1]._fontproperties.copy()
             legend_texts2[0].set_size(13)
             self.cycles_to_failure = "Not calculated. Specify max stress or strain to find cycles_to_failure"
+
+    def print_results(self) -> None:
+        """Print the results from the strain_life_diagram.
+
+        This method prints the results from the strain_life_diagram calculation. It displays the number of cycles until failure and the number of reversals.
+
+        Parameters
+        ----------
+        - None
+
+        Returns
+        -------
+        - None
+
+        """
+        colorprint("Results from strain_life_diagram:", underline=True, bold=True)
+        if self.max_strain is not None:
+            print(
+                "Failure will occur in",
+                round(self.cycles_to_failure, 2),
+                "cycles",
+                str("(" + str(round(self.cycles_to_failure * 2, 2)) + " reversals)."),
+            )
+        else:
+            print(
+                "Failure will occur in",
+                round(self.cycles_to_failure, 2),
+                "cycles",
+                str("(" + str(round(self.cycles_to_failure * 2, 2)) + " reversals)."),
+            )
 
 
 def palmgren_miner_linear_damage(rated_life, time_at_stress, stress):

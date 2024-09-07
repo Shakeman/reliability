@@ -109,6 +109,7 @@ def test_strain_life_diagram():
     assert_allclose(results.min_strain, -0.0029, rtol=rtol, atol=atol)
     assert_allclose(results.max_stress, 377.9702002307027, rtol=rtol, atol=atol)
     assert_allclose(results.min_stress, -321.06700330271457, rtol=rtol, atol=atol)
+    results.print_results()
     plt.close()
 
 

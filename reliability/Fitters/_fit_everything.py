@@ -1180,7 +1180,7 @@ class Fit_Everything:
         # sort the dataframe by BIC, AICc, or AD. Smallest AICc, BIC, AD is better fit
         if not isinstance(sort_by, str):
             msg = "Invalid input to sort_by. Options are 'BIC', 'AICc', 'AD', or 'Log-likelihood'. Default is 'BIC'."
-            raise ValueError(
+            raise TypeError(
                 msg,
             )
         if sort_by.upper() == "BIC":

@@ -109,14 +109,14 @@ def SN_diagram(
         stress = np.array(stress)
     else:
         msg = "stress must be an array or list"
-        raise ValueError(msg)
+        raise TypeError(msg)
     if isinstance(cycles, np.ndarray):
         pass
     elif isinstance(cycles, list):
         cycles = np.array(cycles)
     else:
         msg = "cycles must be an array or list"
-        raise ValueError(msg)
+        raise TypeError(msg)
     if len(cycles) != len(stress):
         msg = "the number of datapoints for stress and cycles must be equal"
         raise ValueError(msg)
@@ -359,14 +359,14 @@ class stress_strain_life_parameters_from_data:
             stress = np.array(stress)
         else:
             msg = "stress must be an array or list"
-            raise ValueError(msg)
+            raise TypeError(msg)
         if isinstance(strain, np.ndarray):
             pass
         elif isinstance(strain, list):
             strain = np.array(strain)
         else:
             msg = "strain must be an array or list"
-            raise ValueError(msg)
+            raise TypeError(msg)
         if cycles is not None:
             if isinstance(cycles, np.ndarray):
                 cycles_2Nf = 2 * cycles
@@ -374,7 +374,7 @@ class stress_strain_life_parameters_from_data:
                 cycles_2Nf = 2 * np.array(cycles)
             else:
                 msg = "cycles must be an array or list"
-                raise ValueError(msg)
+                raise TypeError(msg)
 
         # fit the ramberg osgood relationship to the data
         elastic_strain = stress / E

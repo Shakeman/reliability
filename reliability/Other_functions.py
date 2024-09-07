@@ -1255,18 +1255,18 @@ class crosshairs:
     def __init__(self, xlabel=None, ylabel=None, decimals=2, dateformat=None, **kwargs):
         if type(dateformat) not in [str, type(None)]:
             msg = "dateformat type must be str or None. For acceptable strings see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes"
-            raise ValueError(
+            raise TypeError(
                 msg,
             )
         if not isinstance(decimals, int):
             msg = "decimals must be int"
-            raise ValueError(msg)
+            raise TypeError(msg)
         if type(xlabel) not in [str, type(None)]:
             msg = "xlabel must be string or None"
-            raise ValueError(msg)
+            raise TypeError(msg)
         if type(ylabel) not in [str, type(None)]:
             msg = "ylabel must be string or None"
-            raise ValueError(msg)
+            raise TypeError(msg)
 
         warnings.simplefilter(
             "ignore",

@@ -85,13 +85,13 @@ def one_sample_proportion(trials=None, successes=None, CI=0.95, print_results=Tr
     """
     if trials is None or successes is None:
         msg = "You must specify the number of trials and successes."
-        raise ValueError(msg)
+        raise TypeError(msg)
     if not isinstance(trials, int):
         msg = "trials must be an integer"
-        raise ValueError(msg)
+        raise TypeError(msg)
     if not isinstance(successes, int) is not int:
         msg = "successes must be an integer"
-        raise ValueError(msg)
+        raise TypeError(msg)
     if successes > trials:
         msg = "successes cannot be greater than trials"
         raise ValueError(msg)

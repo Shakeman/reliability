@@ -93,14 +93,14 @@ class reliability_growth:
             times = np.sort(np.asarray(times))
         else:
             msg = "times must be an array or list of failure times"
-            raise ValueError(msg)
+            raise TypeError(msg)
 
         if min(times) <= 0:
             msg = "failure times cannot be negative. times must be an array or list of failure times"
-            raise ValueError(msg)
+            raise TypeError(msg)
         if not isinstance(model, str):
             msg = 'model must be either "Duane" or "Crow-AMSAA".'
-            raise ValueError(msg)
+            raise TypeError(msg)
         if model.upper() in ["DUANE", "D"]:
             model = "Duane"
         elif model.upper() in [
@@ -889,7 +889,7 @@ class MCF_nonparametric:
             data = list(data)
         else:
             msg = "data must be a list or numpy array"
-            raise ValueError(msg)
+            raise TypeError(msg)
 
         # check each item is a list and fix up any ndarrays to be lists.
         test_for_single_system = []
@@ -903,7 +903,7 @@ class MCF_nonparametric:
                 test_for_single_system.append(True)
             else:
                 msg = "Each item in the data must be a list or numpy array. eg. data = [[1,3,5],[3,6,8]]"
-                raise ValueError(msg)
+                raise TypeError(msg)
         # Wraps the data in another list if all elements were numbers.
         if all(test_for_single_system):  # checks if all are True
             data = [data]

@@ -135,7 +135,7 @@ def life_stress_plot(
             line_label = r"$1/\lambda$"
         else:
             msg = "dist must be either Weibull, Lognormal, Normal, Exponential"
-            raise ValueError(msg)
+            raise TypeError(msg)
 
         if dual_stress is True:
             # collect all the stresses so we can find their min and max
@@ -246,7 +246,7 @@ def life_stress_plot(
             for i, stress in enumerate(stresses_for_groups):
                 if isinstance(stress, list):
                     msg = "stresses_for_groups must be a list of floats for single stress, not a list of lists."
-                    raise ValueError(msg)
+                    raise TypeError(msg)
                 failure_points = failure_groups[i]
                 stress_points = np.ones_like(failure_points) * stress
                 if swap_xy is True:

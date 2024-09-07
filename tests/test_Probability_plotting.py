@@ -290,7 +290,7 @@ def test_QQ_plot_semiparametric():
     with pytest.raises(ValueError):
         QQ_plot_semiparametric(X_data_failures=[], Y_dist=Y_dist)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         QQ_plot_semiparametric(X_data_failures=X_data_failures, Y_dist="invalid distribution")
 
     with pytest.raises(ValueError):

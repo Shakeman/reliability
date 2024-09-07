@@ -2574,7 +2574,7 @@ def QQ_plot_semiparametric(
         Gumbel_Distribution,
     ]:
         msg = "Y_dist must be specified as a probability distribution generated using the Distributions module"
-        raise ValueError(
+        raise TypeError(
             msg,
         )
     if isinstance(X_data_failures, list):
@@ -2583,7 +2583,7 @@ def QQ_plot_semiparametric(
         X_data_failures = np.sort(X_data_failures)
     else:
         msg = "X_data_failures must be an array or list"
-        raise ValueError(msg)
+        raise TypeError(msg)
     if isinstance(X_data_right_censored, list):
         X_data_right_censored = np.sort(np.array(X_data_right_censored))
     elif isinstance(X_data_right_censored, np.ndarray):

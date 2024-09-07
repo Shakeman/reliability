@@ -166,7 +166,7 @@ def test_MCF_nonparametric_with_single_system():
 
 def test_MCF_nonparametric_with_invalid_data_type():
     data = "invalid"
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         MCF_nonparametric(data=data)
 
 

@@ -882,7 +882,7 @@ class Competing_Risks_Model:
                         sf *= self.distributions[i].SF(X, show_plot=False)
             else:
                 msg = "X must be a float or a numpy array of floats"
-                raise ValueError(msg)
+                raise TypeError(msg)
             return sf
 
         t_full: npt.NDArray[np.float64] | np.float64 = np.linspace(t, self.__xmax_inf, 1000000)

@@ -214,7 +214,7 @@ def life_stress_plot(
 
         else:  # single stress model
             if use_level_stress is not None:
-                min_stress: float = min(min(stresses_for_groups), np.min(use_level_stress))
+                min_stress: float = min(*stresses_for_groups, np.min(use_level_stress))
             else:
                 min_stress = np.min(stresses_for_groups)
             max_stress: float = np.max(stresses_for_groups)
@@ -289,14 +289,14 @@ def life_stress_plot(
             if swap_xy is True:
                 plt.xlim(
                     0,
-                    1.2 * max(life_func(S1=stress_array_lower), max(flattened_failure_groups)),
+                    1.2 * max(life_func(S1=stress_array_lower), *flattened_failure_groups),
                 )
                 plt.ylim(stress_array_lower, stress_array_upper)
                 plt.title("Stress-life plot\n" + dist + "-" + model + " model")
             else:
                 plt.ylim(
                     0,
-                    1.2 * max(life_func(S1=stress_array_lower), max(flattened_failure_groups)),
+                    1.2 * max(life_func(S1=stress_array_lower), *flattened_failure_groups),
                 )
                 plt.xlim(stress_array_lower, stress_array_upper)
                 plt.title("Life-stress plot\n" + dist + "-" + model + " model")

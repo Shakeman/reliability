@@ -92,8 +92,7 @@ ignore = [
     "ERA001",#  commented-out-code"
     "D417",#    undocumented-param"
     "PLW0128", # redeclared-assigned-name"
-    "PLW3301",# nested min-max
-    #"TRY004",# type-check-without-type-error
+    #"PLW3301",# nested min-max
     "FBT001", # " boolean-type-hint-positional-argument"
     "E501",  # line too long, handled by black
     "FBT003",# Boolean positional value in function call"

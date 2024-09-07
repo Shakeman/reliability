@@ -287,8 +287,8 @@ class reliability_growth:
         if log_scale is True:
             ymin = 10 ** np.floor(np.log10(min(self.__MTBF_c)))
             if self.__target_MTBF is not None:
-                xmin = 10 ** np.floor(np.log10(min(min(self.__times), self.__target_MTBF)))
-                ymax = 10 ** np.ceil(np.log10(max(max(self.__MTBF_c), self.__target_MTBF) * 1.2))
+                xmin = 10 ** np.floor(np.log10(min(*self.__times, self.__target_MTBF)))
+                ymax = 10 ** np.ceil(np.log10(max(*self.__MTBF_c, self.__target_MTBF) * 1.2))
             else:
                 xmin = 10 ** np.floor(np.log10(min(self.__times)))
                 ymax = 10 ** np.ceil(np.log10(max(self.__MTBF_c) * 1.2))
@@ -301,7 +301,7 @@ class reliability_growth:
         else:
             plt.xlim(0, xmax)
             if self.__target_MTBF is not None:
-                plt.ylim(0, max(max(self.__MTBF_c), self.__target_MTBF) * 1.2)
+                plt.ylim(0, max(*self.__MTBF_c, self.__target_MTBF) * 1.2)
             else:
                 plt.ylim(0, max(self.__MTBF_c) * 1.2)
         plt.tight_layout()

@@ -2263,7 +2263,7 @@ def QQ_plot_parametric(
     plt.scatter(x_scatter, y_scatter, marker=marker, color=color)
 
     # fit lines and generate text for equations to go in legend
-    max_value = max(max(dist_X_ISF), max(dist_Y_ISF))
+    max_value = max(*dist_X_ISF, *dist_Y_ISF)
     x = dist_X_ISF[:, np.newaxis]
     y = dist_Y_ISF
     deg1 = np.polyfit(dist_X_ISF, dist_Y_ISF, deg=1)  # fit y=mx+c
@@ -2646,8 +2646,8 @@ def QQ_plot_semiparametric(
     plt.ylabel(str("Theoretical Quantiles based on\n" + method_str + " estimate and " + Y_dist.name + " distribution"))
     plt.xlabel("Actual Quantiles")
     plt.axis("square")
-    max_value = max(max(dist_Y_ISF), max(X_data_failures))
-    min_value = min(min(dist_Y_ISF), min(X_data_failures))
+    max_value = max(*dist_Y_ISF, *X_data_failures)
+    min_value = min(*dist_Y_ISF, *X_data_failures)
     if show_diagonal_line is True:
         plt.plot(
             [-max_value, max_value * 2],

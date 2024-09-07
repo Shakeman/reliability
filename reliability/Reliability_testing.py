@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import math
 import time
+from typing import Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -1149,8 +1150,8 @@ class chi2test:
             xmax = max(self.__data) * 1.1
             xmin = min(self.__data)
         else:
-            xmax = max(self.__distribution.quantile(0.9999), max(self.__data))  # type: ignore
-            xmin = min(self.__distribution.quantile(0.0001), min(self.__data))  # type: ignore
+            xmax = max(self.__distribution.quantile(0.9999), max(self.__data))  # type: ignore  # noqa: PLW3301
+            xmin = min(self.__distribution.quantile(0.0001), min(self.__data))  # type: ignore  # noqa: PLW3301
 
         THRESHOLD = 0.05
         if xmin > 0 and xmin / (xmax - xmin) < THRESHOLD:  # if xmin is near zero then set it to zero
@@ -1324,8 +1325,8 @@ class KStest:
             xmax: float = max(self.__data) * 1.2
             xmin: float = min(self.__data)
         else:
-            xmax = max(self.__distribution.quantile(0.9999), max(self.__data))
-            xmin = min(self.__distribution.quantile(0.0001), min(self.__data))
+            xmax = max(self.__distribution.quantile(0.9999), *self.__data)
+            xmin = min(self.__distribution.quantile(0.0001), *self.__data)
 
         THRESHOLD = 0.05
         if xmin > 0 and xmin / (xmax - xmin) < THRESHOLD:  # if xmin is near zero then set it to zero
@@ -1342,7 +1343,7 @@ def likelihood_plot(
     failures,
     right_censored=None,
     CI: float | list[float] | npt.NDArray[np.float64] = 0.95,
-    method="MLE",
+    method: Literal["MLE", "RRX", "RRY", "LS"] = "MLE",
     color=None,
 ):
     """Generates a likelihood contour plot. This is used for comparing distributions for statistically significant
@@ -1606,10 +1607,10 @@ def likelihood_plot(
         plt.contourf(X, Y, LLmesh, [LLcontour, LLmax], colors=color, alpha=0.5 / len(CI))
         # get the plotting limits
         v = contour.allsegs[0][0]
-        xmin = min(xmin, min(v[:, 0]))
-        xmax = max(xmax, max(v[:, 0]))
-        ymin = min(ymin, min(v[:, 1]))
-        ymax = max(ymax, max(v[:, 1]))
+        xmin = min(xmin, *v[:, 0])
+        xmax = max(xmax, *v[:, 0])
+        ymin = min(ymin, *v[:, 1])
+        ymax = max(ymax, *v[:, 1])
     xdelta = xmax - xmin
     ydelta = ymax - ymin
     if limits[2] is False:  # there is nothing else in the plot

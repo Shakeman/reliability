@@ -84,10 +84,8 @@ ignore = [
     "D205", #1 blank line required between summary line and description
     "D103", # Missing docstring in public function
     "PT011", # `pytest.raises(ValueError)` is too broad, set the `match` parameter or use a more specific exception
-    #"PLR0913", # too-many-arguments
     "ANN205", # missing-return-type-static-method
     "PLR0915", #too-many-statements
-    "PLR0912", #too-many-branches
     "ANN003", #  missing-type-kwargs
     "ANN204", #missing-return-type-special-method
     "N801", #invalid-class-name
@@ -129,10 +127,11 @@ known-first-party = []
 "test_*.py" = ["PLR2004","S101", "SLF001", "INP001", "ANN202"]
 "conftest*.py" = ["INP001", "ANN202"]
 "*_utils.py" = ["SLF001"] #TODO: Refactor Utils functions to not access private memebrs
+"_fit_everything_alt.py" = ["PLR0912"] #TODO:Refactor fit_everything_alt into two fucntions for single and dual stress
 
 [tool.ruff.lint.pylint]
 max-args = 15
-
+max-branches = 80
 [tool.ruff.lint.mccabe]
 max-complexity = 50
 

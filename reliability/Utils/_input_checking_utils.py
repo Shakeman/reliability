@@ -748,7 +748,7 @@ class ALT_fitters_input_checking:
         right_censored_stress_2=None,
         CI=0.95,
         use_level_stress: float | npt.NDArray[np.float64] | None = None,
-        optimizer=None,
+        optimizer: Literal["TNC", "L-BFGS-B", "nelder-mead", "powell", "best"] | None = None,
     ) -> None:
         if dist not in ["Exponential", "Weibull", "Lognormal", "Normal", "Everything"]:
             msg = "dist must be one of Exponential, Weibull, Lognormal, Normal, Everything."
@@ -1127,7 +1127,7 @@ class ALT_fitters_input_checking:
         self.right_censored_stress_1 = right_censored_stress_1
         self.right_censored_stress_2 = right_censored_stress_2
         self.CI = CI
-        self.optimizer = optimizer
+        self.optimizer: Literal["TNC", "L-BFGS-B", "nelder-mead", "powell", "best"] | None = optimizer
         self.use_level_stress: float | npt.NDArray[np.float64] | None = use_level_stress
         self.failure_groups = failure_groups[::-1]
         if right_censored_groups is None:

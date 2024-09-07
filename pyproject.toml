@@ -96,7 +96,7 @@ known-first-party = []
 "test_*.py" = ["PLR2004","S101", "SLF001", "INP001", "ANN202","PT011"]
 "conftest*.py" = ["INP001", "ANN202"]
 "*_utils.py" = ["SLF001"] #TODO: Refactor Utils functions to not access private memebrs
-"_fit_everything_alt.py" = ["PLR0912", "PLR0915"] #TODO:Refactor fit_everything_alt into two fucntions for single and dual stress
+#"_fit_everything_alt.py" = ["PLR0912", "PLR0915"] #TODO:Refactor fit_everything_alt into two fucntions for single and dual stress
 
 [tool.ruff.lint.pylint]
 max-args = 16

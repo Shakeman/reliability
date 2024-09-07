@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
 import numpy as np
@@ -164,7 +166,7 @@ class Fit_Weibull_2P:
         CI=0.95,
         quantiles=None,
         CI_type: str | None = "time",
-        method: str | None = "MLE",
+        method: Literal["MLE", "RRX", "RRY", "LS", "NLLS"] = "MLE",
         optimizer=None,
         force_beta=None,
         downsample_scatterplot=True,
@@ -607,7 +609,7 @@ class Fit_Weibull_2P_grouped:
         CI=0.95,
         force_beta=None,
         quantiles=None,
-        method="MLE",
+        method: Literal["MLE", "RRX", "RRY", "LS"] = "MLE",
         optimizer=None,
         CI_type="time",
         downsample_scatterplot=True,
@@ -1222,7 +1224,7 @@ class Fit_Weibull_3P:
         quantiles=None,
         CI_type="time",
         optimizer=None,
-        method: str | None = "MLE",
+        method: Literal["MLE", "RRX", "RRY", "LS"] = "MLE",
         downsample_scatterplot=True,
         **kwargs,
     ):
@@ -3342,7 +3344,7 @@ class Fit_Weibull_ZI:
         print(self.results.to_string(index=False), "\n")
         print(self.goodness_of_fit.to_string(index=False), "\n")
 
-    def plot(self, downsample_scatterplot=True, **kwargs):
+    def plot(self, downsample_scatterplot=True, **kwargs) -> plt.Axes:
         """Plots the Weibull probability plot and scatter points.
 
         Args:

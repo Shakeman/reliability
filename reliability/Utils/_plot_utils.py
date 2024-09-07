@@ -14,7 +14,7 @@ from numpy.linalg import LinAlgError
 from reliability.Utils._ancillary_utils import round_and_string
 
 
-def reshow_figure(handle: _axes.Axes | Figure | None):
+def reshow_figure(handle: _axes.Axes | Figure | None) -> None:
     """Shows a figure from an axes handle or figure handle.
     This is useful if the handle is saved to a variable but the figure has been
     closed.
@@ -52,7 +52,7 @@ def reshow_figure(handle: _axes.Axes | Figure | None):
         raise ValueError("handle is None. It must be a valid axes or figure handle")
 
 
-def fill_no_autoscale(xlower, xupper, ylower, yupper, **kwargs):
+def fill_no_autoscale(xlower, xupper, ylower, yupper, **kwargs) -> None:
     """Creates a filled region (polygon) without adding it to the global list of
     autoscale objects. Use this function when you want to plot something but not
     have it considered when autoscale sets the range.
@@ -91,7 +91,7 @@ def fill_no_autoscale(xlower, xupper, ylower, yupper, **kwargs):
     plt.gca().add_collection(col, autolim=False)
 
 
-def line_no_autoscale(x, y, **kwargs):
+def line_no_autoscale(x, y, **kwargs) -> None:
     """Creates a line without adding it to the global list of autoscale objects.
     Use this when you want to plot something but not have it considered when
     autoscale sets the range.
@@ -117,7 +117,7 @@ def line_no_autoscale(x, y, **kwargs):
     plt.gca().add_collection(col, autolim=False)
 
 
-def probability_plot_xyticks(yticks=None):
+def probability_plot_xyticks(yticks=None) -> None:
     """This function sets the x and y ticks for probability plots.
 
     X ticks are selected using either MaxNLocator or LogLocator. X ticks are
@@ -145,7 +145,7 @@ def probability_plot_xyticks(yticks=None):
 
     """
 
-    def customFormatter(value, _):
+    def customFormatter(value, _) -> str:
         """Provides custom string formatting that is used for the xticks.
 
         Parameters
@@ -213,7 +213,7 @@ def probability_plot_xyticks(yticks=None):
         label: str = str(str(combined) + "%")
         return label
 
-    def get_edge_distances():
+    def get_edge_distances() -> np.float64:
         """Finds the sum of the distance (in axes coords (0 to 1)) of the distances
         from the edge ticks to the edges.
 
@@ -230,8 +230,8 @@ def probability_plot_xyticks(yticks=None):
         xtick_locations: npt.NDArray[np.float64] = ax.get_xticks()
         left_tick_upper: np.float64 = xy_transform(xtick_locations[0], direction="forward", axis="x")
         left_tick_lower: np.float64 = xy_transform(xlower, direction="forward", axis="x")
-        left_tick_distance = left_tick_upper - left_tick_lower
-        right_tick_distance = xy_transform(xupper, direction="forward", axis="x") - xy_transform(
+        left_tick_distance: np.float64 = left_tick_upper - left_tick_lower
+        right_tick_distance: np.float64 = xy_transform(xupper, direction="forward", axis="x") - xy_transform(
             xtick_locations[-1],
             direction="forward",
             axis="x",
@@ -427,7 +427,7 @@ def restore_axes_limits(
     xvals=None,
     xmin=None,
     xmax=None,
-):
+) -> None:
     """This function works in a pair with get_axes_limits. Using the values
     producted by get_axes_limits which are [xlims, ylims, use_prev_lims], this
     function will determine how to change the axes limits to meet the style
@@ -598,15 +598,15 @@ def get_axes_limits() -> tuple[tuple[float, float], tuple[float, float], bool]:
 
 
 def linear_regression(
-    x,
-    y,
-    slope=None,
-    x_intercept=None,
-    y_intercept=None,
-    RRX_or_RRY="RRX",
-    show_plot=False,
+    x: npt.NDArray[np.float64] | list[float] | np.float64,
+    y: npt.NDArray[np.float64] | list[float] | np.float64,
+    slope: float | None = None,
+    x_intercept: float | None = None,
+    y_intercept: float | None = None,
+    RRX_or_RRY: Literal["RRX", "RRY"] = "RRX",
+    show_plot: bool = False,
     **kwargs,
-):
+) -> tuple[np.float64, np.float64]:
     """This function provides the linear algebra solution to find line of best fit
     passing through points (x,y). Options to specify slope or intercept enable
     these parameters to be forced.
@@ -701,16 +701,18 @@ def linear_regression(
 
     if RRX_or_RRY == "RRY":
         try:
-            solution = np.linalg.inv(xx.T.dot(xx)).dot(xx.T).dot(yy)  # linear regression formula for RRY
+            solution: npt.NDArray[np.float64] = (
+                np.linalg.inv(xx.T.dot(xx)).dot(xx.T).dot(yy)
+            )  # linear regression formula for RRY
         except LinAlgError:
             raise RuntimeError(
                 "An error has occurred when attempting to find the initial guess using least squares estimation.\nThis error is caused by a non-invertable matrix.\nThis can occur when there are only two very similar failure times like 10 and 10.000001.\nThere is no solution to this error, other than to use failure times that are more unique.",
             ) from None
         if y_intercept is not None:
-            m = solution[0]
-            c = y_intercept
+            m: np.float64 = solution[0]
+            c: np.float64 = np.float64(y_intercept)
         elif slope is not None:
-            m = slope
+            m = np.float64(slope)
             c = solution[0]
         else:
             m = solution[0]
@@ -727,21 +729,21 @@ def linear_regression(
             m = 1 / m_x
             c = -x_intercept / m_x
         elif slope is not None:
-            m = 1 / slope
+            m = np.float64(1 / slope)
             c_x = solution[0]
             c = -c_x / slope
         else:
-            m_x = solution[0]
-            c_x = solution[1]
+            m_x: np.float64 = solution[0]
+            c_x: np.float64 = solution[1]
             m = 1 / m_x
             c = -c_x / m_x
 
     if show_plot is True:
         plt.scatter(x, y, marker=".", color="k")
-        delta_x = max(x) - min(x)
-        delta_y = max(y) - min(y)
-        xvals = np.linspace(min(x) - delta_x, max(x) + delta_x, 10)
-        yvals = m * xvals + c
+        delta_x: np.float64 = max(x) - min(x)
+        delta_y: np.float64 = max(y) - min(y)
+        xvals: npt.NDArray[np.float64] = np.linspace(min(x) - delta_x, max(x) + delta_x, 10)
+        yvals: npt.NDArray[np.float64] = m * xvals + c
         if "label" in kwargs:
             label = kwargs.pop("label")
         else:

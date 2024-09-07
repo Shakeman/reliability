@@ -32,7 +32,7 @@ def test_Weibull_2P_guess():
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRX"
     force_shape = None
-    expected_result = [7.073909752122913, 1.1651597484161327]
+    expected_result = (7.073909752122913, 1.1651597484161327)
     assert Weibull_2P_guess(x, y, method, force_shape) == expected_result
 
     # Test case: Negative slope
@@ -40,7 +40,7 @@ def test_Weibull_2P_guess():
     y = np.array([0.5, 0.4, 0.3, 0.2, 0.1])
     method = "RRX"
     force_shape = None
-    expected_result = [1.039928027981657, -1.2673812106491167]
+    expected_result = (1.039928027981657, -1.2673812106491167)
     assert Weibull_2P_guess(x, y, method, force_shape) == expected_result
 
     # Test case: Force shape parameter
@@ -48,7 +48,7 @@ def test_Weibull_2P_guess():
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRX"
     force_shape = 2.0
-    expected_result = [4.662007337682776, 2.0]
+    expected_result = (4.662007337682776, 2.0)
     assert Weibull_2P_guess(x, y, method, force_shape) == expected_result
 
     # Test case: Method is "RRY"
@@ -56,7 +56,7 @@ def test_Weibull_2P_guess():
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRY"
     force_shape = None
-    expected_result = [7.087182406412927, 1.1629773507668202]
+    expected_result = (7.087182406412927, 1.1629773507668202)
     assert Weibull_2P_guess(x, y, method, force_shape) == expected_result
 
     # Test case: Empty arrays
@@ -80,7 +80,7 @@ def test_Weibull_3P_guess():
     gamma0 = 0.5
     failures = np.array([1, 2, 3, 4, 5])
     force_shape = None
-    expected_result = [6.8701030567178645, 1.214464642404451, 5.297345100789064e-10]
+    expected_result = (6.8701030567178645, 1.214464642404451, 5.297345100789064e-10)
     assert Weibull_3P_guess(x, y, method, gamma0, failures, force_shape) == expected_result
 
     # Test case: Non-linear least squares estimation failure
@@ -90,7 +90,7 @@ def test_Weibull_3P_guess():
     gamma0 = 0.5
     failures = np.array([1, 2, 3, 4, 5])
     force_shape = -1.0
-    expected_result = [0.6145864188690114, -1.0, 0.5]
+    expected_result = (0.6145864188690114, -1.0, 0.5)
     assert Weibull_3P_guess(x, y, method, gamma0, failures, force_shape) == expected_result
 
     # Test case: RRY Method
@@ -100,7 +100,7 @@ def test_Weibull_3P_guess():
     gamma0 = 0.5
     failures = np.array([1, 2, 3, 4, 5])
     force_shape = None
-    expected_result = [6.870103083574396, 1.2144646336659919, 3.289767595144275e-10]
+    expected_result = (6.870103083574396, 1.2144646336659919, 3.289767595144275e-10)
     assert Weibull_3P_guess(x, y, method, gamma0, failures, force_shape) == expected_result
 
 
@@ -415,7 +415,7 @@ def test_Gamma_3P_guess():
     method = "RRX"
     gamma0 = 0.5
     failures = np.array([1, 2, 3, 4, 5])
-    expected_result = [5.1704489869481804, 1.3012815922228111, 3.223302155028797e-17]
+    expected_result = (5.1704489869481804, 1.3012815922228111, 3.223302155028797e-17)
     assert Gamma_3P_guess(x, y, method, gamma0, failures) == expected_result
 
     # Test case: Normal execution RRY method
@@ -424,7 +424,7 @@ def test_Gamma_3P_guess():
     method = "RRY"
     gamma0 = 0.5
     failures = np.array([1, 2, 3, 4, 5])
-    expected_result = [5.170448986922751, 1.3012815922268393, 3.2238824435138636e-17]
+    expected_result = (5.170448986922751, 1.3012815922268393, 3.2238824435138636e-17)
     assert Gamma_3P_guess(x, y, method, gamma0, failures) == expected_result
 
 

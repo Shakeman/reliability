@@ -353,7 +353,7 @@ class fitters_input_checking:
         self,
         dist: str,
         failures: npt.NDArray[np.float64] | list[float],
-        method: str | None = None,
+        method: Literal["MLE", "RRX", "RRY", "LS", "NLLS"] = "MLE",
         right_censored: npt.NDArray[np.float64] | list[float] | None = None,
         optimizer: str | None = None,
         CI: float = 0.95,
@@ -611,7 +611,7 @@ class fitters_input_checking:
         self.failures = failures
         self.right_censored = right_censored
         self.CI: float = CI
-        self.method = method
+        self.method: Literal["MLE", "RRX", "RRY", "LS"] = method
         self.optimizer: str | None = optimizer
         self.quantiles: npt.NDArray[np.float64] = quantiles
         self.force_beta = force_beta

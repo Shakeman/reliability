@@ -97,7 +97,7 @@ def ALT_prob_plot(
     shape_for_change_df,
     use_level_stress=None,
     ax: _axes.Axes | bool | None = True,
-):
+) -> plt.Axes | None:
     """Generates an ALT probability plot using the inputs provided.
 
     Parameters
@@ -373,7 +373,7 @@ class axes_transforms:
         return ss.beta.cdf(R, a=alpha, b=beta)
 
 
-def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha=None, beta_beta=None):
+def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha=None, beta_beta=None) -> None:
     """This function finds what the x and y limits of probability plots should be
     and sets these limits. This is similar to autoscaling, but the rules here
     are different to the matplotlib defaults.

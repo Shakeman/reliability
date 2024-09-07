@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 import numpy as np
 import numpy.typing as npt
 import scipy.stats as ss
@@ -15,8 +17,8 @@ def least_squares(
     dist: str,
     failures: npt.NDArray[np.float64],
     right_censored: npt.NDArray[np.float64],
-    method: str = "RRX",
-    force_shape=None,
+    method: Literal["RRX", "RRY"] = "RRX",
+    force_shape: float | None = None,
 ) -> list[np.float64]:
     """Uses least squares or non-linear least squares estimation to fit the
     parameters of the distribution to the plotting positions.
@@ -92,7 +94,7 @@ def least_squares(
         gamma0 = np.float64(0.0)
 
     if dist == "Weibull_2P":
-        guess: list[np.float64] = Weibull_2P_guess(x, y, method, force_shape)
+        guess = Weibull_2P_guess(x, y, method, force_shape)
 
     elif dist == "Weibull_3P":
         guess = Weibull_3P_guess(x, y, method, gamma0, failures, force_shape)
@@ -134,7 +136,9 @@ def least_squares(
     return guess
 
 
-def Weibull_2P_guess(x, y, method, force_shape) -> list[np.float64]:
+def Weibull_2P_guess(
+    x: npt.NDArray[np.float64], y: npt.NDArray[np.float64], method: Literal["RRX", "RRY"], force_shape: float | None
+) -> tuple[np.float64, np.float64]:
     """Calculates the initial guess for the parameters of a 2-parameter Weibull distribution.
 
     Args:
@@ -146,7 +150,7 @@ def Weibull_2P_guess(x, y, method, force_shape) -> list[np.float64]:
 
     Returns:
     -------
-        list[np.float64]: The initial guess for the parameters [alpha, beta] of the Weibull distribution.
+        tuple[np.float64]: The initial guess for the parameters [alpha, beta] of the Weibull distribution.
 
     """
     xlin: npt.NDArray[np.float64] = np.log(x)
@@ -156,11 +160,18 @@ def Weibull_2P_guess(x, y, method, force_shape) -> list[np.float64]:
     slope, intercept = linear_regression(xlin, ylin, slope=force_shape, RRX_or_RRY=method)
     LS_beta: np.float64 = slope
     LS_alpha: np.float64 = np.exp(-intercept / LS_beta)
-    guess: list[np.float64] = [LS_alpha, LS_beta]
+    guess: tuple[np.float64, np.float64] = (LS_alpha, LS_beta)
     return guess
 
 
-def Weibull_3P_guess(x, y, method, gamma0, failures, force_shape) -> list[np.float64]:
+def Weibull_3P_guess(
+    x: npt.NDArray[np.float64],
+    y: npt.NDArray[np.float64],
+    method: Literal["RRX", "RRY"],
+    gamma0: float | np.float64,
+    failures: npt.NDArray[np.float64],
+    force_shape: float | None,
+) -> tuple[np.float64, np.float64, np.float64]:
     """Estimates the parameters for a 3-parameter Weibull distribution based on the given data.
 
     Args:
@@ -174,7 +185,7 @@ def Weibull_3P_guess(x, y, method, gamma0, failures, force_shape) -> list[np.flo
 
     Returns:
     -------
-        list[np.float64]: The estimated parameters [alpha, beta, gamma] for the 3-parameter Weibull distribution.
+        tuple[np.float64]: The estimated parameters [alpha, beta, gamma] for the 3-parameter Weibull distribution.
 
     Raises:
     ------
@@ -189,13 +200,13 @@ def Weibull_3P_guess(x, y, method, gamma0, failures, force_shape) -> list[np.flo
 
     """
     # Weibull_2P estimate to create the guess for Weibull_3P
-    guess_x = x - gamma0
-    guess_2P = Weibull_2P_guess(x=guess_x, y=y, method=method, force_shape=force_shape)
-    LS_alpha = guess_2P[0]
-    LS_beta = guess_2P[1]
+    guess_x: npt.NDArray[np.float64] = x - gamma0
+    guess_2P: tuple[np.float64, np.float64] = Weibull_2P_guess(x=guess_x, y=y, method=method, force_shape=force_shape)
+    LS_alpha: np.float64 = guess_2P[0]
+    LS_beta: np.float64 = guess_2P[1]
 
     # NLLS for Weibull_3P
-    def __weibull_3P_CDF(t, alpha, beta, gamma):
+    def __weibull_3P_CDF(t, alpha, beta, gamma) -> np.float64:
         return 1 - np.exp(-(((t - gamma) / alpha) ** beta))
 
     try:
@@ -216,13 +227,13 @@ def Weibull_3P_guess(x, y, method, gamma0, failures, force_shape) -> list[np.flo
         NLLS_alpha = popt[0]
         NLLS_beta = popt[1]
         NLLS_gamma = popt[2]
-        guess = [NLLS_alpha, NLLS_beta, NLLS_gamma]
+        guess: tuple[np.float64, np.float64, np.float64] = (NLLS_alpha, NLLS_beta, NLLS_gamma)
     except (ValueError, LinAlgError, RuntimeError):
         colorprint(
             "WARNING: Non-linear least squares for Weibull_3P failed. The result returned is an estimate that is likely to be incorrect.",
             text_color="red",
         )
-        guess = [LS_alpha, LS_beta, gamma0]
+        guess = (LS_alpha, LS_beta, np.float64(gamma0))
     return guess
 
 
@@ -301,7 +312,7 @@ def Exponential_2P_guess(x, y, gamma0, failures) -> list[np.float64]:
     LS_Lambda = slope
 
     # NLLS for Exponential_2P
-    def __exponential_2P_CDF(t, Lambda, gamma):
+    def __exponential_2P_CDF(t, Lambda, gamma) -> np.float64:
         return 1 - np.exp(-Lambda * (t - gamma))
 
     try:
@@ -541,7 +552,9 @@ def Loglogistic_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
     return guess
 
 
-def Gamma_2P_guess(x, y, method, failures) -> list[np.float64]:
+def Gamma_2P_guess(
+    x: npt.NDArray[np.float64], y: npt.NDArray[np.float64], method, failures
+) -> tuple[np.float64, np.float64]:
     """Estimates the initial guess for the parameters of a Gamma distribution based on the given data.
 
     Args:
@@ -570,17 +583,17 @@ def Gamma_2P_guess(x, y, method, failures) -> list[np.float64]:
 
     """
     # Weibull_2P estimate which is converted to a Gamma_2P initial guess
-    xlin = np.log(x)
-    ylin = np.log(-np.log(1 - y))
+    xlin: npt.NDArray[np.float64] = np.log(x)
+    ylin: npt.NDArray[np.float64] = np.log(-np.log(1 - y))
     slope, intercept = linear_regression(xlin, ylin, RRX_or_RRY=method)
-    LS_beta = slope
-    LS_alpha = np.exp(-intercept / LS_beta)
+    LS_beta: np.float64 = slope
+    LS_alpha: np.float64 = np.exp(-intercept / LS_beta)
 
     # conversion of weibull parameters to gamma parameters. These values were found empirically and the relationship is only an approximate model
-    beta_guess = abs(0.6932 * LS_beta**2 - 0.0908 * LS_beta + 0.2804)
-    alpha_guess = abs(LS_alpha / (-0.00095 * beta_guess**2 + 1.1119 * beta_guess))
+    beta_guess: np.float64 = abs(0.6932 * LS_beta**2 - 0.0908 * LS_beta + 0.2804)
+    alpha_guess: np.float64 = abs(LS_alpha / (-0.00095 * beta_guess**2 + 1.1119 * beta_guess))
 
-    def __perform_curve_fit():  # separated out for repeated use
+    def __perform_curve_fit() -> tuple[np.float64, np.float64]:  # separated out for repeated use
         curve_fit_bounds = (
             [0, 0],
             [1e20, 1000],
@@ -595,11 +608,11 @@ def Gamma_2P_guess(x, y, method, failures) -> list[np.float64]:
             method="trf",
             max_nfev=300 * len(failures),
         )  # This is the non-linear least squares method. p0 is the initial guess for [alpha,beta]
-        return [popt[0], popt[1]]
+        return (popt[0], popt[1])
 
     try:
         # Gamma_2P estimate
-        guess = __perform_curve_fit()
+        guess: tuple[np.float64, np.float64] = __perform_curve_fit()
     except (ValueError, LinAlgError, RuntimeError):
         try:
             guess = __perform_curve_fit()
@@ -614,11 +627,13 @@ def Gamma_2P_guess(x, y, method, failures) -> list[np.float64]:
                 "WARNING: Non-linear least squares for Gamma_2P failed. The result returned is an estimate that is likely to be incorrect.",
                 text_color="red",
             )
-            guess = [alpha_guess, beta_guess]
+            guess = (alpha_guess, beta_guess)
     return guess
 
 
-def Gamma_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
+def Gamma_3P_guess(
+    x: npt.NDArray[np.float64], y: npt.NDArray[np.float64], method, gamma0: float | np.float64, failures
+) -> tuple[np.float64, np.float64, np.float64]:
     """Estimate the parameters for a three-parameter Gamma distribution based on given data.
 
     Parameters
@@ -639,18 +654,18 @@ def Gamma_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
 
     """
     # Weibull_2P estimate which is converted to a Gamma_2P initial guess
-    xlin = np.log(x - gamma0 * 0.98)
-    ylin = np.log(-np.log(1 - y))
+    xlin: npt.NDArray[np.float64] = np.log(x - gamma0 * 0.98)
+    ylin: npt.NDArray[np.float64] = np.log(-np.log(1 - y))
     slope, intercept = linear_regression(xlin, ylin, RRX_or_RRY=method)
-    LS_beta = slope
-    LS_alpha = np.exp(-intercept / LS_beta)
+    LS_beta: np.float64 = slope
+    LS_alpha: np.float64 = np.exp(-intercept / LS_beta)
 
     # conversion of weibull parameters to gamma parameters. These values were found empirically and the relationship is only an approximate model
-    beta_guess = abs(0.6932 * LS_beta**2 - 0.0908 * LS_beta + 0.2804)
-    alpha_guess = abs(LS_alpha / (-0.00095 * beta_guess**2 + 1.1119 * beta_guess))
+    beta_guess: np.float64 = abs(0.6932 * LS_beta**2 - 0.0908 * LS_beta + 0.2804)
+    alpha_guess: np.float64 = abs(LS_alpha / (-0.00095 * beta_guess**2 + 1.1119 * beta_guess))
 
     # TODO: Move curve fit to its own function
-    def __perform_curve_fit_gamma_2P():  # separated out for repeated use
+    def __perform_curve_fit_gamma_2P() -> tuple[np.float64, np.float64]:  # separated out for repeated use
         curve_fit_bounds = (
             [0, 0],
             [1e20, 1000],
@@ -665,9 +680,9 @@ def Gamma_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
             method="trf",
             max_nfev=300 * len(failures),
         )  # This is the non-linear least squares method. p0 is the initial guess for [alpha,beta]
-        return [popt[0], popt[1]]
+        return (popt[0], popt[1])
 
-    def __perform_curve_fit_gamma_3P():  # separated out for repeated use
+    def __perform_curve_fit_gamma_3P() -> tuple[np.float64, np.float64, np.float64]:  # separated out for repeated use
         curve_fit_bounds_3P = (
             [0, 0, 0],
             [1e20, 1000, gamma0],
@@ -682,7 +697,7 @@ def Gamma_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
             method="trf",
             max_nfev=300 * len(failures),
         )  # This is the non-linear least squares method. p0 is the initial guess for [alpha,beta,gamma]
-        return [popt[0], popt[1], popt[2]]
+        return (popt[0], popt[1], popt[2])
 
     try:
         # Gamma_2P estimate to create the guess for Gamma_3P
@@ -700,7 +715,7 @@ def Gamma_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
                     "WARNING: Non-linear least squares for Gamma_3P failed during Gamma_3P optimization. The result returned is an estimate that is likely to be incorrect.",
                     text_color="red",
                 )
-                guess = [NLLS_alpha_2P, NLLS_beta_2P, gamma0 * 0.98]
+                guess = (NLLS_alpha_2P, NLLS_beta_2P, np.float64(gamma0 * 0.98))
     except (ValueError, LinAlgError, RuntimeError):
         # We repeat the same attempt at a curve_fit because of a very strange event.
         # When Fit_Gamma_3P is run twice in a row, the second attempt fails if there was a probability plot generated for the first attempt.
@@ -723,13 +738,13 @@ def Gamma_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
                         "WARNING: Non-linear least squares for Gamma_3P failed during Gamma_3P optimization. The result returned is an estimate that is likely to be incorrect.",
                         text_color="red",
                     )
-                    guess = [NLLS_alpha_2P, NLLS_beta_2P, gamma0 * 0.98]
+                    guess = (NLLS_alpha_2P, NLLS_beta_2P, np.float64(gamma0 * 0.98))
         except (ValueError, LinAlgError, RuntimeError):
             colorprint(
                 "WARNING: Non-linear least squares for Gamma_3P failed during Gamma_2P optimization. The result returned is an estimate that is likely to be incorrect.",
                 text_color="red",
             )
-            guess = [alpha_guess, beta_guess, gamma0 * 0.98]
+            guess: tuple[np.float64, np.float64, np.float64] = (alpha_guess, beta_guess, np.float64(gamma0 * 0.98))
     return guess
 
 

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 import numpy as np
 from autograd import value_and_grad  # type: ignore
 from scipy.optimize import minimize  # type: ignore
@@ -56,7 +58,7 @@ class LS_optimization:
         LL_func,
         failures,
         right_censored,
-        method: str | None = "LS",
+        method: Literal["RRX", "RRY", "LS", "NLLS"] = "LS",
         force_shape=None,
         LL_func_force=None,
     ):
@@ -78,7 +80,7 @@ class LS_optimization:
                 dist=func_name,
                 failures=failures,
                 right_censored=right_censored,
-                method=method,
+                method=method,  # type: ignore
                 force_shape=force_shape,
             )
             LS_method = method

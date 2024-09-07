@@ -20,7 +20,6 @@ xlsxwriter = "^3.2.0"
 pydantic = "^2.8.2"
 
 
-
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.1"
 ruff = "^0.6.4"
@@ -90,7 +89,6 @@ ignore = [
     "PLW0128", # redeclared-assigned-name"
     "FBT001", # " boolean-type-hint-positional-argument"
     "E501",  # line too long, handled by black
-    #"FBT003",# Boolean positional value in function call"
     "N806", #non-lowercase-variable-in-function
     "T201", # print statement
     "N803", #invalid-argument-name

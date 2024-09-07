@@ -90,7 +90,6 @@ ignore = [
     "FBT001", # " boolean-type-hint-positional-argument"
     "E501",  # line too long, handled by black
     "FBT003",# Boolean positional value in function call"
-    "ANN101", #missing-type-self
     "N806", #non-lowercase-variable-in-function
     "T201", # print statement
     "N803", #invalid-argument-name

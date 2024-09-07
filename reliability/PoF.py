@@ -432,7 +432,7 @@ class stress_strain_life_parameters_from_data:
         ymax = max(self.__stress) * 1.2
         plt.xlim([0, xmax])
         plt.ylim([0, ymax])
-        plt.grid(True)
+        plt.grid(visible=True)
         leg = plt.legend()
         # this is to make the first legend entry (the equation) bigger
         legend_texts = leg.get_texts()
@@ -508,7 +508,7 @@ class stress_strain_life_parameters_from_data:
             )
             plt.xlim(cycles_min_log, cycles_max_log)
             plt.ylim(strain_min_log, strain_max_log)
-            plt.grid(True)
+            plt.grid(visible=True)
             leg2 = plt.legend()
             # this is to make the first legend entry (the equation) bigger
             legend_texts2 = leg2.get_texts()
@@ -779,7 +779,7 @@ class stress_strain_diagram:
         ymin = -ymax
         plt.xlim([xmin, xmax])
         plt.ylim([ymin, ymax])
-        plt.grid(True)
+        plt.grid(visible=True)
         plt.plot([xmin, xmax], [0, 0], "k", linewidth=1)
         plt.plot([0, 0], [ymin, ymax], "k", linewidth=1)
         plt.legend(loc="upper left")
@@ -1223,7 +1223,7 @@ class strain_life_diagram:
                     va="bottom",
                     ha="left",
                 )
-                plt.grid(True)
+                plt.grid(visible=True)
                 leg2 = plt.legend(loc="upper right")
                 legend_texts2 = leg2.get_texts()  # this is to make the first legend entry (the equation) bigger
                 legend_texts2[0]._fontproperties = legend_texts2[1]._fontproperties.copy()
@@ -1289,7 +1289,7 @@ class strain_life_diagram:
                 str(r"$2N_t = $" + str(int(cycles_2Nt))),
                 verticalalignment="bottom",
             )
-            plt.grid(True)
+            plt.grid(visible=True)
             leg2 = plt.legend()
             # this is to make the first legend entry (the equation) bigger
             legend_texts2 = leg2.get_texts()

@@ -81,7 +81,6 @@ ignore = [
     "D103", # Missing docstring in public function
     "ANN205", # missing-return-type-static-method
     "ANN003", #  missing-type-kwargs
-    #"ANN204", #missing-return-type-special-method
     "N801", #invalid-class-name
     "D404", #docstring-starts-with-this
     "PD901", #   pandas-df-variable-name
@@ -91,7 +90,7 @@ ignore = [
     "PLW0128", # redeclared-assigned-name"
     "FBT001", # " boolean-type-hint-positional-argument"
     "E501",  # line too long, handled by black
-    "FBT003",# Boolean positional value in function call"
+    #"FBT003",# Boolean positional value in function call"
     "N806", #non-lowercase-variable-in-function
     "T201", # print statement
     "N803", #invalid-argument-name

@@ -162,7 +162,6 @@ class Fit_Weibull_2P:
         failures: npt.NDArray[np.float64] | list[float],
         right_censored=None,
         show_probability_plot=True,
-        print_results=True,
         CI=0.95,
         quantiles=None,
         CI_type: str | None = "time",
@@ -192,7 +191,6 @@ class Fit_Weibull_2P:
         force_beta = inputs.force_beta
         CI_type = inputs.CI_type
         self.gamma = 0
-
         # Obtain least squares estimates
         LS_method = "LS" if method == "MLE" else method
         LS_results = LS_optimization(
@@ -353,9 +351,11 @@ class Fit_Weibull_2P:
                     "Upper Estimate",
                 ],
             )
-
+        else:
+            self.quantiles = None
         # goodness of fit measures
-        n = len(failures) + len(right_censored)
+        n: int = len(failures) + len(right_censored)
+        self.__n: int = n
         if force_beta is None:
             k = 2
             LL2 = 2 * Fit_Weibull_2P.LL(params, failures, right_censored)
@@ -377,35 +377,9 @@ class Fit_Weibull_2P:
             "Value": [self.loglik, self.AICc, self.BIC, self.AD],
         }
         self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
-
-        if print_results is True:
-            CI_rounded = CI * 100
-            if CI_rounded % 1 == 0:
-                CI_rounded = int(CI * 100)
-            frac_censored = len(right_censored) / n * 100
-            EPSILON = 1e-10
-            if frac_censored % 1 < EPSILON:
-                frac_censored = int(frac_censored)
-            colorprint(
-                str("Results from Fit_Weibull_2P (" + str(CI_rounded) + "% CI):"),
-                bold=True,
-                underline=True,
-            )
-            print("Analysis method:", self.method)
-            if self.optimizer is not None:
-                print("Optimizer:", self.optimizer)
-            print(
-                "Failures / Right censored:",
-                str(str(len(failures)) + "/" + str(len(right_censored))),
-                str("(" + round_and_string(frac_censored) + "% right censored)"),
-                "\n",
-            )
-            print(self.results.to_string(index=False), "\n")
-            print(self.goodness_of_fit.to_string(index=False), "\n")
-
-            if quantiles is not None:
-                print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
-                print(self.quantiles.to_string(index=False), "\n")
+        self.__CI: float = CI
+        self.__right_censored = right_censored
+        self.__failures = failures
 
         if show_probability_plot is True:
             from reliability.Probability_plotting import Weibull_probability_plot
@@ -443,6 +417,35 @@ class Fit_Weibull_2P:
         LL_f = Fit_Weibull_2P.logf(T_f, params[0], force_beta).sum()
         LL_rc = Fit_Weibull_2P.logR(T_rc, params[0], force_beta).sum()
         return -(LL_f + LL_rc)
+
+    def print_results(self):
+        CI_rounded = self.__CI * 100
+        if CI_rounded % 1 == 0:
+            CI_rounded = int(self.__CI * 100)
+        frac_censored = len(self.__right_censored) / self.__n * 100
+        EPSILON = 1e-10
+        if frac_censored % 1 < EPSILON:
+            frac_censored = int(frac_censored)
+        colorprint(
+            str("Results from Fit_Weibull_2P (" + str(CI_rounded) + "% CI):"),
+            bold=True,
+            underline=True,
+        )
+        print("Analysis method:", self.method)
+        if self.optimizer is not None:
+            print("Optimizer:", self.optimizer)
+        print(
+            "Failures / Right censored:",
+            str(str(len(self.__failures)) + "/" + str(len(self.__right_censored))),
+            str("(" + round_and_string(frac_censored) + "% right censored)"),
+            "\n",
+        )
+        print(self.results.to_string(index=False), "\n")
+        print(self.goodness_of_fit.to_string(index=False), "\n")
+
+        if self.quantiles is not None:
+            print(str("Table of quantiles (" + str(CI_rounded) + "% CI bounds on time):"))
+            print(self.quantiles.to_string(index=False), "\n")
 
 
 class Fit_Weibull_2P_grouped:
@@ -1677,48 +1680,48 @@ class Fit_Weibull_Mixture:
         CI = inputs.CI
         optimizer = inputs.optimizer
 
-        n = len(failures) + len(right_censored)
+        n: int = len(failures) + len(right_censored)
         _, y = plotting_positions(failures=failures, right_censored=right_censored)  # this is only used to find AD
 
         # this algorithm is used to estimate the dividing line between the two groups
         # firstly it fits a gaussian kde to the histogram
         # then it draws two straight lines from the highest peak of the kde down to the lower and upper bounds of the failures
         # the dividing line is the point where the difference between the kde and the straight lines is greatest
-        max_failures = max(failures)
-        min_failures = min(failures)
+        max_failures: np.float64 = max(failures)
+        min_failures: np.float64 = min(failures)
         gkde = ss.gaussian_kde(failures)
-        delta = max_failures - min_failures
-        x_kde = np.linspace(min_failures - delta / 5, max_failures + delta / 5, 100)
-        y_kde = gkde.evaluate(x_kde)
-        peak_y = max(y_kde)
-        peak_x = x_kde[np.where(y_kde == peak_y)][0]
+        delta: np.float64 = max_failures - min_failures
+        x_kde: npt.NDArray[np.float64] = np.linspace(min_failures - delta / 5, max_failures + delta / 5, 100)
+        y_kde: npt.NDArray[np.float64] = gkde.evaluate(x_kde)
+        peak_y: np.float64 = max(y_kde)
+        peak_x: np.float64 = x_kde[np.where(y_kde == peak_y)][0]
 
         left_x = min_failures
-        left_y = gkde.evaluate(left_x)
-        left_m = (peak_y - left_y) / (peak_x - left_x)
-        left_c = -left_m * left_x + left_y
-        left_line_x = np.linspace(left_x, peak_x, 100)
-        left_line_y = left_m * left_line_x + left_c  # y=mx+c
-        left_kde = gkde.evaluate(left_line_x)
-        left_diff = abs(left_line_y - left_kde)
-        left_diff_max = max(left_diff)
-        left_div_line = left_line_x[np.where(left_diff == left_diff_max)][0]
+        left_y: np.float64 = gkde.evaluate(left_x)[0]
+        left_m: np.float64 = (peak_y - left_y) / (peak_x - left_x)
+        left_c: np.float64 = -left_m * left_x + left_y
+        left_line_x: npt.NDArray[np.float64] = np.linspace(left_x, peak_x, 100)
+        left_line_y: npt.NDArray[np.float64] = left_m * left_line_x + left_c  # y=mx+c
+        left_kde: npt.NDArray[np.float64] = gkde.evaluate(left_line_x)
+        left_diff: npt.NDArray[np.float64] = abs(left_line_y - left_kde)
+        left_diff_max: np.float64 = max(left_diff)
+        left_div_line: np.float64 = left_line_x[np.where(left_diff == left_diff_max)][0]
 
-        right_x = max_failures
-        right_y = gkde.evaluate(right_x)
-        right_m = (right_y - peak_y) / (right_x - peak_x)
-        right_c = -right_m * right_x + right_y
-        right_line_x = np.linspace(peak_x, right_x, 100)
-        right_line_y = right_m * right_line_x + right_c  # y=mx+c
-        right_kde = gkde.evaluate(right_line_x)
-        right_diff = abs(right_line_y - right_kde)
-        right_diff_max = max(right_diff)
-        right_div_line = right_line_x[np.where(right_diff == right_diff_max)][0]
+        right_x: np.float64 = max_failures
+        right_y: np.float64 = gkde.evaluate(right_x)[0]
+        right_m: np.float64 = (right_y - peak_y) / (right_x - peak_x)
+        right_c: np.float64 = -right_m * right_x + right_y
+        right_line_x: npt.NDArray[np.float64] = np.linspace(peak_x, right_x, 100)
+        right_line_y: npt.NDArray[np.float64] = right_m * right_line_x + right_c  # y=mx+c
+        right_kde: npt.NDArray[np.float64] = gkde.evaluate(right_line_x)
+        right_diff: npt.NDArray[np.float64] = abs(right_line_y - right_kde)
+        right_diff_max: np.float64 = max(right_diff)
+        right_div_line: np.float64 = right_line_x[np.where(right_diff == right_diff_max)][0]
 
-        dividing_line = left_div_line if left_diff_max > right_diff_max else right_div_line
+        dividing_line: np.float64 = left_div_line if left_diff_max > right_diff_max else right_div_line
 
-        number_of_items_in_group_1 = len(np.where(failures < dividing_line)[0])
-        number_of_items_in_group_2 = len(failures) - number_of_items_in_group_1
+        number_of_items_in_group_1: int = len(np.where(failures < dividing_line)[0])
+        number_of_items_in_group_2: int = len(failures) - number_of_items_in_group_1
         MIN_GROUP_ITEMS = 2
         if number_of_items_in_group_1 < MIN_GROUP_ITEMS:
             failures_sorted = np.sort(failures)
@@ -1733,20 +1736,10 @@ class Fit_Weibull_Mixture:
             ) / 2  # adjusts the dividing line in case there aren't enough failures in the second group
 
         # this is the point at which data is assigned to one group or another for the purpose of generating the initial guess
-        GROUP_1_failures = []
-        GROUP_2_failures = []
-        GROUP_1_right_cens = []
-        GROUP_2_right_cens = []
-        for item in failures:
-            if item < dividing_line:
-                GROUP_1_failures.append(item)
-            else:
-                GROUP_2_failures.append(item)
-        for item in right_censored:
-            if item < dividing_line:
-                GROUP_1_right_cens.append(item)
-            else:
-                GROUP_2_right_cens.append(item)
+        GROUP_1_failures = failures[failures < dividing_line]
+        GROUP_2_failures = failures[failures >= dividing_line]
+        GROUP_1_right_cens = right_censored[right_censored < dividing_line]
+        GROUP_2_right_cens = right_censored[right_censored >= dividing_line]
 
         # get inputs for the guess by fitting a weibull to each of the groups with their respective censored data
         group_1_estimates = Fit_Weibull_2P(
@@ -1764,7 +1757,7 @@ class Fit_Weibull_Mixture:
             optimizer=optimizer,
         )
         # proportion guess
-        p_guess = (len(GROUP_1_failures) + len(GROUP_1_right_cens)) / n
+        p_guess: float = (len(GROUP_1_failures) + len(GROUP_1_right_cens)) / n
         guess = [
             group_1_estimates.alpha,
             group_1_estimates.beta,

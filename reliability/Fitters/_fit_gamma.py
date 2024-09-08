@@ -911,16 +911,8 @@ class Fit_Gamma_3P:
         return -(LL_f + LL_rc)
 
     @staticmethod
-    def logf_mbg(t, m, b, g):  # Log PDF (3 parameter Gamma) - mu,beta,gamma
-        return anp.log((t - g) ** (b - 1)) - anp.log((anp.exp(m) ** b) * agamma(b)) - ((t - g) / anp.exp(m))
-
-    @staticmethod
-    def logR_mbg(t, m, b, g):  # Log SF (3 parameter Gamma) - mu,beta,gamma
-        return anp.log(gammaincc(b, (t - g) / anp.exp(m)))
-
-    @staticmethod
     def LL_mbg(params, T_f, T_rc):
         # log likelihood function (3 parameter Gamma) - mu,beta,gamma
-        LL_f = Fit_Gamma_3P.logf_mbg(T_f, params[0], params[1], params[2]).sum()
-        LL_rc = Fit_Gamma_3P.logR_mbg(T_rc, params[0], params[1], params[2]).sum()
+        LL_f = Fit_Gamma_3P.logf_abg(T_f, anp.exp(params[0]), params[1], params[2]).sum()
+        LL_rc = Fit_Gamma_3P.logR_abg(T_rc, anp.exp(params[0]), params[1], params[2]).sum()
         return -(LL_f + LL_rc)

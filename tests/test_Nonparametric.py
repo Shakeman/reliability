@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 from numpy.testing import assert_allclose
 
@@ -38,25 +40,25 @@ def test_RankAdjustment():
     assert_allclose(sum(RAF.SF_upper), 20.858236210538312, rtol=rtol, atol=atol)
 
 
-plot_tyes = ["CDF", "SF", "CHF"]
-bool_list = [True, False]
+plot_types: list[str] = ["CDF", "SF", "CHF"]
+bool_list: list[bool] = [True, False]
 
 
-@pytest.mark.parametrize("plot_type", plot_tyes)
+@pytest.mark.parametrize("plot_type", plot_types)
 @pytest.mark.parametrize("plot_CI", bool_list)
 def test_KaplanMeier_plot(plot_type, plot_CI):
     KMF = KaplanMeier(failures=failures, right_censored=right_censored)
     KMF.plot(plot_type=plot_type, plot_CI=plot_CI)
 
 
-@pytest.mark.parametrize("plot_type", plot_tyes)
+@pytest.mark.parametrize("plot_type", plot_types)
 @pytest.mark.parametrize("plot_CI", bool_list)
 def test_NelsonAalen_plot(plot_type, plot_CI):
     NAF = NelsonAalen(failures=failures, right_censored=right_censored)
     NAF.plot(plot_type=plot_type, plot_CI=plot_CI)
 
 
-@pytest.mark.parametrize("plot_type", plot_tyes)
+@pytest.mark.parametrize("plot_type", plot_types)
 @pytest.mark.parametrize("plot_CI", bool_list)
 def test_RankAdjustment_plot(plot_type, plot_CI):
     RAF = RankAdjustment(failures=failures, right_censored=right_censored)

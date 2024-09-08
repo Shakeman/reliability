@@ -37,19 +37,19 @@ def test_Fit_Weibull_2P():
         right_censored=data.right_censored,
         method="MLE",
         show_probability_plot=True,
-        print_results=True,
     )
     assert_allclose(MLE.alpha, 47.0217247918312, rtol=rtol, atol=atol)
     assert_allclose(MLE.beta, 1.982318106214522, rtol=rtol, atol=atol)
     assert_allclose(MLE.gamma, 0, rtol=rtol, atol=atol)
     assert_allclose(MLE.AICc, 120.41667818523239, rtol=rtol, atol=atol)
 
+    MLE.print_results()
+
     MLE_beta = Fit_Weibull_2P(
         failures=data.failures,
         right_censored=data.right_censored,
         method="MLE",
         show_probability_plot=False,
-        print_results=False,
         force_beta=0.7,
         quantiles=True,
     )
@@ -63,7 +63,6 @@ def test_Fit_Weibull_2P():
         right_censored=data.right_censored,
         method="LS",
         show_probability_plot=False,
-        print_results=False,
     )
     assert_allclose(LS.alpha, 47.43515443864693, rtol=rtol, atol=atol)
     assert_allclose(LS.beta, 1.8458742548969898, rtol=rtol, atol=atol)

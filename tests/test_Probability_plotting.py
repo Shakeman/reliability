@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
@@ -31,6 +33,9 @@ from reliability.Probability_plotting import (
     plot_points,
     plotting_positions,
 )
+
+if TYPE_CHECKING:
+    from matplotlib.pylab import Generator
 
 
 def test_Weibull():
@@ -243,7 +248,7 @@ def test_Gumbel_probability_plot():
 
 def test_QQ_plot_semiparametric():
     # Test case 1: Basic test case with Weibull distribution
-    X_data_failures = [10, 20, 30, 40, 50]
+    X_data_failures: list[float] | npt.NDArray[np.float64] = [10.0, 20.0, 30.0, 40.0, 50.0]
     Y_dist = Weibull_Distribution(alpha=100, beta=2)
     expected_model = [2.411095944079598, 3.0221225173625923, -22.404307687043136]
     fig, model = QQ_plot_semiparametric(X_data_failures=X_data_failures, Y_dist=Y_dist)
@@ -252,7 +257,7 @@ def test_QQ_plot_semiparametric():
     plt.close()
     # Test case 2: Test case with right censored data
     X_data_failures = [10, 20, 30, 40, 50]
-    X_data_right_censored = [25, 35]
+    X_data_right_censored: list[float] = [25.0, 35.0]
     Y_dist = Weibull_Distribution(alpha=100, beta=2)
     expected_model = [2.762983200925992, 3.3508143133647574, -21.553807456088077]
     fig, model = QQ_plot_semiparametric(
@@ -266,14 +271,14 @@ def test_QQ_plot_semiparametric():
     # Test case 3: Test case with normal distribution
     X_data_failures = [10, 20, 30, 40, 50]
     Y_dist = Normal_Distribution(mu=np.float64(50.0), sigma=np.float64(10))
-    expected_model = [1.3232401964337186, 1.2778210803854542, 1.665367588436365]
+    expected_model: list[float] = [1.3232401964337186, 1.2778210803854542, 1.665367588436365]
     fig, model = QQ_plot_semiparametric(X_data_failures=X_data_failures, Y_dist=Y_dist)
     assert isinstance(fig, plt.Figure)
     assert np.allclose(model, expected_model)
     plt.close()
     # Test case 4: Test case with downsampling
-    rng = np.random.default_rng(seed=0)
-    X_data_failures = rng.integers(1, 100, size=10000)
+    rng: Generator = np.random.default_rng(seed=0)
+    X_data_failures = rng.integers(1, 100, size=10000).tolist()
     Y_dist = Weibull_Distribution(alpha=100, beta=2)
     expected_model = [1.719651891260017, 1.5618204644873288, 10.502856153672889]
     fig, model = QQ_plot_semiparametric(X_data_failures=X_data_failures, Y_dist=Y_dist, downsample_scatterplot=True)
@@ -282,7 +287,7 @@ def test_QQ_plot_semiparametric():
     plt.close()
     # Test case 5: Test case with invalid input
     with pytest.raises(ValueError):
-        QQ_plot_semiparametric(X_data_failures=None, Y_dist=Y_dist)
+        QQ_plot_semiparametric(X_data_failures=None, Y_dist=Y_dist)  # type: ignore
 
     with pytest.raises(ValueError):
         QQ_plot_semiparametric(X_data_failures=X_data_failures, Y_dist=None)

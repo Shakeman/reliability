@@ -96,14 +96,13 @@ known-first-party = []
 "test_*.py" = ["PLR2004","S101", "SLF001", "INP001", "ANN202","PT011"]
 "conftest*.py" = ["INP001", "ANN202"]
 "*_utils.py" = ["SLF001"] #TODO: Refactor Utils functions to not access private memebrs
-#"_fit_everything_alt.py" = ["PLR0912", "PLR0915"] #TODO:Refactor fit_everything_alt into two fucntions for single and dual stress
 
 [tool.ruff.lint.pylint]
 max-args = 16
 max-branches = 80
-max-statements = 400
+max-statements = 350
 [tool.ruff.lint.mccabe]
-max-complexity = 80
+max-complexity = 70
 
 [tool.ruff.format]
 # Like Black, use double quotes for strings.

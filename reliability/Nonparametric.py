@@ -129,41 +129,31 @@ class KaplanMeier:
             )
 
         # turn the failures and right censored times into a two lists of times and censoring codes
-        times: npt.NDArray[np.float64] = np.hstack([failures, right_censored])
-        F: npt.NDArray[np.int32] = np.ones_like(failures)
-        RC: npt.NDArray[np.int32] = np.zeros_like(right_censored)  # censored values are given the code of 0
-        cens_code: npt.NDArray[np.int32] = np.hstack([F, RC])
-        Data = {"times": times, "cens_code": cens_code}
-        df = pd.DataFrame(Data, columns=["times", "cens_code"])
-        df2: pd.DataFrame = df.sort_values(by="times")
-        d = df2["times"].to_numpy()
-        c = df2["cens_code"].to_numpy()
+        d, censor_code = times_and_censor_codes(failures, right_censored)
 
-        self.data = d
-        self.censor_codes = c
+        self.data: npt.NDArray[np.float64] = d
+        self.censor_codes: npt.NDArray[np.float64] = censor_code
 
         n: int = len(d)  # number of items
         failures_array = np.arange(1, n + 1)  # array of number of items (1 to n)
         remaining_array = failures_array[::-1]  # items remaining (n to 1)
-        KM = []  # Survival function
         KM_upper = []  # upper CI
         KM_lower = []  # lower CI
-        z = ss.norm.ppf(1 - (1 - CI) / 2)
+        z: np.float64 = ss.norm.ppf(1 - (1 - CI) / 2)
         frac = []
         delta = 0
+        q = 1 - censor_code / (remaining_array)
+        KM: npt.NDArray[np.float64] = np.cumprod(q)
+        R2 = KM**2
+        # test_frac = (1 / (remaining_array * (remaining_array - 1)))[censor_code == 1]
         for i in failures_array:
-            if i == 1:
-                KM.append((remaining_array[i - 1] - c[i - 1]) / remaining_array[i - 1])
-            else:
-                KM.append(((remaining_array[i - 1] - c[i - 1]) / remaining_array[i - 1]) * KM[i - 2])
             # greenwood confidence interval calculations. Uses Normal approximation (same method as in Minitab)
-            if c[i - 1] == 1:
-                risk_set = n - i + 1
-                frac.append(1 / ((risk_set) * (risk_set - 1)))
+            if censor_code[i - 1] == 1:
+                frac.append(1 / ((remaining_array[i - 1]) * (remaining_array[i - 1] - 1)))
                 sumfrac = sum(frac)
-                R2 = KM[i - 1] ** 2
+
                 delta = (
-                    (((sumfrac * R2) ** 0.5) * z) if R2 > 0 else 0
+                    (((sumfrac * R2[i - 1]) ** 0.5) * z) if R2[i - 1] > 0 else 0
                 )  # required if the last piece of data is a failure
             KM_upper.append(KM[i - 1] + delta)
             KM_lower.append(KM[i - 1] - delta)
@@ -175,7 +165,7 @@ class KaplanMeier:
         # assemble the pandas dataframe for the output
         DATA = {
             "Failure times": d,
-            "Censoring code (censored=0)": c,
+            "Censoring code (censored=0)": censor_code,
             "Items remaining": remaining_array,
             "Kaplan-Meier Estimate": KM,
             "Lower CI bound": KM_lower,
@@ -200,7 +190,7 @@ class KaplanMeier:
 
         for i in failures_array:
             if i == 1:
-                if c[i - 1] == 0:  # if the first item is censored
+                if censor_code[i - 1] == 0:  # if the first item is censored
                     KM_x = np.append(KM_x, (d[i - 1]))
                     KM_y = np.append(KM_y, 1)
                     KM_y_lower.append(1)
@@ -246,7 +236,7 @@ class KaplanMeier:
         if CI_rounded % 1 == 0:
             CI_rounded = int(CI * 100)
         self.__CI_rounded = CI_rounded
-        self.__xmax = max(times)
+        self.__xmax = max(d)
 
     def plot(self, plot_type="SF", plot_CI=True, **kwargs):
         """Plot the Kaplan-Meier estimate for the specified plot type.
@@ -454,15 +444,7 @@ class NelsonAalen:
             )
 
         # turn the failures and right censored times into a two lists of times and censoring codes
-        times: npt.NDArray[np.int32] = np.hstack([failures, right_censored])
-        F: npt.NDArray[np.int32] = np.ones_like(failures)
-        RC: npt.NDArray[np.int32] = np.zeros_like(right_censored)  # censored values are given the code of 0
-        cens_code: npt.NDArray[np.int32] = np.hstack([F, RC])
-        Data: dict[str, npt.NDArray[np.int32]] = {"times": times, "cens_code": cens_code}
-        df = pd.DataFrame(Data, columns=["times", "cens_code"])
-        df2: pd.DataFrame = df.sort_values(by="times")
-        d = df2["times"].to_numpy()
-        c = df2["cens_code"].to_numpy()
+        d, c = times_and_censor_codes(failures, right_censored)
 
         self.data = d
         self.censor_codes = c
@@ -470,23 +452,18 @@ class NelsonAalen:
         n: int = len(d)  # number of items
         failures_array = np.arange(1, n + 1)  # array of number of items (1 to n)
         remaining_array = failures_array[::-1]  # items remaining (n to 1)
-        h = []
-        H = []
-        NA = []  # Survival function
         NA_upper = []  # upper CI
         NA_lower = []  # lower CI
         z = ss.norm.ppf(1 - (1 - CI) / 2)
         frac = []
         delta = 0
+        h = c / (remaining_array)  # obtain HF
+        H = np.cumsum(h)  # obtain CHF
+        NA = np.exp(-H)  # Survival function
         for i in failures_array:
-            h.append((c[i - 1]) / remaining_array[i - 1])  # obtain HF
-            H.append(sum(h))  # obtain CHF
-            NA.append(np.exp(-H[-1]))
-
             # greenwood confidence interval calculations. Uses Normal approximation
             if c[i - 1] == 1:
-                risk_set = n - i + 1
-                frac.append(1 / ((risk_set) * (risk_set - 1)))
+                frac.append(1 / ((remaining_array[i - 1]) * (remaining_array[i - 1] - 1)))
                 sumfrac = sum(frac)
                 R2 = NA[i - 1] ** 2
                 delta = (
@@ -573,7 +550,7 @@ class NelsonAalen:
         if CI_rounded % 1 == 0:
             CI_rounded = int(CI * 100)
         self.__CI_rounded = CI_rounded
-        self.__xmax = max(times)
+        self.__xmax = max(d)
 
     def plot(self, plot_type="SF", plot_CI=True, **kwargs):
         """Plot the Nelson-Aalen estimate for the specified plot type.
@@ -787,16 +764,8 @@ class RankAdjustment:
             )
 
         # turn the failures and right censored times into a two lists of times and censoring codes
-        times = np.hstack([failures, right_censored])
-        F = np.ones_like(failures)
-        RC = np.zeros_like(right_censored)  # censored values are given the code of 0
-        cens_code = np.hstack([F, RC])
-        Data = {"times": times, "cens_code": cens_code}
-        df = pd.DataFrame(Data, columns=["times", "cens_code"])
-        df2 = df.sort_values(by="times")
-        d = df2["times"].to_numpy()
-        c = df2["cens_code"].to_numpy()
-        n = len(d)  # number of items
+        d, c = times_and_censor_codes(failures, right_censored)
+        n: int = len(d)  # number of items
         failures_array = np.arange(1, n + 1)  # array of number of items (1 to n)
         remaining_array = failures_array[::-1]  # items remaining (n to 1)
 
@@ -807,16 +776,15 @@ class RankAdjustment:
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored, a=plotting_hueristic, sort=True)
         # create the stepwise plot using the plotting positions
-        x_array = [0]
+        x_array = np.insert(x.repeat(2), 0, 0)
         y_array = [0]
         for i in range(len(x)):
-            x_array.extend([x[i], x[i]])
             if i == 0:
                 y_array.extend([0, y[i]])
             else:
                 y_array.extend([y[i - 1], y[i]])
         if c[-1] == 0:  # repeat the last value if censored
-            x_array.append(d[-1])
+            x_array = np.append(x_array, (d[-1]))
             y_array.append(y_array[-1])
 
         # convert the plotting positions (which are only for the failures) into the full Rank Adjustment column by adding the values for the censored data
@@ -839,8 +807,7 @@ class RankAdjustment:
 
             # greenwood confidence interval calculations. Uses Normal approximation (same method as Minitab uses for Kaplan-Meier)
             if c[i - 1] == 1:
-                risk_set = n - i + 1
-                frac.append(1 / ((risk_set) * (risk_set - 1)))
+                frac.append(1 / ((remaining_array[i - 1]) * (remaining_array[i - 1] - 1)))
                 sumfrac = sum(frac)
                 R2 = RA[i - 1] ** 2
                 delta = (
@@ -1029,3 +996,15 @@ class RankAdjustment:
             underline=True,
         )
         print(self.results.to_string(index=False), "\n")
+
+
+def times_and_censor_codes(failures, right_censored) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+    # turn the failures and right censored times into a two lists of times and censoring codes
+    times: npt.NDArray[np.float64] = np.hstack([failures, right_censored])
+    F: npt.NDArray[np.float64] = np.ones_like(failures)
+    RC: npt.NDArray[np.float64] = np.zeros_like(right_censored)  # censored values are given the code of 0
+    cens_code: npt.NDArray[np.float64] = np.hstack([F, RC])
+    ind = np.argsort(times)
+    d: npt.NDArray[np.float64] = times[ind]
+    c: npt.NDArray[np.float64] = cens_code[ind]
+    return d, c

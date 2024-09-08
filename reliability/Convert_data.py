@@ -94,12 +94,12 @@ class xlsx_to_XCN:
         failure_code_in_XCN="F",
         **kwargs,
     ) -> None:
-        df = pd.read_excel(io=path, **kwargs)
-        cols = df.columns
-        X = df[cols[0]].to_numpy()
+        excel_df = pd.read_excel(io=path, **kwargs)
+        cols = excel_df.columns
+        X = excel_df[cols[0]].to_numpy()
         X = np.array(removeNaNs(list(X)))
         # C0 needs to be to_list not to_numpy in case of mixtures of strings and numbers which numpy would convert all to strings
-        C0 = df[cols[1]].to_list()
+        C0 = excel_df[cols[1]].to_list()
         C0 = removeNaNs(C0)
         C_upper = []
         for item in C0:
@@ -161,7 +161,7 @@ class xlsx_to_XCN:
         C = np.array(C_out)
 
         if len(cols) > 2:  # noqa: PLR2004
-            N = df[cols[2]].to_numpy()
+            N = excel_df[cols[2]].to_numpy()
             N = removeNaNs(N)
         else:
             N = np.ones_like(X)  # if N is missing then it is assumed as all ones
@@ -243,12 +243,12 @@ class xlsx_to_FR:
     """
 
     def __init__(self, path, **kwargs) -> None:
-        df = pd.read_excel(io=path, **kwargs)
-        cols = df.columns
-        failures = df[cols[0]].to_numpy()
+        excel_df = pd.read_excel(io=path, **kwargs)
+        cols = excel_df.columns
+        failures = excel_df[cols[0]].to_numpy()
         self.failures = removeNaNs(failures)
         if len(cols) > 1:
-            right_censored = df[cols[1]].to_numpy()
+            right_censored = excel_df[cols[1]].to_numpy()
             self.right_censored = removeNaNs(right_censored)
             f, rc = list(self.failures), list(self.right_censored)
             len_f, len_rc = len(f), len(rc)
@@ -325,10 +325,10 @@ class xlsx_to_FNRN:
     """
 
     def __init__(self, path, **kwargs) -> None:
-        df = pd.read_excel(io=path, **kwargs)
-        cols = df.columns
-        failures = df[cols[0]].to_numpy()
-        num_failures = df[cols[1]].to_numpy()
+        excel_df = pd.read_excel(io=path, **kwargs)
+        cols = excel_df.columns
+        failures = excel_df[cols[0]].to_numpy()
+        num_failures = excel_df[cols[1]].to_numpy()
         failures = removeNaNs(failures)
         num_failures = removeNaNs(num_failures)
         if len(failures) != len(num_failures):
@@ -340,8 +340,8 @@ class xlsx_to_FNRN:
             right_censored = None
             num_right_censored = None
         else:
-            right_censored = df[cols[2]].to_numpy()
-            num_right_censored = df[cols[3]].to_numpy()
+            right_censored = excel_df[cols[2]].to_numpy()
+            num_right_censored = excel_df[cols[3]].to_numpy()
             right_censored = removeNaNs(right_censored)
             num_right_censored = removeNaNs(num_right_censored)
             if len(right_censored) != len(num_right_censored):

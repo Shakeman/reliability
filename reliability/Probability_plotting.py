@@ -37,7 +37,7 @@ plot_points - plots the failure points on a scatter plot. Useful to overlay
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -2480,13 +2480,13 @@ def PP_plot_semiparametric(
 
 
 def QQ_plot_semiparametric(
-    X_data_failures=None,
-    X_data_right_censored=None,
+    X_data_failures: npt.NDArray[np.float64] | list[float],
+    X_data_right_censored: npt.NDArray[np.float64] | list[float] | None = None,
     Y_dist=None,
-    show_fitted_lines=True,
-    show_diagonal_line=False,
-    method="KM",
-    downsample_scatterplot=False,
+    show_fitted_lines: bool = True,
+    show_diagonal_line: bool = False,
+    method: Literal["KM", "NA" "RA"] = "KM",
+    downsample_scatterplot: bool = False,
     **kwargs,
 ) -> tuple[Figure, list[np.float64]]:
     """A QQ plot (quantile-quantile plot) consists of plotting failure units vs
@@ -2593,28 +2593,24 @@ def QQ_plot_semiparametric(
     else:
         msg = "X_data_right_censored must be an array or list"
         raise ValueError(msg)
-    a = kwargs.pop("a") if "a" in kwargs else 0.3  # rank adjustment heuristic
+    a: float = kwargs.pop("a") if "a" in kwargs else 0.3  # rank adjustment heuristic
     # extract certain keyword arguments or specify them if they are not set
-    color = kwargs.pop("color") if "color" in kwargs else "k"
-    marker = kwargs.pop("marker") if "marker" in kwargs else "."
+    color: str = kwargs.pop("color") if "color" in kwargs else "k"
+    marker: str = kwargs.pop("marker") if "marker" in kwargs else "."
 
     if method == "KM":
         KM = KaplanMeier(
             failures=X_data_failures,
             right_censored=X_data_right_censored,
         )
-        df = KM.results
-        failure_rows = df.loc[df["Censoring code (censored=0)"] == 1.0]
-        ecdf = 1 - np.array(failure_rows["Kaplan-Meier Estimate"].values)
+        ecdf = 1 - KM.KM[KM.censor_codes == 1]
         method_str = "Kaplan-Meier"
     elif method == "NA":
         NA = NelsonAalen(
             failures=X_data_failures,
             right_censored=X_data_right_censored,
         )
-        df = NA.results
-        failure_rows = df.loc[df["Censoring code (censored=0)"] == 1.0]
-        ecdf = 1 - np.array(failure_rows["Nelson-Aalen Estimate"].values)
+        ecdf = 1 - NA.NA[NA.censor_codes == 1]
         method_str = "Nelson-Aalen"
     elif method == "RA":
         RA = RankAdjustment(
@@ -2622,9 +2618,7 @@ def QQ_plot_semiparametric(
             right_censored=X_data_right_censored,
             plotting_hueristic=a,
         )
-        df = RA.results
-        failure_rows = df.loc[df["Censoring code (censored=0)"] == 1.0]
-        ecdf = 1 - np.array(failure_rows["Rank Adjustment Estimate"].values)
+        ecdf = 1 - RA.RA[RA.censor_codes == 1]
         method_str = "Rank Adjustment"
     else:
         msg = 'method must be "KM" for Kaplan-meier, "NA" for Nelson-Aalen, or "RA" for Rank Adjustment. Default is KM'

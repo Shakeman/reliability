@@ -202,27 +202,27 @@ def test_write_df_to_xlsx(monkeypatch: pytest.MonkeyPatch):
     folder_path: Path = folder_path / "_excel_files"
     path: Path = folder_path / "test.xlsx"
     new_path: Path = folder_path / "test(new).xlsx"
-    df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
+    generic_df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
 
     # Test case: Writing dataframe to xlsx file
-    write_df_to_xlsx(df, path)
+    write_df_to_xlsx(generic_df, path)
     assert Path.exists(path)
 
     # Test case: Writing dataframe to existing xlsx file and choosing not to overwrite
     monkeypatch.setattr("builtins.input", lambda _: "N")
-    write_df_to_xlsx(df, path)
+    write_df_to_xlsx(generic_df, path)
     assert Path.exists(new_path)
 
     # Test case: Writing dataframe to existing xlsx file and choosing to overwrite
     monkeypatch.setattr("builtins.input", lambda _: "Y")
-    write_df_to_xlsx(df, path)
+    write_df_to_xlsx(generic_df, path)
     assert Path.exists(path)
 
     Path(path).unlink()
 
     # Test case: Writing dataframe to xlsx file with additional kwargs
     kwargs = {"sheet_name": "Sheet1", "header": False}
-    write_df_to_xlsx(df, path, **kwargs)
+    write_df_to_xlsx(generic_df, path, **kwargs)
     assert Path.exists(path)
 
     Path(path).unlink()

@@ -658,26 +658,6 @@ class Fit_Weibull_2P_grouped:
         failures = np.repeat(failure_times, failure_qty)
         right_censored = np.repeat(right_censored_times, right_censored_qty)
 
-        # perform input error checking for the rest of the inputs
-        inputs = fitters_input_checking(
-            dist="Weibull_2P",
-            failures=failures,
-            right_censored=right_censored,
-            method=method,
-            optimizer=optimizer,
-            CI=CI,
-            quantiles=quantiles,
-            force_beta=force_beta,
-            CI_type=CI_type,
-        )
-        failures = inputs.failures
-        right_censored = inputs.right_censored
-        CI = inputs.CI
-        method = inputs.method
-        optimizer = inputs.optimizer
-        quantiles = inputs.quantiles
-        force_beta = inputs.force_beta
-        CI_type = inputs.CI_type
         self.gamma = 0
         if optimizer not in ["L-BFGS-B", "TNC", "powell", "nelder-mead"]:
             optimizer = "TNC"  # temporary correction for "best" and "all"
@@ -795,13 +775,7 @@ class Fit_Weibull_2P_grouped:
                     )  # this includes maxiter as TNC often exceeds the default limit of 100
                     params = result.x
                     guess = [params[0], params[1]]
-                    LL2 = 2 * Fit_Weibull_2P_grouped.LL(
-                        guess,
-                        failure_times,
-                        right_censored_times,
-                        failure_qty,
-                        right_censored_qty,
-                    )
+                    LL2 = 2 * result.fun
                     BIC_array.append(np.log(n) * k + LL2)
                     delta_BIC = abs(BIC_array[-1] - BIC_array[-2])
             else:  # force beta is True
@@ -830,14 +804,7 @@ class Fit_Weibull_2P_grouped:
                     )
                     params = result.x
                     guess = [params[0]]
-                    LL2 = 2 * Fit_Weibull_2P_grouped.LL_fb(
-                        guess,
-                        failure_times,
-                        right_censored_times,
-                        failure_qty,
-                        right_censored_qty,
-                        force_beta,
-                    )
+                    LL2 = 2 * result.fun
                     BIC_array.append(np.log(n) * k + LL2)
                     delta_BIC = abs(BIC_array[-1] - BIC_array[-2])
 
@@ -996,7 +963,7 @@ class Fit_Weibull_2P_grouped:
         n = sum(failure_qty) + sum(right_censored_qty)
         if force_beta is None:
             k = 2
-            LL2 = 2 * Fit_Weibull_2P_grouped.LL(
+            LL = -Fit_Weibull_2P_grouped.LL(
                 params,
                 failure_times,
                 right_censored_times,
@@ -1005,7 +972,7 @@ class Fit_Weibull_2P_grouped:
             )
         else:
             k = 1
-            LL2 = 2 * Fit_Weibull_2P_grouped.LL_fb(
+            LL = -Fit_Weibull_2P_grouped.LL_fb(
                 params,
                 failure_times,
                 right_censored_times,
@@ -1013,10 +980,9 @@ class Fit_Weibull_2P_grouped:
                 right_censored_qty,
                 force_beta,
             )
-        self.loglik2 = LL2
-        self.loglik = LL2 * -0.5
+        self.loglik = LL
         if n - k - 1 > 0:
-            self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
+            self.AICc: np.float64 = 2 * (k - LL) + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = np.inf
         self.BIC = np.log(n) * k + LL2
@@ -2861,7 +2827,7 @@ class Fit_Weibull_DS:
 
     def __init__(
         self,
-        failures: npt.NDArray[np.float64] | list[float],
+        failures: npt.NDArray[np.float64] | list[float] | list[int],
         right_censored=None,
         show_probability_plot=True,
         print_results=True,

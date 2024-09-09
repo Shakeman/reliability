@@ -19,7 +19,7 @@ def least_squares(
     right_censored: npt.NDArray[np.float64],
     method: Literal["RRX", "RRY"] = "RRX",
     force_shape: float | None = None,
-) -> list[np.float64]:
+) -> tuple[np.float64, ...]:
     """Uses least squares or non-linear least squares estimation to fit the
     parameters of the distribution to the plotting positions.
 
@@ -245,7 +245,7 @@ def Weibull_3P_guess(
     return guess
 
 
-def Exponential_1P_guess(x, y, method) -> list[np.float64]:
+def Exponential_1P_guess(x, y, method) -> tuple[np.float64]:
     """Calculates the guess value for the Exponential_1P model.
 
     Args:
@@ -278,12 +278,11 @@ def Exponential_1P_guess(x, y, method) -> list[np.float64]:
         y_intercept=y_intercept,
         RRX_or_RRY=method,
     )  # equivalent to y = m.x
-    LS_Lambda: np.float64 = slope
-    guess: list[np.float64] = [LS_Lambda]
+    guess: tuple[np.float64] = (slope,)
     return guess
 
 
-def Exponential_2P_guess(x, y, gamma0, failures) -> list[np.float64]:
+def Exponential_2P_guess(x, y, gamma0, failures) -> tuple[np.float64, np.float64]:
     """Estimate the parameters for a two-parameter exponential distribution.
 
     Args:
@@ -317,7 +316,7 @@ def Exponential_2P_guess(x, y, gamma0, failures) -> list[np.float64]:
     xlin = x - gamma0
     ylin = -np.log(1 - y)
     slope, _ = linear_regression(xlin, ylin, x_intercept=0, RRX_or_RRY="RRX")
-    LS_Lambda = slope
+    LS_Lambda: np.float64 = slope
 
     # NLLS for Exponential_2P
     def __exponential_2P_CDF(t, Lambda, gamma) -> np.float64:
@@ -338,19 +337,19 @@ def Exponential_2P_guess(x, y, gamma0, failures) -> list[np.float64]:
             method="trf",
             max_nfev=300 * len(failures),
         )
-        NLLS_Lambda = popt[0]
-        NLLS_gamma = popt[1]
-        guess = [NLLS_Lambda, NLLS_gamma]
+        NLLS_Lambda: np.float64 = popt[0]
+        NLLS_gamma: np.float64 = popt[1]
+        guess = (NLLS_Lambda, NLLS_gamma)
     except (ValueError, LinAlgError, RuntimeError):
         colorprint(
             "WARNING: Non-linear least squares for Exponential_2P failed. The result returned is an estimate that is likely to be incorrect.",
             text_color="red",
         )
-        guess = [LS_Lambda, gamma0]
+        guess = (LS_Lambda, gamma0)
     return guess
 
 
-def Normal_2P_guess(x, y, method, force_shape) -> list[np.float64]:
+def Normal_2P_guess(x, y, method, force_shape) -> tuple[np.float64, np.float64]:
     """Calculates the initial guess for the parameters of a 2-parameter Normal distribution.
 
     Args:
@@ -371,11 +370,11 @@ def Normal_2P_guess(x, y, method, force_shape) -> list[np.float64]:
     slope, intercept = linear_regression(x, ylin, slope=force_shape, RRX_or_RRY=method)
     LS_sigma = 1 / slope
     LS_mu = -intercept * LS_sigma
-    guess: list[np.float64] = [LS_mu, LS_sigma]
+    guess: tuple[np.float64, np.float64] = (LS_mu, LS_sigma)
     return guess
 
 
-def Gumbel_2P_guess(x, y, method) -> list[np.float64]:
+def Gumbel_2P_guess(x, y, method) -> tuple[np.float64, np.float64]:
     """Calculates the initial guess for the parameters of a 2-parameter Gumbel distribution.
 
     Parameters
@@ -393,11 +392,11 @@ def Gumbel_2P_guess(x, y, method) -> list[np.float64]:
     slope, intercept = linear_regression(x, ylin, RRX_or_RRY=method)
     LS_sigma = 1 / slope
     LS_mu = -intercept * LS_sigma
-    guess: list[np.float64] = [LS_mu, LS_sigma]
+    guess: tuple[np.float64, np.float64] = (LS_mu, LS_sigma)
     return guess
 
 
-def Lognormal_2P_guess(x, y, method, force_shape) -> list[np.float64]:
+def Lognormal_2P_guess(x, y, method, force_shape) -> tuple[np.float64, np.float64]:
     """Calculates the initial guess for the parameters of a 2-parameter lognormal distribution.
 
     Args:
@@ -419,11 +418,11 @@ def Lognormal_2P_guess(x, y, method, force_shape) -> list[np.float64]:
     slope, intercept = linear_regression(xlin, ylin, slope=force_shape, RRX_or_RRY=method)
     LS_sigma = 1 / slope
     LS_mu = -intercept * LS_sigma
-    guess: list[np.float64] = [LS_mu, LS_sigma]
+    guess: tuple[np.float64, np.float64] = (LS_mu, LS_sigma)
     return guess
 
 
-def Lognormal_3P_guess(x, y, gamma0, failures) -> list[np.float64]:
+def Lognormal_3P_guess(x, y, gamma0, failures) -> tuple[np.float64, np.float64, np.float64]:
     """Calculates the initial guess for the parameters of a 3-parameter lognormal distribution.
 
     Args:
@@ -465,17 +464,17 @@ def Lognormal_3P_guess(x, y, gamma0, failures) -> list[np.float64]:
         )  # This is the non-linear least squares method. p0 is the initial guess for [mu,sigma].
         NLLS_mu = popt[0]
         NLLS_sigma = popt[1]
-        guess = [NLLS_mu, NLLS_sigma, gamma]
+        guess: tuple[np.float64, np.float64, np.float64] = (NLLS_mu, NLLS_sigma, gamma)
     except (ValueError, LinAlgError, RuntimeError):
         colorprint(
             "WARNING: Non-linear least squares for Lognormal_3P failed. The result returned is an estimate that is likely to be incorrect.",
             text_color="red",
         )
-        guess = [np.mean(np.log(x - gamma)), np.std(np.log(x - gamma)), gamma]
+        guess = (np.mean(np.log(x - gamma)), np.std(np.log(x - gamma)), gamma)
     return guess
 
 
-def Loglogistic_2P_guess(x, y, method) -> list[np.float64]:
+def Loglogistic_2P_guess(x, y, method) -> tuple[np.float64, np.float64]:
     """Calculates the initial guess for the parameters of a 2-parameter log-logistic distribution.
 
     Parameters
@@ -498,11 +497,11 @@ def Loglogistic_2P_guess(x, y, method) -> list[np.float64]:
     slope, intercept = linear_regression(xlin, ylin, RRX_or_RRY=method)
     LS_beta: np.float64 = -slope
     LS_alpha: np.float64 = np.exp(intercept / LS_beta)
-    guess: list[np.float64] = [LS_alpha, LS_beta]
+    guess: tuple[np.float64, np.float64] = (LS_alpha, LS_beta)
     return guess
 
 
-def Loglogistic_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
+def Loglogistic_3P_guess(x, y, method, gamma0, failures) -> tuple[np.float64, np.float64, np.float64]:
     """Estimate the parameters for a 3-parameter Loglogistic distribution based on the given data.
 
     Parameters
@@ -550,13 +549,13 @@ def Loglogistic_3P_guess(x, y, method, gamma0, failures) -> list[np.float64]:
         NLLS_alpha = popt[0]
         NLLS_beta = popt[1]
         NLLS_gamma = popt[2]
-        guess = [NLLS_alpha, NLLS_beta, NLLS_gamma]
+        guess: tuple[np.float64, np.float64, np.float64] = (NLLS_alpha, NLLS_beta, NLLS_gamma)
     except (ValueError, LinAlgError, RuntimeError):
         colorprint(
             "WARNING: Non-linear least squares for Loglogistic_3P failed. The result returned is an estimate that is likely to be incorrect.",
             text_color="red",
         )
-        guess = [LS_alpha, LS_beta, gamma0]
+        guess = (LS_alpha, LS_beta, gamma0)
     return guess
 
 
@@ -763,7 +762,7 @@ def Gamma_3P_guess(
     return guess
 
 
-def Beta_2P_guess(x, y, failures) -> list[np.float64]:
+def Beta_2P_guess(x, y, failures) -> tuple[np.float64, np.float64]:
     """Estimates the parameters alpha and beta for a 2-parameter Beta distribution using non-linear least squares method.
 
     Args:
@@ -807,13 +806,13 @@ def Beta_2P_guess(x, y, failures) -> list[np.float64]:
         )  # This is the non-linear least squares method. p0 is the initial guess for [alpha,beta]
         NLLS_alpha: np.float64 = popt[0]
         NLLS_beta: np.float64 = popt[1]
-        guess: list[np.float64] = [NLLS_alpha, NLLS_beta]
+        guess: tuple[np.float64, np.float64] = (NLLS_alpha, NLLS_beta)
     except (ValueError, LinAlgError, RuntimeError):
         colorprint(
             "WARNING: Non-linear least squares for Beta_2P failed. The result returned is an estimate that is likely to be incorrect.",
             text_color="red",
         )
-        guess = [np.float64(2.0), np.float64(1.0)]
+        guess = (np.float64(2.0), np.float64(1.0))
     return guess
 
 

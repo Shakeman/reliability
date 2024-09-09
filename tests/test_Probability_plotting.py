@@ -302,7 +302,7 @@ def test_QQ_plot_semiparametric():
         QQ_plot_semiparametric(
             X_data_failures=X_data_failures,
             Y_dist=Weibull_Distribution(alpha=100, beta=2),
-            method="invalid method",
+            method="invalid method",  # type: ignore
         )
 
 

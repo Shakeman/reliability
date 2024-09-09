@@ -9,7 +9,7 @@ import scipy.stats as ss
 from reliability.Utils._ancillary_utils import colorprint
 
 
-def anderson_darling(fitted_cdf, empirical_cdf) -> float:
+def anderson_darling(fitted_cdf: npt.NDArray[np.float64], empirical_cdf: npt.NDArray[np.float64]) -> float:
     """Calculates the Anderson-Darling goodness of fit statistic.
     These formulas are based on the method used in MINITAB which gives an
     adjusted form of the original AD statistic described on Wikipedia.
@@ -29,18 +29,31 @@ def anderson_darling(fitted_cdf, empirical_cdf) -> float:
     """
     if not isinstance(fitted_cdf, np.ndarray):
         fitted_cdf = [fitted_cdf]  # required when there is only 1 failure
-    Z = np.sort(np.asarray(fitted_cdf))
-    Zi = np.hstack([Z, 1 - 1e-12])
+    n: int = len(fitted_cdf)
+    Z_initial: npt.NDArray[np.float64] = np.sort(np.asarray(fitted_cdf))
+    # TODO: Decide if keeping Minitab's version or using the one from literature
+    """
+    Z_reverse = np.flip(Z_initial)
+    ln_Z = np.log(Z_initial)
+    ln_Z_reverse = np.log(1-Z_reverse)
+    S_adjust_by_i = np.arange(1,n+1)*2-1
+    S = ((ln_Z + ln_Z_reverse)*S_adjust_by_i).sum()/n
+    test_AD_squared = -n - S
+    AD_adjust_squared =  test_AD_squared * (1 + 0.75/n + 2.25/n**2)
+    """
+    Zi = np.hstack([Z_initial, 1 - 1e-12])
     Zi_1 = (np.hstack([0, Zi]))[0:-1]  # Z_i-1
     FnZi = np.sort(np.asarray(empirical_cdf))
     FnZi_1 = np.hstack([0, FnZi])  # Fn(Z_i-1)
     lnZi = np.log(Zi)
+    ln_inv_Zi = np.log(1 - Zi)
+    ln_inv_Zi_1 = np.log(1 - Zi_1)
     lnZi_1 = np.hstack([0, lnZi])[0:-1]
 
-    A = -Zi - np.log(1 - Zi) + Zi_1 + np.log(1 - Zi_1)
-    B = 2 * np.log(1 - Zi) * FnZi_1 - 2 * np.log(1 - Zi_1) * FnZi_1
-    C = lnZi * FnZi_1**2 - np.log(1 - Zi) * FnZi_1**2 - lnZi_1 * FnZi_1**2 + np.log(1 - Zi_1) * FnZi_1**2
-    n: int = len(fitted_cdf)
+    A = -Zi - ln_inv_Zi + Zi_1 + ln_inv_Zi_1
+    B = 2 * FnZi_1 * (ln_inv_Zi - ln_inv_Zi_1)
+    C = FnZi_1**2 * (lnZi - ln_inv_Zi - lnZi_1 + ln_inv_Zi_1)
+
     AD: float = n * ((A + B + C).sum())
     return AD
 
@@ -51,6 +64,10 @@ def unpack_single_arrays(array: np.float64 | float) -> np.float64: ...
 
 @overload
 def unpack_single_arrays(array: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]: ...
+
+
+@overload
+def unpack_single_arrays(array: list[float]) -> list[float]: ...
 
 
 def unpack_single_arrays(array):
@@ -75,7 +92,9 @@ def unpack_single_arrays(array):
     return out
 
 
-def generate_X_array(dist, xvals=None, xmin=None, xmax=None) -> npt.NDArray[np.float64]:
+def generate_X_array(
+    dist, xvals: npt.NDArray[np.float64] | None = None, xmin=None, xmax=None
+) -> npt.NDArray[np.float64]:
     """Generates the array of X values for each of the PDf, CDF, SF, HF, CHF
     functions within reliability.Distributions.
 

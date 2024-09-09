@@ -74,7 +74,9 @@ class LS_optimization:
             "Loglogistic_3P",
             "Exponential_2P",
         ]:
-            guess = least_squares(dist=func_name, failures=failures, right_censored=right_censored)
+            guess: tuple[np.float64, ...] = least_squares(
+                dist=func_name, failures=failures, right_censored=right_censored
+            )
             LS_method = "NLLS"
         elif method in ["RRX", "RRY"]:
             guess = least_squares(
@@ -87,7 +89,7 @@ class LS_optimization:
             LS_method = method
         else:  # LS
             # RRX
-            guess_RRX = least_squares(
+            guess_RRX: tuple[np.float64, ...] = least_squares(
                 dist=func_name,
                 failures=failures,
                 right_censored=right_censored,
@@ -99,7 +101,7 @@ class LS_optimization:
             else:
                 loglik_RRX = -LL_func(guess_RRX, failures, right_censored)
             # RRY
-            guess_RRY: list[np.float64] = least_squares(
+            guess_RRY: tuple[np.float64, ...] = least_squares(
                 dist=func_name,
                 failures=failures,
                 right_censored=right_censored,
@@ -113,12 +115,12 @@ class LS_optimization:
             # take the best one
             if abs(loglik_RRX) < abs(loglik_RRY):  # RRX is best
                 LS_method = "RRX"
-                guess: list[np.float64] = guess_RRX
+                guess = guess_RRX
             else:  # RRY is best
                 LS_method = "RRY"
                 guess = guess_RRY
-        self.guess: list[np.float64] = guess
-        self.method = LS_method
+        self.guess: tuple[np.float64, ...] = guess
+        self.method: Literal["NLLS", "RRX", "RRY", "LS"] = LS_method
 
 
 class MLE_optimization:
@@ -300,7 +302,7 @@ class MLE_optimization:
                             right_censored,
                         )
                     else:
-                        LL2 = 2 * LL_func(guess, failures, right_censored)
+                        LL2 = 2 * result.fun
                     LL_array.append(np.abs(LL2))
                     delta_LL: int = abs(LL_array[-1] - LL_array[-2])
             else:  # this will only be run for Weibull_2P, Normal_2P, and Lognormal_2P so the guess is structured with this in mind
@@ -319,7 +321,7 @@ class MLE_optimization:
                         bounds=bounds,
                     )
                     guess = result.x
-                    LL2 = 2 * LL_func_force(guess, failures, right_censored, force_shape)
+                    LL2 = 2 * result.fun
                     LL_array.append(np.abs(LL2))
                     delta_LL = abs(LL_array[-1] - LL_array[-2])
                     guess = result.x  # update the guess each iteration

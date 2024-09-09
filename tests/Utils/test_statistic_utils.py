@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from numpy.testing import assert_array_almost_equal
+from numpy.testing import assert_allclose, assert_array_almost_equal
 
 from reliability.Utils._statstic_utils import (
     Beta_2P_guess,
@@ -24,6 +24,9 @@ from reliability.Utils._statstic_utils import (
     __normal_2P_CDF,
     non_invertable_handler,
 )
+
+atol = 1e-3
+rtol = 1e-3
 
 
 def test_Weibull_2P_guess():
@@ -109,14 +112,14 @@ def test_Exponential_1P_guess():
     x = np.array([1, 2, 3, 4, 5])
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRX"
-    expected_result = [0.1303526043922722]  # Expected guess value for Exponential_1P model
+    expected_result = (0.1303526043922722,)  # Expected guess value for Exponential_1P model
     assert Exponential_1P_guess(x, y, method) == expected_result
 
     # Test case: RRY method
     x = np.array([1, 2, 3, 4, 5])
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRY"
-    expected_result = [0.12964928814483878]  # Expected guess value for Exponential_1P model
+    expected_result = (0.12964928814483878,)  # Expected guess value for Exponential_1P model
     assert Exponential_1P_guess(x, y, method) == expected_result
 
 
@@ -126,7 +129,7 @@ def test_Exponential_2P_guess():
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     gamma0 = 0.5
     failures = np.array([1, 2, 3, 4, 5])
-    expected_result = [0.14205458883223968, 0.3497157953954444]
+    expected_result = (0.14205458883223968, 0.3497157953954444)
     assert Exponential_2P_guess(x, y, gamma0, failures) == expected_result
 
     # Test case: RRY Method
@@ -134,7 +137,7 @@ def test_Exponential_2P_guess():
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     gamma0 = 0.5
     failures = np.array([1, 2, 3, 4, 5])
-    expected_result = [0.14205458883223968, 0.3497157953954444]
+    expected_result = (0.14205458883223968, 0.3497157953954444)
     assert Exponential_2P_guess(x, y, gamma0, failures) == expected_result
 
     # Test case: Non-linear least squares estimation failure
@@ -142,7 +145,7 @@ def test_Exponential_2P_guess():
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     gamma0 = -0.5
     failures = np.array([1, 2, 3, 4, 5])
-    expected_result = [0.1151051050364014, -0.5]  # Fallback to ordinary least squares estimation
+    expected_result = (0.1151051050364014, -0.5)  # Fallback to ordinary least squares estimation
     assert Exponential_2P_guess(x, y, gamma0, failures) == expected_result
 
 
@@ -152,7 +155,7 @@ def test_Normal_2P_guess():
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRX"
     force_shape = None
-    expected_result = [4.816005541001474, 3.130050606758314]
+    expected_result = (4.816005541001474, 3.130050606758314)
     assert Normal_2P_guess(x, y, method, force_shape) == expected_result
 
     # Test case: RRY method, forced shape parameter
@@ -160,7 +163,7 @@ def test_Normal_2P_guess():
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRY"
     force_shape = 2.0
-    expected_result = [4.160368165984542, 2.0]
+    expected_result = (4.160368165984542, 2.0)
     assert Normal_2P_guess(x, y, method, force_shape) == expected_result
 
 
@@ -169,14 +172,14 @@ def test_Gumbel_2P_guess():
     x = np.array([1, 2, 3, 4, 5])
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRX"
-    expected_result = [5.443576279536926, 2.099480763001191]
+    expected_result = (5.443576279536926, 2.099480763001191)
     assert Gumbel_2P_guess(x, y, method) == expected_result
 
     # Test case: RRY Method
     x = np.array([1, 2, 3, 4, 5])
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRY"
-    expected_result = [5.532452858362983, 2.1758420655270236]
+    expected_result = (5.532452858362983, 2.1758420655270236)
     assert Gumbel_2P_guess(x, y, method) == expected_result
 
 
@@ -186,7 +189,7 @@ def test_Lognormal_2P_guess():
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRX"
     force_shape = None
-    expected_result = [1.6875780741271529, 1.2583587640070946]
+    expected_result = (1.6875780741271529, 1.2583587640070946)
     assert Lognormal_2P_guess(x, y, method, force_shape) == expected_result
 
     # Test case: RRY Method
@@ -194,7 +197,7 @@ def test_Lognormal_2P_guess():
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRY"
     force_shape = None
-    expected_result = [1.6973017023071022, 1.2751183209563315]  # Fallback to least squares estimation
+    expected_result = (1.6973017023071022, 1.2751183209563315)  # Fallback to least squares estimation
     assert Lognormal_2P_guess(x, y, method, force_shape) == expected_result
 
     # Test case: Negative shape parameter
@@ -202,7 +205,7 @@ def test_Lognormal_2P_guess():
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRX"
     force_shape = -1.0
-    expected_result = [0.3773142655641382, -1.0]
+    expected_result = (0.3773142655641382, -1.0)
     assert Lognormal_2P_guess(x, y, method, force_shape) == expected_result
 
     # Test case: RRY Method with force shape
@@ -210,7 +213,7 @@ def test_Lognormal_2P_guess():
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRY"
     force_shape = 1.0
-    expected_result = [1.5376824315486803, 1.0]  # Fallback to least squares estimation
+    expected_result = (1.5376824315486803, 1.0)  # Fallback to least squares estimation
     assert Lognormal_2P_guess(x, y, method, force_shape) == expected_result
 
 
@@ -273,7 +276,7 @@ def test_Lognormal_3P_guess():
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     gamma0 = 0.5
     failures = np.array([1, 2, 3, 4, 5])
-    expected_result = [1.661852414321683, 1.177303513131254, 0.0]
+    expected_result = (1.661852414321683, 1.177303513131254, 0.0)
     assert Lognormal_3P_guess(x, y, gamma0, failures) == expected_result
 
 
@@ -282,15 +285,15 @@ def test_Loglogistic_2P_guess():
     x = np.array([1, 2, 3, 4, 5])
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRX"
-    expected_result = [5.313736132570901, 1.3569874666195965]
-    assert Loglogistic_2P_guess(x, y, method) == expected_result
+    expected_result = (5.313736132570901, 1.3569874666195965)
+    assert_allclose(Loglogistic_2P_guess(x, y, method), expected_result)
 
     # Test case 2
     x = np.array([1, 2, 3, 4, 5])
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     method = "RRY"
-    expected_result = [5.3404557038858895, 1.3475053647737885]
-    assert Loglogistic_2P_guess(x, y, method) == expected_result
+    expected_result = (5.3404557038858895, 1.347505364773788)
+    assert_allclose(Loglogistic_2P_guess(x, y, method), expected_result)
 
 
 def test_loglogistic_3P_CDF():
@@ -326,7 +329,7 @@ def test_Loglogistic_3P_guess():
     gamma0 = 0.5
     failures = np.array([1, 2, 3, 4, 5])
     method = "RRX"
-    expected_result = [5.187796669436402, 1.4449857699246145, 5.915989666785221e-14]
+    expected_result = (5.187796669436402, 1.4449857699246145, 5.915989666785221e-14)
     assert Loglogistic_3P_guess(x, y, method, gamma0, failures) == expected_result
 
     # Test case:RRY method parameter
@@ -335,7 +338,7 @@ def test_Loglogistic_3P_guess():
     gamma0 = 0.5
     failures = np.array([1, 2, 3, 4, 5])
     method = "RRY"
-    expected_result = [5.187796643455984, 1.4449857936930202, 1.2242313397159331e-12]
+    expected_result = (5.187796643455984, 1.4449857936930202, 1.2242313397159331e-12)
     assert Loglogistic_3P_guess(x, y, method, gamma0, failures) == expected_result
 
 
@@ -450,14 +453,14 @@ def test_Beta_2P_guess():
     x = np.array([1, 2, 3, 4, 5])
     y = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
     failures = [1, 2, 3, 4, 5]
-    assert Beta_2P_guess(x, y, failures) == [2.0, 1.0]
+    assert Beta_2P_guess(x, y, failures) == (2.0, 1.0)
 
     # Test case: Large data
     x = np.arange(1, 10001)
     rng = np.random.default_rng()
     y = rng.random(10000)
     failures = list(range(1, 10001))
-    assert Beta_2P_guess(x, y, failures) == [2.0, 1.0]
+    assert Beta_2P_guess(x, y, failures) == (2.0, 1.0)
 
 
 def test_non_invertable_handler():

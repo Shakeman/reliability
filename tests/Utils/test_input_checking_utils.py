@@ -352,7 +352,7 @@ def test_distributions_input_checking():
         xmax=xmax,
         show_plot=None,
         plot_CI=plot_CI,
-        CI_type="abc",
+        CI_type="abc",  # type: ignore
         CI=None,
         CI_y=CI_y,
         CI_x=CI_x,
@@ -369,7 +369,7 @@ def test_distributions_input_checking():
         xmax=0.9,
         show_plot=show_plot,
         plot_CI=plot_CI,
-        CI_type="abc",
+        CI_type="abc",  # type: ignore
         CI=None,
         CI_y=CI_y,
         CI_x=CI_x,
@@ -401,7 +401,7 @@ def test_distributions_input_checking():
         xmax=xmax,
         show_plot=show_plot,
         plot_CI=plot_CI,
-        CI_type="none",
+        CI_type="none",  # type: ignore
         CI=CI,
         CI_y=CI_y,
         CI_x=CI_x,
@@ -417,7 +417,7 @@ def test_distributions_input_checking():
         xmax=xmax,
         show_plot=show_plot,
         plot_CI=plot_CI,
-        CI_type="abc",
+        CI_type="abc",  # type: ignore
         CI=CI,
         CI_y=CI_y,
         CI_x=CI_x,

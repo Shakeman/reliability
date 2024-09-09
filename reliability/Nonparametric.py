@@ -137,26 +137,16 @@ class KaplanMeier:
         n: int = len(d)  # number of items
         failures_array = np.arange(1, n + 1)  # array of number of items (1 to n)
         remaining_array = failures_array[::-1]  # items remaining (n to 1)
-        KM_upper = []  # upper CI
-        KM_lower = []  # lower CI
         z: np.float64 = ss.norm.ppf(1 - (1 - CI) / 2)
-        frac = []
-        delta = 0
         q = 1 - censor_code / (remaining_array)
         KM: npt.NDArray[np.float64] = np.cumprod(q)
         R2 = KM**2
-        # test_frac = (1 / (remaining_array * (remaining_array - 1)))[censor_code == 1]
-        for i in failures_array:
-            # greenwood confidence interval calculations. Uses Normal approximation (same method as in Minitab)
-            if censor_code[i - 1] == 1:
-                frac.append(1 / ((remaining_array[i - 1]) * (remaining_array[i - 1] - 1)))
-                sumfrac = sum(frac)
-
-                delta = (
-                    (((sumfrac * R2[i - 1]) ** 0.5) * z) if R2[i - 1] > 0 else 0
-                )  # required if the last piece of data is a failure
-            KM_upper.append(KM[i - 1] + delta)
-            KM_lower.append(KM[i - 1] - delta)
+        fracs = 1 / (remaining_array * (remaining_array - 1))
+        fracs[censor_code == 0] = 0
+        fracsums = np.cumsum(fracs)
+        deltas = (fracsums * R2) ** 0.5 * z
+        KM_lower = KM - deltas
+        KM_upper = KM + deltas
         KM_lower = np.array(KM_lower)
         KM_upper = np.array(KM_upper)
         KM_upper[KM_upper > 1] = 1
@@ -444,33 +434,25 @@ class NelsonAalen:
             )
 
         # turn the failures and right censored times into a two lists of times and censoring codes
-        d, c = times_and_censor_codes(failures, right_censored)
+        d, censor_code = times_and_censor_codes(failures, right_censored)
 
         self.data = d
-        self.censor_codes = c
+        self.censor_codes = censor_code
 
         n: int = len(d)  # number of items
         failures_array = np.arange(1, n + 1)  # array of number of items (1 to n)
         remaining_array = failures_array[::-1]  # items remaining (n to 1)
-        NA_upper = []  # upper CI
-        NA_lower = []  # lower CI
         z = ss.norm.ppf(1 - (1 - CI) / 2)
-        frac = []
-        delta = 0
-        h = c / (remaining_array)  # obtain HF
+        h = censor_code / (remaining_array)  # obtain HF
         H = np.cumsum(h)  # obtain CHF
         NA = np.exp(-H)  # Survival function
-        for i in failures_array:
-            # greenwood confidence interval calculations. Uses Normal approximation
-            if c[i - 1] == 1:
-                frac.append(1 / ((remaining_array[i - 1]) * (remaining_array[i - 1] - 1)))
-                sumfrac = sum(frac)
-                R2 = NA[i - 1] ** 2
-                delta = (
-                    (((sumfrac * R2) ** 0.5) * z) if R2 > 0 else 0
-                )  # required if the last piece of data is a failure
-            NA_upper.append(NA[i - 1] + delta)
-            NA_lower.append(NA[i - 1] - delta)
+        R2 = NA**2
+        fracs = 1 / (remaining_array * (remaining_array - 1))
+        fracs[censor_code == 0] = 0
+        fracsums = np.cumsum(fracs)
+        deltas = (fracsums * R2) ** 0.5 * z
+        NA_lower = NA - deltas
+        NA_upper = NA + deltas
         NA_lower = np.array(NA_lower)
         NA_upper = np.array(NA_upper)
         NA_upper[NA_upper > 1] = 1
@@ -479,7 +461,7 @@ class NelsonAalen:
         # assemble the pandas dataframe for the output
         DATA = {
             "Failure times": d,
-            "Censoring code (censored=0)": c,
+            "Censoring code (censored=0)": censor_code,
             "Items remaining": remaining_array,
             "Nelson-Aalen Estimate": NA,
             "Lower CI bound": NA_lower,
@@ -504,7 +486,7 @@ class NelsonAalen:
 
         for i in failures_array:
             if i == 1:
-                if c[i - 1] == 0:  # if the first item is censored
+                if censor_code[i - 1] == 0:  # if the first item is censored
                     NA_x = np.append(NA_x, (d[i - 1]))
                     NA_y = np.append(NA_y, 1)
                     NA_y_lower.append(1)
@@ -764,7 +746,7 @@ class RankAdjustment:
             )
 
         # turn the failures and right censored times into a two lists of times and censoring codes
-        d, c = times_and_censor_codes(failures, right_censored)
+        d, censor_code = times_and_censor_codes(failures, right_censored)
         n: int = len(d)  # number of items
         failures_array = np.arange(1, n + 1)  # array of number of items (1 to n)
         remaining_array = failures_array[::-1]  # items remaining (n to 1)
@@ -783,38 +765,25 @@ class RankAdjustment:
                 y_array.extend([0, y[i]])
             else:
                 y_array.extend([y[i - 1], y[i]])
-        if c[-1] == 0:  # repeat the last value if censored
+        if censor_code[-1] == 0:  # repeat the last value if censored
             x_array = np.append(x_array, (d[-1]))
             y_array.append(y_array[-1])
 
         # convert the plotting positions (which are only for the failures) into the full Rank Adjustment column by adding the values for the censored data
-        RA = []
         y_extended = [0]
-        y_extended.extend(y)  # need to add 0 to the start of the plotting positions since the CDF always starts at 0
-        failure_counter = 0
-        RA_upper = []  # upper CI
-        RA_lower = []  # lower CI
+        y_extended = np.hstack(
+            [0, y]
+        )  # need to add 0 to the start of the plotting positions since the CDF always starts at 0
+        fail_counts = np.cumsum(censor_code).astype(int)  # the number of failures up to each point
+        RA = 1 - y_extended[fail_counts]
         z = ss.norm.ppf(1 - (1 - CI) / 2)
-        frac = []
-        delta = 0
-        for i in failures_array:  # failures array is 1 to n
-            cens = c[i - 1]
-            if cens == 1:  # censored values = 0. failures = 1
-                failure_counter += 1
-            RA.append(
-                1 - y_extended[failure_counter],
-            )  # RA is equivalent to the Survival function but not the stepwise version of the data. Just 1 point for each failure or right censored datapoint
-
-            # greenwood confidence interval calculations. Uses Normal approximation (same method as Minitab uses for Kaplan-Meier)
-            if c[i - 1] == 1:
-                frac.append(1 / ((remaining_array[i - 1]) * (remaining_array[i - 1] - 1)))
-                sumfrac = sum(frac)
-                R2 = RA[i - 1] ** 2
-                delta = (
-                    (((sumfrac * R2) ** 0.5) * z) if R2 > 0 else 0
-                )  # required if the last piece of data is a failure
-            RA_upper.append(RA[i - 1] + delta)
-            RA_lower.append(RA[i - 1] - delta)
+        R2 = RA**2
+        fracs = 1 / (remaining_array * (remaining_array - 1))
+        fracs[censor_code == 0] = 0
+        fracsums = np.cumsum(fracs)
+        deltas = (fracsums * R2) ** 0.5 * z
+        RA_lower = RA - deltas
+        RA_upper = RA + deltas
         RA_lower = np.array(RA_lower)
         RA_upper = np.array(RA_upper)
         RA_upper[RA_upper > 1] = 1
@@ -825,7 +794,7 @@ class RankAdjustment:
         RA_lower_downsample = [1]  # reliability starts at 1
         RA_upper_downsample = [1]
         for i in range(len(RA)):
-            if c[i] != 0:  # this means the current item is a failure
+            if censor_code[i] != 0:  # this means the current item is a failure
                 RA_lower_downsample.append(RA_lower[i])
                 RA_upper_downsample.append(RA_upper[i])
         # then we upsample by converting to stepwise plot. Essentially this is just repeating each value twice in the downsampled arrays
@@ -835,7 +804,7 @@ class RankAdjustment:
             RA_y_lower.extend([RA_lower_downsample[i], RA_lower_downsample[i]])
             RA_y_upper.extend([RA_upper_downsample[i], RA_upper_downsample[i]])
         if (
-            c[-1] == 1
+            censor_code[-1] == 1
         ):  # if the last value is a failure we need to remove the last element as the plot ends in a vertical line not a horizontal line
             RA_y_lower = RA_y_lower[0:-1]
             RA_y_upper = RA_y_upper[0:-1]
@@ -856,7 +825,7 @@ class RankAdjustment:
         # assemble the pandas dataframe for the output
         DATA = {
             "Failure times": d,
-            "Censoring code (censored=0)": c,
+            "Censoring code (censored=0)": censor_code,
             "Items remaining": remaining_array,
             "Rank Adjustment Estimate": self.RA,
             "Lower CI bound": RA_lower,

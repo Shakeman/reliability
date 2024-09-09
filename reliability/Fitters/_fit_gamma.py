@@ -352,14 +352,13 @@ class Fit_Gamma_2P:
         # goodness of fit measures
         n = len(failures) + len(right_censored)
         k = 2
-        LL2 = 2 * Fit_Gamma_2P.LL_ab(params_ab, failures, right_censored)
-        self.loglik2 = LL2
-        self.loglik = LL2 * -0.5
+        LL = -Fit_Gamma_2P.LL_ab(params_ab, failures, right_censored)
+        self.loglik = LL
         if n - k - 1 > 0:
-            self.AICc: np.float64 = 2 * k + LL2 + (2 * k**2 + 2 * k) / (n - k - 1)
+            self.AICc: np.float64 = 2 * (k - LL) + (2 * k**2 + 2 * k) / (n - k - 1)
         else:
             self.AICc = np.inf
-        self.BIC: np.float64 = np.log(n) * k + LL2
+        self.BIC: np.float64 = np.log(n) * k - 2 * LL
 
         x, y = plotting_positions(failures=failures, right_censored=right_censored)
         self.AD = anderson_darling(fitted_cdf=self.distribution.CDF(xvals=x, show_plot=False), empirical_cdf=y)

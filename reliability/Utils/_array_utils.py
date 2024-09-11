@@ -41,14 +41,14 @@ def anderson_darling(fitted_cdf: npt.NDArray[np.float64], empirical_cdf: npt.NDA
     test_AD_squared = -n - S
     AD_adjust_squared =  test_AD_squared * (1 + 0.75/n + 2.25/n**2)
     """
-    Zi = np.hstack([Z_initial, 1 - 1e-12])
-    Zi_1 = (np.hstack([0, Zi]))[0:-1]  # Z_i-1
-    FnZi = np.sort(np.asarray(empirical_cdf))
-    FnZi_1 = np.hstack([0, FnZi])  # Fn(Z_i-1)
-    lnZi = np.log(Zi)
-    ln_inv_Zi = np.log(1 - Zi)
-    ln_inv_Zi_1 = np.log(1 - Zi_1)
-    lnZi_1 = np.hstack([0, lnZi])[0:-1]
+    Zi: npt.NDArray[np.float64] = np.hstack([Z_initial, 1 - 1e-12])
+    Zi_1: npt.NDArray[np.float64] = (np.hstack([0, Zi]))[0:-1]  # Z_i-1
+    FnZi: npt.NDArray[np.float64] = np.sort(np.asarray(empirical_cdf))
+    FnZi_1: npt.NDArray[np.float64] = np.hstack([0, FnZi])  # Fn(Z_i-1)
+    lnZi: npt.NDArray[np.float64] = np.log(Zi)
+    ln_inv_Zi: npt.NDArray[np.float64] = np.log(1 - Zi)
+    ln_inv_Zi_1: npt.NDArray[np.float64] = np.log(1 - Zi_1)
+    lnZi_1: npt.NDArray[np.float64] = np.hstack([0, lnZi])[0:-1]
 
     A = -Zi - ln_inv_Zi + Zi_1 + ln_inv_Zi_1
     B = 2 * FnZi_1 * (ln_inv_Zi - ln_inv_Zi_1)

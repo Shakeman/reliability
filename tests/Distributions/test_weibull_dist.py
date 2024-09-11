@@ -18,7 +18,7 @@ def test_Weibull_Distribution():
     assert_allclose(dist.variance, 5.365045915063796, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, 0.6311106578189344, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 3.2450893006876456, rtol=rtol, atol=atol)
-    assert dist.param_title_long == "Weibull Distribution (α=5,β=2,γ=10)"
+    assert dist.param_title_long == "Weibull Distribution (α=5.0,β=2.0,γ=10.0)"
     assert_allclose(dist.quantile(0.2), 12.361903635387193, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 12.9861134604144417, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(20), 1.1316926249544481, rtol=rtol, atol=atol)

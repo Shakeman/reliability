@@ -18,7 +18,7 @@ def test_Gumbel_Distribution():
     assert_allclose(dist.variance, 6.579736267392906, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, -1.1395470994046486, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 5.4, rtol=rtol, atol=atol)
-    assert dist.param_title_long == "Gumbel Distribution (μ=15,σ=2)"
+    assert dist.param_title_long == "Gumbel Distribution (μ=15.0,σ=2.0)"
     assert_allclose(dist.quantile(0.2), 12.00012002648097, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 12.938139133682554, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(10), 4.349172610672009, rtol=rtol, atol=atol)

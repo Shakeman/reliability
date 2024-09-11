@@ -165,7 +165,7 @@ def Weibull_2P_guess(
     ylin: npt.NDArray[np.float64] = np.log(-np.log(1 - y))
     if force_shape is not None and method == "RRX":
         force_shape = 1 / force_shape  # only needs to be inverted for RRX not RRY
-    slope, intercept = linear_regression(xlin, ylin, slope=force_shape, RRX_or_RRY=method)
+    slope, intercept = linear_regression(xlin, ylin, slope=force_shape, RRX_or_RRY=method).get_results()
     LS_beta: np.float64 = slope
     LS_alpha: np.float64 = np.exp(-intercept / LS_beta)
     guess: tuple[np.float64, np.float64] = (LS_alpha, LS_beta)
@@ -277,7 +277,7 @@ def Exponential_1P_guess(x, y, method) -> tuple[np.float64]:
         x_intercept=x_intercept,
         y_intercept=y_intercept,
         RRX_or_RRY=method,
-    )  # equivalent to y = m.x
+    ).get_results()  # equivalent to y = m.x
     guess: tuple[np.float64] = (slope,)
     return guess
 
@@ -315,7 +315,7 @@ def Exponential_2P_guess(x, y, gamma0, failures) -> tuple[np.float64, np.float64
     # while it is mathematically possible to use ordinary least squares (y=mx+c) for this, the LS method does not allow bounds on gamma. This can result in gamma > min(data) which should be impossible and will cause other errors.
     xlin = x - gamma0
     ylin = -np.log(1 - y)
-    slope, _ = linear_regression(xlin, ylin, x_intercept=0, RRX_or_RRY="RRX")
+    slope, _ = linear_regression(xlin, ylin, x_intercept=0, RRX_or_RRY="RRX").get_results()
     LS_Lambda: np.float64 = slope
 
     # NLLS for Exponential_2P
@@ -367,7 +367,7 @@ def Normal_2P_guess(x, y, method, force_shape) -> tuple[np.float64, np.float64]:
     ylin = ss.norm.ppf(y)
     if force_shape is not None and method == "RRY":
         force_shape = 1 / force_shape  # only needs to be inverted for RRY not RRX
-    slope, intercept = linear_regression(x, ylin, slope=force_shape, RRX_or_RRY=method)
+    slope, intercept = linear_regression(x, ylin, slope=force_shape, RRX_or_RRY=method).get_results()
     LS_sigma = 1 / slope
     LS_mu = -intercept * LS_sigma
     guess: tuple[np.float64, np.float64] = (LS_mu, LS_sigma)
@@ -389,7 +389,7 @@ def Gumbel_2P_guess(x, y, method) -> tuple[np.float64, np.float64]:
 
     """
     ylin = np.log(-np.log(1 - y))
-    slope, intercept = linear_regression(x, ylin, RRX_or_RRY=method)
+    slope, intercept = linear_regression(x, ylin, RRX_or_RRY=method).get_results()
     LS_sigma = 1 / slope
     LS_mu = -intercept * LS_sigma
     guess: tuple[np.float64, np.float64] = (LS_mu, LS_sigma)
@@ -415,7 +415,7 @@ def Lognormal_2P_guess(x, y, method, force_shape) -> tuple[np.float64, np.float6
     ylin = ss.norm.ppf(y)
     if force_shape is not None and method == "RRY":
         force_shape = 1 / force_shape  # only needs to be inverted for RRY not RRX
-    slope, intercept = linear_regression(xlin, ylin, slope=force_shape, RRX_or_RRY=method)
+    slope, intercept = linear_regression(xlin, ylin, slope=force_shape, RRX_or_RRY=method).get_results()
     LS_sigma = 1 / slope
     LS_mu = -intercept * LS_sigma
     guess: tuple[np.float64, np.float64] = (LS_mu, LS_sigma)
@@ -494,7 +494,7 @@ def Loglogistic_2P_guess(x, y, method) -> tuple[np.float64, np.float64]:
     """
     xlin: np.float64 = np.log(x)
     ylin: np.float64 = np.log(1 / y - 1)
-    slope, intercept = linear_regression(xlin, ylin, RRX_or_RRY=method)
+    slope, intercept = linear_regression(xlin, ylin, RRX_or_RRY=method).get_results()
     LS_beta: np.float64 = -slope
     LS_alpha: np.float64 = np.exp(intercept / LS_beta)
     guess: tuple[np.float64, np.float64] = (LS_alpha, LS_beta)
@@ -526,7 +526,7 @@ def Loglogistic_3P_guess(x, y, method, gamma0, failures) -> tuple[np.float64, np
     # Loglogistic_2P estimate to create the guess for Loglogistic_3P
     xlin = np.log(x - gamma0)
     ylin = np.log(1 / y - 1)
-    slope, intercept = linear_regression(xlin, y=ylin, RRX_or_RRY=method)
+    slope, intercept = linear_regression(xlin, y=ylin, RRX_or_RRY=method).get_results()
     LS_beta = -slope
     LS_alpha = np.exp(intercept / LS_beta)
 
@@ -595,7 +595,7 @@ def Gamma_2P_guess(
     # Weibull_2P estimate which is converted to a Gamma_2P initial guess
     xlin: npt.NDArray[np.float64] = np.log(x)
     ylin: npt.NDArray[np.float64] = np.log(-np.log(1 - y))
-    slope, intercept = linear_regression(xlin, ylin, RRX_or_RRY=method)
+    slope, intercept = linear_regression(xlin, ylin, RRX_or_RRY=method).get_results()
     LS_beta: np.float64 = slope
     LS_alpha: np.float64 = np.exp(-intercept / LS_beta)
 
@@ -670,7 +670,7 @@ def Gamma_3P_guess(
     # Weibull_2P estimate which is converted to a Gamma_2P initial guess
     xlin: npt.NDArray[np.float64] = np.log(x - gamma0 * 0.98)
     ylin: npt.NDArray[np.float64] = np.log(-np.log(1 - y))
-    slope, intercept = linear_regression(xlin, ylin, RRX_or_RRY=method)
+    slope, intercept = linear_regression(xlin, ylin, RRX_or_RRY=method).get_results()
     LS_beta: np.float64 = slope
     LS_alpha: np.float64 = np.exp(-intercept / LS_beta)
 
@@ -1065,7 +1065,7 @@ def exponential_ALT_least_squares(S1, L) -> list[np.float64]:
         - b: Intercept of the linear regression line.
 
     """
-    m, c = linear_regression(x=1 / S1, y=np.log(L), RRX_or_RRY="RRY")
+    m, c = linear_regression(x=1 / S1, y=np.log(L), RRX_or_RRY="RRY").get_results()
     b = np.exp(c)
     output: list[np.float64] = [m, b]  # y=mx+b
     return output
@@ -1086,7 +1086,7 @@ def eyring_ALT_least_squares(S1, L) -> list[np.float64]:
     - b: Intercept of the linear regression line.
 
     """
-    m, c = linear_regression(x=1 / S1, y=np.log(L) + np.log(S1), RRX_or_RRY="RRY")
+    m, c = linear_regression(x=1 / S1, y=np.log(L) + np.log(S1), RRX_or_RRY="RRY").get_results()
     b = -c
     output: list[np.float64] = [m, b]  # a,c
     return output
@@ -1105,7 +1105,7 @@ def power_ALT_least_squares(S1, L) -> list[np.float64]:
     - output: List containing the calculated values [a, n], where 'a' is the intercept and 'n' is the slope.
 
     """
-    m, c = linear_regression(x=np.log(S1), y=np.log(L), RRX_or_RRY="RRY")
+    m, c = linear_regression(x=np.log(S1), y=np.log(L), RRX_or_RRY="RRY").get_results()
     return [np.exp(c), m]  # a,n
 
 

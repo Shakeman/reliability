@@ -18,7 +18,7 @@ def test_Normal_Distribution():
     assert_allclose(dist.variance, 4, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, 0, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 3, rtol=rtol, atol=atol)
-    assert dist.param_title_long == "Normal Distribution (μ=5,σ=2)"
+    assert dist.param_title_long == "Normal Distribution (μ=5.0,σ=2.0)"
     assert_allclose(dist.quantile(0.2), 3.3167575328541714, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 3.9511989745839187, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(10), 0.6454895953278145, rtol=rtol, atol=atol)

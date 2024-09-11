@@ -18,7 +18,7 @@ def test_Gamma_Distribution():
     assert_allclose(dist.variance, 50, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, 1.414213562373095, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 6, rtol=rtol, atol=atol)
-    assert dist.param_title_long == "Gamma Distribution (α=5,β=2,γ=10)"
+    assert dist.param_title_long == "Gamma Distribution (α=5.0,β=2.0,γ=10.0)"
     assert_allclose(dist.quantile(0.2), 14.121941545164923, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 15.486746053517457, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(20), 6.666666666666647, rtol=rtol, atol=atol)

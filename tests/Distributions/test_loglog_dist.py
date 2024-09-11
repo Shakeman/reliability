@@ -18,7 +18,7 @@ def test_Loglogistic_Distribution():
     assert_allclose(dist.variance, 144.228617485192, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, 1.2246481827926854, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 8.342064360132765, rtol=rtol, atol=atol)
-    assert dist.param_title_long == "Loglogistic Distribution (α=50,β=8,γ=10)"
+    assert dist.param_title_long == "Loglogistic Distribution (α=50.0,β=8.0,γ=10.0)"
     assert_allclose(dist.quantile(0.2), 52.044820762685724, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 54.975179587474166, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(20), 41.308716243335226, rtol=rtol, atol=atol)

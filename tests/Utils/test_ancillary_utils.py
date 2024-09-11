@@ -55,7 +55,7 @@ def test_round_and_string():
     assert round_and_string(0) == "0"
 
     # Test case: number = 10.0
-    assert round_and_string(10.0) == "10"
+    assert round_and_string(10.0) == "10.0"
 
     # Test case: number = -5.4857485e-05
     assert round_and_string(-5.4857485e-05) == "-5.48575e-05"
@@ -76,13 +76,13 @@ def test_round_and_string():
     assert round_and_string(5.4857485e-05) == "5.48575e-05"
 
     # Test case: number = -10.0
-    assert round_and_string(-10.0) == "-10"
+    assert round_and_string(-10.0) == "-10.0"
 
     # Test case: number = -5.4857485e-05, decimals = 3
     assert round_and_string(-5.4857485e-05, decimals=3) == "-5.486e-05"
 
     # Test case: number = 10.0, decimals = 3
-    assert round_and_string(10.0, decimals=3) == "10"
+    assert round_and_string(10.0, decimals=3) == "10.0"
 
     # Test case: number = -2.54875415e-16, decimals = 3
     assert round_and_string(-2.54875415e-16, decimals=3) == "-2.549e-16"
@@ -110,66 +110,6 @@ def test_round_and_string():
 
     # Test case: number = -np.inf
     assert round_and_string(-np.inf) == "-inf"
-
-    # Test case: number = 0, integer_floats_to_ints = False
-    assert round_and_string(0, integer_floats_to_ints=False) == "0"
-
-    # Test case: number = 10.0, integer_floats_to_ints = False
-    assert round_and_string(10.0, integer_floats_to_ints=False) == "10.0"
-
-    # Test case: number = -5.4857485e-05, integer_floats_to_ints = False
-    assert round_and_string(-5.4857485e-05, integer_floats_to_ints=False) == "-5.48575e-05"
-
-    # Test case: number = 2.54875415e-16, integer_floats_to_ints = False
-    assert round_and_string(2.54875415e-16, integer_floats_to_ints=False) == "2.54875e-16"
-
-    # Test case: number = -1e+20, integer_floats_to_ints = False
-    assert round_and_string(-1e20, integer_floats_to_ints=False) == "-1e+20"
-
-    # Test case: number = 1e+20, integer_floats_to_ints = False
-    assert round_and_string(1e20, integer_floats_to_ints=False) == "1e+20"
-
-    # Test case: number = -2.54875415e-16, integer_floats_to_ints = False
-    assert round_and_string(-2.54875415e-16, integer_floats_to_ints=False) == "-2.54875e-16"
-
-    # Test case: number = 5.4857485e-05, integer_floats_to_ints = False
-    assert round_and_string(5.4857485e-05, integer_floats_to_ints=False) == "5.48575e-05"
-
-    # Test case: number = -10.0, integer_floats_to_ints = False
-    assert round_and_string(-10.0, integer_floats_to_ints=False) == "-10.0"
-
-    # Test case: number = -5.4857485e-05, decimals = 3, integer_floats_to_ints = False
-    assert round_and_string(-5.4857485e-05, decimals=3, integer_floats_to_ints=False) == "-5.486e-05"
-
-    # Test case: number = 10.0, decimals = 3, integer_floats_to_ints = False
-    assert round_and_string(10.0, decimals=3, integer_floats_to_ints=False) == "10.0"
-
-    # Test case: number = -2.54875415e-16, decimals = 3, integer_floats_to_ints = False
-    assert round_and_string(-2.54875415e-16, decimals=3, integer_floats_to_ints=False) == "-2.549e-16"
-
-    # Test case: number = 5.4857485e-05, decimals = 3, integer_floats_to_ints = False
-    assert round_and_string(5.4857485e-05, decimals=3, integer_floats_to_ints=False) == "5.486e-05"
-
-    # Test case: number = -1e+20, decimals = 3, integer_floats_to_ints = False
-    assert round_and_string(-1e20, decimals=3, integer_floats_to_ints=False) == "-1e+20"
-
-    # Test case: number = 1e+20, decimals = 3, integer_floats_to_ints = False
-    assert round_and_string(1e20, decimals=3, integer_floats_to_ints=False) == "1e+20"
-
-    # Test case: number = 0.123456789, decimals = 8, integer_floats_to_ints = False
-    assert round_and_string(0.123456789, decimals=8, integer_floats_to_ints=False) == "0.12345679"
-
-    # Test case: number = 0.123456789, decimals = 0, integer_floats_to_ints = False
-    assert round_and_string(0.123456789, decimals=0, integer_floats_to_ints=False) == "0"
-
-    # Test case: number = np.nan, integer_floats_to_ints = False
-    assert round_and_string(np.nan, integer_floats_to_ints=False) == "nan"
-
-    # Test case: number = np.inf, integer_floats_to_ints = False
-    assert round_and_string(np.inf, integer_floats_to_ints=False) == "inf"
-
-    # Test case: number = -np.inf, integer_floats_to_ints = False
-    assert round_and_string(-np.inf, integer_floats_to_ints=False) == "-inf"
 
 
 def test_colorprint():

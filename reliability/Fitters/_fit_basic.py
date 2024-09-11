@@ -376,9 +376,9 @@ class Fit_Normal_2P:
         self.goodness_of_fit = pd.DataFrame(GoF_data, columns=["Goodness of fit", "Value"])
         self.__right_censored = right_censored
         self.__failures = failures
-        self.__CI = CI
-        self.__CI_type = CI_type
-        self.__n = n
+        self.__CI: float = CI
+        self.__CI_type: str | None = CI_type
+        self.__n: int = n
 
     def print_results(self):
         CI_rounded = self.__CI * 100

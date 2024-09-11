@@ -201,6 +201,7 @@ class Fit_Everything_ALT:
         use_level_stress: float | npt.NDArray[np.float64] | None = None,
         CI: float = 0.95,
         optimizer: Literal["TNC", "L-BFGS-B", "nelder-mead", "powell", "best"] | None = None,
+        *,
         show_probability_plot: bool = True,
         show_best_distribution_probability_plot: bool = True,
         exclude: list[str] | None = None,

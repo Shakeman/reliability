@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import scipy.stats as ss
 from matplotlib.axes import _axes
 
@@ -324,63 +325,71 @@ class axes_transforms:
     """
 
     @staticmethod
-    def weibull_forward(F: np.float64):
+    def weibull_forward(F: np.float64) -> np.float64:
         return np.log(-np.log(1 - F))
 
     @staticmethod
-    def weibull_inverse(R: np.float64):
+    def weibull_inverse(R: np.float64) -> np.float64:
         return 1 - np.exp(-np.exp(R))
 
     @staticmethod
-    def loglogistic_forward(F: np.float64):
+    def loglogistic_forward(F: np.float64) -> np.float64:
         return np.log(1 / (1 - F) - 1)
 
     @staticmethod
-    def loglogistic_inverse(R: np.float64):
+    def loglogistic_inverse(R: np.float64) -> np.float64:
         return 1 - 1 / (np.exp(R) + 1)
 
     @staticmethod
-    def exponential_forward(F: np.float64):
+    def exponential_forward(F: np.float64) -> np.float64:
         return ss.expon.ppf(F)
 
     @staticmethod
-    def exponential_inverse(R: np.float64):
+    def exponential_inverse(R: np.float64) -> np.float64:
         return ss.expon.cdf(R)
 
     @staticmethod
-    def normal_forward(F: np.float64):
+    def normal_forward(F: np.float64) -> np.float64:
         return ss.norm.ppf(F)
 
     @staticmethod
-    def normal_inverse(R: np.float64):
+    def normal_inverse(R: np.float64) -> np.float64:
         return ss.norm.cdf(R)
 
     @staticmethod
-    def gumbel_forward(F: np.float64):
+    def gumbel_forward(F: np.float64) -> np.float64:
         return ss.gumbel_l.ppf(F)
 
     @staticmethod
-    def gumbel_inverse(R: np.float64):
+    def gumbel_inverse(R: np.float64) -> np.float64:
         return ss.gumbel_l.cdf(R)
 
     @staticmethod
-    def gamma_forward(F: np.float64, beta: np.float64):
+    def gamma_forward(F: np.float64, beta: np.float64) -> np.float64:
         return ss.gamma.ppf(F, a=beta)
 
     @staticmethod
-    def gamma_inverse(R: np.float64, beta: np.float64):
+    def gamma_inverse(R: np.float64, beta: np.float64) -> np.float64:
         return ss.gamma.cdf(R, a=beta)
 
     @staticmethod
-    def beta_forward(F: np.float64, alpha: np.float64, beta: np.float64):
+    def beta_forward(F: np.float64, alpha: np.float64, beta: np.float64) -> np.float64:
         return ss.beta.ppf(F, a=alpha, b=beta)
 
     @staticmethod
-    def beta_inverse(R: np.float64, alpha: np.float64, beta: np.float64):
+    def beta_inverse(R: np.float64, alpha: np.float64, beta: np.float64) -> np.float64:
         return ss.beta.cdf(R, a=alpha, b=beta)
 
 
-def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha=None, beta_beta=None) -> None:
+def probability_plot_xylims(
+    x: npt.NDArray[np.float64],
+    y: npt.NDArray[np.float64],
+    dist,
+    spacing=0.1,
+    gamma_beta=None,
+    beta_alpha=None,
+    beta_beta=None,
+) -> None:
     """This function finds what the x and y limits of probability plots should be
     and sets these limits. This is similar to autoscaling, but the rules here
     are different to the matplotlib defaults.
@@ -421,10 +430,10 @@ def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha
     x = x[np.isfinite(x)]
     y = np.asarray(y)
     y = y[np.isfinite(y)]
-    min_x = min(x)
-    max_x = max(x)
-    min_y = min(y)
-    max_y = max(y)
+    min_x: np.float64 = min(x)
+    max_x: np.float64 = max(x)
+    min_y: np.float64 = min(y)
+    max_y: np.float64 = max(y)
 
     # x limits
     if dist in ["weibull", "lognormal", "loglogistic"]:
@@ -455,11 +464,11 @@ def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha
 
     # y limits
     if dist == "weibull":
-        min_y_tfm = axes_transforms.weibull_forward(min_y)
-        max_y_tfm = axes_transforms.weibull_forward(max_y)
-        dy_tfm = max_y_tfm - min_y_tfm
-        ylim_lower = axes_transforms.weibull_inverse(min_y_tfm - dy_tfm * spacing)
-        ylim_upper = axes_transforms.weibull_inverse(max_y_tfm + dy_tfm * spacing)
+        min_y_tfm: np.float64 = axes_transforms.weibull_forward(min_y)
+        max_y_tfm: np.float64 = axes_transforms.weibull_forward(max_y)
+        dy_tfm: np.float64 = max_y_tfm - min_y_tfm
+        ylim_lower: np.float64 = axes_transforms.weibull_inverse(min_y_tfm - dy_tfm * spacing)
+        ylim_upper: np.float64 = axes_transforms.weibull_inverse(max_y_tfm + dy_tfm * spacing)
     elif dist == "exponential":
         min_y_tfm = axes_transforms.exponential_forward(min_y)
         max_y_tfm = axes_transforms.exponential_forward(max_y)
@@ -500,14 +509,14 @@ def probability_plot_xylims(x, y, dist, spacing=0.1, gamma_beta=None, beta_alpha
         msg = "dist is unrecognised"
         raise ValueError(msg)
     if ylim_upper == ylim_lower:
-        dx = min(1 - ylim_upper, ylim_upper - 1)
+        dx: np.float64 = np.min([1 - ylim_upper, ylim_upper - 1])
         ylim_upper = ylim_upper - spacing * dx
         ylim_lower = ylim_lower + spacing * dx
 
     # correction for the case where ylims are is 0 or 1
     if ylim_lower == 0:
-        ylim_lower = min_y if min_y > 0 else 1e-05
+        ylim_lower = min_y if min_y > 0 else np.float64(1e-05)
     if ylim_upper == 1:
-        ylim_upper = max_y if max_y < 1 else 0.99999
+        ylim_upper = max_y if max_y < 1 else np.float64(0.99999)
     # set ylims
     plt.ylim(ylim_lower, ylim_upper)

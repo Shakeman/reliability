@@ -18,7 +18,7 @@ def test_Lognormal_Distribution():
     assert_allclose(dist.variance, 92.82552776851736, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, 3.689292296091298, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 34.36765343083244, rtol=rtol, atol=atol)
-    assert dist.param_title_long == "Lognormal Distribution (μ=2,σ=0.8,γ=10)"
+    assert dist.param_title_long == "Lognormal Distribution (μ=2.0,σ=0.8,γ=10.0)"
     assert_allclose(dist.quantile(0.2), 13.7685978648453116, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 14.857284757111664, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(20), 9.143537277214762, rtol=rtol, atol=atol)

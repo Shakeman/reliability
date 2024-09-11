@@ -606,16 +606,7 @@ def get_axes_limits() -> tuple[tuple[float, float], tuple[float, float], bool]:
     return out
 
 
-def linear_regression(
-    x: npt.NDArray[np.float64] | list[float] | np.float64,
-    y: npt.NDArray[np.float64] | list[float] | np.float64,
-    slope: float | None = None,
-    x_intercept: float | None = None,
-    y_intercept: float | None = None,
-    RRX_or_RRY: Literal["RRX", "RRY"] = "RRX",
-    show_plot: bool = False,
-    **kwargs,
-) -> tuple[np.float64, np.float64]:
+class linear_regression:
     """This function provides the linear algebra solution to find line of best fit
     passing through points (x,y). Options to specify slope or intercept enable
     these parameters to be forced.
@@ -660,111 +651,129 @@ def linear_regression(
     For more information on linear regression, see the `documentation <https://reliability.readthedocs.io/en/latest/How%20does%20Least%20Squares%20Estimation%20work.html>`_.
 
     """
-    x = np.asarray(x)
-    y = np.asarray(y)
-    if len(x) != len(y):
-        msg = "x and y are different lengths"
-        raise ValueError(msg)
-    if RRX_or_RRY not in ["RRX", "RRY"]:
-        msg = 'RRX_or_RRY must be either "RRX" or "RRY". Default is "RRY".'
-        raise ValueError(msg)
-    if x_intercept is not None and RRX_or_RRY == "RRY":
-        msg = "RRY must use y_intercept not x_intercept"
-        raise ValueError(msg)
-    if y_intercept is not None and RRX_or_RRY == "RRX":
-        msg = "RRX must use x_intercept not y_intercept"
-        raise ValueError(msg)
-    if slope is not None and (x_intercept is not None or y_intercept is not None):
-        msg = "You can not specify both slope and intercept"
-        raise ValueError(msg)
 
-    if RRX_or_RRY == "RRY":
-        if y_intercept is not None:  # only the slope must be found
+    def __init__(
+        self,
+        x: npt.NDArray[np.float64] | list[float] | np.float64,
+        y: npt.NDArray[np.float64] | list[float] | np.float64,
+        slope: float | None = None,
+        x_intercept: float | None = None,
+        y_intercept: float | None = None,
+        RRX_or_RRY: Literal["RRX", "RRY"] = "RRX",
+    ) -> None:
+        x = np.asarray(x)
+        y = np.asarray(y)
+        if len(x) != len(y):
+            msg = "x and y are different lengths"
+            raise ValueError(msg)
+        if RRX_or_RRY not in ["RRX", "RRY"]:
+            msg = 'RRX_or_RRY must be either "RRX" or "RRY". Default is "RRY".'
+            raise ValueError(msg)
+        if x_intercept is not None and RRX_or_RRY == "RRY":
+            msg = "RRY must use y_intercept not x_intercept"
+            raise ValueError(msg)
+        if y_intercept is not None and RRX_or_RRY == "RRX":
+            msg = "RRX must use x_intercept not y_intercept"
+            raise ValueError(msg)
+        if slope is not None and (x_intercept is not None or y_intercept is not None):
+            msg = "You can not specify both slope and intercept"
+            raise ValueError(msg)
+
+        if RRX_or_RRY == "RRY":
+            if y_intercept is not None:  # only the slope must be found
+                min_pts = 1
+                xx = np.array([x]).T
+                yy = (y - y_intercept).T
+            elif slope is not None:  # only the intercept must be found
+                min_pts = 1
+                xx = np.array([np.ones_like(x)]).T
+                yy = (y - slope * x).T
+            else:  # both slope and intercept must be found
+                min_pts = 2
+                xx = np.array([x, np.ones_like(x)]).T
+                yy = y.T
+        elif x_intercept is not None:  # only the slope must be found
             min_pts = 1
-            xx = np.array([x]).T
-            yy = (y - y_intercept).T
+            yy = np.array([y]).T
+            xx = (x - x_intercept).T
         elif slope is not None:  # only the intercept must be found
             min_pts = 1
-            xx = np.array([np.ones_like(x)]).T
-            yy = (y - slope * x).T
+            yy = np.array([np.ones_like(y)]).T
+            xx = (x - slope * y).T
         else:  # both slope and intercept must be found
             min_pts = 2
-            xx = np.array([x, np.ones_like(x)]).T
-            yy = y.T
-    elif x_intercept is not None:  # only the slope must be found
-        min_pts = 1
-        yy = np.array([y]).T
-        xx = (x - x_intercept).T
-    elif slope is not None:  # only the intercept must be found
-        min_pts = 1
-        yy = np.array([np.ones_like(y)]).T
-        xx = (x - slope * y).T
-    else:  # both slope and intercept must be found
-        min_pts = 2
-        yy = np.array([y, np.ones_like(y)]).T
-        xx = x.T
+            yy = np.array([y, np.ones_like(y)]).T
+            xx = x.T
 
-    if len(x) < min_pts:
-        if slope is not None:
-            err_str = "A minimum of 1 point is required to fit the line when the slope is specified."
-        elif x_intercept is not None and y_intercept is not None:
-            err_str = "A minimum of 1 point is required to fit the line when the intercept is specified."
-        else:
-            err_str = "A minimum of 2 points are required to fit the line when slope or intercept are not specified."
-        raise ValueError(err_str)
+        if len(x) < min_pts:
+            if slope is not None:
+                err_str = "A minimum of 1 point is required to fit the line when the slope is specified."
+            elif x_intercept is not None and y_intercept is not None:
+                err_str = "A minimum of 1 point is required to fit the line when the intercept is specified."
+            else:
+                err_str = (
+                    "A minimum of 2 points are required to fit the line when slope or intercept are not specified."
+                )
+            raise ValueError(err_str)
 
-    if RRX_or_RRY == "RRY":
-        try:
-            solution: npt.NDArray[np.float64] = (
-                np.linalg.inv(xx.T.dot(xx)).dot(xx.T).dot(yy)
-            )  # linear regression formula for RRY
-        except LinAlgError:
-            msg = "An error has occurred when attempting to find the initial guess using least squares estimation.\nThis error is caused by a non-invertable matrix.\nThis can occur when there are only two very similar failure times like 10 and 10.000001.\nThere is no solution to this error, other than to use failure times that are more unique."
-            raise RuntimeError(
-                msg,
-            ) from None
-        if y_intercept is not None:
-            m: np.float64 = solution[0]
-            c: np.float64 = np.float64(y_intercept)
-        elif slope is not None:
-            m = np.float64(slope)
-            c = solution[0]
-        else:
-            m = solution[0]
-            c = solution[1]
-    else:  # RRX
-        try:
-            solution = np.linalg.inv(yy.T.dot(yy)).dot(yy.T).dot(xx)  # linear regression formula for RRX
-        except LinAlgError:
-            msg = "An error has occurred when attempting to find the initial guess using least squares estimation.\nThis error is caused by a non-invertable matrix.\nThis can occur when there are only two very similar failure times like 10 and 10.000001.\nThere is no solution to this error, other than to use failure times that are more unique."
-            raise RuntimeError(
-                msg,
-            ) from None
-        if x_intercept is not None:
-            m_x = solution[0]
-            m = 1 / m_x
-            c = -x_intercept / m_x
-        elif slope is not None:
-            m = np.float64(1 / slope)
-            c_x = solution[0]
-            c = -c_x / slope
-        else:
-            m_x: np.float64 = solution[0]
-            c_x: np.float64 = solution[1]
-            m = 1 / m_x
-            c = -c_x / m_x
+        if RRX_or_RRY == "RRY":
+            try:
+                solution: npt.NDArray[np.float64] = (
+                    np.linalg.inv(xx.T.dot(xx)).dot(xx.T).dot(yy)
+                )  # linear regression formula for RRY
+            except LinAlgError:
+                msg = "An error has occurred when attempting to find the initial guess using least squares estimation.\nThis error is caused by a non-invertable matrix.\nThis can occur when there are only two very similar failure times like 10 and 10.000001.\nThere is no solution to this error, other than to use failure times that are more unique."
+                raise RuntimeError(
+                    msg,
+                ) from None
+            if y_intercept is not None:
+                m: np.float64 = solution[0]
+                c: np.float64 = np.float64(y_intercept)
+            elif slope is not None:
+                m = np.float64(slope)
+                c = solution[0]
+            else:
+                m = solution[0]
+                c = solution[1]
+        else:  # RRX
+            try:
+                solution = np.linalg.inv(yy.T.dot(yy)).dot(yy.T).dot(xx)  # linear regression formula for RRX
+            except LinAlgError:
+                msg = "An error has occurred when attempting to find the initial guess using least squares estimation.\nThis error is caused by a non-invertable matrix.\nThis can occur when there are only two very similar failure times like 10 and 10.000001.\nThere is no solution to this error, other than to use failure times that are more unique."
+                raise RuntimeError(
+                    msg,
+                ) from None
+            if x_intercept is not None:
+                m_x = solution[0]
+                m = 1 / m_x
+                c = -x_intercept / m_x
+            elif slope is not None:
+                m = np.float64(1 / slope)
+                c_x = solution[0]
+                c = -c_x / slope
+            else:
+                m_x: np.float64 = solution[0]
+                c_x: np.float64 = solution[1]
+                m = 1 / m_x
+                c = -c_x / m_x
+        self.m: np.float64 = m
+        self.c: np.float64 = c
+        self.__x = x
+        self.__y = y
 
-    if show_plot is True:
-        plt.scatter(x, y, marker=".", color="k")
-        delta_x: np.float64 = max(x) - min(x)
-        delta_y: np.float64 = max(y) - min(y)
-        xvals: npt.NDArray[np.float64] = np.linspace(min(x) - delta_x, max(x) + delta_x, 10)
-        yvals: npt.NDArray[np.float64] = m * xvals + c
+    def get_results(self) -> tuple[np.float64, np.float64]:
+        return self.m, self.c
+
+    def show_plot(self, **kwargs) -> None:
+        plt.scatter(self.__x, self.__y, marker=".", color="k")
+        delta_x: np.float64 = max(self.__x) - min(self.__x)
+        delta_y: np.float64 = max(self.__y) - min(self.__y)
+        xvals: npt.NDArray[np.float64] = np.linspace(min(self.__x) - delta_x, max(self.__x) + delta_x, 10)
+        yvals: npt.NDArray[np.float64] = self.m * xvals + self.c
         if "label" in kwargs:
             label = kwargs.pop("label")
         else:
-            label = str("y=" + round_and_string(m, 2) + ".x + " + round_and_string(c, 2))
+            label = str("y=" + round_and_string(self.m, 2) + ".x + " + round_and_string(self.c, 2))
         plt.plot(xvals, yvals, label=label, **kwargs)
-        plt.xlim(min(x) - delta_x * 0.2, max(x) + delta_x * 0.2)
-        plt.ylim(min(y) - delta_y * 0.2, max(y) + delta_y * 0.2)
-    return m, c
+        plt.xlim(min(self.__x) - delta_x * 0.2, max(self.__x) + delta_x * 0.2)
+        plt.ylim(min(self.__y) - delta_y * 0.2, max(self.__y) + delta_y * 0.2)

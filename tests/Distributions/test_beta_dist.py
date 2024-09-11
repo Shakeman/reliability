@@ -18,7 +18,7 @@ def test_Beta_Distribution():
     assert_allclose(dist.variance, 0.025510204081632654, rtol=rtol, atol=atol)
     assert_allclose(dist.skewness, -0.5962847939999439, rtol=rtol, atol=atol)
     assert_allclose(dist.kurtosis, 2.88, rtol=rtol, atol=atol)
-    assert dist.param_title_long == "Beta Distribution (α=5,β=2)"
+    assert dist.param_title_long == "Beta Distribution (α=5.0,β=2.0)"
     assert_allclose(dist.quantile(0.2), 0.577552475153728, rtol=rtol, atol=atol)
     assert_allclose(dist.inverse_SF(q=0.7), 0.6396423096199797, rtol=rtol, atol=atol)
     assert_allclose(dist.mean_residual_life(0.5), 0.2518796992481146, rtol=rtol, atol=atol)

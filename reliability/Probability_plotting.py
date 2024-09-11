@@ -42,7 +42,6 @@ from typing import TYPE_CHECKING, Literal
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
-import pandas as pd
 from matplotlib.transforms import blended_transform_factory
 
 from reliability.Distributions import (
@@ -73,9 +72,10 @@ dec = 3  # number of decimals to use when rounding fitted parameters in labels
 
 
 def plotting_positions(
-    failures=None,
-    right_censored=None,
+    failures: npt.NDArray[np.float64] | list[float] | list[int] | None = None,
+    right_censored: npt.NDArray[np.float64] | list[float] | list[int] | None = None,
     a: float = 0.3,
+    *,
     sort: bool = False,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """Calculates the plotting positions for plotting on probability paper.
@@ -110,7 +110,7 @@ def plotting_positions(
     """
     # error checking the input
     if type(failures) in [list, np.ndarray]:
-        f: npt.NDArray[np.float64] = np.asarray(failures)
+        f: npt.NDArray[np.float64] = np.asarray(failures, dtype=np.float64)
     else:
         msg = "failures must be specified as an array or list"
         raise ValueError(msg)
@@ -118,7 +118,7 @@ def plotting_positions(
     if right_censored is None:
         rc: npt.NDArray[np.float64] = np.array([])
     elif type(right_censored) in [np.ndarray, list]:
-        rc: npt.NDArray[np.float64] = np.asarray(right_censored)
+        rc: npt.NDArray[np.float64] = np.asarray(right_censored, dtype=np.float64)
     else:
         msg = "if specified, right_censored must be an array or list"
         raise ValueError(msg)
@@ -140,15 +140,12 @@ def plotting_positions(
     rc_codes: npt.NDArray[np.float64] = np.zeros_like(rc)
     cens_codes: npt.NDArray[np.float64] = np.hstack([f_codes, rc_codes])
     all_data: npt.NDArray[np.float64] = np.hstack([f, rc])
+    cens_codes = cens_codes[np.argsort(all_data)]
+    all_data.sort()
     n: int = len(all_data)
-    data: dict[str, npt.NDArray[np.float64]] = {"times": all_data, "cens_codes": cens_codes}
-    df = pd.DataFrame(data, columns=["times", "cens_codes"])
-    df_sorted: pd.DataFrame = df.sort_values(by="times")
-    df_sorted["reverse_i"] = np.arange(1, n + 1)[::-1]
-    failure_rows: pd.DataFrame = df_sorted.loc[df_sorted["cens_codes"] == 1.0]
-    reverse_i: list[int] = failure_rows["reverse_i"].to_numpy().tolist()
+    reverse_i = np.arange(1, n + 1)[::-1][cens_codes == 1].tolist()
     len_reverse_i: int = len(reverse_i)
-    leading_cens: int = np.where(df_sorted["cens_codes"].to_numpy() == 1)[0][0].item()
+    leading_cens: int = np.where(cens_codes == 1)[0][0].item()
 
     if leading_cens > 0:  # there are censored items before the first failure
         k = np.arange(1, len_reverse_i + 1)
@@ -170,15 +167,13 @@ def plotting_positions(
 
     if sort is False:
         # restore the original order of the points using the index from the sorted dataframe
-        idx: npt.NDArray[np.int64] = failure_rows.index.to_numpy()
-        df2: pd.DataFrame = pd.DataFrame(
-            data={"x": failure_rows.times.to_numpy(), "y": F, "idx": idx},
-            columns=["x", "y", "idx"],
-        ).sort_values(by="idx")
-        x: npt.NDArray[np.float64] = np.array(df2.x.values, dtype=np.float64)
-        y: npt.NDArray[np.float64] = np.array(df2.y.values, dtype=np.float64)
+        idx: npt.NDArray[np.int64] = np.argsort(f)
+        Y = np.array(F, dtype=np.float64)
+        Y = Y[np.argsort(idx)]
+        x: npt.NDArray[np.float64] = f
+        y: npt.NDArray[np.float64] = Y
     else:
-        x = np.array(failure_rows.times.values, dtype=np.float64)
+        x = np.sort(f)
         y = np.array(F, dtype=np.float64)
     return x, y
 
@@ -414,16 +409,17 @@ def Weibull_probability_plot(
 def Loglogistic_probability_plot(
     failures: npt.NDArray[np.float64],
     right_censored: npt.NDArray[np.float64] | None = None,
-    fit_gamma: bool = False,
     _fitted_dist_params=None,
     heuristic_constant: float = 0.3,
     CI: float = 0.95,
     CI_type: str | None = "time",
-    show_fitted_distribution=True,
-    show_scatter_points=True,
-    downsample_scatterplot=False,
+    *,
+    fit_gamma: bool = False,
+    show_fitted_distribution: bool = True,
+    show_scatter_points: bool = True,
+    downsample_scatterplot: bool = False,
     **kwargs,
-):
+) -> plt.Figure:
     """Generates a probability plot on Loglogistically scaled probability paper so
     that the CDF of the distribution appears linear. This function can be used
     to show Loglogistic_2P or Loglogistic_3P distributions.
@@ -854,11 +850,12 @@ def Gumbel_probability_plot(
     position_heuristic: float = 0.3,
     CI: float = 0.95,
     CI_type: str | None = "time",
+    *,
     show_fitted_distribution: bool = True,
     show_scatter_points: bool = True,
     downsample_scatterplot: bool = False,
     **kwargs,
-):
+) -> plt.Figure:
     """Generates a probability plot on Gumbel scaled probability paper so that the
     CDF of the distribution appears linear.
 
@@ -2483,6 +2480,7 @@ def QQ_plot_semiparametric(
     X_data_failures: npt.NDArray[np.float64] | list[float],
     X_data_right_censored: npt.NDArray[np.float64] | list[float] | None = None,
     Y_dist=None,
+    *,
     show_fitted_lines: bool = True,
     show_diagonal_line: bool = False,
     method: Literal["KM", "NA" "RA"] = "KM",

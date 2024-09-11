@@ -883,7 +883,7 @@ class strain_life_diagram:
         min_strain: float | None = None,
         max_stress: float | None = None,
         min_stress: float | None = None,
-        show_plot: bool = True,
+        show_plot: bool = True,  # noqa: FBT001
     ) -> None:
         if max_stress is not None and max_strain is not None:
             msg = "Do not specify both max_stress and max_strain as the corresponding value will be automatically calculated"
@@ -946,7 +946,7 @@ class strain_life_diagram:
             delta_epsilon_half: float = (self.max_strain - self.min_strain) / 2
 
             # solve for number of cycles and the plot parameters
-            cycles_2Nf_array: float = np.logspace(1, 8, 1000)
+            cycles_2Nf_array: npt.NDArray[np.float64] = np.logspace(1, 8, 1000)
             if mean_stress == 0:
 
                 def coffin_manson(eps_tot, sigma_f, E, cycles_2Nf, epsilon_f, b, c) -> float:
@@ -965,7 +965,9 @@ class strain_life_diagram:
 
                 use_cycles_2Nf = fsolve(fun_cm, np.array(10))
                 cycles_2Nt: float = (epsilon_f * E / sigma_f) ** (1 / (b - c))
-                epsilon_total: float = (sigma_f / E) * cycles_2Nf_array**b + epsilon_f * cycles_2Nf_array**c
+                epsilon_total: npt.NDArray[np.float64] = (
+                    sigma_f / E
+                ) * cycles_2Nf_array**b + epsilon_f * cycles_2Nf_array**c
                 epsilon_total_at_cycles_2Nt: float = (sigma_f / E) * cycles_2Nt**b + epsilon_f * cycles_2Nt**c
                 equation_str = str(
                     r"$\epsilon_{tot} = \frac{"
@@ -980,8 +982,8 @@ class strain_life_diagram:
                     + str(round(c, 4))
                     + "}$",
                 )
-                plastic_strain_line: float = epsilon_f * cycles_2Nf_array**c
-                elastic_strain_line: float = sigma_f / E * cycles_2Nf_array**b
+                plastic_strain_line: npt.NDArray[np.float64] = epsilon_f * cycles_2Nf_array**c
+                elastic_strain_line: npt.NDArray[np.float64] = sigma_f / E * cycles_2Nf_array**b
             elif mean_stress_correction_method == "morrow":
 
                 def morrow(eps_tot, sigma_f, sigma_mean, E, cycles_2Nf, epsilon_f, b, c) -> float:

@@ -132,7 +132,7 @@ def test_plot_points_and_plotting_positions():
 
 def test_plotting_positions():
     # Test case 1: Basic test case with failure data
-    failures: list[int] = [10, 20, 30, 40, 50]
+    failures: list[int] | npt.NDArray[np.float64] = [10, 20, 30, 40, 50]
     expected_x: npt.NDArray[np.float64] = np.array([10.0, 20.0, 30.0, 40.0, 50.0], dtype=np.float64)
     expected_y: npt.NDArray[np.float64] = np.array(
         [0.12962962962962962, 0.31481481481481477, 0.5, 0.6851851851851851, 0.8703703703703703],
@@ -143,7 +143,7 @@ def test_plotting_positions():
 
     # Test case 2: Test case with right censored data
     failures = [10, 20, 30, 40, 50]
-    right_censored: list[int] = [25, 35]
+    right_censored: list[int] | npt.NDArray[np.float64] = [25, 35]
     expected_x: npt.NDArray[np.float64] = np.array([10.0, 20.0, 30.0, 40.0, 50.0], dtype=np.float64)
     expected_y: npt.NDArray[np.float64] = np.array([0.09459459, 0.22972973, 0.39189189, 0.60810811, 0.82432432])
     x, y = plotting_positions(failures, right_censored)
@@ -174,7 +174,7 @@ def test_plotting_positions():
 
     # Test case 6: Test case with invalid input type
     with pytest.raises(ValueError):
-        plotting_positions("invalid input")
+        plotting_positions("invalid input")  # type: ignore
 
     # Test case 7: Test case with invalid a value
     with pytest.raises(ValueError):
@@ -198,6 +198,64 @@ def test_plotting_positions():
     x, y = plotting_positions(failures=failures, a=a)
     assert np.allclose(x, expected_x)
     assert np.allclose(y, expected_y)
+
+    # Test case 10: test case equivalent from Fit_Normal_2P
+    failures = np.array(
+        [
+            43.5845486,
+            39.40512803,
+            48.01310702,
+            45.57882144,
+            43.72175716,
+            40.13337069,
+            42.33387836,
+            36.14292126,
+            49.33043046,
+            40.69419221,
+            44.96569525,
+            46.09595341,
+        ]
+    )
+    right_censored = np.array([50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0])
+    x, y = plotting_positions(failures=failures, right_censored=right_censored)
+    assert np.allclose(
+        x,
+        np.array(
+            [
+                43.5845486,
+                39.40512803,
+                48.01310702,
+                45.57882144,
+                43.72175716,
+                40.13337069,
+                42.33387836,
+                36.14292126,
+                49.33043046,
+                40.69419221,
+                44.96569525,
+                46.09595341,
+            ]
+        ),
+    )
+    assert np.allclose(
+        y,
+        np.array(
+            [
+                0.27941176,
+                0.08333333,
+                0.5245098,
+                0.42647059,
+                0.32843137,
+                0.13235294,
+                0.23039216,
+                0.03431373,
+                0.57352941,
+                0.18137255,
+                0.37745098,
+                0.4754902,
+            ]
+        ),
+    )
 
 
 def test_Gumbel_probability_plot():

@@ -70,7 +70,7 @@ ignore = [
     "ERA001",#  commented-out-code"
     "D417",#    undocumented-param"
     "PLW0128", # redeclared-assigned-name"
-    "FBT001", # " boolean-type-hint-positional-argument"
+    #"FBT001", # " boolean-type-hint-positional-argument"
     "E501",  # line too long, handled by black
     "N806", #non-lowercase-variable-in-function
     "T201", # print statement
@@ -97,6 +97,7 @@ known-first-party = []
 "test_*.py" = ["PLR2004","S101", "SLF001", "INP001", "ANN202","PT011"]
 "conftest*.py" = ["INP001", "ANN202"]
 "*_utils.py" = ["SLF001"] #TODO: Refactor Utils functions to not access private memebrs
+"*_dist.py" = ["FBT001"]
 
 [tool.ruff.lint.pylint]
 max-args = 16

@@ -943,17 +943,11 @@ class ALT_fitters_input_checking:
 
         # group the failures into their failure_stresses and then check there are enough to fit the model
         if is_dual_stress is False:
-            failure_df_ungrouped = pd.DataFrame(
-                data={"failures": failures, "failure_stress_1": failure_stress_1},
-                columns=["failures", "failure_stress_1"],
-            )
             failure_groups = []
-            unique_failure_stresses = []
-            for keys, items in failure_df_ungrouped.groupby(["failure_stress_1"]):
-                key = keys[0]
-                values = list(items.iloc[:, 0].values)
+            unique_failure_stresses = np.unique(failure_stress_1)
+            for key in unique_failure_stresses:
+                values = failures[failure_stress_1 == key]
                 failure_groups.append(values)
-                unique_failure_stresses.append(key)
             # Check that there are enough failures to fit the model.
             # This does not mean 2 failures at each stress.
             # All we need is as many failures as there are parameters in the model.
@@ -982,20 +976,11 @@ class ALT_fitters_input_checking:
                 )
 
             if len(right_censored) > 0:
-                right_censored_df_ungrouped = pd.DataFrame(
-                    data={
-                        "right_censored": right_censored,
-                        "right_censored_stress_1": right_censored_stress_1,
-                    },
-                    columns=["right_censored", "right_censored_stress_1"],
-                )
                 right_censored_groups = []
-                unique_right_censored_stresses = []
-                for keys, items in right_censored_df_ungrouped.groupby(["right_censored_stress_1"]):
-                    key = keys[0]
-                    values = list(items.iloc[:, 0].values)
+                unique_right_censored_stresses = np.unique(right_censored_stress_1)
+                for key in unique_right_censored_stresses:
+                    values = right_censored[right_censored_stress_1 == 1]
                     right_censored_groups.append(values)
-                    unique_right_censored_stresses.append(key)
                     if key not in unique_failure_stresses:
                         raise ValueError(
                             str("The right censored stress " + str(key) + " does not appear in failure stresses."),
@@ -1010,24 +995,12 @@ class ALT_fitters_input_checking:
                 right_censored_groups = None
         else:  # This is for dual stress cases
             # concatenate the stresses to deal with them as a pair
-            failure_stress_pairs: list[str] = [
-                str(failure_stress_1[i]) + "_" + str(failure_stress_2[i]) for i in range(len(failure_stress_1))
-            ]
-
-            failure_df_ungrouped = pd.DataFrame(
-                data={
-                    "failures": failures,
-                    "failure_stress_pairs": failure_stress_pairs,
-                },
-                columns=["failures", "failure_stress_pairs"],
-            )
+            failure_stress_pairs = failure_stress_1.astype(str) + "_" + failure_stress_2.astype(str)
             failure_groups = []
-            unique_failure_stresses_str = []
-            for keys, items in failure_df_ungrouped.groupby(["failure_stress_pairs"]):
-                key = keys[0]
-                values = list(items.iloc[:, 0].values)
+            unique_failure_stresses_str = np.unique(failure_stress_pairs)
+            for key in unique_failure_stresses_str:
+                values = failures[failure_stress_pairs == key]
                 failure_groups.append(values)
-                unique_failure_stresses_str.append(key)
             # Check that there are enough failures to fit the model.
             # This does not mean 2 failures at each stress.
             # All we need is as many failures as there are parameters in the model.
@@ -1063,25 +1036,14 @@ class ALT_fitters_input_checking:
 
             if len(right_censored) > 0:
                 # concatenate the right censored stresses to deal with them as a pair
-                right_censored_stress_pairs: list[str] = [
-                    str(right_censored_stress_1[i]) + "_" + str(right_censored_stress_2[i])
-                    for i in range(len(right_censored_stress_1))
-                ]
-
-                right_censored_df_ungrouped = pd.DataFrame(
-                    data={
-                        "right_censored": right_censored,
-                        "right_censored_stress_pairs": right_censored_stress_pairs,
-                    },
-                    columns=["right_censored", "right_censored_stress_pairs"],
+                right_censored_stress_pairs = (
+                    right_censored_stress_1.astype(str) + "_" + right_censored_stress_2.astype(str)
                 )
                 right_censored_groups = []
-                unique_right_censored_stresses_str = []
-                for keys, items in right_censored_df_ungrouped.groupby(["right_censored_stress_pairs"]):
-                    key = keys[0]
-                    values = list(items.iloc[:, 0].values)
+                unique_right_censored_stresses_str = np.unique(right_censored_stress_pairs)
+                for key in unique_right_censored_stresses_str:
+                    values = right_censored[right_censored_stress_pairs == key]
                     right_censored_groups.append(values)
-                    unique_right_censored_stresses_str.append(key)
                     if key not in unique_failure_stresses_str:
                         raise ValueError(
                             str(

@@ -93,7 +93,7 @@ def unpack_single_arrays(array):
 
 
 def generate_X_array(
-    dist, xvals: npt.NDArray[np.float64] | None = None, xmin=None, xmax=None
+    dist, xvals: npt.NDArray[np.float64] | float | list[float] | None = None, xmin=None, xmax=None
 ) -> npt.NDArray[np.float64]:
     """Generates the array of X values for each of the PDf, CDF, SF, HF, CHF
     functions within reliability.Distributions.

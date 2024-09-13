@@ -73,7 +73,7 @@ class Beta_Distribution:
         mean, var, skew, kurt = ss.beta.stats(self.alpha, self.beta, 0, 1, moments="mvsk")
         self.mean = float(mean)
         self.variance = float(var)
-        self.standard_deviation = var**0.5
+        self.standard_deviation: float = self.variance**0.5
         self.skewness = float(skew)
         self.kurtosis: np.float64 = kurt + 3
         self.excess_kurtosis = float(kurt)
@@ -90,8 +90,8 @@ class Beta_Distribution:
             + round_and_string(self.beta, dec)
             + ")",
         )
-        self.b5 = ss.beta.ppf(0.05, self.alpha, self.beta, 0, 1)
-        self.b95 = ss.beta.ppf(0.95, self.alpha, self.beta, 0, 1)
+        self.b5: np.float64 = ss.beta.ppf(0.05, self.alpha, self.beta, 0, 1)
+        self.b95: np.float64 = ss.beta.ppf(0.95, self.alpha, self.beta, 0, 1)
 
         # the pdf at 0. Used by Utils.restore_axes_limits and Utils.generate_X_array
         self._pdf0 = ss.beta.pdf(0, self.alpha, self.beta, 0, 1)
@@ -734,11 +734,10 @@ class Beta_Distribution:
         if not isinstance(number_of_samples, int) or number_of_samples < 1:
             msg = "number_of_samples must be an integer greater than 0"
             raise ValueError(msg)
-        if seed is not None:
-            rng = np.random.default_rng(seed)
+        rng = np.random.default_rng(seed)
         RVS: npt.NDArray[np.float64] = ss.beta.rvs(
             self.alpha, self.beta, 0, 1, size=number_of_samples, random_state=rng
-        )
+        )  # type: ignore
 
         # this section is for resampling so that we always get numbers below 1.
         # For a Beta Distribution, 1 should be impossible, but scipy.stats will

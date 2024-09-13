@@ -586,7 +586,9 @@ class fitters_input_checking:
             min_failures = 1
         elif dist in ["Weibull_Mixture", "Weibull_CR"]:
             min_failures = 4
-
+        else:
+            msg = "The distribution specified is not recognised."
+            raise ValueError(msg)
         number_of_unique_failures = len(
             np.unique(failures),
         )  # failures need to be unique. ie. [4,4] counts as 1 distinct failure

@@ -1,4 +1,5 @@
 import warnings
+from typing import TYPE_CHECKING
 
 from numpy.testing import assert_allclose
 
@@ -9,6 +10,10 @@ from reliability.Fitters import (
     Fit_Everything,
 )
 from reliability.Other_functions import make_right_censored_data
+
+if TYPE_CHECKING:
+    import numpy as np
+    import numpy.typing as npt
 
 # I would like to make these smaller but the slight differences in different python versions (3.6-3.9) mean that tight tolerances result in test failures
 atol = 1e-3
@@ -21,17 +26,12 @@ def test_Fit_Everything():
     # ignores the runtime warning from scipy when the nelder-mean or powell optimizers are used and jac is not required
     warnings.filterwarnings(action="ignore", category=RuntimeWarning)
     dist = Beta_Distribution(alpha=5, beta=4)
-    rawdata = dist.random_samples(200, seed=5)
+    rawdata: npt.NDArray[np.float64] = dist.random_samples(200, seed=5)
     data = make_right_censored_data(data=rawdata, threshold=dist.mean)
     MLE = Fit_Everything(
         failures=data.failures,
         right_censored=data.right_censored,
         method="MLE",
-        show_probability_plot=True,
-        show_histogram_plot=True,
-        show_PP_plot=True,
-        show_best_distribution_probability_plot=True,
-        print_results=True,
     )
     MLE.print_results()
     MLE.histogram_plot()
@@ -42,11 +42,6 @@ def test_Fit_Everything():
         failures=data.failures,
         right_censored=data.right_censored,
         method="LS",
-        show_probability_plot=True,
-        show_histogram_plot=True,
-        show_PP_plot=True,
-        show_best_distribution_probability_plot=True,
-        print_results=True,
     )
     LS.print_results()
 

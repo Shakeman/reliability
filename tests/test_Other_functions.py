@@ -42,8 +42,6 @@ def test_similar_distributions():
     results = similar_distributions(
         distribution=dist,
         include_location_shifted=True,
-        show_plot=True,
-        print_results=True,
     )
     assert_allclose(results.results[0].alpha, 49.22622520639563, rtol=rtol_big, atol=atol_big)
     assert_allclose(results.results[0].beta, 3.2573074120881964, rtol=rtol_big, atol=atol_big)

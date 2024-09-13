@@ -768,22 +768,15 @@ class ALT_fitters_input_checking:
             )
 
         if life_stress_model == "Everything":
-            if failure_stress_2 is not None:
-                is_dual_stress = True
-                min_failures_reqd = 4
-            else:
-                is_dual_stress = False
-                min_failures_reqd = 3
+            is_dual_stress = failure_stress_2 is not None
         elif life_stress_model in [
             "Dual_Exponential",
             "Power_Exponential",
             "Dual_Power",
         ]:
             is_dual_stress = True
-            min_failures_reqd = 4
         else:
             is_dual_stress = False
-            min_failures_reqd = 3
 
         # failure checks
         if is_dual_stress is True and (failure_stress_1 is None or failure_stress_2 is None):
@@ -803,270 +796,44 @@ class ALT_fitters_input_checking:
                     text_color="red",
                 )
             failure_stress_2 = []
-
-        # right_censored checks
-        if right_censored is None:
-            if right_censored_stress_1 is not None:
-                colorprint(
-                    "WARNING: right_censored_stress_1 is not being used as right_censored was not provided.",
-                    text_color="red",
+        match is_dual_stress:
+            case True:
+                update = alt_fitters_dual_stress_input_checking(
+                    dist,
+                    life_stress_model,
+                    failures,
+                    failure_stress_1,
+                    failure_stress_2,
+                    right_censored,
+                    right_censored_stress_1,
+                    right_censored_stress_2,
+                    CI,
+                    use_level_stress,
+                    optimizer,
                 )
-            if right_censored_stress_2 is not None:
-                colorprint(
-                    "WARNING: right_censored_stress_2 is not being used as right_censored was not provided.",
-                    text_color="red",
+                self.failure_stress_2 = update.failure_stress_2
+                self.right_censored_stress_2 = update.right_censored_stress_2
+            case False:
+                update = alt_single_stress_fitters_input_checking(
+                    dist,
+                    life_stress_model,
+                    failures,
+                    failure_stress_1,
+                    right_censored,
+                    right_censored_stress_1,
+                    CI,
+                    use_level_stress,
+                    optimizer,
                 )
-            right_censored = []
-            right_censored_stress_1 = []
-            right_censored_stress_2 = []
-        else:
-            if is_dual_stress is True and (right_censored_stress_1 is None or right_censored_stress_2 is None):
-                msg = "right_censored_stress_1 and right_censored_stress_2 must be provided for dual stress models."
-                raise ValueError(
-                    msg,
-                )
-            if is_dual_stress is False:
-                if right_censored_stress_1 is None:
-                    msg = "right_censored_stress_1 must be provided"
-                    raise ValueError(msg)
-                if right_censored_stress_2 is not None:
-                    colorprint(
-                        str(
-                            "WARNING: right_censored_stress_2 is not being used as "
-                            + life_stress_model
-                            + " is a single stress model.",
-                        ),
-                        text_color="red",
-                    )
-                right_censored_stress_2 = []
-
-        # type checking and converting to arrays for failures and right_censored
-        if type(failures) not in [list, np.ndarray]:
-            msg = "failures must be a list or array of failure data"
-            raise ValueError(msg)
-        if type(failure_stress_1) not in [list, np.ndarray]:
-            msg = "failure_stress_1 must be a list or array of failure stress data"
-            raise ValueError(msg)
-        if type(failure_stress_2) not in [list, np.ndarray]:
-            msg = "failure_stress_2 must be a list or array of failure stress data"
-            raise ValueError(msg)
-
-        if type(right_censored) not in [list, np.ndarray]:
-            msg = "right_censored must be a list or array of right censored failure data"
-            raise ValueError(msg)
-        if type(right_censored_stress_1) not in [list, np.ndarray]:
-            msg = "right_censored_stress_1 must be a list or array of right censored failure stress data"
-            raise ValueError(msg)
-        if type(right_censored_stress_2) not in [list, np.ndarray]:
-            msg = "right_censored_stress_2 must be a list or array of right censored failure stress data"
-            raise ValueError(msg)
-
-        failures = np.asarray(failures).astype(float)
-        failure_stress_1 = np.asarray(failure_stress_1).astype(float)
-        failure_stress_2 = np.asarray(failure_stress_2).astype(float)
-        right_censored = np.asarray(right_censored).astype(float)
-        right_censored_stress_1 = np.asarray(right_censored_stress_1).astype(float)
-        right_censored_stress_2 = np.asarray(right_censored_stress_2).astype(float)
-
-        # check that list lengths match
-        if is_dual_stress is False:
-            if len(failures) != len(failure_stress_1):
-                msg = "failures must have the same number of elements as failure_stress_1"
-                raise ValueError(msg)
-            if len(right_censored) != len(right_censored_stress_1):
-                msg = "right_censored must have the same number of elements as right_censored_stress_1"
-                raise ValueError(msg)
-        else:
-            if len(failures) != len(failure_stress_1) or len(failures) != len(failure_stress_2):
-                msg = "failures must have the same number of elements as failure_stress_1 and failure_stress_2"
-                raise ValueError(
-                    msg,
-                )
-            if len(right_censored) != len(right_censored_stress_1) or len(right_censored) != len(
-                right_censored_stress_2,
-            ):
-                msg = "right_censored must have the same number of elements as right_censored_stress_1 and right_censored_stress_2"
-                raise ValueError(
-                    msg,
-                )
-
-        # raise an error for values <= 0. Not even the Normal Distribution is allowed to have failures at negative life.
-        if min(np.hstack([failures, right_censored])) <= 0:
-            msg = "All failure and right censored values must be greater than zero."
-            raise ValueError(msg)
-
-        # type and value checking for CI
-        if type(CI) not in [float, np.float64]:
-            msg = "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval."
-            raise ValueError(msg)
-        if CI <= 0 or CI >= 1:
-            msg = "CI must be between 0 and 1. Default is 0.95 for 95% confidence interval."
-            raise ValueError(msg)
-
-        # error checking for optimizer
-        if optimizer is not None:
-            if not isinstance(optimizer, str):
-                msg = 'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html'
-                raise ValueError(
-                    msg,
-                )
-            if optimizer.upper() == "TNC":
-                optimizer = "TNC"
-            elif optimizer.upper() == "POWELL":
-                optimizer = "powell"
-            elif optimizer.upper() in ["L-BFGS-B", "LBFGSB"]:
-                optimizer = "L-BFGS-B"
-            elif optimizer.upper() in ["NELDER-MEAD", "NELDERMEAD", "NM"]:
-                optimizer = "nelder-mead"
-            elif optimizer.upper() in ["ALL", "BEST"]:
-                optimizer = "best"
-            else:
-                msg = 'optimizer must be either "TNC", "L-BFGS-B", "nelder-mead", "powell", "best" or None. For more detail see the documentation: https://reliability.readthedocs.io/en/latest/Optimizers.html'
-                raise ValueError(
-                    msg,
-                )
-
-        # check the number of unique stresses
-        unique_stresses_1 = np.unique(failure_stress_1)
-        MIN_UNIQUE_STRESSES = 2
-
-        if len(unique_stresses_1) < MIN_UNIQUE_STRESSES:
-            msg = "failure_stress_1 must have at least 2 unique stresses."
-            raise ValueError(msg)
-        if is_dual_stress is True:
-            unique_stresses_2 = np.unique(failure_stress_2)
-            if len(unique_stresses_2) < MIN_UNIQUE_STRESSES:
-                msg = "failure_stress_2 must have at least 2 unique stresses when using a dual stress model."
-                raise ValueError(
-                    msg,
-                )
-
-        # group the failures into their failure_stresses and then check there are enough to fit the model
-        if is_dual_stress is False:
-            failure_groups = []
-            unique_failure_stresses = np.unique(failure_stress_1)
-            for key in unique_failure_stresses:
-                values = failures[failure_stress_1 == key]
-                failure_groups.append(values)
-            # Check that there are enough failures to fit the model.
-            # This does not mean 2 failures at each stress.
-            # All we need is as many failures as there are parameters in the model.
-            total_unique_failures = 0
-            for _, failure_group in enumerate(failure_groups):
-                total_unique_failures += len(np.unique(failure_group))
-            if total_unique_failures < min_failures_reqd:
-                if life_stress_model == "Everything":
-                    raise ValueError(
-                        str(
-                            "There must be at least "
-                            + str(min_failures_reqd)
-                            + " unique failures for all ALT models to be fitted.",
-                        ),
-                    )
-                raise ValueError(
-                    str(
-                        "There must be at least "
-                        + str(min_failures_reqd)
-                        + " unique failures for the "
-                        + dist
-                        + "-"
-                        + life_stress_model
-                        + " model to be fitted.",
-                    ),
-                )
-
-            if len(right_censored) > 0:
-                right_censored_groups = []
-                unique_right_censored_stresses = np.unique(right_censored_stress_1)
-                for key in unique_right_censored_stresses:
-                    values = right_censored[right_censored_stress_1 == 1]
-                    right_censored_groups.append(values)
-                    if key not in unique_failure_stresses:
-                        raise ValueError(
-                            str("The right censored stress " + str(key) + " does not appear in failure stresses."),
-                        )
-
-                # add in empty lists for stresses which appear in failure_stress_1 but not in right_censored_stress_1
-                for i, stress in enumerate(unique_failure_stresses):
-                    if stress not in unique_right_censored_stresses:
-                        right_censored_groups.insert(i, [])
-
-            else:
-                right_censored_groups = None
-        else:  # This is for dual stress cases
-            # concatenate the stresses to deal with them as a pair
-            failure_stress_pairs = failure_stress_1.astype(str) + "_" + failure_stress_2.astype(str)
-            failure_groups = []
-            unique_failure_stresses_str = np.unique(failure_stress_pairs)
-            for key in unique_failure_stresses_str:
-                values = failures[failure_stress_pairs == key]
-                failure_groups.append(values)
-            # Check that there are enough failures to fit the model.
-            # This does not mean 2 failures at each stress.
-            # All we need is as many failures as there are parameters in the model.
-            total_unique_failures = 0
-            for _, failure_group in enumerate(failure_groups):
-                total_unique_failures += len(np.unique(failure_group))
-            if total_unique_failures < min_failures_reqd:
-                if life_stress_model == "Everything":
-                    raise ValueError(
-                        str(
-                            "There must be at least "
-                            + str(min_failures_reqd)
-                            + " unique failures for all ALT models to be fitted.",
-                        ),
-                    )
-                raise ValueError(
-                    str(
-                        "There must be at least "
-                        + str(min_failures_reqd)
-                        + " unique failures for the "
-                        + dist
-                        + "-"
-                        + life_stress_model
-                        + "model to be fitted.",
-                    ),
-                )
-
-            # unpack the concatenated string for dual stresses ==> ['10.0_1000.0','20.0_2000.0','5.0_500.0'] should be [[10.0,1000.0],[20.0,2000.0],[5.0,500.0]]
-            unique_failure_stresses = []
-            for item in unique_failure_stresses_str:
-                stress_pair = [float(x) for x in list(item.split("_"))]
-                unique_failure_stresses.append(stress_pair)
-
-            if len(right_censored) > 0:
-                # concatenate the right censored stresses to deal with them as a pair
-                right_censored_stress_pairs = (
-                    right_censored_stress_1.astype(str) + "_" + right_censored_stress_2.astype(str)
-                )
-                right_censored_groups = []
-                unique_right_censored_stresses_str = np.unique(right_censored_stress_pairs)
-                for key in unique_right_censored_stresses_str:
-                    values = right_censored[right_censored_stress_pairs == key]
-                    right_censored_groups.append(values)
-                    if key not in unique_failure_stresses_str:
-                        raise ValueError(
-                            str(
-                                "The right censored stress pair "
-                                + str([float(x) for x in list(key.split("_"))])
-                                + " does not appear in failure stresses.",
-                            ),
-                        )
-
-                # add in empty lists for stresses which appear in failure_stress but not in right_censored_stress
-                for i, stress in enumerate(unique_failure_stresses_str):
-                    if stress not in unique_right_censored_stresses_str:
-                        right_censored_groups.insert(i, [])
-            else:
-                right_censored_groups = None
-
+                self.failure_stress_2 = np.array([])
+                self.right_censored_stress_2 = np.array([])
         # check that use level stress is the correct type
-        if is_dual_stress is False and use_level_stress is not None:
+        if is_dual_stress is False and update.use_level_stress is not None:
             if type(use_level_stress) in [list, tuple, np.ndarray, str, bool, dict]:
                 msg = "use_level_stress must be a number"
                 raise ValueError(msg)
-            use_level_stress = float(use_level_stress)
-        elif is_dual_stress is True and use_level_stress is not None:
+            use_level_stress = float(update.use_level_stress)
+        elif is_dual_stress is True and update.use_level_stress is not None:
             if type(use_level_stress) not in [list, np.ndarray]:
                 msg = "use_level_stress must be an array or list of the use level stresses. eg. use_level_stress = [stress_1, stress_2]."
                 raise ValueError(
@@ -1074,29 +841,27 @@ class ALT_fitters_input_checking:
                 )
             EXPECTED_USE_LEVEL_STRESS_LENGTH = 2
 
-            if len(use_level_stress) != EXPECTED_USE_LEVEL_STRESS_LENGTH:
+            if len(update.use_level_stress) != EXPECTED_USE_LEVEL_STRESS_LENGTH:
                 msg = "use_level_stress must be an array or list of length 2 with the use level stresses. eg. use_level_stress = [stress_1, stress_2]."
                 raise ValueError(
                     msg,
                 )
-            use_level_stress = np.asarray(use_level_stress)
+            use_level_stress = np.asarray(update.use_level_stress)
 
         # returns everything
-        self.failures = failures
-        self.failure_stress_1 = failure_stress_1
-        self.failure_stress_2 = failure_stress_2
-        self.right_censored = right_censored
-        self.right_censored_stress_1 = right_censored_stress_1
-        self.right_censored_stress_2 = right_censored_stress_2
-        self.CI = CI
-        self.optimizer: Literal["TNC", "L-BFGS-B", "nelder-mead", "powell", "best"] | None = optimizer
-        self.use_level_stress: float | npt.NDArray[np.float64] | None = use_level_stress
-        self.failure_groups = failure_groups[::-1]
-        if right_censored_groups is None:
-            self.right_censored_groups = right_censored_groups
+        self.failures = update.failures
+        self.failure_stress_1 = update.failure_stress_1
+        self.right_censored = update.right_censored
+        self.right_censored_stress_1 = update.right_censored_stress_1
+        self.CI = update.CI
+        self.optimizer: Literal["TNC", "L-BFGS-B", "nelder-mead", "powell", "best"] | None = update.optimizer
+        self.use_level_stress: float | npt.NDArray[np.float64] | None = update.use_level_stress
+        self.failure_groups = update.failure_groups
+        if update.right_censored_groups is None:
+            self.right_censored_groups = update.right_censored_groups
         else:
-            self.right_censored_groups = right_censored_groups[::-1]
-        self.stresses_for_groups = unique_failure_stresses[::-1]
+            self.right_censored_groups = update.right_censored_groups
+        self.stresses_for_groups = update.stresses_for_groups
 
 
 class alt_fitters_dual_stress_input_checking:
@@ -1195,15 +960,11 @@ class alt_fitters_dual_stress_input_checking:
         use_level_stress=None,
         optimizer=None,
     ) -> None:
-        if dist not in ["Exponential", "Weibull", "Lognormal", "Normal"]:
+        if dist not in ["Exponential", "Weibull", "Lognormal", "Normal", "Everything"]:
             msg = "dist must be one of Exponential, Weibull, Lognormal, Normal."
             raise ValueError(msg)
-        if life_stress_model not in [
-            "Dual_Exponential",
-            "Power_Exponential",
-            "Dual_Power",
-        ]:
-            msg = "life_stess_model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power."
+        if life_stress_model not in ["Dual_Exponential", "Power_Exponential", "Dual_Power", "Everything"]:
+            msg = "life_stess_model must be one of Exponential, Eyring, Power, Dual_Exponential, Power_Exponential, Dual_Power, Everything."
             raise ValueError(
                 msg,
             )
@@ -1497,11 +1258,11 @@ class alt_single_stress_fitters_input_checking:
         use_level_stress=None,
         optimizer: str | None = None,
     ) -> None:
-        if dist not in ["Exponential", "Weibull", "Lognormal", "Normal"]:
+        if dist not in ["Exponential", "Weibull", "Lognormal", "Normal", "Everything"]:
             msg = "dist must be one of Exponential, Weibull, Lognormal, Normal."
             raise ValueError(msg)
-        if life_stress_model not in ["Exponential", "Eyring", "Power"]:
-            msg = "life_stess_model must be one of Exponential, Eyring, Power"
+        if life_stress_model not in ["Exponential", "Eyring", "Power", "Everything"]:
+            msg = "life_stess_model must be one of Exponential, Eyring, Power, Everything"
             raise ValueError(
                 msg,
             )

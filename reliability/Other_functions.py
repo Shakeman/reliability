@@ -482,21 +482,11 @@ class similar_distributions:
                     "Gamma_3P",
                     "Loglogistic_3P",
                 ],
-                print_results=False,
-                show_probability_plot=False,
-                show_histogram_plot=False,
-                show_PP_plot=False,
-                show_best_distribution_probability_plot=False,
             )
         else:
             # fit all distributions to the filtered samples
             fitted_results = Fit_Everything(
                 failures=RVS_filtered,
-                print_results=False,
-                show_probability_plot=False,
-                show_histogram_plot=False,
-                show_PP_plot=False,
-                show_best_distribution_probability_plot=False,
             )
         ranked_distributions = list(fitted_results.results.Distribution.values)
 

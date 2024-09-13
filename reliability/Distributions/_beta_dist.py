@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
@@ -709,7 +711,7 @@ class Beta_Distribution:
         print("Skewness =", self.skewness)
         print("Excess kurtosis =", self.excess_kurtosis)
 
-    def random_samples(self, number_of_samples, seed=None):
+    def random_samples(self, number_of_samples: int, seed: int | None = None) -> npt.NDArray[np.float64]:
         """Draws random samples from the probability distribution.
 
         Parameters
@@ -734,7 +736,9 @@ class Beta_Distribution:
             raise ValueError(msg)
         if seed is not None:
             rng = np.random.default_rng(seed)
-        RVS = ss.beta.rvs(self.alpha, self.beta, 0, 1, size=number_of_samples, random_state=rng)
+        RVS: npt.NDArray[np.float64] = ss.beta.rvs(
+            self.alpha, self.beta, 0, 1, size=number_of_samples, random_state=rng
+        )
 
         # this section is for resampling so that we always get numbers below 1.
         # For a Beta Distribution, 1 should be impossible, but scipy.stats will

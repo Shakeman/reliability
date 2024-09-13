@@ -1028,7 +1028,8 @@ class make_ALT_data:
 
     """
 
-    def __init__(
+    # TODO: break into single and dual functions
+    def __init__(  # noqa: PLR0913
         self,
         distribution,
         life_stress_model,

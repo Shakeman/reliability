@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+from typing import Literal
 
 import autograd.numpy as anp
 import matplotlib.pyplot as plt
@@ -157,13 +158,8 @@ class Fit_Everything:
         right_censored: npt.NDArray[np.float64] | None = None,
         exclude=None,
         sort_by="BIC",
-        method: str | None = "MLE",
+        method: Literal["MLE", "RRX", "RRY", "LS", "NLLS"] = "MLE",
         optimizer=None,
-        print_results=True,
-        show_histogram_plot=True,
-        show_PP_plot=True,
-        show_probability_plot=True,
-        show_best_distribution_probability_plot=True,
         downsample_scatterplot=True,
     ) -> None:
         inputs = fitters_input_checking(
@@ -180,22 +176,6 @@ class Fit_Everything:
 
         if method in ["RRX", "RRY", "LS", "NLLS"]:
             method = "LS"
-
-        if show_histogram_plot not in [True, False]:
-            msg = "show_histogram_plot must be either True or False. Defaults to True."
-            raise ValueError(msg)
-        if print_results not in [True, False]:
-            msg = "print_results must be either True or False. Defaults to True."
-            raise ValueError(msg)
-        if show_PP_plot not in [True, False]:
-            msg = "show_PP_plot must be either True or False. Defaults to True."
-            raise ValueError(msg)
-        if show_probability_plot not in [True, False]:
-            msg = "show_probability_plot must be either True or False. Defaults to True."
-            raise ValueError(msg)
-        if show_best_distribution_probability_plot not in [True, False]:
-            msg = "show_best_distribution_probability_plot must be either True or False. Defaults to True."
-            raise ValueError(msg)
 
         self.failures = failures
         self.right_censored = right_censored
@@ -1281,8 +1261,6 @@ class Fit_Everything:
         self.__method = method
         self.__failures = failures
         self.__right_censored = right_censored
-
-        # print the results
 
     def print_results(self) -> None:
         """Prints the results from the Fit_Everything analysis.

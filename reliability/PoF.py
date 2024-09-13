@@ -17,6 +17,7 @@ Within the module PoF, are the following functions:
 from __future__ import annotations
 
 import warnings
+from typing import Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -883,7 +884,7 @@ class strain_life_diagram:
         min_strain: float | None = None,
         max_stress: float | None = None,
         min_stress: float | None = None,
-        show_plot: bool = True,  # noqa: FBT001
+        show_plot: bool = True,
     ) -> None:
         if max_stress is not None and max_strain is not None:
             msg = "Do not specify both max_stress and max_strain as the corresponding value will be automatically calculated"
@@ -1490,6 +1491,7 @@ class fracture_mechanics_crack_initiation:
 
     """
 
+    # TODO: simplify function to use less arguments
     def __init__(
         self,
         P: float,
@@ -1504,7 +1506,7 @@ class fracture_mechanics_crack_initiation:
         epsilon_f: float,
         Kt: float = 1.0,
         q: float = 1.0,
-        mean_stress_correction_method: str = "modified_morrow",
+        mean_stress_correction_method: Literal["morrow", "modified_morrow", "SWT"] = "modified_morrow",
     ) -> None:
         if mean_stress_correction_method not in ["morrow", "modified_morrow", "SWT"]:
             msg = "mean_stress_correction_method must be either morrow,modified_morrow, or SWT. Default is modified_morrow."
